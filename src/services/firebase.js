@@ -18,6 +18,4 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig)
 
-console.log('hello')
-
-export const database = firebase.firestore() 
+export const db = firebase.firestore() 
