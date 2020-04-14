@@ -1,0 +1,81 @@
+<!-- 
+settings-view markup
+-->
+
+<template id="settings-view">
+  <div>
+    <label>
+      <div uk-grid class="uk-grid-column-small" style="margin-left: 0px;">
+        <div class="uk-container" style="margin: auto;">
+          <input
+            class="uk-radio"
+            type="radio"
+            name="radio"
+            id="settings-view-radio0"
+          />
+        </div>
+        <div uk-grid class="uk-grid-row-collapse uk-width-expand">
+          <div
+            class="uk-first-column uk-width-1-1 uk-text-bold"
+            style="font-size: large;"
+            id="settings-view-radio0-text"
+          >
+            Enable
+          </div>
+          <div class="uk-first-column uk-width-1-1" style="font-size: small;">
+            Send a "Do-Not-Sell" signal with every network request
+          </div>
+        </div>
+      </div>
+    </label>
+    <br />
+    <label>
+      <div uk-grid class="uk-grid-column-small" style="margin-left: 0px;">
+        <div class="uk-container" style="margin: auto;">
+          <input
+            class="uk-radio"
+            type="radio"
+            name="radio"
+            id="settings-view-radio1"
+          />
+        </div>
+        <div uk-grid class="uk-grid-row-collapse uk-width-expand">
+          <div
+            class="uk-first-column uk-width-1-1 uk-text-bold"
+            style="font-size: large;"
+            id="settings-view-radio1-text"
+          >
+            Disable
+          </div>
+          <div class="uk-first-column uk-width-1-1" style="font-size: small;">
+            Do not send any "Do-Not-Sell" signals
+          </div>
+        </div>
+      </div>
+    </label>
+    <br />
+    <label>
+      <div uk-grid class="uk-grid-column-small" style="margin-left: 0px;">
+        <div class="uk-container" style="margin: auto;">
+          <input
+            class="uk-radio"
+            type="radio"
+            name="radio"
+            id="settings-view-radio2"
+          />
+        </div>
+        <div uk-grid class="uk-grid-row-collapse uk-width-expand">
+          <div
+            class="uk-first-column uk-width-1-1 uk-text-bold"
+            style="font-size: large;"
+          >
+            Custom
+          </div>
+          <div class="uk-first-column uk-width-1-1" style="font-size: small;">
+            Send "Do-Not-Sell" signals based on your whitelist
+          </div>
+        </div>
+      </div>
+    </label>
+  </div>
+</template>
