@@ -1,0 +1,26 @@
+<!--
+scaffold-component markup
+
+- Defines the layout of each scrollable content
+*/
+-->
+
+<template id="scaffold-component">
+    <div class="uk-container" id="scaffold" style="animation-duration: 250ms;">
+        <div class="uk-grid-large">
+            <!-- Heading and subtitle -->
+            <div class="first-column uk-margin-medium-bottom">
+                <h1 class="uk-heading-medium text-color-darker" style="display: inline;">
+                    {{ title }}
+                </h1>
+                <div class="uk-text-lead uk-text-light text-color">
+                    {{ subtitle }}
+                </div>
+            </div>
+            <!-- Body -->
+            <div class="first-column" id="scaffold-component-body">
+                <!-- Body content inflated here -->
+            </div>
+        </div>
+    </div>
+</template>

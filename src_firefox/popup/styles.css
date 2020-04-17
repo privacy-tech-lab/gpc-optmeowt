@@ -1,0 +1,67 @@
+@import "../options/styles.css";
+
+/* Switch
+https://github.com/uikit/uikit/issues/2531
+ */
+
+.uk-switch {
+  position: relative;
+  display: inline-block;
+  height: 34px;
+  width: 60px;
+}
+
+/* Hide default HTML checkbox */
+.uk-switch input {
+  display: none;
+}
+/* Slider */
+.uk-switch-slider {
+  height: 24px;
+  width: 48px;
+  background-color: rgba(0, 0, 0, 0.22);
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  border-radius: 500px;
+  bottom: 0;
+  cursor: pointer;
+  transition-property: background-color;
+  transition-duration: 0.2s;
+  box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.07);
+}
+/* Switch pointer */
+.uk-switch-slider:before {
+  content: "";
+  background-color: #fff;
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  transition-property: transform, box-shadow;
+  transition-duration: 0.2s;
+}
+/* Slider active color */
+input:checked + .uk-switch-slider {
+  background-color: #4472c4 !important;
+}
+/* Pointer active animation */
+input:checked + .uk-switch-slider:before {
+  transform: translateX(24px);
+}
+
+/* Style Modifier */
+.uk-switch-slider.uk-switch-big:before {
+  transform: scale(1.2);
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.22);
+}
+
+input:checked + .uk-switch-slider.uk-switch-big:before {
+  transform: translateX(24px) scale(1.2);
+}
+
+/* Inverse Modifier - affects only default */
+.uk-light .uk-switch-slider:not(.uk-switch-on-off) {
+  background-color: rgba(255, 255, 255, 0.22);
+}
