@@ -29,49 +29,155 @@
       <div
         class="uk-container"
         style="margin: auto; padding: 0; padding-right: 8px;"
+        uk-tooltip=""
+        id="enable-disable"
       >
-        <span uk-icon="icon: play; ratio: 1"></span>
+        <img
+          src=""
+          height="20"
+          width="20"
+          alt="enable-disable"
+          uk-svg
+          id="img"
+        />
       </div>
-      <div class="uk-container" style="margin: auto; padding: 0;">
-        <span uk-icon="icon: cog; ratio: 1"></span>
+      <div
+        class="uk-container"
+        style="margin: auto; padding: 0;"
+        uk-tooltip="More"
+        id="more"
+      >
+        <img
+          src="../assets/options-2-outline.svg"
+          height="20"
+          width="20"
+          alt="more"
+          uk-svg
+        />
       </div>
     </div>
     <hr class="uk-margin-small-top" />
     <!-- Content -->
-    <div
-      class="uk-flex-inline uk-width-1-1 uk-flex-center uk-text-center"
-      style="font-weight: bold; font-size: large; color: #4472c4;"
-    >
-      www.wesleyan.edu
-    </div>
-    <br />
-    <div uk-grid class="uk-margin-top">
-      <div
-        class="uk-width-expand"
-        style="font-weight: bold; font-size: medium;"
-      >
-        Send "Do-Not-Sell" signal
+    <div class="uk-inline">
+      <div id="content">
+        <div
+          class="uk-flex-inline uk-width-1-1 uk-flex-center uk-text-center uk-text-large uk-text-bold uk-text-truncate"
+          style="color: #4472c4;"
+          id="domain"
+        >
+          <!-- Active tab domain inflated here -->
+        </div>
+        <br />
+        <div uk-grid class="uk-margin-top" style="margin-bottom: 4%;">
+          <div
+            class="uk-width-expand uk-margin-auto-vertical"
+            style="font-weight: bold; font-size: medium;"
+          >
+            Send "Do-Not-Sell" signal
+          </div>
+          <div>
+            <div uk-grid>
+              <div class="uk-width-auto">
+                <label class="switch">
+                  <input type="checkbox" id="input" checked />
+                  <span></span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="uk-text-bold" style="font-size: medium;">
+          Responses
+        </div>
+        <div class="uk-width-1-1">
+          See responses from the 'Do Not Sell' requests. Dummy data below
+        </div>
+        <ul class="uk-list uk-list-divider" style="margin-top: 4%; margin-bottom: 0px;">
+          <li class="uk-margin-small-left uk-margin-small-right">
+            <div uk-grid class="uk-grid-row-collapse">
+              <div
+                class="uk-width-1-1"
+                style="font-size: small; font-weight: bold;"
+              >
+                Request URL:
+              </div>
+              <div class="uk-width-1-1">
+                https://facebook.com/profile
+              </div>
+              <div
+                class="uk-width-1-1 uk-margin-small-top"
+                style="font-size: small; font-weight: bold;"
+              >
+                Response: <span class="uk-badge" style="font-size: 10px; background-color: #e1f5fe; color:#01579b !important;">RECEIVED</span>
+              </div>
+              <div class="uk-width-1-1">
+                You data will not be sold.
+              </div>
+            </div>
+          </li>
+          <li class="uk-margin-small-left uk-margin-small-right">
+            <div uk-grid class="uk-grid-row-collapse">
+              <div
+                class="uk-width-1-1"
+                style="font-size: small; font-weight: bold;"
+              >
+                Request URL:
+              </div>
+              <div class="uk-width-1-1">
+                https://facebook.com/sources
+              </div>
+              <div
+                class="uk-width-1-1 uk-margin-small-top"
+                style="font-size: small; font-weight: bold;"
+              >
+                Response: <span class="uk-badge" style="font-size: 10px; background-color: #e1f5fe; color:#01579b !important;">RECEIVED</span>
+              </div>
+              <div class="uk-width-1-1">
+                We received your request to not sell your data and per your
+                request...
+              </div>
+            </div>
+          </li>
+          <li class="uk-margin-small-left uk-margin-small-right">
+            <div uk-grid class="uk-grid-row-collapse">
+              <div
+                class="uk-width-1-1"
+                style="font-size: small; font-weight: bold;"
+              >
+                Request URL:
+              </div>
+              <div class="uk-width-1-1">
+                https://facebook.com/public
+              </div>
+              <div
+                class="uk-width-1-1 uk-margin-small-top"
+                style="font-size: small; font-weight: bold;"
+              >
+                Response: <span class="uk-badge" style="font-size: 10px; background-color: #cfd8dc; color:#37474f !important;">UNRECEIVED</span>
+              </div>
+              <div class="uk-width-1-1">
+                None
+              </div>
+            </div>
+          </li>
+        </ul>
       </div>
-      <div>
-        <div class="uk-grid uk-grid-small" uk-grid>
-          <div class="uk-width-auto">
-            <label class="uk-switch" for="default-3">
-              <input type="checkbox" id="default-3" />
-              <div class="uk-switch-slider uk-switch-big"></div>
-            </label>
+      <div
+        class="uk-position-cover uk-flex uk-flex-center uk-flex-middle"
+        style="transition: all ease 0.25s; opacity: 0;"
+        id="message"
+      >
+        <div class="uk-container uk-text-center">
+          <div
+            style="font-size: medium; font-weight: bold; margin-bottom: 4px;"
+          >
+            Extension Disabled
+          </div>
+          <div>
+            You may enable the extension by clicking the play button above.
           </div>
         </div>
       </div>
-    </div>
-    <div style="font-weight: bold; font-size: medium;">
-      Response
-    </div>
-    <div style="margin-top: 4px;">
-      We received your request to not …. quis nostrud exercitation ullamco
-      laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in
-      reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-      pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa
-      qui officia deserunt mollit anim id est laborum.
     </div>
   </body>
 </html>

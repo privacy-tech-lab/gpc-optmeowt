@@ -6,7 +6,8 @@
         "webRequest",
         "<all_urls>",
         "webRequestBlocking",
-        "storage"
+        "storage",
+        "activeTab"
     ],
     "icons": {
         "16": "assets/icon16.png",
@@ -17,7 +18,10 @@
         "default_title": "Privacy Rights Platform",
         "default_popup": "popup/popup.html"
     },
-    "options_page": "options/options.html",
+    "options_ui": {
+        "page": "options/options.html",
+        "open_in_tab": true
+    },
     "background": {
         "scripts": [
             "background.js"
