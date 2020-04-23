@@ -6,7 +6,8 @@
         "webRequest",
         "<all_urls>",
         "webRequestBlocking",
-        "storage"
+        "storage",
+        "tabs"
     ],
     "icons": {
         "16": "assets/icon16.png",
