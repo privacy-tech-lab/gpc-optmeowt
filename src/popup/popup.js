@@ -62,6 +62,14 @@ document.addEventListener("DOMContentLoaded", (event) => {
   });
 });
 
+document.getElementById("requests").innerText = chrome.extension.getBackgroundPage().counter;
+
+chrome.runtime.onMessage.addListener(function (request, _, __) {
+  if (request.msg === "COUNTER") {
+    document.getElementById("requests").innerText = request.data;
+  }
+});
+
 document.getElementById("more").addEventListener("click", () => {
-    chrome.runtime.openOptionsPage();
+  chrome.runtime.openOptionsPage();
 });
