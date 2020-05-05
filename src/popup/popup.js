@@ -62,11 +62,51 @@ document.addEventListener("DOMContentLoaded", (event) => {
   });
 });
 
-document.getElementById("requests").innerText = chrome.extension.getBackgroundPage().counter;
+async function buildURLS(requests) {
+  let items = "";
+  for (var url in requests) {
+    items +=
+      `
+  <li class="uk-margin-small-left uk-margin-small-right">
+    <div uk-grid class="uk-grid-row-collapse">
+      <div
+        class="uk-width-1-1"
+        style="font-size: small; font-weight: bold;"
+      >
+        Request URL:
+      </div>
+      <div class="uk-width-1-1 uk-text-break">
+        ` +
+      url +
+      `
+      </div>
+      <div
+        class="uk-width-1-1 uk-margin-small-top"
+        style="font-size: small; font-weight: bold;"
+      >
+        Response: <span class="uk-badge" style="font-size: 10px; background-color: #cfd8dc; color:#37474f !important;">UNRECEIVED</span>
+      </div>
+      <div class="uk-width-1-1">
+        None
+      </div>
+    </div>
+  </li>
+  `;
+  }
+  document.getElementById("urls").innerHTML = items;
+}
+
+chrome.runtime.sendMessage({
+  msg: "INIT",
+  data: null,
+});
 
 chrome.runtime.onMessage.addListener(function (request, _, __) {
-  if (request.msg === "COUNTER") {
+  if (request.msg === "BADGE") {
     document.getElementById("requests").innerText = request.data;
+  }
+  if (request.msg === "REQUESTS") {
+    buildURLS(request.data)
   }
 });
 
