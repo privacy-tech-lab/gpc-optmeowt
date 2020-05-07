@@ -1,6 +1,12 @@
 addHeaders = (details) => {
   details.requestHeaders.push({ name: "DNS", value: "0" });
+  addUrl(details);
+  // chrome.storage.local.set{details.initiar}
   return { requestHeaders: details.requestHeaders };
+}
+
+function addUrl (d) {
+  chrome.storage.local.set({"WHITELIST": d.initiator})
 }
 
 function enable() {
@@ -33,6 +39,7 @@ chrome.storage.local.get(["WHITELIST", "WHITELIST_ENABLED", "NON_WHITELISTED"], 
 });
 
 /* returns URL hostname string */
+/*
 function getCurrURL () {
   chrome.tabs.query({active: true, currentWindow: true}, function (tabs) {
     const urlObj = new URL(tabs[0].url);
@@ -41,8 +48,10 @@ function getCurrURL () {
   })
 }
 getCurrURL();
+*/
 
 /* Stores current URL if not in database */
+/*
 function storeCurrURL() {
   chrome.storage.local.get(["NON_WHITELISTED", "WHITELIST", "HOST"], function (result) {
     var url = result.HOST;
@@ -58,10 +67,14 @@ function storeCurrURL() {
         return;
       }
     }
-    chrome.storage.local.set({"NON_WHITELISTED": non_whitelisted.push(url)});
+    non_whitelisted.push("google.com")
+    non_whitelisted.push(url);
+    chrome.storage.local.set({"NON_WHITELISTED": non_whitelisted});
   })
 }
 storeCurrURL();
+*/
+
 ///////////////////////////////////////////////////////////////////////////
 
 chrome.storage.local.get(["ENABLED"], function (result) {
