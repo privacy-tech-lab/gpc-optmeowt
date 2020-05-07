@@ -1,28 +1,36 @@
 {
-    "name": "Privacy Rights Platform",
-    "version": "0.0.1",
-    "description": "The Privacy Rights Platform is a software system that allows users of mobile and web apps to make use of their rights to opt out from the sale of data and other privacy rights",
-    "permissions": [
-        "webRequest",
-        "<all_urls>",
-        "webRequestBlocking",
-        "storage",
-        "tabs"
-    ],
-    "icons": {
-        "16": "assets/icon16.png",
-        "48": "assets/icon48.png",
-        "128": "assets/icon128.png"
-    },
-    "browser_action": {
-        "default_title": "Privacy Rights Platform",
-        "default_popup": "popup/popup.html"
-    },
-    "options_page": "options/options.html",
-    "background": {
-        "scripts": [
-            "background.js"
-        ]
-    },
-    "manifest_version": 2
+  "name": "Privacy Rights Platform",
+  "version": "0.0.1",
+  "description": "The Privacy Rights Platform is a software system that allows users of mobile and web apps to make use of their rights to opt out from the sale of data and other privacy rights",
+  "permissions": [
+    "webRequest",
+    "<all_urls>",
+    "webRequestBlocking",
+    "storage",
+    "activeTab"
+  ],
+  "icons": {
+    "16": "assets/icon16.png",
+    "48": "assets/icon48.png",
+    "128": "assets/icon128.png"
+  },
+  "browser_action": {
+    "default_title": "Privacy Rights Platform",
+    "default_popup": "popup/popup.html"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["contentScript.js"],
+      "run_at": "document_start"
+    }
+  ],
+  "options_ui": {
+    "page": "options/options.html",
+    "open_in_tab": true
+  },
+  "background": {
+    "scripts": ["background.js"]
+  },
+  "manifest_version": 2
 }

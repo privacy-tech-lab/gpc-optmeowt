@@ -62,6 +62,7 @@ export async function mainView() {
   ).innerHTML;
 
   overviewView(bodyTemplate); // First page
+  document.querySelector('#main-view-overview').classList.add('active')
 
   document
     .getElementById("main-view-overview")

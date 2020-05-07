@@ -31,7 +31,6 @@ body {
     color: var(--text-color-inactive);
     opacity: 1;
     cursor: pointer;
-    font-weight: bold;
     transition: all ease 0.5s;
 }
 
