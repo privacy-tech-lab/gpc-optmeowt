@@ -2,10 +2,12 @@
   <img src="https://github.com/privacy-tech-lab/privacy-rights-platform-browser-extension/blob/master/src/assets/icon128.png" width="128px" height="128px" title="Privacy Rights Platform logo">
 <p>
 
-# Privacy Rights Platform — Browser Extension
+# The Privacy Rights Platform — Browser Extension
 
-The Privacy Rights Platform Browser Extension sends Do Not Sell signals to websites that users access. We accomplish this by 
-1) Providing the user with options regarding who to send the Do Not Sell signals to. 
+The Privacy Rights Platform Browser Extension sends Do Not Sell signals to websites that users wish to access. 
+
+We accomplish this by:
+1) Providing users with options regarding who to send the Do Not Sell signals to. 
 2) Providing users information about locations we have sent the Do Not Sell signal to. 
 3) By sending an HTTP request header upon website access noting to website hosts that the user does not want their data sold, according to the options above.
 
