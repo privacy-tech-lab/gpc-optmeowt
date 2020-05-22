@@ -53,9 +53,10 @@ Congratulations! You have installed the Privacy Rights Platform Browser Extensio
 ## Third Party Libraries
 
 The Privacy Rights Platform Browser Extension uses the following third party libraries. We thank the developers.
-- animate.css
-- mustache.js
-- uikit
+- [animate.css](https://github.com/animate-css/animate.css)
+- [mustache.js](https://github.com/janl/mustache.js)
+- [uikit](https://github.com/uikit/uikit)
+- [Switch Animation Editor by Aaron Iker](https://codepen.io/aaroniker/pen/oaQdQZ)
 
 <p align="center">
   <img src="https://github.com/privacy-tech-lab/privacy-tech-lab.github.io/blob/master/images/plt_logo.png" width="200px" height="200px" title="privacy-tech-lab logo">
