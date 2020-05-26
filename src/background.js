@@ -102,6 +102,7 @@ function enable(bool) {
     if (bool) {
       chrome.webRequest.onBeforeSendHeaders.removeListener(addHeaders);
       chrome.webRequest.onBeforeSendHeaders.removeListener(receivedHeaders);
+      chrome.webRequest.onBeforeSendHeaders.removeListener(checkWhitelist);
     } else {
       chrome.webRequest.onBeforeSendHeaders.addListener(
         addHeaders,
@@ -129,6 +130,7 @@ function enable(bool) {
 function disable() {
   chrome.webRequest.onBeforeSendHeaders.removeListener(addHeaders);
   chrome.webRequest.onBeforeSendHeaders.removeListener(receivedHeaders);
+  chrome.webRequest.onBeforeSendHeaders.removeListener(checkWhitelist);
   chrome.storage.local.set({ ENABLED: false });
   chrome.browserAction.setBadgeText({ text: "" });
   counter = 0;
@@ -146,12 +148,15 @@ chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
 });
 
 /// Generate DOMAINS, WHITELIST_ENABLED, NONWHITELIST keys in local storage
-chrome.storage.local.get(["DOMAINS", "WHITELIST_ENABLED", "NONWHITELIST"], function (result) {
-  if (result.DOMAINS == undefined) {
-    chrome.storage.local.set({ "DOMAINS": {} });
-  }
+chrome.storage.local.get(["ENABLED", "WHITELIST_ENABLED", "DOMAINS"], function (result) {
+  if (result.ENABLED == undefined) {
+    chrome.storage.local.set({ ENABLED: true });
+  } 
   if (result.WHITELIST_ENABLED == undefined) {
     chrome.storage.local.set({ "WHITELIST_ENABLED": true });
+  }
+  if (result.DOMAINS == undefined) {
+    chrome.storage.local.set({ "DOMAINS": {} });
   }
   // if (result.NONWHITELIST == undefined) {
   //   chrome.storage.local.set({ "NONWHITELIST": [] });
@@ -159,11 +164,12 @@ chrome.storage.local.get(["DOMAINS", "WHITELIST_ENABLED", "NONWHITELIST"], funct
 });
 
 chrome.storage.local.get(["ENABLED", "WHITELIST_ENABLED"], function (result) {
-  if (result.ENABLED == undefined) {
-    chrome.storage.local.set({ ENABLED: true });
-    checkWhitelistThenEnable();
-  } else if (result.ENABLED) {
-    checkWhitelistThenEnable();
+  if (result.ENABLED) {
+    if (result.WHITELIST_ENABLED) {
+      checkWhitelistThenEnable();
+    } else {
+      enable(false);
+    }
   } else {
     disable();
   }
