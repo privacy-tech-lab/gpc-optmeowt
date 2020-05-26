@@ -11,16 +11,16 @@ const headings = {
 
 function eventListeners() {
     document.getElementById("settings-view-radio0").addEventListener('click', () => {
-        chrome.runtime.sendMessage({ ENABLED: true });
-        chrome.storage.local.set({ ENABLED: true });
+        chrome.runtime.sendMessage({ ENABLED: true, WHITELIST_ENABLED: false });
+        chrome.storage.local.set({ ENABLED: true, WHITELIST_ENABLED: false });
     })
     document.getElementById("settings-view-radio1").addEventListener('click', () => {
-        chrome.runtime.sendMessage({ ENABLED: false });
-        chrome.storage.local.set({ ENABLED: false });
+        chrome.runtime.sendMessage({ ENABLED: false, WHITELIST_ENABLED: false });
+        chrome.storage.local.set({ ENABLED: false, WHITELIST_ENABLED: false });
     })
     document.getElementById("settings-view-radio2").addEventListener('click', () => {
-        chrome.runtime.sendMessage({ ENABLED: true });
-        chrome.storage.local.set({ ENABLED: true });
+        chrome.runtime.sendMessage({ ENABLED: true, WHITELIST_ENABLED: true });
+        chrome.storage.local.set({ ENABLED: true, WHITELIST_ENABLED: true });
     })
 }
 
@@ -44,6 +44,9 @@ export async function settingsView(scaffoldTemplate) {
       document.getElementById("settings-view-radio0").checked = true;
     } else {
       document.getElementById("settings-view-radio1").checked = true;
+    }
+    if (result.WHITELIST_ENABLED) {
+      document.getElementById("settings-view-radio2").checked = true;
     }
   });
 

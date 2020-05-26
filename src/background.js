@@ -6,15 +6,34 @@ activeTabID = 0;
 
 /// Manipulate Headers
 addHeaders = (details) => {
+  storeDomains(details);
   details.requestHeaders.push({ name: "DNS", value: "0" });
+    console.log("TEST: Pushed DNS signal");
   return { requestHeaders: details.requestHeaders };
 };
 
-/// Manipulate received headders if need be.
+/// Manipulate received headers if need be.
 receivedHeaders = (details) => {
   logData(details);
   incrementBadge(details);
 };
+
+/// Checks if current domain name is whitelisted
+checkWhitelist = (details) => {
+  chrome.storage.local.get(["DOMAINS", "WHITELIST_ENABLED"], function (result) {
+    if (result.WHITELIST_ENABLED) {
+      if (result.DOMAINS[details.initiator] == true) {
+        inWhitelist = true
+      } else {
+        inWhitelist = false
+      }
+    } else {
+      inWhitelist = false
+    }
+    console.log(inWhitelist)
+    enable(inWhitelist)
+  })
+}
 
 /// Logs all urls of a domain with response headers
 function logData(details) {
@@ -51,33 +70,67 @@ function incrementBadge() {
   });
 }
 
-/// Enable extension funtionality
-function enable() {
+/// Adds requested domain name to DOMAINS
+function storeDomains (details) {
+  chrome.storage.local.get(["DOMAINS", "NONWHITELIST"], function (result) {
+    var d = details.initiator;
+    var domains = result.DOMAINS
+    // var nonwhitelist = result.NONWHITELIST
+    if (domains[d] === undefined) {
+      domains[d] = true              /// ----- default whitelist switch -----
+      // nonwhitelist.push(d + "/*")
+    } 
+    chrome.storage.local.set({"DOMAINS": domains});
+    // chrome.storage.local.set({"NONWHITELIST": nonwhitelist});
+  })
+}
+
+function checkWhitelistThenEnable() {
   chrome.webRequest.onBeforeSendHeaders.addListener(
-    addHeaders,
+    checkWhitelist,
     {
       urls: ["<all_urls>"],
     },
     ["requestHeaders", "extraHeaders", "blocking"]
   );
-  chrome.storage.local.set({ ENABLED: true });
+}
 
-  chrome.webRequest.onHeadersReceived.addListener(
-    receivedHeaders,
-    {
-      urls: ["<all_urls>"],
-    },
-    ["responseHeaders", "extraHeaders" /*, "blocking"*/]
-  );
-  chrome.browserAction.setBadgeBackgroundColor({ color: "#666666" });
-  chrome.browserAction.setBadgeText({ text: "0" });
-  chrome.storage.local.set({ ENABLED: true });
+/// Enable extension functionality
+function enable(bool) {
+  /// if bool == true, then request in whitelist, and we don't send DNS signal
+
+    if (bool) {
+      chrome.webRequest.onBeforeSendHeaders.removeListener(addHeaders);
+      chrome.webRequest.onBeforeSendHeaders.removeListener(receivedHeaders);
+      chrome.webRequest.onBeforeSendHeaders.removeListener(checkWhitelist);
+    } else {
+      chrome.webRequest.onBeforeSendHeaders.addListener(
+        addHeaders,
+        {
+          urls: ["<all_urls>"],
+        },
+        ["requestHeaders", "extraHeaders", "blocking"]
+      );
+      chrome.storage.local.set({ ENABLED: true });
+    
+      chrome.webRequest.onHeadersReceived.addListener(
+        receivedHeaders,
+        {
+          urls: ["<all_urls>"],
+        },
+        ["responseHeaders", "extraHeaders" /*, "blocking"*/]
+      );
+      chrome.browserAction.setBadgeBackgroundColor({ color: "#666666" });
+      chrome.browserAction.setBadgeText({ text: "0" });
+      chrome.storage.local.set({ ENABLED: true });
+    }
 }
 
 /// Disable extenstion functionality
 function disable() {
   chrome.webRequest.onBeforeSendHeaders.removeListener(addHeaders);
   chrome.webRequest.onBeforeSendHeaders.removeListener(receivedHeaders);
+  chrome.webRequest.onBeforeSendHeaders.removeListener(checkWhitelist);
   chrome.storage.local.set({ ENABLED: false });
   chrome.browserAction.setBadgeText({ text: "" });
   counter = 0;
@@ -94,12 +147,29 @@ chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
   }
 });
 
-chrome.storage.local.get(["ENABLED"], function (result) {
+/// Generate DOMAINS, WHITELIST_ENABLED, NONWHITELIST keys in local storage
+chrome.storage.local.get(["ENABLED", "WHITELIST_ENABLED", "DOMAINS"], function (result) {
   if (result.ENABLED == undefined) {
     chrome.storage.local.set({ ENABLED: true });
-    enable();
-  } else if (result.ENABLED) {
-    enable();
+  } 
+  if (result.WHITELIST_ENABLED == undefined) {
+    chrome.storage.local.set({ "WHITELIST_ENABLED": true });
+  }
+  if (result.DOMAINS == undefined) {
+    chrome.storage.local.set({ "DOMAINS": {} });
+  }
+  // if (result.NONWHITELIST == undefined) {
+  //   chrome.storage.local.set({ "NONWHITELIST": [] });
+  // }
+});
+
+chrome.storage.local.get(["ENABLED", "WHITELIST_ENABLED"], function (result) {
+  if (result.ENABLED) {
+    if (result.WHITELIST_ENABLED) {
+      checkWhitelistThenEnable();
+    } else {
+      enable(false);
+    }
   } else {
     disable();
   }
@@ -108,7 +178,7 @@ chrome.storage.local.get(["ENABLED"], function (result) {
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   if (request.ENABLED != null) {
     if (request.ENABLED) {
-      enable();
+      checkWhitelistThenEnable();
       sendResponse("DONE");
     } else {
       disable();
