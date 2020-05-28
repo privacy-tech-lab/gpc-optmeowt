@@ -20,18 +20,19 @@ receivedHeaders = (details) => {
 
 /// Checks if current domain name is whitelisted
 checkWhitelist = (details) => {
+  storeDomains(details);
   chrome.storage.local.get(["DOMAINS", "WHITELIST_ENABLED"], function (result) {
     if (result.WHITELIST_ENABLED) {
       if (result.DOMAINS[details.initiator] == true) {
-        inWhitelist = true
+        sendSignal = false
       } else {
-        inWhitelist = false
+        sendSignal = true
       }
     } else {
-      inWhitelist = false
+      sendSignal = true // implies ENABLED == true
     }
-    console.log(inWhitelist)
-    enable(inWhitelist)
+    console.log(sendSignal)
+    enable(sendSignal)
   })
 }
 
@@ -98,12 +99,10 @@ function checkWhitelistThenEnable() {
 /// Enable extension functionality
 function enable(bool) {
   /// if bool == true, then request in whitelist, and we don't send DNS signal
+  /// !bool = true represents something is not whitelisted, and we send the signal
 
     if (bool) {
-      chrome.webRequest.onBeforeSendHeaders.removeListener(addHeaders);
-      chrome.webRequest.onBeforeSendHeaders.removeListener(receivedHeaders);
-      chrome.webRequest.onBeforeSendHeaders.removeListener(checkWhitelist);
-    } else {
+      // chrome.webRequest.onBeforeSendHeaders.removeListener(checkWhitelist);
       chrome.webRequest.onBeforeSendHeaders.addListener(
         addHeaders,
         {
@@ -124,6 +123,9 @@ function enable(bool) {
       chrome.browserAction.setBadgeText({ text: "0" });
       chrome.storage.local.set({ ENABLED: true });
     }
+
+    chrome.webRequest.onCompleted.removeListener(addHeaders);
+    chrome.webRequest.onCompleted.removeListener(receivedHeaders);
 }
 
 /// Disable extenstion functionality
@@ -165,11 +167,11 @@ chrome.storage.local.get(["ENABLED", "WHITELIST_ENABLED", "DOMAINS"], function (
 
 chrome.storage.local.get(["ENABLED", "WHITELIST_ENABLED"], function (result) {
   if (result.ENABLED) {
-    if (result.WHITELIST_ENABLED) {
+    // if (result.WHITELIST_ENABLED) {
       checkWhitelistThenEnable();
-    } else {
-      enable(false);
-    }
+    // } else {
+    //   enable(false);
+    // }
   } else {
     disable();
   }
