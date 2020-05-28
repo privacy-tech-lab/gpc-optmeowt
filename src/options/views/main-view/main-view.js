@@ -7,20 +7,9 @@ import {
   parseTemplate,
   animateCSS,
 } from "../../components/util.js";
-import { overviewView } from "../overview-view/overview-view.js";
 import { settingsView } from "../settings-view/settings-view.js";
 import { whitelistView } from "../whitelist-view/whitelist-view.js";
 import { aboutView } from "../about-view/about-view.js";
-
-async function displayOverview(bodyTemplate) {
-    animateCSS("#scaffold", 'fadeOut', async function() {
-        document.getElementById('scaffold').remove()
-        await overviewView(bodyTemplate)
-        animateCSS("#scaffold", 'fadeIn');
-      });
-      document.querySelector('.navbar-item.active').classList.remove('active')
-      document.querySelector('#main-view-overview').classList.add('active')
-}
 
 async function displaySettings(bodyTemplate) {
     animateCSS("#scaffold", 'fadeOut', async function() {
@@ -61,12 +50,9 @@ export async function mainView() {
     "main-view"
   ).innerHTML;
 
-  overviewView(bodyTemplate); // First page
-  document.querySelector('#main-view-overview').classList.add('active')
+  settingsView(bodyTemplate); // First page
+  document.querySelector('#main-view-settings').classList.add('active')
 
-  document
-    .getElementById("main-view-overview")
-    .addEventListener("click", () => displayOverview(bodyTemplate));
   document
     .getElementById("main-view-settings")
     .addEventListener("click", () => displaySettings(bodyTemplate));
