@@ -8,7 +8,7 @@ activeTabID = 0;
 addHeaders = (details) => {
   storeDomains(details);
   details.requestHeaders.push({ name: "DNS", value: "0" });
-    console.log("TEST: Pushed DNS signal");
+  console.log("TEST: Pushed DNS signal");
   return { requestHeaders: details.requestHeaders };
 };
 
@@ -23,41 +23,61 @@ checkWhitelist = (details) => {
   chrome.storage.local.get(["DOMAINS", "WHITELIST_ENABLED"], function (result) {
     if (result.WHITELIST_ENABLED) {
       if (result.DOMAINS[details.initiator] == true) {
-        inWhitelist = true
+        inWhitelist = true;
       } else {
-        inWhitelist = false
+        inWhitelist = false;
       }
     } else {
-      inWhitelist = false
+      inWhitelist = false;
     }
-    console.log(inWhitelist)
-    enable(inWhitelist)
-  })
-}
+    console.log(inWhitelist);
+    enable(inWhitelist);
+  });
+};
 
 /// Logs all urls of a domain with response headers
 function logData(details) {
+  var url = new URL(details.url);
+  var parsed = psl.parse(url.hostname);
+
   if (tabs[details.tabId] === undefined) {
-    tabs[details.tabId] = { DOMAIN: null, URLS: {}, TIMESTAMP: 0 };
-    tabs[details.tabId].URLS[details.url] = {
+    tabs[details.tabId] = { DOMAIN: null, REQUEST_DOMAINS: {}, TIMESTAMP: 0 };
+    tabs[details.tabId].REQUEST_DOMAINS[parsed.domain] = {
+      URLS: {},
       RESPONSE: details.responseHeaders,
       TIMESTAMP: details.timeStamp,
+    };
+    tabs[details.tabId].REQUEST_DOMAINS[parsed.domain].URLS = {
+      URL: details.url,
+      RESPONSE: details.responseHeaders,
     };
   } else {
-    tabs[details.tabId].URLS[details.url] = {
-      RESPONSE: details.responseHeaders,
-      TIMESTAMP: details.timeStamp,
-    };
+    if (tabs[details.tabId].REQUEST_DOMAINS[parsed.domain] === undefined) {
+      tabs[details.tabId].REQUEST_DOMAINS[parsed.domain] = {
+        URLS: {},
+        RESPONSE: details.responseHeaders,
+        TIMESTAMP: details.timeStamp,
+      };
+      tabs[details.tabId].REQUEST_DOMAINS[parsed.domain].URLS[details.url] = {
+        RESPONSE: details.responseHeaders,
+      };
+    } else {
+      tabs[details.tabId].REQUEST_DOMAINS[parsed.domain].URLS[details.url] = {
+        RESPONSE: details.responseHeaders,
+      };
+    }
   }
 }
 
 /// Increment badge number
 function incrementBadge() {
   let numberOfRequests = 0;
-  let requests = {}
+  let requests = {};
   if (tabs[activeTabID] !== undefined) {
-    numberOfRequests = Object.keys(tabs[activeTabID].URLS).length;
-    requests = tabs[activeTabID].URLS
+    for (var key in tabs[activeTabID].REQUEST_DOMAINS) {
+      numberOfRequests += Object.keys(tabs[activeTabID].REQUEST_DOMAINS[key].URLS).length
+    }
+    requests = tabs[activeTabID].REQUEST_DOMAINS;
   }
   chrome.browserAction.setBadgeText({ text: numberOfRequests.toString() });
   chrome.runtime.sendMessage({
@@ -71,18 +91,18 @@ function incrementBadge() {
 }
 
 /// Adds requested domain name to DOMAINS
-function storeDomains (details) {
+function storeDomains(details) {
   chrome.storage.local.get(["DOMAINS", "NONWHITELIST"], function (result) {
     var d = details.initiator;
-    var domains = result.DOMAINS
+    var domains = result.DOMAINS;
     // var nonwhitelist = result.NONWHITELIST
     if (domains[d] === undefined) {
-      domains[d] = true              /// ----- default whitelist switch -----
+      domains[d] = true; /// ----- default whitelist switch -----
       // nonwhitelist.push(d + "/*")
-    } 
-    chrome.storage.local.set({"DOMAINS": domains});
+    }
+    chrome.storage.local.set({ DOMAINS: domains });
     // chrome.storage.local.set({"NONWHITELIST": nonwhitelist});
-  })
+  });
 }
 
 function checkWhitelistThenEnable() {
@@ -99,31 +119,31 @@ function checkWhitelistThenEnable() {
 function enable(bool) {
   /// if bool == true, then request in whitelist, and we don't send DNS signal
 
-    if (bool) {
-      chrome.webRequest.onBeforeSendHeaders.removeListener(addHeaders);
-      chrome.webRequest.onBeforeSendHeaders.removeListener(receivedHeaders);
-      chrome.webRequest.onBeforeSendHeaders.removeListener(checkWhitelist);
-    } else {
-      chrome.webRequest.onBeforeSendHeaders.addListener(
-        addHeaders,
-        {
-          urls: ["<all_urls>"],
-        },
-        ["requestHeaders", "extraHeaders", "blocking"]
-      );
-      chrome.storage.local.set({ ENABLED: true });
-    
-      chrome.webRequest.onHeadersReceived.addListener(
-        receivedHeaders,
-        {
-          urls: ["<all_urls>"],
-        },
-        ["responseHeaders", "extraHeaders" /*, "blocking"*/]
-      );
-      chrome.browserAction.setBadgeBackgroundColor({ color: "#666666" });
-      chrome.browserAction.setBadgeText({ text: "0" });
-      chrome.storage.local.set({ ENABLED: true });
-    }
+  if (bool) {
+    chrome.webRequest.onBeforeSendHeaders.removeListener(addHeaders);
+    chrome.webRequest.onBeforeSendHeaders.removeListener(receivedHeaders);
+    chrome.webRequest.onBeforeSendHeaders.removeListener(checkWhitelist);
+  } else {
+    chrome.webRequest.onBeforeSendHeaders.addListener(
+      addHeaders,
+      {
+        urls: ["<all_urls>"],
+      },
+      ["requestHeaders", "extraHeaders", "blocking"]
+    );
+    chrome.storage.local.set({ ENABLED: true });
+
+    chrome.webRequest.onHeadersReceived.addListener(
+      receivedHeaders,
+      {
+        urls: ["<all_urls>"],
+      },
+      ["responseHeaders", "extraHeaders" /*, "blocking"*/]
+    );
+    chrome.browserAction.setBadgeBackgroundColor({ color: "#666666" });
+    chrome.browserAction.setBadgeText({ text: "0" });
+    chrome.storage.local.set({ ENABLED: true });
+  }
 }
 
 /// Disable extenstion functionality
@@ -138,7 +158,7 @@ function disable() {
 
 chrome.tabs.onActivated.addListener(function (info) {
   activeTabID = info.tabId;
-  incrementBadge()
+  incrementBadge();
 });
 
 chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
@@ -148,15 +168,17 @@ chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
 });
 
 /// Generate DOMAINS, WHITELIST_ENABLED, NONWHITELIST keys in local storage
-chrome.storage.local.get(["ENABLED", "WHITELIST_ENABLED", "DOMAINS"], function (result) {
+chrome.storage.local.get(["ENABLED", "WHITELIST_ENABLED", "DOMAINS"], function (
+  result
+) {
   if (result.ENABLED == undefined) {
     chrome.storage.local.set({ ENABLED: true });
-  } 
+  }
   if (result.WHITELIST_ENABLED == undefined) {
-    chrome.storage.local.set({ "WHITELIST_ENABLED": true });
+    chrome.storage.local.set({ WHITELIST_ENABLED: true });
   }
   if (result.DOMAINS == undefined) {
-    chrome.storage.local.set({ "DOMAINS": {} });
+    chrome.storage.local.set({ DOMAINS: {} });
   }
   // if (result.NONWHITELIST == undefined) {
   //   chrome.storage.local.set({ "NONWHITELIST": [] });
@@ -187,18 +209,23 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   }
   if (request.msg === "TAB") {
     var url = new URL(sender.origin);
-    var domain = url.hostname;
+    var parsed = psl.parse(url.hostname);
+    var domain = parsed.domain;
     var tabID = sender.tab.id;
     if (tabs[tabID] === undefined) {
-      tabs[tabID] = { DOMAIN: domain, URLS: {}, TIMESTAMP: request.data };
+      tabs[tabID] = {
+        DOMAIN: domain,
+        REQUEST_DOMAINS: {},
+        TIMESTAMP: request.data,
+      };
     } else if (tabs[tabID].DOMAIN !== domain) {
       tabs[tabID].DOMAIN = domain;
-      let urls = tabs[tabID]["URLS"];
+      let urls = tabs[tabID]["REQUEST_DOMAINS"];
       for (var key in urls) {
         if (urls[key]["TIMESTAMP"] >= request.data) {
-          tabs[tabID]["URLS"][key] = urls[key];
+          tabs[tabID]["REQUEST_DOMAINS"][key] = urls[key];
         } else {
-          delete tabs[tabID]["URLS"][key];
+          delete tabs[tabID]["REQUEST_DOMAINS"][key];
         }
       }
       tabs[tabID]["TIMESTAMP"] = request.data;

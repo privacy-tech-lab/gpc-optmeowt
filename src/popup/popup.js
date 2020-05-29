@@ -3,8 +3,12 @@ document.addEventListener("DOMContentLoaded", (event) => {
     var tab = tabs[0];
     try {
       var url = new URL(tab.url);
-      var domain = url.hostname;
-      document.getElementById("domain").innerHTML = domain;
+      var parsed = psl.parse(url.hostname)
+      if (parsed.domain === null) {
+        document.getElementById("domain").innerHTML = location.href;
+      } else {
+        document.getElementById("domain").innerHTML = parsed.domain;
+      }
     } catch (e) {
       document.getElementById("domain").innerHTML = location.href;
     }
@@ -64,7 +68,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
 
 async function buildURLS(requests) {
   let items = "";
-  for (var url in requests) {
+  for (var request_domain in requests) {
     items +=
       `
   <li class="uk-margin-small-left uk-margin-small-right">
@@ -73,18 +77,18 @@ async function buildURLS(requests) {
         class="uk-width-1-1"
         style="font-size: small; font-weight: bold;"
       >
-        Request URL:
+        Request Domain:
       </div>
       <div class="uk-width-1-1 uk-text-break">
         ` +
-      url +
+      request_domain +
       `
       </div>
       <div
         class="uk-width-1-1 uk-margin-small-top"
         style="font-size: small; font-weight: bold;"
       >
-        Response: <span class="uk-badge" style="font-size: 10px; background-color: #cfd8dc; color:#37474f !important;">UNRECEIVED</span>
+        Responses: <span class="uk-badge" style="font-size: 10px; background-color: #cfd8dc; color:#37474f !important;">RECEIVED 0/`+Object.keys(requests[request_domain].URLS).length+`</span>
       </div>
       <div class="uk-width-1-1">
         None
@@ -106,7 +110,7 @@ chrome.runtime.onMessage.addListener(function (request, _, __) {
     document.getElementById("requests").innerText = request.data;
   }
   if (request.msg === "REQUESTS") {
-    buildURLS(request.data)
+    buildURLS(request.data);
   }
 });
 
