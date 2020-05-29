@@ -57,6 +57,7 @@ The Privacy Rights Platform Browser Extension uses the following third party lib
 - [mustache.js](https://github.com/janl/mustache.js)
 - [uikit](https://github.com/uikit/uikit)
 - [Switch Animation by Aaron Iker](https://codepen.io/aaroniker/pen/oaQdQZ)
+- [psl (Public Suffix List)](https://github.com/lupomontero/psl)
 
 <p align="center">
   <img src="https://github.com/privacy-tech-lab/privacy-tech-lab.github.io/blob/master/images/plt_logo.png" width="200px" height="200px" title="privacy-tech-lab logo">
