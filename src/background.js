@@ -3,13 +3,22 @@ Initializers
 */
 tabs = {}; /// Store all active tab id's, domain, requests, and response
 activeTabID = 0;
+sendSignal = false;
 
 /// Manipulate Headers
 addHeaders = (details) => {
-  storeDomains(details);
-  details.requestHeaders.push({ name: "DNS", value: "0" });
-    console.log("TEST: Pushed DNS signal");
-  return { requestHeaders: details.requestHeaders };
+  updateDomainsAndSignal(details);
+  
+  /// Now we know where to send the signal.
+  if (sendSignal) {
+    details.requestHeaders.push({ name: "DNS", value: "0" });
+    console.log("Pushed DNS signal !");
+    return { requestHeaders: details.requestHeaders };
+  } 
+  else {
+    console.log("Preparing to send no added signal...");
+    return { requestHeaders: details.requestHeaders };
+  }
 };
 
 /// Manipulate received headers if need be.
@@ -18,22 +27,29 @@ receivedHeaders = (details) => {
   incrementBadge(details);
 };
 
-/// Checks if current domain name is whitelisted
-checkWhitelist = (details) => {
-  storeDomains(details);
-  chrome.storage.local.get(["DOMAINS", "WHITELIST_ENABLED"], function (result) {
+function updateDomainsAndSignal(details) {
+  chrome.storage.local.get(["WHITELIST_ENABLED", "DOMAINS"], function (result) {
+    /// Store current domain in DOMAINS
+    var d = details.initiator;
+    var domains = result.DOMAINS
+    if (domains[d] === undefined) {
+      domains[d] = true
+      chrome.storage.local.set({"DOMAINS": domains});
+      console.log("Stored current domain");
+    } 
+    /// set to true if whitelist is off, or if whitelist is on but domain is not whitelisted
+    /// Basically, we want to know if we send the signal to a given domain
     if (result.WHITELIST_ENABLED) {
-      if (result.DOMAINS[details.initiator] == true) {
+      if (domains[d] === true) {
         sendSignal = false
       } else {
         sendSignal = true
       }
     } else {
-      sendSignal = true // implies ENABLED == true
+      sendSignal = true /// Always send signal to all domains
     }
-    console.log(sendSignal)
-    enable(sendSignal)
-  })
+    console.log(sendSignal);
+  });
 }
 
 /// Logs all urls of a domain with response headers
@@ -71,68 +87,33 @@ function incrementBadge() {
   });
 }
 
-/// Adds requested domain name to DOMAINS
-function storeDomains (details) {
-  chrome.storage.local.get(["DOMAINS", "NONWHITELIST"], function (result) {
-    var d = details.initiator;
-    var domains = result.DOMAINS
-    // var nonwhitelist = result.NONWHITELIST
-    if (domains[d] === undefined) {
-      domains[d] = true              /// ----- default whitelist switch -----
-      // nonwhitelist.push(d + "/*")
-    } 
-    chrome.storage.local.set({"DOMAINS": domains});
-    // chrome.storage.local.set({"NONWHITELIST": nonwhitelist});
-  })
-}
-
-function checkWhitelistThenEnable() {
+/// Enable extension functionality
+function enable() {
   chrome.webRequest.onBeforeSendHeaders.addListener(
-    checkWhitelist,
+    addHeaders,
     {
       urls: ["<all_urls>"],
     },
     ["requestHeaders", "extraHeaders", "blocking"]
   );
-}
-
-/// Enable extension functionality
-function enable(bool) {
-  /// if bool == true, then request in whitelist, and we don't send DNS signal
-  /// !bool = true represents something is not whitelisted, and we send the signal
-
-    if (bool) {
-      // chrome.webRequest.onBeforeSendHeaders.removeListener(checkWhitelist);
-      chrome.webRequest.onBeforeSendHeaders.addListener(
-        addHeaders,
-        {
-          urls: ["<all_urls>"],
-        },
-        ["requestHeaders", "extraHeaders", "blocking"]
-      );
-      chrome.storage.local.set({ ENABLED: true });
+  chrome.storage.local.set({ ENABLED: true });
     
-      chrome.webRequest.onHeadersReceived.addListener(
-        receivedHeaders,
-        {
-          urls: ["<all_urls>"],
-        },
-        ["responseHeaders", "extraHeaders" /*, "blocking"*/]
-      );
-      chrome.browserAction.setBadgeBackgroundColor({ color: "#666666" });
-      chrome.browserAction.setBadgeText({ text: "0" });
-      chrome.storage.local.set({ ENABLED: true });
-    }
-
-    chrome.webRequest.onCompleted.removeListener(addHeaders);
-    chrome.webRequest.onCompleted.removeListener(receivedHeaders);
+  chrome.webRequest.onHeadersReceived.addListener(
+    receivedHeaders,
+    {
+      urls: ["<all_urls>"],
+    },
+    ["responseHeaders", "extraHeaders" , "blocking"]
+  );
+  chrome.browserAction.setBadgeBackgroundColor({ color: "#666666" });
+  chrome.browserAction.setBadgeText({ text: "0" });
+  chrome.storage.local.set({ ENABLED: true });
 }
 
 /// Disable extenstion functionality
 function disable() {
   chrome.webRequest.onBeforeSendHeaders.removeListener(addHeaders);
   chrome.webRequest.onBeforeSendHeaders.removeListener(receivedHeaders);
-  chrome.webRequest.onBeforeSendHeaders.removeListener(checkWhitelist);
   chrome.storage.local.set({ ENABLED: false });
   chrome.browserAction.setBadgeText({ text: "" });
   counter = 0;
@@ -160,18 +141,11 @@ chrome.storage.local.get(["ENABLED", "WHITELIST_ENABLED", "DOMAINS"], function (
   if (result.DOMAINS == undefined) {
     chrome.storage.local.set({ "DOMAINS": {} });
   }
-  // if (result.NONWHITELIST == undefined) {
-  //   chrome.storage.local.set({ "NONWHITELIST": [] });
-  // }
 });
 
-chrome.storage.local.get(["ENABLED", "WHITELIST_ENABLED"], function (result) {
+chrome.storage.local.get(["ENABLED"], function (result) {
   if (result.ENABLED) {
-    // if (result.WHITELIST_ENABLED) {
-      checkWhitelistThenEnable();
-    // } else {
-    //   enable(false);
-    // }
+    enable();
   } else {
     disable();
   }
@@ -180,7 +154,7 @@ chrome.storage.local.get(["ENABLED", "WHITELIST_ENABLED"], function (result) {
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   if (request.ENABLED != null) {
     if (request.ENABLED) {
-      checkWhitelistThenEnable();
+      enable();
       sendResponse("DONE");
     } else {
       disable();
