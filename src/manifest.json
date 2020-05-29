@@ -30,7 +30,7 @@
     "open_in_tab": true
   },
   "background": {
-    "scripts": ["background.js"]
+    "scripts": ["libs/psl.js-1.8.0/psl.min.js", "background.js"]
   },
   "manifest_version": 2
 }
