@@ -1,6 +1,10 @@
+# Local user files
 .DS_Store
+.idea
+.vscode
+
+# Node.js
 node_modules
-/dist
 
 # local env files
 .env.local
@@ -10,12 +14,3 @@ node_modules
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-
-# Editor directories and files
-.idea
-.vscode
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
