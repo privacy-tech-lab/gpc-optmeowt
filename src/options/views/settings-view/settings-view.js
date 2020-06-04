@@ -3,6 +3,7 @@ settings-view script
 */
 
 import { renderParse, fetchParse } from "../../components/util.js";
+import "../../../libs/FileSaver.js-2.0.2/src/FileSaver.js";
 
 const headings = {
   title: "Settings",
@@ -21,6 +22,14 @@ function eventListeners() {
     document.getElementById("settings-view-radio2").addEventListener('click', () => {
         chrome.runtime.sendMessage({ ENABLED: true, WHITELIST_ENABLED: true });
         chrome.storage.local.set({ ENABLED: true, WHITELIST_ENABLED: true });
+    })
+    document.getElementById("download-whitelist").addEventListener('click', () => {
+        console.log("CLICKED!");
+        chrome.storage.local.get(["DOMAINS"], function (result) {
+          var domains = result.DOMAINS;
+          var blob = new Blob([JSON.stringify(domains, null, 4)], {type: "text/plain;charset=utf-8"});
+          saveAs(blob, "whitelist_backup.txt");
+        });
     })
 }
 
