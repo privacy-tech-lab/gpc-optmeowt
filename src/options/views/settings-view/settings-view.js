@@ -23,14 +23,35 @@ function eventListeners() {
         chrome.runtime.sendMessage({ ENABLED: true, WHITELIST_ENABLED: true });
         chrome.storage.local.set({ ENABLED: true, WHITELIST_ENABLED: true });
     })
-    document.getElementById("download-whitelist").addEventListener('click', () => {
-        console.log("CLICKED!");
-        chrome.storage.local.get(["DOMAINS"], function (result) {
-          var domains = result.DOMAINS;
-          var blob = new Blob([JSON.stringify(domains, null, 4)], {type: "text/plain;charset=utf-8"});
-          saveAs(blob, "whitelist_backup.txt");
-        });
+    document.getElementById("download-button").addEventListener('click', handleDownload)
+    document.getElementById("upload-button").addEventListener('click', startUpload)
+    document.getElementById("upload-whitelist").addEventListener('change', handleUpload, false)
+}
+
+function handleDownload() {
+    console.log("Downloading ...");
+    chrome.storage.local.get(["DOMAINS"], function (result) {
+      var domains = result.DOMAINS;
+      var blob = new Blob([JSON.stringify(domains, null, 4)], {type: "text/plain;charset=utf-8"});
+      saveAs(blob, "whitelist_backup.txt");
     })
+    console.log("Downloaded!")
+}
+
+function startUpload() {
+  document.getElementById("upload-whitelist").value = ""
+  document.getElementById("upload-whitelist").click()
+}
+
+function handleUpload() {
+    console.log("Starting upload ...");
+    const file = this.files[0];
+    const fr = new FileReader();
+    fr.onload = function(e) {
+      chrome.storage.local.set({ DOMAINS: JSON.parse(e.target.result) });
+      console.log("Finished upload!")
+    };
+    fr.readAsText(file);
 }
 
 export async function settingsView(scaffoldTemplate) {

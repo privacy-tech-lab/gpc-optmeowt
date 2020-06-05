@@ -78,11 +78,26 @@ settings-view markup
       </div>
     </label>
   </div>
+  <hr>
   <div>
-    <a 
-      id="download-whitelist"
+    <button 
+      id="download-button"
     >
       Download Whitelist Backup
     </a>
+  </div>
+  <div>
+    <button
+      id="upload-button"
+    >
+      Restore Whitelist from File
+    </button>
+    <input
+      hidden
+      type="file"
+      accept="text/plain"
+      id="upload-whitelist"
+    >
+    </input>
   </div>
 </template>
