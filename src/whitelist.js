@@ -1,0 +1,63 @@
+/* 
+Whitelist.js contains functions for calling and modifying the whitelist,
+as well as calling import and export functions
+*/
+
+export async function handleDownload() {
+    console.log("Downloading ...");
+    chrome.storage.local.get(["DOMAINS"], function (result) {
+      var domains = result.DOMAINS;
+      var blob = new Blob([JSON.stringify(domains, null, 4)], 
+                          {type: "text/plain;charset=utf-8"});
+      saveAs(blob, "whitelist_backup.txt");
+    })
+    console.log("Downloaded!")
+}
+
+export async function startUpload() {
+  document.getElementById("upload-whitelist").value = ""
+  document.getElementById("upload-whitelist").click()
+}
+
+export async function handleUpload() {
+    console.log("Starting upload ...");
+    const file = this.files[0];
+    const fr = new FileReader();
+    fr.onload = function(e) {
+      chrome.storage.local.set({ DOMAINS: JSON.parse(e.target.result) });
+      console.log("Finished upload!")
+    };
+    fr.readAsText(file);
+}
+
+//////////////////////////////////////////////////////////////////////////
+
+// Sets DOMAINS[urlKey] to true
+export async function addToWhitelist(urlKey) {
+  var new_domains = [];
+  chrome.storage.local.get(["DOMAINS"], function (result) {
+    new_domains = result.DOMAINS;
+    new_domains[urlKey] = true;
+    chrome.storage.local.set({ DOMAINS: new_domains });
+  });
+}
+
+// Sets DOMAINS[urlKey] to false
+export async function removeFromWhitelist(urlKey) {
+  var new_domains = [];
+  chrome.storage.local.get(["DOMAINS"], function (result) {
+    new_domains = result.DOMAINS;
+    new_domains[urlKey] = false;
+    chrome.storage.local.set({ DOMAINS: new_domains });
+  });
+}
+
+// Removes DOMAINS[urlKey] from DOMAINS
+export async function permRemoveFromWhitelist(urlKey) {
+  var new_domains = [];
+  chrome.storage.local.get(["DOMAINS"], function (result) {
+    new_domains = result.DOMAINS;
+    delete new_domains[urlKey]
+    chrome.storage.local.set({ DOMAINS: new_domains });
+  });
+}

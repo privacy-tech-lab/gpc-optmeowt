@@ -158,7 +158,7 @@ chrome.storage.local.get(["ENABLED", "WHITELIST_ENABLED", "DOMAINS"], function (
     chrome.storage.local.set({ ENABLED: true });
   }
   if (result.WHITELIST_ENABLED == undefined) {
-    chrome.storage.local.set({ WHITELIST_ENABLED: true });
+    chrome.storage.local.set({ WHITELIST_ENABLED: false });
   }
   if (result.DOMAINS == undefined) {
     chrome.storage.local.set({ DOMAINS: {} });

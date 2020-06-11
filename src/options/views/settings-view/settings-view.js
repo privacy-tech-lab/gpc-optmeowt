@@ -3,6 +3,8 @@ settings-view script
 */
 
 import { renderParse, fetchParse } from "../../components/util.js";
+import { handleDownload, startUpload, handleUpload } from "../../../whitelist.js";
+import "../../../libs/FileSaver.js-2.0.2/src/FileSaver.js"
 
 const headings = {
   title: "Settings",
@@ -22,6 +24,9 @@ function eventListeners() {
         chrome.runtime.sendMessage({ ENABLED: true, WHITELIST_ENABLED: true });
         chrome.storage.local.set({ ENABLED: true, WHITELIST_ENABLED: true });
     })
+    document.getElementById("download-button").addEventListener('click', handleDownload)
+    document.getElementById("upload-button").addEventListener('click', startUpload)
+    document.getElementById("upload-whitelist").addEventListener('change', handleUpload, false)
 }
 
 export async function settingsView(scaffoldTemplate) {
