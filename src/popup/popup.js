@@ -1,3 +1,5 @@
+import { addToWhitelist, removeFromWhitelist } from "../../whitelist.js";
+
 document.addEventListener("DOMContentLoaded", (event) => {
   chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
     var tab = tabs[0];
@@ -14,6 +16,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
     }
   });
 
+  /// Sets whole extension enable/disable
   chrome.storage.local.get(["ENABLED"], function (result) {
     if (result.ENABLED == undefined) {
       document.getElementById("img").src = "../assets/play-circle-outline.svg";
@@ -64,6 +67,29 @@ document.addEventListener("DOMContentLoaded", (event) => {
       }
     });
   });
+
+  /// Sets whitelist switch to correct position
+  /// CANNOT USE result.CURR_DOMAIN, otherwise you have unexpected behavior with the switch
+  chrome.storage.local.get(["DOMAINS", "CURR_DOMAIN"], function (result) {
+    if (result.DOMAINS[result.CURR_DOMAIN]) {
+      document.getElementById("input").checked = true;
+    } else {
+      document.getElementById("input").checked = false;
+    }
+  });
+
+  document.getElementById("input").addEventListener("click", () => {
+    chrome.storage.local.get(["DOMAINS", "CURR_DOMAIN"], function (result) {
+      if (result.DOMAINS[result.CURR_DOMAIN]) {
+        removeFromWhitelist(result.CURR_DOMAIN);
+        document.getElementById("input").checked = false;
+      } else {
+        addToWhitelist(result.CURR_DOMAIN);
+        document.getElementById("input").checked = true;
+      }
+    });
+  });
+
 });
 
 async function buildURLS(requests) {
