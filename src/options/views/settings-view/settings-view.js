@@ -40,7 +40,7 @@ export async function settingsView(scaffoldTemplate) {
   document.getElementById("scaffold-component-body").innerHTML =
     content.innerHTML;
 
-  chrome.storage.local.get(["ENABLED"], function (result) {
+  chrome.storage.local.get(["ENABLED", "WHITELIST_ENABLED"], function (result) {
       console.log(result.ENABLED)
     if (result.ENABLED == undefined) {
       chrome.storage.local.set({ ENABLED: true });
