@@ -30,20 +30,24 @@ receivedHeaders = (details) => {
 function updateDomainsAndSignal(details) {
   chrome.storage.local.get(["WHITELIST_ENABLED", "DOMAINS"], function (result) {
     /// Store current domain in DOMAINS
-    var d = details.initiator;
-    var domains = result.DOMAINS
+    var url = new URL(details.url);
+    var parsed = psl.parse(url.hostname);
+    var d = parsed.domain
+    var domains = result.DOMAINS;
+    console.log(d)
+
     if (domains[d] === undefined) {
-      domains[d] = true
+      domains[d] = false
       chrome.storage.local.set({"DOMAINS": domains});
       console.log("Stored current domain");
     } 
-    /// set to true if whitelist is off, or if whitelist is on but domain is not whitelisted
+    /// Set to true if whitelist is off, or if whitelist is on AND domain is whitelisted
     /// Basically, we want to know if we send the signal to a given domain
     if (result.WHITELIST_ENABLED) {
       if (domains[d] === true) {
-        sendSignal = false
-      } else {
         sendSignal = true
+      } else {
+        sendSignal = false
       }
     } else {
       sendSignal = true /// Always send signal to all domains
