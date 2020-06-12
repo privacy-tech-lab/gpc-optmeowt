@@ -37,7 +37,6 @@ function updateDomainsAndSignal(details) {
     /// Store current domain in DOMAINS
     var d = details.initiator;
     var domains = result.DOMAINS
-    chrome.storage.local.set({"CURR_DOMAIN": d});
     if (domains[d] === undefined) {
       domains[d] = true
       chrome.storage.local.set({"DOMAINS": domains});

@@ -1,11 +1,15 @@
 import { addToWhitelist, removeFromWhitelist } from "../../whitelist.js";
 
 document.addEventListener("DOMContentLoaded", (event) => {
+  var parsed_domain = '';
+
   chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
     var tab = tabs[0];
     try {
       var url = new URL(tab.url);
       var parsed = psl.parse(url.hostname)
+      parsed_domain = parsed.domain;
+      console.log("POPUP: ", parsed_domain);
       if (parsed.domain === null) {
         document.getElementById("domain").innerHTML = location.href;
       } else {
@@ -70,21 +74,22 @@ document.addEventListener("DOMContentLoaded", (event) => {
 
   /// Sets whitelist switch to correct position
   /// CANNOT USE result.CURR_DOMAIN, otherwise you have unexpected behavior with the switch
-  chrome.storage.local.get(["DOMAINS", "CURR_DOMAIN"], function (result) {
-    if (result.DOMAINS[result.CURR_DOMAIN]) {
-      document.getElementById("input").checked = true;
-    } else {
-      document.getElementById("input").checked = false;
-    }
+  chrome.storage.local.get(["DOMAINS"], function (result) {
+      if (result.DOMAINS[parsed_domain]) {
+        document.getElementById("input").checked = true;
+      } else {
+        document.getElementById("input").checked = false;
+      }
+    // })
   });
 
   document.getElementById("input").addEventListener("click", () => {
-    chrome.storage.local.get(["DOMAINS", "CURR_DOMAIN"], function (result) {
-      if (result.DOMAINS[result.CURR_DOMAIN]) {
-        removeFromWhitelist(result.CURR_DOMAIN);
+    chrome.storage.local.get(["DOMAINS"], function (result) {
+      if (result.DOMAINS[parsed_domain]) {
+        removeFromWhitelist(parsed_domain);
         document.getElementById("input").checked = false;
       } else {
-        addToWhitelist(result.CURR_DOMAIN);
+        addToWhitelist(parsed_domain);
         document.getElementById("input").checked = true;
       }
     });
