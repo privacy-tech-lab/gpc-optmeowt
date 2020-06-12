@@ -5,11 +5,6 @@ tabs = {}; /// Store all active tab id's, domain, requests, and response
 activeTabID = 0;
 sendSignal = false;
 
-////////////////////////////////////////////////////////
-/// NOTES: 
-/// do we need CURR_DOMAIN?
-////////////////////////////////////////////////////////
-
 /// Manipulate Headers
 addHeaders = (details) => {
   updateDomainsAndSignal(details);
