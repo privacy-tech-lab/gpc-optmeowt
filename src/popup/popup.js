@@ -2,6 +2,7 @@ import { addToWhitelist, removeFromWhitelist } from "../../whitelist.js";
 
 document.addEventListener("DOMContentLoaded", (event) => {
   var parsed_domain = '';
+  var switch_has_listener = false;
 
   chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
     var tab = tabs[0];
@@ -72,28 +73,38 @@ document.addEventListener("DOMContentLoaded", (event) => {
     });
   });
 
-  /// Sets whitelist switch to correct position
-  /// CANNOT USE result.CURR_DOMAIN, otherwise you have unexpected behavior with the switch
-  chrome.storage.local.get(["DOMAINS"], function (result) {
-      if (result.DOMAINS[parsed_domain]) {
-        document.getElementById("input").checked = true;
-      } else {
-        document.getElementById("input").checked = false;
-      }
-    // })
-  });
+  if (switch_has_listener) {
+    document.getElementById("input").removeEventListener();
+  }
 
-  document.getElementById("input").addEventListener("click", () => {
-    chrome.storage.local.get(["DOMAINS"], function (result) {
-      if (result.DOMAINS[parsed_domain]) {
-        removeFromWhitelist(parsed_domain);
-        document.getElementById("input").checked = false;
-      } else {
-        addToWhitelist(parsed_domain);
-        document.getElementById("input").checked = true;
-      }
+  // Sets whitelist switch to correct position
+  chrome.storage.local.get(["DOMAINS"], function (result) {
+    var s = ""
+    if (result.DOMAINS[parsed_domain]) {
+      s = `<input type="checkbox" id="input" checked/>
+                      <span></span>`
+      // document.getElementById("input").checked = true;
+    }
+    else {
+      s = `<input type="checkbox" id="input"/>
+                      <span></span>`
+      // document.getElementById("input").checked = false;
+    }
+    document.getElementById("switch-label").innerHTML = s
+
+    document.getElementById("input").addEventListener("click", () => {
+      switch_has_listener = true;
+      chrome.storage.local.get(["DOMAINS"], function (result) {
+        if (result.DOMAINS[parsed_domain]) {
+          removeFromWhitelist(parsed_domain);
+          document.getElementById("input").checked = false;
+        } else {
+          addToWhitelist(parsed_domain);
+          document.getElementById("input").checked = true;
+        }
+      });
     });
-  });
+  })
 
 });
 
