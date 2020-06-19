@@ -5,26 +5,29 @@ whitelist-view markup
 <template id="whitelist-view">
   <div uk-grid>
     <div class="uk-width-3-4" style="margin-top: 0px;">
-      <div class="uk-text-lead uk-text-bold text-color-darker">
-        URL's
-      </div>
-      <form
-        class="uk-search uk-search-default uk-width-3-4"
-        style="margin-top: 1%;"
-      >
-        <div class="uk-margin">
-          <div class="uk-inline uk-width-expand">
-            <span
-              class="uk-form-icon uk-form-icon-flip"
-              uk-icon="icon: plus"
-            ></span>
-            <input class="uk-input" type="text" placeholder="Add a url" />
-          </div>
+      <div class="whitelist-navbar" >
+        <div class="uk-text-lead uk-text-bold text-color-darker">
+          URL's
         </div>
-      </form>
+        <form
+          class="uk-search uk-search-default uk-width-3-4"
+          style="margin-top: 1%;"
+        >
+          <div class="uk-margin">
+            <div class="uk-inline uk-width-expand">
+              <span
+                class="uk-form-icon uk-form-icon-flip"
+                uk-icon="icon: plus"
+              ></span>
+              <input class="uk-input" type="text" placeholder="Add a url" />
+            </div>
+          </div>
+        </form>
+      </div>
       <ul
         class="uk-list uk-list-divider uk-width-3-4"
         style="margin-top: 0px; margin-bottom: 0px;"
+        id="whitelist-main"
       >
         <li>
           <div class="uk-width-1-1" style="font-size: medium;">
@@ -41,7 +44,7 @@ whitelist-view markup
             >
           </div>
         </li>
-        <li>
+        <!-- <li>
           <div class="uk-width-1-1" style="font-size: medium;">
             https://cnn.com/sports/*<span
               class="uk-badge uk-align-right"
@@ -85,7 +88,7 @@ whitelist-view markup
               Delete</span
             >
           </div>
-        </li>
+        </li> -->
       </ul>
     </div>
   </div>
