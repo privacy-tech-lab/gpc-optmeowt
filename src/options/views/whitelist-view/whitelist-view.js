@@ -3,7 +3,6 @@ whitelist-view script
 */
 
 import { renderParse, fetchParse } from '../../components/util.js'
-// import '../../libs/list.js-1.5.0/list.min.js'
 
 const headings = {
     title: 'Whitelist',
@@ -11,101 +10,71 @@ const headings = {
 }
 
 function eventListeners() {
-    console.log("Loaded eventListeners();")
+    
+    // Filterd lists listener code based on
+    // `https://www.w3schools.com/howto/howto_js_filter_lists.asp`
     document.getElementById('searchbar').addEventListener('keyup', () => {
-        console.log("Searchbar listener activated...")
-        
-        input = document.getElementById('searchbar')
-        filter = input.value.toLowerCase()
-    })
-}
+        let input, list, li, count
+        input = document.getElementById('searchbar').value.toLowerCase();
+        list = document.getElementById('whitelist-main')
+        li = list.getElementsByTagName('li')
+        count = li.length
 
-// Constructs list of domains with `list.min.js`
-async function buildListJS() {
-    var options = {
-        valueNames: [ 'domain' ],
-        // Since there are no elements in the list, this will be used as template.
-        item: `<li>
-        <div class="uk-width-1-1 domain" style="font-size: medium;">
-          <span
-            class="uk-badge uk-align-right"
-            style="
-              margin: 0px;
-              background-color: white;
-              border: 1px solid #f44336;
-              color: #f44336;
-            "
-          >
-            Delete</span
-          >
-        </div>
-      </li>`
-      };
-      
-    var values = [];
-
-    // Populate values
-    chrome.storage.local.get(["DOMAINS"], function (result) {
-        for (var d in result.DOMAINS) {
-            values += { domain: d }
+        for (let i = 0; i < count; i++) {
+            let d = li[i].getElementsByClassName('domain')[0];
+            let txtValue = d.innerText; 
+            if (txtValue.toLowerCase().indexOf(input) > -1) {
+            li[i].style.display = "";
+          } else {
+            li[i].style.display = "none";
+          }
         }
     })
-      
-    var domainList = new List('whitelist-view', options, values);
-      
-    // chrome.storage.local.get(["DOMAINS"], function (result) {
-    //     for (var d in result.DOMAINS) {
-    //         domainList.add({
-    //             domain: d,
-    //           });
-    //     }
-    // })
+
 }
 
 async function buildList() {
-    var stored_domains = []
-    var items = ""
+    let items = ""
     chrome.storage.local.get(["DOMAINS"], function (result) {
-        stored_domains = result.DOMAINS;
-        for (var domain in result.DOMAINS) {
+        for (let domain in result.DOMAINS) {
             items += 
                 `
-        <li>
-            <div class="uk-width-1-1 domain" style="font-size: medium;">
+                <li>
+                <div class="uk-width-1-1" style="font-size: medium;">
+                  <span class="domain">
                 `
                 +
                 domain
                 +
                 `
-            <span
-                class="uk-badge uk-align-right"
-                style="
-                    margin: 0px;
-                    background-color: white;
-                    border: 1px solid #f44336;
-                    color: #f44336;
-                    "
-                >
-                    Delete
                 </span>
-            </div>
-        </li>
-                `
+                  <span
+                    class="uk-badge uk-align-right"
+                    style="
+                      margin: 0px;
+                      background-color: white;
+                      border: 1px solid #f44336;
+                      color: #f44336;
+                    "
+                  >
+                    Delete</span
+                  >
+                </div>
+              </li>
+            `
         }
         document.getElementById('whitelist-main').innerHTML = items;
     })
+    console.log("Finished building list.")
 }
 
 export async function whitelistView(scaffoldTemplate) {
     const body = renderParse(scaffoldTemplate, headings, 'scaffold-component')
     let content = await fetchParse('./views/whitelist-view/whitelist-view.html', 'whitelist-view')
-    // var values = { valueNames: ['domain'] }
-    // var domainList = new List('whitelist-view', values)
     
     document.getElementById('content').innerHTML = body.innerHTML
     document.getElementById('scaffold-component-body').innerHTML = content.innerHTML
-    buildList();
-    console.log("Finished building list.")
 
+    buildList();
     eventListeners();
 }
