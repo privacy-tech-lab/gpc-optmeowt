@@ -10,29 +10,43 @@ const headings = {
 }
 
 function eventListeners() {
-    
-    // Filterd lists listener code based on
-    // `https://www.w3schools.com/howto/howto_js_filter_lists.asp`
-    document.getElementById('searchbar').addEventListener('keyup', () => {
-        let input, list, li, count
-        input = document.getElementById('searchbar').value.toLowerCase();
-        list = document.getElementById('whitelist-main')
-        li = list.getElementsByTagName('li')
-        count = li.length
-
-        for (let i = 0; i < count; i++) {
-            let d = li[i].getElementsByClassName('domain')[0];
-            let txtValue = d.innerText; 
-            if (txtValue.toLowerCase().indexOf(input) > -1) {
-            li[i].style.display = "";
-          } else {
-            li[i].style.display = "none";
-          }
-        }
-    })
-
+    document.getElementById('searchbar').addEventListener('keyup', filterList )
 }
 
+// Filterd lists code heavily inspired by
+// `https://www.w3schools.com/howto/howto_js_filter_lists.asp`
+function filterList() {
+  let input, list, li, count
+  input = document.getElementById('searchbar').value.toLowerCase();
+  list = document.getElementById('whitelist-main')
+  li = list.getElementsByTagName('li')
+  count = li.length
+
+  for (let i = 0; i < count; i++) {
+      let d = li[i].getElementsByClassName('domain')[0];
+      let txtValue = d.innerText; 
+      if (txtValue.toLowerCase().indexOf(input) > -1) {
+      li[i].style.display = "";
+    } else {
+      li[i].style.display = "none";
+    }
+  }
+}
+
+/* Generates the HTML component of whitelist toggle 
+   based on whether a domain is true/false in the stored whitelist */
+function buildToggle(bool) {
+  let toggle;
+  if (bool) {
+    toggle = `<input type="checkbox" id="toggle-whitelist" checked />`;
+  } else {
+    toggle = `<input type="checkbox" id="toggle-whitelist" />`;
+  }
+  return toggle
+}
+
+/* Generates the HTML component of whitelisted domains 
+   based on the stored whitelist */
 async function buildList() {
     let items = ""
     chrome.storage.local.get(["DOMAINS"], function (result) {
@@ -61,7 +75,12 @@ async function buildList() {
                 "
             >
               <label class="switch">
-                <input type="checkbox" id="toggle-whitelist" checked />
+                `
+                +
+              buildToggle(result.DOMAINS[domain])
+              // `<input type="checkbox" id="toggle-whitelist" />`
+                +
+                `
                 <span></span>
               </label>
             </div>
