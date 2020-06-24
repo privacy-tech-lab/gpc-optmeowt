@@ -1,9 +1,16 @@
+import { addToWhitelist, removeFromWhitelist } from "../../whitelist.js";
+
 document.addEventListener("DOMContentLoaded", (event) => {
+  var parsed_domain = '';
+  var switch_has_listener = false;
+
   chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
     var tab = tabs[0];
     try {
       var url = new URL(tab.url);
       var parsed = psl.parse(url.hostname)
+      parsed_domain = parsed.domain;
+      console.log("POPUP: ", parsed_domain);
       if (parsed.domain === null) {
         document.getElementById("domain").innerHTML = location.href;
       } else {
@@ -14,6 +21,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
     }
   });
 
+  /// Sets whole extension enable/disable
   chrome.storage.local.get(["ENABLED"], function (result) {
     if (result.ENABLED == undefined) {
       document.getElementById("img").src = "../assets/play-circle-outline.svg";
@@ -64,6 +72,40 @@ document.addEventListener("DOMContentLoaded", (event) => {
       }
     });
   });
+
+  if (switch_has_listener) {
+    document.getElementById("input").removeEventListener();
+  }
+
+  // Sets whitelist switch to correct position
+  chrome.storage.local.get(["DOMAINS"], function (result) {
+    var s = ""
+    if (result.DOMAINS[parsed_domain]) {
+      s = `<input type="checkbox" id="input" checked/>
+                      <span></span>`
+      // document.getElementById("input").checked = true;
+    }
+    else {
+      s = `<input type="checkbox" id="input"/>
+                      <span></span>`
+      // document.getElementById("input").checked = false;
+    }
+    document.getElementById("switch-label").innerHTML = s
+
+    document.getElementById("input").addEventListener("click", () => {
+      switch_has_listener = true;
+      chrome.storage.local.get(["DOMAINS"], function (result) {
+        if (result.DOMAINS[parsed_domain]) {
+          removeFromWhitelist(parsed_domain);
+          document.getElementById("input").checked = false;
+        } else {
+          addToWhitelist(parsed_domain);
+          document.getElementById("input").checked = true;
+        }
+      });
+    });
+  })
+
 });
 
 async function buildURLS(requests) {
