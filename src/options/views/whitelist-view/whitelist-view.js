@@ -39,28 +39,48 @@ async function buildList() {
         for (let domain in result.DOMAINS) {
             items += 
                 `
-                <li>
-                <div class="uk-width-1-1" style="font-size: medium;">
-                  <span class="domain">
-                `
-                +
-                domain
-                +
-                `
-                </span>
-                  <span
-                    class="uk-badge uk-align-right"
-                    style="
-                      margin: 0px;
-                      background-color: white;
-                      border: 1px solid #f44336;
-                      color: #f44336;
-                    "
-                  >
-                    Delete</span
-                  >
-                </div>
-              </li>
+        <li>
+          <div uk-grid class="uk-grid-small uk-width-1-1" style="font-size: medium;">
+            <div>
+                <label>
+                    <input type="checkbox" id="select" class="check text-color" />
+                </label>
+            </div>
+            <div class="domain uk-width-expand" >
+            `
+            +
+            domain
+            +
+            `
+            </div>
+            <div style="
+                margin-right: 5px; 
+                margin-left: 5px;
+                margin-top: auto;
+                margin-bottom: auto;
+                "
+            >
+              <label class="switch">
+                <input type="checkbox" id="toggle-whitelist" checked />
+                <span></span>
+              </label>
+            </div>
+            <div
+              class="uk-badge"
+              style="
+                margin-right: 5px; 
+                margin-left: 5px;
+                margin-top: auto;
+                margin-bottom: auto;
+                background-color: white;
+                border: 1px solid #f44336;
+                color: #f44336;
+              "
+            >
+              Delete
+            </div>
+          </div>
+        </li>
             `
         }
         document.getElementById('whitelist-main').innerHTML = items;
