@@ -3,6 +3,7 @@ whitelist-view script
 */
 
 import { renderParse, fetchParse } from '../../components/util.js'
+import { toggleListener } from "../../../whitelist.js";
 
 const headings = {
     title: 'Whitelist',
@@ -11,6 +12,16 @@ const headings = {
 
 function eventListeners() {
     document.getElementById('searchbar').addEventListener('keyup', filterList )
+    createToggleListeners();
+}
+
+// passed in domains object after HTML rendered
+function createToggleListeners() {
+  chrome.storage.local.get(["DOMAINS"], function (result) {
+    for (let domain in result.DOMAINS) {
+      toggleListener(domain, domain)
+    }
+  });
 }
 
 // Filterd lists code heavily inspired by
@@ -30,81 +41,80 @@ function filterList() {
     } else {
       li[i].style.display = "none";
     }
-  }
-}
-
-/* Generates the HTML component of whitelist toggle 
-   based on whether a domain is true/false in the stored whitelist */
-function buildToggle(bool) {
-  let toggle;
-  if (bool) {
-    toggle = `<input type="checkbox" id="toggle-whitelist" checked />`;
-  } else {
-    toggle = `<input type="checkbox" id="toggle-whitelist" />`;
-  }
-  return toggle
+  };
 }
 
 /* Generates the HTML component of whitelisted domains 
    based on the stored whitelist */
-async function buildList() {
-    let items = ""
-    chrome.storage.local.get(["DOMAINS"], function (result) {
-        for (let domain in result.DOMAINS) {
-            items += 
-                `
-        <li>
-          <div uk-grid class="uk-grid-small uk-width-1-1" style="font-size: medium;">
-            <div>
-                <label>
-                    <input type="checkbox" id="select" class="check text-color" />
-                </label>
-            </div>
-            <div class="domain uk-width-expand" >
+function buildList() {
+  let items = ""
+  chrome.storage.local.get(["DOMAINS"], function (result) {
+    for (let domain in result.DOMAINS) {
+      items += 
+            `
+      <li>
+        <div uk-grid class="uk-grid-small uk-width-1-1" style="font-size: medium;">
+          <div>
+            <label>
+              <input type="checkbox" id="select" class="check text-color" />
+            </label>
+          </div>
+          <div class="domain uk-width-expand" >
             `
             +
             domain
             +
             `
-            </div>
-            <div style="
-                margin-right: 5px; 
-                margin-left: 5px;
-                margin-top: auto;
-                margin-bottom: auto;
-                "
-            >
-              <label class="switch">
-                `
-                +
-              buildToggle(result.DOMAINS[domain])
-              // `<input type="checkbox" id="toggle-whitelist" />`
-                +
-                `
-                <span></span>
-              </label>
-            </div>
-            <div
-              class="uk-badge"
-              style="
-                margin-right: 5px; 
-                margin-left: 5px;
-                margin-top: auto;
-                margin-bottom: auto;
-                background-color: white;
-                border: 1px solid #f44336;
-                color: #f44336;
-              "
-            >
-              Delete
-            </div>
           </div>
-        </li>
+          <div style="
+            margin-right: 5px; 
+            margin-left: 5px;
+            margin-top: auto;
+            margin-bottom: auto;
+            "
+          >
+            <label class="switch" >
             `
-        }
-        document.getElementById('whitelist-main').innerHTML = items;
-    })
-    console.log("Finished building list.")
+            +
+            buildToggle(domain, result.DOMAINS[domain])
+            // `<input type="checkbox" id="toggle-whitelist" />`
+            +
+            `
+              <span></span>
+            </label>
+          </div>
+          <div
+            class="uk-badge"
+            style="
+              margin-right: 5px; 
+              margin-left: 5px;
+              margin-top: auto;
+              margin-bottom: auto;
+              background-color: white;
+              border: 1px solid #f44336;
+              color: #f44336;
+            "
+          >
+            Delete
+          </div>
+        </div>
+      </li>
+            `
+    } 
+    document.getElementById('whitelist-main').innerHTML = items;
+  });
+}
+
+/* Generates the HTML component of whitelist toggle 
+   based on whether a domain is true/false in the stored whitelist */
+function buildToggle(domain, bool) {
+  let toggle;
+  if (bool) {
+    toggle = `<input type="checkbox" id="` + domain + `" checked />`;
+  } else {
+    toggle = `<input type="checkbox" id="` + domain + `" />`;
+  }
+  return toggle
 }
 
 export async function whitelistView(scaffoldTemplate) {
