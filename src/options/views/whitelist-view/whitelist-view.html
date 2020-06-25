@@ -5,88 +5,74 @@ whitelist-view markup
 <template id="whitelist-view">
   <div uk-grid>
     <div class="uk-width-3-4" style="margin-top: 0px;">
-      <div class="uk-text-lead uk-text-bold text-color-darker">
-        URL's
+
+      <!-- Navbar -->
+      <div class="whitelist-navbar" >
+        <div class="uk-text-lead uk-text-bold text-color-darker">
+          Domains
+        </div>
+        <form
+          class="uk-search uk-search-default uk-width-3-4"
+          style="margin-top: 1%;"
+        >
+          <div class="uk-margin">
+            <div class="uk-inline uk-width-expand">
+              <span
+                class="uk-form-icon uk-form-icon-flip"
+                uk-icon="icon: plus"
+              ></span>
+              <input class="uk-input" id="searchbar" type="text" placeholder="Type to search for a domain" />
+            </div>
+          </div>
+        </form>
       </div>
-      <form
-        class="uk-search uk-search-default uk-width-3-4"
-        style="margin-top: 1%;"
+
+      <!-- Whitelist -->
+      <ul
+        class="uk-list uk-list-divider uk-width-1-1"
+        style="margin-top: 0px; margin-bottom: 0px;"
+        id="whitelist-main"
       >
-        <div class="uk-margin">
-          <div class="uk-inline uk-width-expand">
-            <span
-              class="uk-form-icon uk-form-icon-flip"
-              uk-icon="icon: plus"
-            ></span>
-            <input class="uk-input" type="text" placeholder="Add a url" />
+      <li>
+        <div uk-grid class="uk-grid-small uk-width-1-1" style="font-size: medium;">
+          <div>
+            <label>
+              <input type="checkbox" id="select" class="check text-color" />
+            </label>
+          </div>
+          <div class="domain uk-width-expand" >
+            instagram.com
+          </div>
+          <div style="
+            margin-right: 5px; 
+            margin-left: 5px;
+            margin-top: auto;
+            margin-bottom: auto;
+            "
+          >
+            <label class="switch" >
+              <input type="checkbox" id="instagram.com" />
+              <span></span>
+            </label>
+          </div>
+          <div
+            class="uk-badge"
+            style="
+              margin-right: 5px; 
+              margin-left: 5px;
+              margin-top: auto;
+              margin-bottom: auto;
+              background-color: white;
+              border: 1px solid #f44336;
+              color: #f44336;
+            "
+          >
+            Delete
           </div>
         </div>
-      </form>
-      <ul
-        class="uk-list uk-list-divider uk-width-3-4"
-        style="margin-top: 0px; margin-bottom: 0px;"
-      >
-        <li>
-          <div class="uk-width-1-1" style="font-size: medium;">
-            https://instagram.com/*<span
-              class="uk-badge uk-align-right"
-              style="
-                margin: 0px;
-                background-color: white;
-                border: 1px solid #f44336;
-                color: #f44336;
-              "
-            >
-              Delete</span
-            >
-          </div>
-        </li>
-        <li>
-          <div class="uk-width-1-1" style="font-size: medium;">
-            https://cnn.com/sports/*<span
-              class="uk-badge uk-align-right"
-              style="
-                margin: 0px;
-                background-color: white;
-                border: 1px solid #f44336;
-                color: #f44336;
-              "
-            >
-              Delete</span
-            >
-          </div>
-        </li>
-        <li>
-          <div class="uk-width-1-1" style="font-size: medium;">
-            https://github.com/*<span
-              class="uk-badge uk-align-right"
-              style="
-                margin: 0px;
-                background-color: white;
-                border: 1px solid #f44336;
-                color: #f44336;
-              "
-            >
-              Delete</span
-            >
-          </div>
-        </li>
-        <li>
-          <div class="uk-width-1-1" style="font-size: medium;">
-            https://cnet.com/*<span
-              class="uk-badge uk-align-right"
-              style="
-                margin: 0px;
-                background-color: white;
-                border: 1px solid #f44336;
-                color: #f44336;
-              "
-            >
-              Delete</span
-            >
-          </div>
-        </li>
+      </li>
       </ul>
+
     </div>
   </div>
 </template>

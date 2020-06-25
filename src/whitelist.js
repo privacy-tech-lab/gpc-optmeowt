@@ -39,7 +39,8 @@ export async function addToWhitelist(urlKey) {
     new_domains = result.DOMAINS;
     new_domains[urlKey] = true;
     chrome.storage.local.set({ DOMAINS: new_domains });
-  });
+  }); 
+  console.log(urlKey, ", Added to whitelist.")
 }
 
 // Sets DOMAINS[urlKey] to false
@@ -50,6 +51,7 @@ export async function removeFromWhitelist(urlKey) {
     new_domains[urlKey] = false;
     chrome.storage.local.set({ DOMAINS: new_domains });
   });
+  console.log(urlKey, ", Removed from whitelist.")
 }
 
 // Removes DOMAINS[urlKey] from DOMAINS
@@ -60,4 +62,21 @@ export async function permRemoveFromWhitelist(urlKey) {
     delete new_domains[urlKey]
     chrome.storage.local.set({ DOMAINS: new_domains });
   });
+}
+
+//////////////////////////////////////////////////////////////////////////
+
+// elementId: (string) representing element to grab by ID
+// domain: (string) representing domain to link toggle to in backend
+// Creates an event listener to toggle a given element ID corresponding to a domain
+export async function toggleListener(elementId, domain) {
+  document.getElementById(elementId).addEventListener("click", () => {
+    chrome.storage.local.get(["DOMAINS"], function (result) {
+      if (result.DOMAINS[domain]) {
+        removeFromWhitelist(domain);
+      } else {
+        addToWhitelist(domain);
+      }
+    })
+  })
 }
