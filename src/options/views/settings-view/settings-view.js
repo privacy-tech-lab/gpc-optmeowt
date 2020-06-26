@@ -4,6 +4,7 @@ settings-view script
 
 import { renderParse, fetchParse } from "../../components/util.js";
 import { handleDownload, startUpload, handleUpload } from "../../../whitelist.js";
+import { darkSwitchFunction } from "../../../libs/dark-mode-switch-1.0.0/dark-mode-switch.js"
 import "../../../libs/FileSaver.js-2.0.2/src/FileSaver.js"
 
 const headings = {
@@ -39,6 +40,8 @@ export async function settingsView(scaffoldTemplate) {
   document.getElementById("content").innerHTML = body.innerHTML;
   document.getElementById("scaffold-component-body").innerHTML =
     content.innerHTML;
+
+  darkSwitchFunction();
 
   chrome.storage.local.get(["ENABLED", "WHITELIST_ENABLED"], function (result) {
       console.log(result.ENABLED)
