@@ -15,7 +15,7 @@ This extension is designed to be compliant with the California Consumer Privacy 
 
 ## Running and Installing OptMeowt
 
-You can currently install OptMeowt to any Chrome-based web browser. While we do not currently support Firefox, we are diligently working on compatabilty across both Chrome-based browsers and Firefox.
+You can currently install OptMeowt to any Chrome-based web browser. While we do not currently support Firefox, we are diligently working on compatibility across both Chrome-based browsers and Firefox.
 
 Note that though this extension has been thoroughly tested in Google Chrome, it should also run in other Chrome-based browsers including Vivaldi, Opera, Microsoft Edge, and Brave, amongst others.
 
