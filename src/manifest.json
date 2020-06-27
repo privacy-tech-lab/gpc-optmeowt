@@ -10,9 +10,7 @@
     "activeTab"
   ],
   "icons": {
-    "16": "assets/icon16.png",
-    "48": "assets/icon48.png",
-    "128": "assets/icon128.png"
+    "128": "assets/face-icons/icon128-face-circle.png"
   },
   "browser_action": {
     "default_title": "OptMeowt",
