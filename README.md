@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="https://github.com/privacy-tech-lab/privacy-rights-platform-browser-extension/blob/master/src/assets/cat-w-text/optmeow-logo-circle.png" width="128px" height="128px" title="OptMeowt logo">
+  <img src="https://github.com/privacy-tech-lab/optmeowt-browser-extension/blob/issue-19/src/assets/cat-w-text/optmeow-logo-circle.png" width="150px" height="150px" title="OptMeowt logo">
 <p>
 
-# OptMeowt 🐾
+# OptMeowt :paw_prints:
 
 OptMeowt is a browser extension that works by sending Do Not Sell signals to websites that users wish to access. 
 
