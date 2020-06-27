@@ -1,5 +1,5 @@
 [data-theme="dark"] {
-  background-color: #111 !important;
+  background-color: #1c1c1c !important;
   color: #eee;
 }
 
@@ -8,9 +8,40 @@
 }
 
 [data-theme="dark"] .bg-white {
-  background-color: #000 !important;
+  background-color: #111 !important;
 }
 
 [data-theme="dark"] .bg-black {
   background-color: #eee !important;
 }
+
+/********************************************************/
+
+/*
+Buttons and Switches
+*/
+
+[data-theme="dark"] .search {
+  background-color: #333 !important;
+  border-color: #333 ;
+}
+
+[data-theme="dark"] .button {
+  background-color: #333 !important;
+  border: 1px solid #333 !important;
+  color: #eee !important;
+}
+
+/* [data-theme="dark"] .dark-checkbox {
+  background-color: #333 !important;
+  border: 1px solid #333 !important;
+  color: #eee !important;
+} */
+
+/* input[type="radio"]:checked, [data-theme="dark"] {
+  box-shadow: 0 6px 12px #000 !important;
+}
+
+input[type='radio']:hover:not(:checked), [data-theme="dark"] {
+  box-shadow: 0 6px 12px #000 !important;
+} */
