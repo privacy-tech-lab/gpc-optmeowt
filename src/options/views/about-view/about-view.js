@@ -6,7 +6,7 @@ import { renderParse, fetchParse } from '../../components/util.js'
 
 const headings = {
     title: 'About',
-    subtitle: "Learn more about the Privacy Rights Platform"
+    subtitle: "Learn more about the OptMeowt"
 }
 
 export async function aboutView(scaffoldTemplate) {
