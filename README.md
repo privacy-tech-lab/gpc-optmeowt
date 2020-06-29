@@ -6,7 +6,7 @@
 
 OptMeowt ("Opt Me Out") is an implementation of [current work towards a W3C specification](https://github.com/privacycg/proposals/issues/10) for opting out from the sale of personal information per the California Consumer Privacy Act (CCPA), particularly, [Section 999.315(d) of the Regulations](https://oag.ca.gov/sites/all/files/agweb/pdfs/privacy/oal-sub-final-text-of-regs.pdf). It sends Do Not Sell signals to websites a user is accessing.
 
-We are in the middle of the development. Feel free to make a feature request, open a pull request, or just [get in touch](szimmeck@wesleyan.edu). We are academic researchers at Wesleyan University's [privacy-tech-lab](https://privacy-tech-lab.github.io/), and we would like to collaborate with anyone who is interested in moving Do Not Sell forward.
+We are in the middle of the development. Feel free to make a feature request, open a pull request, or just [get in touch](mailto:szimmeck@wesleyan.edu). We are academic researchers at Wesleyan University's [privacy-tech-lab](https://privacy-tech-lab.github.io/), and we would like to collaborate with anyone who is interested in moving Do Not Sell forward.
 
 ## Installing and Running OptMeowt
 
