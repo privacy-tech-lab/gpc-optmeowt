@@ -56,7 +56,7 @@ function buildList() {
         <div uk-grid class="uk-grid-small uk-width-1-1" style="font-size: medium;">
           <div>
             <label>
-              <input type="checkbox" id="select" class="check text-color" />
+              <input type="checkbox" id="select" class="check text-color dark-checkbox" />
             </label>
           </div>
           <div class="domain uk-width-expand" >
@@ -84,7 +84,7 @@ function buildList() {
             </label>
           </div>
           <div
-            class="uk-badge"
+            class="uk-badge button"
             style="
               margin-right: 5px; 
               margin-left: 5px;

@@ -1,3 +1,9 @@
+/* Dark Mode */
+@import "../libs/dark-mode-switch-1.0.0/dark-mode.css";
+
+
+/********************************************************/
+
 /* Colors */
 :root {
     --accent-color: #4472C4;
@@ -68,9 +74,8 @@ input[type='radio']:hover:not(:checked) {
 
 /* Checkbox */
 .check {
-    transform: scale(1.25);
-    padding: 0px;
-    /* border-color: #888fa1; */
+  /* appearance: none; */
+  transform: scale(1.25);
 }
 
 /********************************************************/
