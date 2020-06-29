@@ -4,37 +4,25 @@
 
 # OptMeowt :paw_prints:
 
-OptMeowt is a browser extension that works by sending Do Not Sell signals to websites that users wish to access.
+OptMeowt ("Opt Me Out") is an implementation of [current work towards a W3C specification](https://github.com/privacycg/proposals/issues/10) for opting out from the sale of personal information per the California Consumer Privacy Act (CCPA), particularly, [Section 999.315(d) of the Regulations](https://oag.ca.gov/sites/all/files/agweb/pdfs/privacy/oal-sub-final-text-of-regs.pdf). It sends Do Not Sell signals to websites a user is accessing.
 
-We accomplish this by:
-1) Providing users with options regarding who to send the Do Not Sell signals to.
-2) Providing users information about locations we have sent the Do Not Sell signal to.
-3) By sending an HTTP request header upon website access noting to website hosts that the user does not want their data sold, according to the options above.
+We are in the middle of the development. Feel free to make a feature request, open a pull request, or just [get in touch](szimmeck@wesleyan.edu). We are academic researchers at Wesleyan University's [privacy-tech-lab](https://privacy-tech-lab.github.io/), and we would like to collaborate with anyone who is interested in moving Do Not Sell forward.
 
-This extension is designed to be compliant with the California Consumer Privacy Act (CCPA).
+## Installing and Running OptMeowt
 
-## Running and Installing OptMeowt
+You can install OptMeowt to any Chromium-based web browser. In addition to Google Chrome, it should also run in Vivaldi, Opera, Microsoft Edge, and Brave. In the future we hope to support Firefox and Safari as well.
 
-You can currently install OptMeowt to any Chrome-based web browser. While we do not currently support Firefox, we are diligently working on compatibility across both Chrome-based browsers and Firefox.
+Here are the instructions for installing OptMeowt as an unpacked extension on Google Chrome:
 
-Note that though this extension has been thoroughly tested in Google Chrome, it should also run in other Chrome-based browsers including Vivaldi, Opera, Microsoft Edge, and Brave, amongst others.
-
-### Downloading
-
-In order to download OptMeowt, you can either clone our repo to your machine and follow the installation steps below, or alternatively you can click the green `Clone or download` button above and then click `DOWNLOAD ZIP` to download a full copy of the repo. If you download a zip copy, make sure to unzip the downloaded zipped file before moving on to the installation step. Note where on your machine you have saved this folder.
-
-### Installing the Extension on Google Chrome
-
-In order to install OptMeowt on Google Chrome, first navigate to the `Extensions` page from the dropdown menu in the top right corner of the browser window, inside the "hamburger" icon consisting of three vertical dots. Alternatively, you can type `chrome://extensions/` into your search bar and click enter.
-
-Once inside the `Extensions` page, the following steps will show you how to install the unpacked OptMeowt browser extension:
-1) Click the `Load unpacked` button in the top left of the page.
-2) Navigate to the now unzipped OptMeowt folder.
-3) Click and open up the `src` folder within the downloaded folder.
+1. Clone this repo or download a zipped copy and unzip it.
+2. In Google Chrome, navigate to the extensions page at `chrome://extensions/`.
+3. If you have not done so yet, enable `Developer mode` with the slider on the top right corner of the extension page.
+4. Click the `Load unpacked` button in the top left of the page.
+5. Navigate to where you unzipped the OptMeowt folder and open up the `src` folder.
 **Note:** You do not need to click on the `manifest.json` file in Chrome, though other browsers may require this.
-4) Click to finalize and install.
+6. Click to finalize and install.
 
-Congratulations! You have installed OptMeowt, and can now use it with the newly installed icon next to the search bar.
+Congratulations! You have installed OptMeowt. You can use via the icon next to the search bar.
 
 ## Files and Directories in the Repo
 
