@@ -1,6 +1,17 @@
 /*
-main-view script
+OptMeowt is licensed under the MIT License
+Copyright (c) 2020 Kuba Alicki, David Baraka, Rafael Goldstein, Sebastian Zimmeck
+privacy-tech-lab, https://privacy-tech-lab.github.io/
 */
+
+
+/*
+main-view.js
+================================================================================
+main-view.js handles the navigation between different parts of the options page
+and loads them when called through the navigation bar
+*/
+
 
 import {
   fetchTemplate,

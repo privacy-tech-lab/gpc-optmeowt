@@ -1,6 +1,16 @@
 /*
-whitelist-view script
+OptMeowt is licensed under the MIT License
+Copyright (c) 2020 Kuba Alicki, David Baraka, Rafael Goldstein, Sebastian Zimmeck
+privacy-tech-lab, https://privacy-tech-lab.github.io/
 */
+
+
+/*
+whitelist-view.js
+================================================================================
+whitelist-view.js loads whitelist-view.html when clicked on the options page
+*/
+
 
 import { renderParse, fetchParse } from '../../components/util.js'
 import { toggleListener } from "../../../whitelist.js";

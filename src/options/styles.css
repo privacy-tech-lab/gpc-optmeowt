@@ -1,3 +1,17 @@
+/*
+OptMeowt is licensed under the MIT License
+Copyright (c) 2020 Kuba Alicki, David Baraka, Rafael Goldstein, Sebastian Zimmeck
+privacy-tech-lab, https://privacy-tech-lab.github.io/
+*/
+
+
+/*
+styles.css
+================================================================================
+styles.css is the main css page for OptMeowt's options page
+*/
+
+
 /* Dark Mode */
 @import "../libs/dark-mode-switch-1.0.0/dark-mode.css";
 

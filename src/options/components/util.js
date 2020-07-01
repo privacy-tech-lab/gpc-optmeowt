@@ -1,8 +1,16 @@
 /*
-util.js
-
-Global helper functions
+OptMeowt is licensed under the MIT License
+Copyright (c) 2020 Kuba Alicki, David Baraka, Rafael Goldstein, Sebastian Zimmeck
+privacy-tech-lab, https://privacy-tech-lab.github.io/
 */
+
+
+/*
+util.js
+================================================================================
+util.js contains global helper functions to help render the options page
+*/
+
 
 // Get local html file as string
 export async function fetchTemplate(path) {

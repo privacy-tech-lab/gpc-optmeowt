@@ -1,7 +1,17 @@
-/* 
-Whitelist.js contains functions for calling and modifying the whitelist,
-as well as calling import and export functions
+/*
+OptMeowt is licensed under the MIT License
+Copyright (c) 2020 Kuba Alicki, David Baraka, Rafael Goldstein, Sebastian Zimmeck
+privacy-tech-lab, https://privacy-tech-lab.github.io/
 */
+
+
+/*
+whitelist.js
+================================================================================
+whitelist.js handles OptMeowt's reads/writes to the local whitelist in the
+browser storage
+*/
+
 
 export async function handleDownload() {
     console.log("Downloading ...");

@@ -1,3 +1,17 @@
+/*
+OptMeowt is licensed under the MIT License
+Copyright (c) 2020 Kuba Alicki, David Baraka, Rafael Goldstein, Sebastian Zimmeck
+privacy-tech-lab, https://privacy-tech-lab.github.io/
+*/
+
+
+/*
+popup.js
+================================================================================
+popup.js supplements and renders complex elements on popup.html
+*/
+
+
 import { toggleListener } from "../whitelist.js";
 
 document.addEventListener("DOMContentLoaded", (event) => {

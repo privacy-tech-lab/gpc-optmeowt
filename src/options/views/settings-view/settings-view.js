@@ -1,6 +1,16 @@
 /*
-settings-view script
+OptMeowt is licensed under the MIT License
+Copyright (c) 2020 Kuba Alicki, David Baraka, Rafael Goldstein, Sebastian Zimmeck
+privacy-tech-lab, https://privacy-tech-lab.github.io/
 */
+
+
+/*
+settings-view.js
+================================================================================
+settings-view.js loads settings-view.html when clicked on the options page
+*/
+
 
 import { renderParse, fetchParse } from "../../components/util.js";
 import { handleDownload, startUpload, handleUpload } from "../../../whitelist.js";

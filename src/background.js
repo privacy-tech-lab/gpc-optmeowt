@@ -1,6 +1,19 @@
 /*
-Initializers
+OptMeowt is licensed under the MIT License
+Copyright (c) 2020 Kuba Alicki, David Baraka, Rafael Goldstein, Sebastian Zimmeck
+privacy-tech-lab, https://privacy-tech-lab.github.io/
 */
+
+
+/*
+background.js
+================================================================================
+background.js is the main background script handling OptMeowt's 
+main opt-out functionality
+*/
+
+
+/// Initializers
 tabs = {}; /// Store all active tab id's, domain, requests, and response
 activeTabID = 0;
 sendSignal = false;

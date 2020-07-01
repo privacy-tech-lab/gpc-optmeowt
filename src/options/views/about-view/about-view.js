@@ -1,6 +1,16 @@
 /*
-about-view script
+OptMeowt is licensed under the MIT License
+Copyright (c) 2020 Kuba Alicki, David Baraka, Rafael Goldstein, Sebastian Zimmeck
+privacy-tech-lab, https://privacy-tech-lab.github.io/
 */
+
+
+/*
+about-view.js
+================================================================================
+about-view.js loads about-view.html when clicked on the options page
+*/
+
 
 import { renderParse, fetchParse } from '../../components/util.js'
 

@@ -1,3 +1,17 @@
+/*
+OptMeowt is licensed under the MIT License
+Copyright (c) 2020 Kuba Alicki, David Baraka, Rafael Goldstein, Sebastian Zimmeck
+privacy-tech-lab, https://privacy-tech-lab.github.io/
+*/
+
+
+/*
+styles.css
+================================================================================
+styles.css is the main css page for OptMeowt's popup page
+*/
+
+
 @import "../options/styles.css";
 svg{
   fill: #d3d3d3;
