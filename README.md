@@ -4,9 +4,9 @@
 
 # OptMeowt :paw_prints:
 
-OptMeowt ("Opt Me Out") sends Do Not Sell signals to websites a user is accessing. It is an implementation of [current work towards a W3C specification](https://github.com/privacycg/proposals/issues/10) for opting out from the sale of personal information per the California Consumer Privacy Act (CCPA), particularly, [Section 999.315(d) of the Regulations](https://oag.ca.gov/sites/all/files/agweb/pdfs/privacy/oal-sub-final-text-of-regs.pdf).
+OptMeowt ("Opt Me Out") is a browser extension for sending Do Not Sell signals to websites (once we finalized development!). It is an implementation of [current work towards a W3C specification](https://github.com/privacycg/proposals/issues/10) for opting out from the sale of personal information, especially, per the California Consumer Privacy Act (CCPA), particularly, [Section 999.315(d) of the Regulations](https://oag.ca.gov/sites/all/files/agweb/pdfs/privacy/oal-sub-final-text-of-regs.pdf).
 
-We are in the middle of the development. Feel free to make a feature request, open a pull request, or just [get in touch](https://github.com/SebastianZimmeck). We are academic researchers at Wesleyan University's [privacy-tech-lab](https://privacy-tech-lab.github.io/), and we would like to collaborate with anyone who is interested in moving Do Not Sell forward.
+Feel free to make a feature request, open a pull request, or just [get in touch](https://github.com/SebastianZimmeck). We are academic researchers at Wesleyan University's [privacy-tech-lab](https://privacy-tech-lab.github.io/), and we would like to collaborate with anyone who is interested in moving Do Not Sell forward.
 
 ## Installing and Running OptMeowt
 
