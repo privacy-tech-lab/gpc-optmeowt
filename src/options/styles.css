@@ -12,13 +12,17 @@ styles.css is the main css page for OptMeowt's options page
 */
 
 
-/* Dark Mode */
+/* 
+Dark Mode Switch
+Based on https://github.com/coliff/dark-mode-switch
+*/
 @import "../libs/dark-mode-switch-1.0.0/dark-mode.css";
-
 
 /********************************************************/
 
-/* Colors */
+/* 
+Colors 
+*/
 :root {
     --accent-color: #4472C4;
     --accent-color-lighter-80: #DAE3F3;
@@ -42,7 +46,9 @@ styles.css is the main css page for OptMeowt's options page
 
 /********************************************************/
 
-/* Body style */
+/* 
+Body style 
+*/
 body {
     color: var(--text-color);
     user-select: none;
@@ -50,7 +56,9 @@ body {
 
 /********************************************************/
 
-/* Navbar item style */
+/* 
+Navbar item style 
+*/
 .navbar-item {
     color: var(--text-color-inactive);
     opacity: 1;
@@ -64,8 +72,8 @@ body {
 
 /********************************************************/
 
-/*
-Radio buttons style
+/* 
+Radio buttons style 
 */
 input[type="radio"]{
 	width: 35px; height: 35px;
@@ -86,7 +94,9 @@ input[type='radio']:hover:not(:checked) {
 
 /********************************************************/
 
-/* Checkbox */
+/* 
+`whitelist-view` options page checkbox style
+*/
 .check {
   /* appearance: none; */
   transform: scale(1.25);
@@ -94,7 +104,7 @@ input[type='radio']:hover:not(:checked) {
 
 /********************************************************/
 
-/* Switch
+/* Animated iOS style switch
 https://codepen.io/aaroniker/pen/oaQdQZ
 */
 .switch {
