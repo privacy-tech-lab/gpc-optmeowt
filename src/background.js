@@ -13,15 +13,22 @@ main opt-out functionality
 */
 
 
-/// Initializers
+/**
+ * Initializers
+ */
 tabs = {}; /// Store all active tab id's, domain, requests, and response
 activeTabID = 0;
 sendSignal = false;
 
-/// Manipulate Headers
+
+/**
+ * Manipulates Headers and adds Do-Not-Sell signal if functionality is on
+ * @param {Object} details - retrieved info passed into callback
+ * @return {HttpHeaders} array of modified HTTP headers to be sent
+ *                       (request headers)
+ */
 addHeaders = (details) => {
   updateDomainsAndSignal(details);
-  
   /// Now we know where to send the signal.
   if (sendSignal) {
     details.requestHeaders.push({ name: "DNS", value: "0" });
@@ -34,12 +41,21 @@ addHeaders = (details) => {
   }
 };
 
-/// Manipulate received headers if need be.
+/**
+ * Manipulates received headers if need be. Logs data and updates popup badge
+ * @param {Object} details - retrieved info passed into callback
+ */
 receivedHeaders = (details) => {
   logData(details);
   incrementBadge(details);
 };
 
+/**
+ * Adds current domain to local storage whitelist. 
+ * Verifies a signal should be sent to a particular domain and sets 
+ * `sendSignal` bool flag accordingly. 
+ * @param {Object} details - retrieved info passed into callback
+ */
 function updateDomainsAndSignal(details) {
   chrome.storage.local.get(["WHITELIST_ENABLED", "DOMAINS"], function (result) {
     /// Store current domain in DOMAINS
@@ -69,7 +85,10 @@ function updateDomainsAndSignal(details) {
   });
 }
 
-/// Logs all urls of a domain with response headers
+/**
+ * Logs all urls of a domain with response headers to local `tabs` object
+ * @param {Object} details - retrieved info passed into callback
+ */
 function logData(details) {
   var url = new URL(details.url);
   var parsed = psl.parse(url.hostname);
@@ -103,7 +122,10 @@ function logData(details) {
   }
 }
 
-/// Increment badge number
+/**
+ * Counts and stores requests for popup window, and sends "BADGE" and 
+ * "REQUESTS" messages to popup.js
+ */
 function incrementBadge() {
   let numberOfRequests = 0;
   let requests = {};
@@ -124,7 +146,9 @@ function incrementBadge() {
   });
 }
 
-/// Enable extension functionality
+/**
+ * Enables extension functionality and sets site listeners 
+ */
 function enable() {
   chrome.webRequest.onBeforeSendHeaders.addListener(
     addHeaders,
@@ -147,7 +171,9 @@ function enable() {
   chrome.storage.local.set({ ENABLED: true });
 }
 
-/// Disable extenstion functionality
+/**
+ * Disables extension functionality
+ */
 function disable() {
   chrome.webRequest.onBeforeSendHeaders.removeListener(addHeaders);
   chrome.webRequest.onBeforeSendHeaders.removeListener(receivedHeaders);
@@ -156,18 +182,27 @@ function disable() {
   counter = 0;
 }
 
+/**
+ * Listener for tab switch that updates curr tab badge counter
+ */
 chrome.tabs.onActivated.addListener(function (info) {
   activeTabID = info.tabId;
   incrementBadge();
 });
 
+/**
+ * Runs on startup to query current tab
+ */
 chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
   if (tabs.id !== undefined) {
     activeTabID = tab.id;
   }
 });
 
-/// Generate DOMAINS, WHITELIST_ENABLED, NONWHITELIST keys in local storage
+/**
+ * Generates DOMAINS, WHITELIST_ENABLED, NONWHITELIST keys in local storage
+ * if undefined
+ */
 chrome.storage.local.get(["ENABLED", "WHITELIST_ENABLED", "DOMAINS"], function (
   result
 ) {
@@ -182,6 +217,9 @@ chrome.storage.local.get(["ENABLED", "WHITELIST_ENABLED", "DOMAINS"], function (
   }
 });
 
+/**
+ * Runs on startup to enable/disable extension
+ */
 chrome.storage.local.get(["ENABLED"], function (result) {
   if (result.ENABLED) {
     enable();
@@ -190,6 +228,10 @@ chrome.storage.local.get(["ENABLED"], function (result) {
   }
 });
 
+/**
+ * Listener for runtime messages, in partuclar "TAB" from contentScript.js
+ * or for "INIT" to start popup badge counter
+ */
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   if (request.ENABLED != null) {
     if (request.ENABLED) {
