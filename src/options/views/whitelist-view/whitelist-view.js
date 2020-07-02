@@ -15,17 +15,28 @@ whitelist-view.js loads whitelist-view.html when clicked on the options page
 import { renderParse, fetchParse } from '../../components/util.js'
 import { toggleListener } from "../../../whitelist.js";
 
+/**
+ * @typedef headings
+ * @property {string} headings.title - Title of the given page
+ * @property {string} headings.subtitle - Subtitle of the given page
+ */
 const headings = {
     title: 'Whitelist',
     subtitle: "Create a custom list to send 'Do-Not-Sell' signals"
 }
 
+/**
+ * Creates the event listeners for the `Whitelist` page buttons and options
+ */
 function eventListeners() {
     document.getElementById('searchbar').addEventListener('keyup', filterList )
     createToggleListeners();
 }
 
-// passed in domains object after HTML rendered
+/**
+ * Creates the specific whitelist toggles for each rendered domain in 
+ * the whitelist
+ */
 function createToggleListeners() {
   chrome.storage.local.get(["DOMAINS"], function (result) {
     for (let domain in result.DOMAINS) {
@@ -34,8 +45,12 @@ function createToggleListeners() {
   });
 }
 
-// Filterd lists code heavily inspired by
-// `https://www.w3schools.com/howto/howto_js_filter_lists.asp`
+/**
+ * Filterd lists code heavily inspired by
+ * `https://www.w3schools.com/howto/howto_js_filter_lists.asp`
+ * 
+ * Enables live filtering of domains via the search bar
+ */
 function filterList() {
   let input, list, li, count
   input = document.getElementById('searchbar').value.toLowerCase();
@@ -54,8 +69,10 @@ function filterList() {
   };
 }
 
-/* Generates the HTML component of whitelisted domains 
-   based on the stored whitelist */
+/**
+ * Builds the list of domains in the whitelist, and their respective 
+ * options, to be displayed
+ */
 function buildList() {
   let items = ""
   chrome.storage.local.get(["DOMAINS"], function (result) {
@@ -115,8 +132,13 @@ function buildList() {
   });
 }
 
-/* Generates the HTML component of whitelist toggle 
-   based on whether a domain is true/false in the stored whitelist */
+/**
+ * Generates the HTML that will build the whitelist switch for a given 
+ * domain in the whitelist
+ * @param {string} domain - Any given domain
+ * @param {bool} bool - Represents whether it is whitelisted or not
+ * @return {string} - The stringified checkbox HTML compontent
+ */
 function buildToggle(domain, bool) {
   let toggle;
   if (bool) {
@@ -127,6 +149,10 @@ function buildToggle(domain, bool) {
   return toggle
 }
 
+/**
+ * Renders the `Whitelist` view in the options page
+ * @param {string} scaffoldTemplate - stringified HTML template
+ */
 export async function whitelistView(scaffoldTemplate) {
     const body = renderParse(scaffoldTemplate, headings, 'scaffold-component')
     let content = await fetchParse('./views/whitelist-view/whitelist-view.html', 'whitelist-view')

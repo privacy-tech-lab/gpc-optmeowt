@@ -22,6 +22,10 @@ import { settingsView } from "../settings-view/settings-view.js";
 import { whitelistView } from "../whitelist-view/whitelist-view.js";
 import { aboutView } from "../about-view/about-view.js";
 
+/**
+ * Opens the `Settings` page
+ * @param {string} bodyTemplate - stringified HTML template
+ */
 async function displaySettings(bodyTemplate) {
     animateCSS("#scaffold", 'fadeOut', async function() {
         document.getElementById('scaffold').remove()
@@ -32,6 +36,10 @@ async function displaySettings(bodyTemplate) {
       document.querySelector('#main-view-settings').classList.add('active')
 }
 
+/**
+ * Opens the `Whitelist` page
+ * @param {string} bodyTemplate - stringified HTML template
+ */
 function displayWhitelist(bodyTemplate) {
     animateCSS("#scaffold", 'fadeOut', async function() {
         document.getElementById('scaffold').remove()
@@ -42,6 +50,10 @@ function displayWhitelist(bodyTemplate) {
       document.querySelector('#main-view-whitelist').classList.add('active')
 }
 
+/**
+ * Opens the `Display` page
+ * @param {string} bodyTemplate - stringified HTML template
+ */
 function displayAbout(bodyTemplate) {
     animateCSS("#scaffold", 'fadeOut', async function() {
         document.getElementById('scaffold').remove()
@@ -52,6 +64,9 @@ function displayAbout(bodyTemplate) {
       document.querySelector('#main-view-about').classList.add('active')
 }
 
+/**
+ * Prepares the `Main` page elements and intializes the default `Settings` page
+ */
 export async function mainView() {
   let docTemplate = await fetchTemplate("./views/main-view/main-view.html");
   const bodyTemplate = await fetchTemplate(

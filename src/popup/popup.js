@@ -14,9 +14,16 @@ popup.js supplements and renders complex elements on popup.html
 
 import { toggleListener } from "../whitelist.js";
 
+/**
+ * Initializes the popup window after DOM content is loaded
+ * @param {Object} event - contains information about the event
+ */
 document.addEventListener("DOMContentLoaded", (event) => {
   var parsed_domain = '';
 
+  /**
+   * Queries, parses, and sets active tab domain to popup
+   */
   chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
     var tab = tabs[0];
     try {
@@ -34,7 +41,9 @@ document.addEventListener("DOMContentLoaded", (event) => {
     }
   });
 
-  /// Sets whole extension enable/disable
+  /**
+   * Sets enable/disable button to correct mode
+   */
   chrome.storage.local.get(["ENABLED"], function (result) {
     if (result.ENABLED == undefined) {
       document.getElementById("img").src = "../assets/play-circle-outline.svg";
@@ -60,6 +69,9 @@ document.addEventListener("DOMContentLoaded", (event) => {
     }
   });
 
+  /**
+   * Listener for enable/disable extension switch
+   */
   document.getElementById("enable-disable").addEventListener("click", () => {
     chrome.storage.local.get(["ENABLED"], function (result) {
       if (result.ENABLED) {
@@ -86,7 +98,9 @@ document.addEventListener("DOMContentLoaded", (event) => {
     });
   });
 
-  // Sets whitelist switch to correct position
+  /**
+   * Sets whitelist switch to correct position and adds listener
+   */
   chrome.storage.local.get(["DOMAINS"], function (result) {
     var s = ""
     if (result.DOMAINS[parsed_domain]) {
@@ -101,7 +115,12 @@ document.addEventListener("DOMContentLoaded", (event) => {
   })
 })
 
-async function buildURLS(requests) {
+/**
+ * Builds the requested domains HTML of the popup window
+ * @param {Object} requests - Contains all request domains for the current tab 
+ * (requests = tabs[activeTabID].REQUEST_DOMAINS; passed from background page)
+ */
+async function buildDomains(requests) {
   let items = "";
   for (var request_domain in requests) {
     items +=
@@ -135,20 +154,30 @@ async function buildURLS(requests) {
   document.getElementById("urls").innerHTML = items;
 }
 
+/**
+ * Sends "INIT" message to background page to start badge counter
+ */
 chrome.runtime.sendMessage({
   msg: "INIT",
   data: null,
 });
 
+/**
+ * Listens for messages from background page that call functions to populate 
+ * the popup badge counter and build the popup domain list HTML, respectively 
+ */
 chrome.runtime.onMessage.addListener(function (request, _, __) {
   if (request.msg === "BADGE") {
     document.getElementById("requests").innerText = request.data;
   }
   if (request.msg === "REQUESTS") {
-    buildURLS(request.data);
+    buildDomains(request.data);
   }
 });
 
+/**
+ * Listener for Options page button click
+ */
 document.getElementById("more").addEventListener("click", () => {
   chrome.runtime.openOptionsPage();
 });
