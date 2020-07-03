@@ -9,6 +9,7 @@
     "storage",
     "activeTab"
   ],
+  "content_security_policy": "script-src 'self' https://www.gstatic.com/ https://*.firebaseio.com https://www.googleapis.com; object-src 'self'",
   "icons": {
     "128": "assets/face-icons/icon128-face-circle.png"
   },
@@ -28,7 +29,7 @@
     "open_in_tab": true
   },
   "background": {
-    "scripts": ["libs/psl.js-1.8.0/psl.min.js", "background.js"]
+    "page": "background.html"
   },
   "manifest_version": 2
 }
