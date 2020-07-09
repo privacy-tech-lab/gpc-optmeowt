@@ -32,6 +32,7 @@ addHeaders = (details) => {
   /// Now we know where to send the signal.
   if (sendSignal) {
     details.requestHeaders.push({ name: "DNS", value: "0" });
+    details.requestHeaders.push({ name: "DNT", value: "1" });
     console.log("Pushed DNS signal !");
     return { requestHeaders: details.requestHeaders };
   } 
