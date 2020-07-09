@@ -22,7 +22,7 @@ sendSignal = false;
 addHeaders = (details) => {
   updateDomainsAndSignal(details);
   if (sendSignal) {
-    initUSP(details);
+    initUSP();
   }
 
   /// Now we know where to send the signal.

@@ -28,13 +28,20 @@ modification process
 - We have the issue of cookies being sent to sites that don't really
   need them, i.e. 'chrome://...' sites and our background/'options.html'
   pages, so we need to filter this out. 
-  (Unchecked runtime.lastError: No host permissions for cookies at url: "chrome://extensions/".)
-- Error: (Unchecked runtime.lastError: Failed to parse or set cookie named "us_privacy".)
+  (Unchecked runtime.lastError: No host permissions for cookies at url: 
+    "chrome://extensions/".)
+- Error: (Unchecked runtime.lastError: Failed to parse or set cookie named 
+    "us_privacy".)
+- Once you set a cookie, create a listener that checks
+  if the cookie is modified, and check it agains the last
+  version sent for a "server response" (ie. is it '1---'),
+  then form a UI response for the user.
 
                     ----- Done -----
 - Implemented check for different versions with iab_vars in `us_privacy.js`,
   (though not with a JSON)
-- Have it respond if a cookie exists and parse it (though doesn't update the cookie name)
+- Have it respond if a cookie exists and parse it (though doesn't update 
+    the cookie name)
 
                   ----- Parsing JSON -----
 - Honestly, parsing JSON for this might be too roundabout
@@ -42,36 +49,24 @@ modification process
 -!- Create something that pulls the data in when the extension is refreshed,
     right into `iab_vars`
 
-                  ----- Dev Notes -----
-- In the future, maybe try using `chorme.cookie.getAll()`
-- Once you set a cookie, create a listener that checks
-  if the cookie is modified, and check it agains the last
-  version sent for a "server response" (ie. is it '1---'),
-  then form a UI response for the user.
-
                 ----- Prev. Attempts -----
-- I have also tried
-  `details.requestHeaders.push({ 
-    name: "cookie", 
-    value: "1NYN;path=/;domain=" + d + "" });`
-  HTTP headers, but this one line didn't work so I shelved it. 
+- push a cookie with HTTP headers
 */
 
-iab_vars = [
+iab_vars = [  // Make this not case-sensitive
   "usprivacy",
   "us-privacy",
   "us_privacy"
 ]
-cookie_exists = false
-usp_cookie = {}
+default_name = 'us_privacy'
+default_value = '1NYN'
 
 /**
- * Updates `us_privacy` cookie with user option
- * Checks if there are multiple 
- * @param {Object} details - 
+ * Initializes the IAB proposal for CCPA Opt-Out functionality
+ * via a `us_privacy` first-party cookie
+ * Pulls data about the current tab and intializes the cookie-set process
  */
-function initUSP(details) {
-  usp_cookie = {}
+function initUSP() {
 
   chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
     console.log("tabs: ", tabs)
@@ -88,100 +83,69 @@ function initUSP(details) {
 }
 
 /**
- * This will assume there is only ONE cookie;
- * once it finds one, it assumes it is the only one.
- * 
- * STRUCTURE: fetch iab_cookies.json, and then chain
- * to another function that handles the promise
- * @param {string} url - location of JSON files
+ * Collects all cookies with variations of the IAB `us_privacy`
+ * cookie, and handles them according to how many exist
+ * @param {string} url - url of the current tab
  */
-function checkExistsAndHandleUSP (url, domain) {
+function checkExistsAndHandleUSP(url) {
+  var cookie_matches = []
+
   chrome.cookies.getAll({
     "url": url
   }, 
   function (cookie_arr) {
     // fetchAndHandleJSON('iab_cookies.json');
     console.log("cookie_arr: ", cookie_arr)
-    cookie_exists = false
     for (var cookie in cookie_arr) {
       console.log("iterating...", cookie_arr[cookie]["name"]);
       if ( iab_vars.includes(cookie_arr[cookie]["name"]) ){
         console.log("An iab variation exists!!!")
         storeURLforDev(cookie_arr[cookie]["domain"])
-        cookie_exists = true
-        usp_cookie = cookie_arr[cookie]
-        // return
+        cookie_matches.push(cookie_arr[cookie])
       }
     }
-    console.log("cookie_exists: ", cookie_exists)
-    if (cookie_exists) {
-      // value = 'EXISTS'
-      value = parseUSP(usp_cookie["value"])
+
+    // Now we have an array of all the cookie matches.
+    if (cookie_matches.length === 1) {
+      value = parseUSP(cookie_matches[0]["value"])
       if (value == '1---') {
-        console.log("This site recognized you are outside of the domain of the CCPA.")
+        console.log("This site recognized you are outside of \
+                     the domain of the CCPA.")
       } else {
-        updateUSP(url, domain, value);
+        updateUSP(cookie_matches[0], value, url);
       }
-    } else {
-      updateUSP(url, domain, '1NNN');
+    }
+    if (cookie_matches.length === 0) {
+        updateUSP(null, '1NYN', url);
+    }
+    // If there are multiple cookies, handle here.
+    // Since makeCookieUSP sets domain === null;
+    // if multiple cookies exist, keep only the top level domain.
+    // i.e. starts with '.'
+    //    ---- IMPLEMENT ---- 
+    if (cookie_matches.length > 1) {
+      console.log("MULTIPLE COOKIES EXIST!")
     }
   })
 }
-
-function storeURLforDev(url) {
-  chrome.storage.local.get(["IAB"], 
-  function (result) {
-    var iab = result.IAB
-    if (iab[url] === undefined) {
-      iab[url] = false
-      chrome.storage.local.set({"IAB": iab});
-      console.log("Stored current iab website");
-    } 
-  })
-}
-
-// function handleExistsUSP (json) {
-//   iab_vars = json["iab"]
-//   console.log("iab_vars", iab_vars)
-//   if 
-// }
-
-// /**
-//  * 
-//  * @param {string} location - Location/name of the JSON to be fetched
-//  * @return {Object} Data inside JSON object
-//  */
-// function fetchAndHandleJSON(location) {
-//   return fetch(location)
-//   .then(
-//     response => {
-//       console.log('Retrieved iab cookie JSON!')
-//       // Add error cases - 
-//       // https://stackoverflow.com/questions/47267221/fetch-response-json-and-response-status
-//       response.json().then(json => 
-//         {
-//           console.log("JSON: ", json)
-//           // fun(json)
-//         })
-//     }
-//   )
-// }
   
 /**
- * -----INCOMPLETE-----
- * but semi functioning
- * @param {*} url_obj 
- * @param {*} domain 
+ * If a cookie exists, it will be updated and set
+ * If a cookie does not exist, it will be created then set
+ * according to the IAB standards and the passed in values
+ * @param {object} cookie - existing cookie to be updated
+ * @param {string} value - value to be given to new cookie
+ * @param {string} url - url to be set to new cookie
  */
-function updateUSP (url, domain, value) {
+function updateUSP(cookie, value, url) {
   // Maybe check to see if current_domain === origin_domain
   // Also try chrome.cookies.getAll() to check all windows?
 
-  chrome.cookies.get({ 
-    "name": 'us_privacy', // Make this not case-sensitive
-    "url": url
-  }, 
-  function (cookie) {
+  // chrome.cookies.get({ 
+  //   "name": 'us_privacy', // Make this not case-sensitive
+  //   "url": url
+  // }, 
+  // function (cookie) {
     /* 
       This next block of code was originally written with
       the assumption that this cookie call would check to 
@@ -212,26 +176,41 @@ function updateUSP (url, domain, value) {
     //       console.log("Found and updated cookie value.")
     //     })
     // } else {
-      console.log("COOKIE NULL, creating new cookie")
-      chrome.cookies.set(
-        makeCookieUSP(url, value), 
-        function (details) {
-          console.log("Created new cookie.")
-        }
-      )
+
+
+  /*
+    Here maybe I could just pass in the whole cookie, and
+    have make cookie just update the cookie values. 
+  */
+  let new_cookie = {}
+
+  if (cookie === null) {
+    new_cookie = makeCookieUSP(default_name, default_value, url)
+  } else {
+    new_cookie = pruneCookieUSP(cookie, value, url)
+  }
+  console.log("Updated cookie to be set: ", new_cookie)
+  chrome.cookies.set(
+    new_cookie, 
+    function (details) {
+      console.log("Created new cookie.")
+    }
+  )
     // }
-  })
+  // })
 }
 
 /**
- * -----INCOMPLETE-----
- * @param {string} signal - 'us_privacy.value` from a cookie
- * @return {string} - Updated signal
+ * Parses a IAB cookie value given one exists, and updates
+ * it according to its current value
+ * @param {string} signal - the value of an IAB cookie. Example: `1YNN`. 
+ * @return {string} - Updated IAB value to be set
  */
-function parseUSP (signal) {
+function parseUSP(signal) {
   console.log("parsing signal: ", signal)
   if (!isValidSignalUSP(signal)) {
-    console.log('Existing domain is not Valid! Updating signal to valid form...')
+    console.log('Existing domain is not Valid! Updating signal to \
+                valid form...')
     return '1NYN'
   }
   if (signal === '1---') {
@@ -244,29 +223,60 @@ function parseUSP (signal) {
 }
 
 /**
- * Constructs a new `us_privacy` cookie
- * @param {string} url - The url the cookie should be assigned
- * @return {Object} `us_privacy` cookie
+ * "Prunes" the values a retrieved cookie has set that a cookie
+ * "to-be-set" cannot have. Also updates the value and url according
+ * to the passed in values. 
+ * @param {object} cookie - Cookie to be "pruned"
+ * @param {string} value - value the updated cookie should have
+ * @param {string} url - url the updated cookie should have
+ * @return {object} - updated cookie to be returned
  */
-function makeCookieUSP(url, value) {
+function pruneCookieUSP(cookie, value, url) {
+  console.log("cookie pruning: ", cookie)
+  cookie.value = value
+  cookie.url = url
+  console.log("Prune cookie domain: ", cookie.domain)
+  // Checks if a cookie made by a site is stored per domain/subdomain
+  if (cookie.domain.substr(0,1) !== '.') {
+    console.log("Domain to be pruned starts with '.'")
+    cookie.domain = null;
+  }
+  if (cookie.hostOnly !== null) {
+    delete cookie.hostOnly
+  }
+  if (cookie.session !== null) {
+    delete cookie.session
+  }
+  console.log("Pruned cookie: ", cookie)
+  return cookie
+}
+
+/**
+ * Constructs a new cookie per the IAB spec
+ * @param {string} url - The url the cookie should be assigned
+ * @return {Object} - new IAB cookie
+ */
+function makeCookieUSP(name, value, url) {
   var time = new Date()
   var now = time.getTime()
   console.log("now ", now)
 
   let cookie = {}
   cookie.expirationDate = now/1000 + 31557600
+  // cookie.domain = domain
   cookie.url = url;
-  cookie.name = 'us_privacy'
+  cookie.name = name
   cookie.value = value
   return cookie
 }
 
 /**
- * Checks if a given `us_privacy` signal is valid for verion '1'
+ * IAB spec V.1:
+ * Checks if a given `us_privacy` signal is valid
  * @param {string} signal - `us_privacy` string
- * @returns {bool} Represents if signal is a valid signal
+ * @returns {bool} - Represents if signal is a valid signal
  */
-function isValidSignalUSP (signal) {
+function isValidSignalUSP(signal) {
   var valid_chars = ['y', 'n', 'Y', 'N']
   if (signal.length != 4) { 
     return false 
@@ -289,6 +299,60 @@ function isValidSignalUSP (signal) {
   return true
 }
 
+/**
+ * Stores the url, assuming a IAB cookie was found by the extension,
+ * to a special location for debuggin purposes. 
+ * --- TO BE REMOVED IN FINAL VERSION --- 
+ * @param {string} url - url to be stored
+ */
+function storeURLforDev(url) {
+  chrome.storage.local.get(["IAB"], 
+  function (result) {
+    var iab = result.IAB
+    if (iab[url] === undefined) {
+      iab[url] = false
+      chrome.storage.local.set({"IAB": iab});
+      console.log("Stored current iab website");
+    } 
+  })
+}
+
+/* 
+Proposed JSON file handling for IAB signal variations
+*/
+
+// function handleExistsUSP (json) {
+//   iab_vars = json["iab"]
+//   console.log("iab_vars", iab_vars)
+//   if 
+// }
+
+// /**
+//  * 
+//  * @param {string} location - Location/name of the JSON to be fetched
+//  * @return {Object} Data inside JSON object
+//  */
+// function fetchAndHandleJSON(location) {
+//   return fetch(location)
+//   .then(
+//     response => {
+//       console.log('Retrieved iab cookie JSON!')
+// // Add error cases - 
+// // https://stackoverflow.com/questions/47267221/fetch-response-json-and
+        // -response-status
+//       response.json().then(json => 
+//         {
+//           console.log("JSON: ", json)
+//           // fun(json)
+//         })
+//     }
+//   )
+// }
+
+/**
+ * Initializes the "IAB" object in the local storage
+ * for debugging purposes
+ */
 chrome.storage.local.get(["IAB"], function (
   result
 ) {
