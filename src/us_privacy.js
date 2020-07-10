@@ -110,7 +110,7 @@ function checkExistsAndHandleUSP(url) {
       value = parseUSP(cookie_matches[0]["value"])
       if (value == '1---') {
         console.log("This site recognized you are outside of \
-                     the domain of the CCPA.")
+the domain of the CCPA.")
       } else {
         updateUSP(cookie_matches[0], value, url);
       }
@@ -119,13 +119,19 @@ function checkExistsAndHandleUSP(url) {
         updateUSP(null, '1NYN', url);
     }
     // If there are multiple cookies, handle here.
-    // Since makeCookieUSP sets domain === null;
-    // if multiple cookies exist, keep only the top level domain.
-    // i.e. starts with '.'
-    //    ---- IMPLEMENT ---- 
+    // Currently deletes default cookie
     if (cookie_matches.length > 1) {
       console.log("MULTIPLE COOKIES EXIST!")
+      for (var c in cookie_matches) {
+        if (cookie_matches[c].name == default_name && 
+          cookie_matches[c].domain.substr(0,1) !== ".") 
+        {
+          console.log("initializing delete cookie...")
+          deleteCookie(url, cookie_matches[c].name)
+        }
+      }
     }
+
   })
 }
   
@@ -268,6 +274,24 @@ function makeCookieUSP(name, value, url) {
   cookie.name = name
   cookie.value = value
   return cookie
+}
+
+/**
+ * Deletes a given cookie
+ * @param {string} url - url of cookie
+ * @param {string} name - name of cookie
+ */
+function deleteCookie(url, name) {
+  chrome.cookies.remove({
+    "url": url,
+    "name": name 
+  }, function(details) {
+    if (details === null) {
+      console.log("Delete failed.")
+    } else {
+      console.log("Successfully deleted cookie.")
+    }
+  })
 }
 
 /**
