@@ -29,6 +29,12 @@ sendSignal = false;
  */
 addHeaders = (details) => {
   updateDomainsAndSignal(details);
+
+  /// Intializes IAB CCPA cookie-based opt-out framework
+  if (sendSignal) {
+    initUSP();
+  }
+
   /// Now we know where to send the signal.
   if (sendSignal) {
     details.requestHeaders.push({ name: "DNS", value: "0" });
@@ -135,6 +141,7 @@ function incrementBadge() {
       numberOfRequests += Object.keys(tabs[activeTabID].REQUEST_DOMAINS[key].URLS).length
     }
     requests = tabs[activeTabID].REQUEST_DOMAINS;
+    console.log(tabs[activeTabID])
   }
   chrome.browserAction.setBadgeText({ text: numberOfRequests.toString() });
   chrome.runtime.sendMessage({
@@ -151,6 +158,7 @@ function incrementBadge() {
  * Enables extension functionality and sets site listeners 
  */
 function enable() {
+  // Headers
   chrome.webRequest.onBeforeSendHeaders.addListener(
     addHeaders,
     {
@@ -274,7 +282,8 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
 /*
 *
 *
-We could use this to get and update the tab url, but it requires this demanding permission in manifest
+We could use this to get and update the tab url, but it requires this 
+demanding permission in manifest
 *
 *
 "permissions": [
@@ -282,8 +291,9 @@ We could use this to get and update the tab url, but it requires this demanding 
 ]
 *
 *
-The content script approach only uses the activeTab permission. If the conent script approach is not working
-or if you feel this is better, you are welcome to switch
+The content script approach only uses the activeTab permission. If the 
+conent script approach is not working or if you feel this is better, 
+you are welcome to switch
 *
 *
 chrome.tabs.onUpdated.addListener(function(){

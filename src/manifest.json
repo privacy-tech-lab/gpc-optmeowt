@@ -7,7 +7,8 @@
     "<all_urls>",
     "webRequestBlocking",
     "storage",
-    "activeTab"
+    "activeTab",
+    "cookies"
   ],
   "icons": {
     "128": "assets/face-icons/icon128-face-circle.png"
@@ -28,7 +29,11 @@
     "open_in_tab": true
   },
   "background": {
-    "scripts": ["libs/psl.js-1.8.0/psl.min.js", "background.js"]
+    "scripts": [
+      "libs/psl.js-1.8.0/psl.min.js", 
+      "background.js", 
+      "us_privacy.js"
+    ]
   },
   "manifest_version": 2
 }
