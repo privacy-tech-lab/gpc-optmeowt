@@ -4,25 +4,27 @@
 
 # OptMeowt :paw_prints:
 
-OptMeowt ("Opt Me Out") sends Do Not Sell signals to websites a user is accessing. It is an implementation of [current work towards a W3C specification](https://github.com/privacycg/proposals/issues/10) for opting out from the sale of personal information per the California Consumer Privacy Act (CCPA), particularly, [Section 999.315(d) of the Regulations](https://oag.ca.gov/sites/all/files/agweb/pdfs/privacy/oal-sub-final-text-of-regs.pdf).
+OptMeowt ("Opt Me Out") is a browser extension for sending Do Not Sell signals to websites. **Note:** It is a work in progress, we are not finished yet! OptMeowt implements [current work towards a W3C specification](https://github.com/privacycg/proposals/issues/10) for opting out from the sale of personal information, especially, per the California Consumer Privacy Act (CCPA), [Regs Section 999.315(d)](https://oag.ca.gov/sites/all/files/agweb/pdfs/privacy/oal-sub-final-text-of-regs.pdf).
 
-We are in the middle of the development. Feel free to make a feature request, open a pull request, or just [get in touch](https://github.com/SebastianZimmeck). We are academic researchers at Wesleyan University's [privacy-tech-lab](https://privacy-tech-lab.github.io/), and we would like to collaborate with anyone who is interested in moving Do Not Sell forward.
+OptMewot sends browser headers with Do Not Sell signals to all domains visited. Users can also whitelist domains that should not receive such signal. In addition, OptMeowt also implements functionality for sending Do Not Sell signals according to the [IAB CCPA Compliance Framework for Publishers & Technology Companies](https://iabtechlab.com/standards/ccpa/).
+
+Feel free to make a feature request, open a pull request, or just [get in touch](https://github.com/SebastianZimmeck). We are academic researchers at Wesleyan University's [privacy-tech-lab](https://privacy-tech-lab.github.io/), and we would like to collaborate with anyone who is interested in moving Do Not Sell forward.
 
 ## Installing and Running OptMeowt
 
-You can install OptMeowt to any Chromium-based web browser. In addition to Google Chrome, it should also run in Vivaldi, Opera, Microsoft Edge, and Brave. In the future we hope to support Firefox and Safari as well.
+You can install OptMeowt to any Chromium-based browser. In addition to Chrome, it should run in Brave, Edge, Opera, and Vivaldi. In the future we hope to support Firefox and Safari as well.
 
-Here are the instructions for installing OptMeowt as an unpacked extension on Google Chrome:
+Install OptMeowt as an unpacked extension on Chrome as follows:
 
 1. Clone this repo or download a zipped copy and unzip it.
-2. In Google Chrome, navigate to the extensions page at `chrome://extensions/`.
+2. In Chrome, navigate to the extensions page at `chrome://extensions/`.
 3. If you have not done so yet, enable `Developer mode` with the slider on the top right corner of the extension page.
 4. Click the `Load unpacked` button in the top left of the page.
 5. Navigate to where you unzipped the OptMeowt folder and open up the `src` folder.
 **Note:** You do not need to click on the `manifest.json` file in Chrome, though other browsers may require this.
-6. Click to finalize and install.
+6. Click to finalize the install.
 
-Congratulations! You have installed OptMeowt. You can use via the icon next to the search bar.
+Congratulations! You have installed OptMeowt. You can use it via the icon next to the search bar.
 
 ## Files and Directories in the Repo
 
@@ -46,6 +48,7 @@ OptMeowt uses the following third party libraries. We thank the developers.
 - [uikit](https://github.com/uikit/uikit)
 - [Switch Animation by Aaron Iker](https://codepen.io/aaroniker/pen/oaQdQZ)
 - [psl (Public Suffix List)](https://github.com/lupomontero/psl)
+- [Dark Mode Switch](https://github.com/coliff/dark-mode-switch)
 
 <p align="center">
   <img src="https://github.com/privacy-tech-lab/optmeowt-browser-extension/blob/master/plt_logo.png" width="200px" height="200px" title="privacy-tech-lab logo">

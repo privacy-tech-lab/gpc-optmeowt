@@ -12,6 +12,9 @@ styles.css is the main css page for OptMeowt's popup page
 */
 
 
+/*
+SVG photo assets style
+*/
 @import "../options/styles.css";
 svg{
   fill: #d3d3d3;

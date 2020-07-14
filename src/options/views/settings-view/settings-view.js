@@ -17,11 +17,19 @@ import { handleDownload, startUpload, handleUpload } from "../../../whitelist.js
 import { darkSwitchFunction } from "../../../libs/dark-mode-switch-1.0.0/dark-mode-switch.js"
 import "../../../libs/FileSaver.js-2.0.2/src/FileSaver.js"
 
+/**
+ * @typedef headings
+ * @property {string} headings.title - Title of the given page
+ * @property {string} headings.subtitle - Subtitle of the given page
+ */
 const headings = {
   title: "Settings",
   subtitle: "Adjust extension settings",
 };
 
+/**
+ * Creates the event listeners for the `Settings` page buttons and options
+ */
 function eventListeners() {
     document.getElementById("settings-view-radio0").addEventListener('click', () => {
         chrome.runtime.sendMessage({ ENABLED: true, WHITELIST_ENABLED: false });
@@ -40,6 +48,10 @@ function eventListeners() {
     document.getElementById("upload-whitelist").addEventListener('change', handleUpload, false)
 }
 
+/**
+ * Renders the `Settings` view in the options page
+ * @param {string} scaffoldTemplate - stringified HTML template
+ */
 export async function settingsView(scaffoldTemplate) {
   const body = renderParse(scaffoldTemplate, headings, "scaffold-component");
   let content = await fetchParse(
