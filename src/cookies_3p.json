@@ -1,0 +1,22 @@
+{
+    "cu": {
+        "name": "cu",
+        "value": "optout",
+        "domain": ".ipredictive.com"
+    },
+    "tyntOptOut": {
+        "name": "tyntOptOut",
+        "value": "true",
+        "domain": ".tynt.com"
+    },
+    "33x_nc": {
+        "name": "33x_nc",
+        "value": "33Across+Optout",
+        "domain": ".33across.com"
+    },
+    "optout": {
+        "name": "optout",
+        "value": "1",
+        "domain": "choices.adhaven.com"
+    }
+}
