@@ -13,6 +13,9 @@ browser storage
 */
 
 
+/**
+ * Exports the whitelist in local storage as a .txt file
+ */
 export async function handleDownload() {
     console.log("Downloading ...");
     chrome.storage.local.get(["DOMAINS"], function (result) {
@@ -24,11 +27,17 @@ export async function handleDownload() {
     console.log("Downloaded!")
 }
 
+/**
+ * Sets-up the process for importing a saved whitelist backup
+ */
 export async function startUpload() {
   document.getElementById("upload-whitelist").value = ""
   document.getElementById("upload-whitelist").click()
 }
 
+/**
+ * Imports and updates the whitelist in local storage with an imported backup
+ */
 export async function handleUpload() {
     console.log("Starting upload ...");
     const file = this.files[0];
@@ -42,43 +51,55 @@ export async function handleUpload() {
 
 //////////////////////////////////////////////////////////////////////////
 
-// Sets DOMAINS[urlKey] to true
-export async function addToWhitelist(urlKey) {
+/**
+ * Sets DOMAINS[domainKey] to true
+ * @param {string} domainKey - domain to be changed in whitelist 
+ */
+export async function addToWhitelist(domainKey) {
   var new_domains = [];
   chrome.storage.local.get(["DOMAINS"], function (result) {
     new_domains = result.DOMAINS;
-    new_domains[urlKey] = true;
+    new_domains[domainKey] = true;
     chrome.storage.local.set({ DOMAINS: new_domains });
   }); 
-  console.log(urlKey, ", Added to whitelist.")
+  console.log(domainKey, ", Added to whitelist.")
 }
 
-// Sets DOMAINS[urlKey] to false
-export async function removeFromWhitelist(urlKey) {
+/**
+ * Sets DOMAINS[domainKey] to false
+ * @param {string} domainKey - domain to be changed in whitelist 
+ */
+export async function removeFromWhitelist(domainKey) {
   var new_domains = [];
   chrome.storage.local.get(["DOMAINS"], function (result) {
     new_domains = result.DOMAINS;
-    new_domains[urlKey] = false;
+    new_domains[domainKey] = false;
     chrome.storage.local.set({ DOMAINS: new_domains });
   });
-  console.log(urlKey, ", Removed from whitelist.")
+  console.log(domainKey, ", Removed from whitelist.")
 }
 
-// Removes DOMAINS[urlKey] from DOMAINS
-export async function permRemoveFromWhitelist(urlKey) {
+/**
+ * Removes DOMAINS[domainKey] from DOMAINS
+ * @param {string} domainKey - domain to be changed in whitelist 
+ */
+export async function permRemoveFromWhitelist(domainKey) {
   var new_domains = [];
   chrome.storage.local.get(["DOMAINS"], function (result) {
     new_domains = result.DOMAINS;
-    delete new_domains[urlKey]
+    delete new_domains[domainKey]
     chrome.storage.local.set({ DOMAINS: new_domains });
   });
 }
 
 //////////////////////////////////////////////////////////////////////////
 
-// elementId: (string) representing element to grab by ID
-// domain: (string) representing domain to link toggle to in backend
-// Creates an event listener to toggle a given element ID corresponding to a domain
+/**
+ * Creates an event listener that toggles a given domain's stored value in 
+ * the whitelist if a user clicks on the object with the given element ID
+ * @param {string} elementId - HTML element to be linked to the listener
+ * @param {string} domain - domain to be changed in whitelist 
+ */
 export async function toggleListener(elementId, domain) {
   document.getElementById(elementId).addEventListener("click", () => {
     chrome.storage.local.get(["DOMAINS"], function (result) {

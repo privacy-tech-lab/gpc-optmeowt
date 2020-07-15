@@ -32,7 +32,8 @@
     "scripts": [
       "libs/psl.js-1.8.0/psl.min.js", 
       "background.js",
-      "cookies_3p.js"
+      "cookies_3p.js",
+      "us_privacy.js"
     ]
   },
   "manifest_version": 2
