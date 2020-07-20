@@ -73,11 +73,13 @@ function initUSP() {
     if (tabs[0] != undefined && tabs[0].url != undefined) {
       var tab = tabs[0];
       var url_obj = new URL(tab.url);
-      var parsed = psl.parse(url_obj.hostname)
-      var domain = parsed.domain;
-      var url = url_obj.origin + '/'
+      var url = url_obj.href;
+      // var url = url_obj.origin + '/'
+      // var parsed = psl.parse(url_obj.hostname)
+      // var domain = parsed.domain;
+      console.log("Current url: ", url)
 
-      checkExistsAndHandleUSP(url, domain);
+      checkExistsAndHandleUSP(url);
     }
   })
 }
@@ -110,7 +112,7 @@ function checkExistsAndHandleUSP(url) {
       value = parseUSP(cookie_matches[0]["value"])
       if (value == '1---') {
         console.log("This site recognized you are outside of \
-the domain of the CCPA.")
+the domain of the CCPA.", cookie_matches[0]["domain"])
       } else {
         updateUSP(cookie_matches[0], value, url);
       }
@@ -301,7 +303,7 @@ function deleteCookie(url, name) {
  * @returns {bool} - Represents if signal is a valid signal
  */
 function isValidSignalUSP(signal) {
-  var valid_chars = ['y', 'n', 'Y', 'N']
+  var valid_chars = ['y', 'n', 'Y', 'N', '-']
   if (signal.length != 4) { 
     return false 
   }
