@@ -1,22 +1,122 @@
 {
-    "cu": {
-        "name": "cu",
-        "value": "optout",
-        "domain": ".ipredictive.com"
-    },
-    "tyntOptOut": {
-        "name": "tyntOptOut",
-        "value": "true",
-        "domain": ".tynt.com"
-    },
-    "33x_nc": {
+    "33Across<33x_nc>": {
         "name": "33x_nc",
         "value": "33Across+Optout",
         "domain": ".33across.com"
     },
-    "optout": {
+    "33Across<tyntOptOut>": {
+        "name": "tyntOptOut",
+        "value": "true",
+        "domain": ".tynt.com"
+    },
+    "4Info<optout>": {
         "name": "optout",
         "value": "1",
         "domain": "choices.adhaven.com"
+    },
+    "Adelphic<cu>": {
+        "name": "cu",
+        "value": "optout",
+        "domain": ".ipredictive.com"
+    },
+    "Amobee<optOut>": {
+        "name": "optOut",
+        "value": "1",
+        "domain": ".turn.com"
+    },
+    "Amobee<OO>": {
+        "name": "OO",
+        "value": "OptOut",
+        "domain": ".amgdgt.com"
+    },
+    "Amobee<opt-out>": {
+        "name": "opt-out",
+        "value": "true",
+        "domain": ".tidaltv.com"
+    },
+    "Apollo_Program<auid>": {
+        "name": "auid",
+        "value": "optout",
+        "domain": ".apolloprogram.io"
+    },
+    "Audiencerate<OPT-OUT>": {
+        "name": "OPT-OUT",
+        "value": "OPT-OUT",
+        "domain": ".audrte.com"
+    },
+    "AuDigent<au_adgt_optout>": {
+        "name": "au_adgt_optout",
+        "value": "audigent-optout",
+        "domain": ".ad.gt"
+    },
+    "Beeswax<bito>": {
+        "name": "bito",
+        "value": "optout",
+        "domain": ".bidr.io"
+    },
+    "Catalina_BuyerVision<aa>": {
+        "name": "aa",
+        "value": "opt-out",
+        "domain": ".agkn.com"
+    },
+    "Clicksco<ccoptout>": {
+        "name": "ccoptout",
+        "value": "1",
+        "domain": ".ccgateway.net"
+    },
+    "Cognitiv<daa_opt_out>": {
+        "name": "daa_opt_out",
+        "value": "1",
+        "domain": "beacon.lynx.cognitivlabs.com"
+    },
+    "Connexity<oo>": {
+        "name": "oo",
+        "value": "OptOut",
+        "domain": ".connexity.net"
+    },
+    "Connexity<ad_retarget_opt_out>": {
+        "name": "ad_retarget_opt_out",
+        "value": "true",
+        "domain": ".shopzilla.com"
+    },
+    "Criteo<optout>": {
+        "name": "optout",
+        "value": "1",
+        "domain": ".criteo.com"
+    },
+    "Cross_Pixel<uid>": {
+        "name": "uid",
+        "value": "-1",
+        "domain": ".crsspxl.com"
+    },
+    "Cross_Pixel<OPTOUT>": {
+        "name": "OPTOUT",
+        "value": "1",
+        "domain": ".crsspxl.com"
+    },
+    "Cross_Pixel<uuid>": {
+        "name": "uuid",
+        "value": "OPTOUT",
+        "domain": ".crsspxl.com"
+    },
+    "Datonics<optout>": {
+        "name": "optout",
+        "value": "\"0+0+0\"",
+        "domain": ".pro-market.net"
+    },
+    "Dstillery<orboptout>": {
+        "name": "orboptout",
+        "value": "2-1",
+        "domain": ".media6degrees.com"
+    },
+    "EMX<opt-out>": {
+        "name": "opt-out",
+        "value": "emxoptout",
+        "domain": ".emxdgt.com"
+    },
+    "Eyeota<mako_uid>": {
+        "name": "mako_uid",
+        "value": "opt-out",
+        "domain": ".eyeota.net"
     }
 }
