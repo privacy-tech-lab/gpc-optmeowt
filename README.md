@@ -2,6 +2,8 @@
   <img src="https://github.com/privacy-tech-lab/optmeowt-browser-extension/blob/issue-19/src/assets/cat-w-text/optmeow-logo-circle.png" width="150px" height="150px" title="OptMeowt logo">
 <p>
 
+Note: If you are a publisher and would like your users to send you do not sell signals via OptMeowt, please open an issue or a pull request with your requirements (especially, for the API communicating with your server). You can also contact us at szimmeck@wesleyan.edu. We can provide you with a turnkey frontend solution for your Do Not Sell signal processing.
+
 # OptMeowt :paw_prints:
 
 OptMeowt ("Opt Me Out") is a browser extension for sending Do Not Sell signals to websites. **Note:** It is a work in progress, we are not finished yet! OptMeowt implements [current work towards a W3C specification](https://github.com/privacycg/proposals/issues/10) for opting out from the sale of personal information, especially, per the California Consumer Privacy Act (CCPA), [Regs Section 999.315(d)](https://oag.ca.gov/sites/all/files/agweb/pdfs/privacy/oal-sub-final-text-of-regs.pdf).
