@@ -39,11 +39,11 @@ addHeaders = (details) => {
   if (sendSignal) {
     details.requestHeaders.push({ name: "DNS", value: "0" });
     details.requestHeaders.push({ name: "DNT", value: "1" });
-    console.log("Pushed DNS signal !");
+    console.log("Pushed DNS signal !", details.requestHeaders);
     return { requestHeaders: details.requestHeaders };
   } 
   else {
-    console.log("Preparing to send no added signal...");
+    console.log("Preparing to send no added signal...", details.requestHeaders);
     return { requestHeaders: details.requestHeaders };
   }
 };
