@@ -1,0 +1,3 @@
+[submodule "spoc"]
+	path = spoc
+	url = https://github.com/darobin/spoc/
