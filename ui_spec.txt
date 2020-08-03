@@ -1,1 +1,1 @@
-spoc/blob/master/ui_spec.txt
+https://github.com/darobin/spoc/blob/master/ui_spec.txt
