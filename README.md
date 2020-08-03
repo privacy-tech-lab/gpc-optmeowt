@@ -42,6 +42,8 @@ You did it! You have installed OptMeowt. You can use it via the icon next to the
 
 ## Files and Directories in the Repo
 
+- `spoc/`: Contains docs and discussions regarding a univeral opt out signal to be implemented in OptMeowt, i.e. Signal of Preference for One Controller. This is a work in progress.
+- `spoc/ui_spec.txt`: Contains the legal specification / language describing OptMeowt's CCPA opt out functionality. 
 - `src/`: Contains the main contents of the OptMeowt browser extension.
 - `src/assets`: Contains the graphical elements of the extension, including the logos and button images.
 - `src/libs`: Contains all of the libraries used in the browser extension.
@@ -49,7 +51,10 @@ You did it! You have installed OptMeowt. You can use it via the icon next to the
 - `src/popup`: Contains the UI elements and scripts for the popup inside the extensions bar.
 - `src/background.js`: This is the main script running OptMeowt. It controls all of the major backend, regarding whether the extension is on/off, sending the Do Not Sell signal, etc.
 - `src/contentScript.js`: This is the main supplemental script that passes data to `background.js` and runs on every webpage loaded.
+- `src/cookies_3p.js`: Handles placing all of the 3rd party opt out cookies stored in `cookies_3p.json`. This runs one time and places the cookies on install. 
+- `src/cookies_3p.json`: Contains all of the 3rd party opt out cookies collected from the [DAA's CCPA Opt Out Tool for the Web](https://optout.privacyrights.info/?c=1). 
 - `src/manifest.json`: This provides the browser with metadata about the extension, regarding its name, permissions, etc.
+- `src/us_privacy.js`: Handles placing, manipulating, and updating 1st party opt out cookies for each site visited with the Do Not Sell signal (namely the IAB `usprivacy` cookies)
 - `src/whitelist.js`: This is the main JS file that allows the extension to communicate with the whitelist stored in the browser's local storage.
 - `ui-mockup`: Contains PDF and XD files demonstrating the preliminary mockup and analysis of OptMeowt.
 
