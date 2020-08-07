@@ -40,6 +40,7 @@ addHeaders = (details) => {
   if (sendSignal) {
     for (var signal in optout_headers) {
       let s = optout_headers[signal]
+      console.log(s)
       details.requestHeaders.push({ name: s.name, value: s.value });
       console.log("Sending signal added...", s.name, s.value);
     }

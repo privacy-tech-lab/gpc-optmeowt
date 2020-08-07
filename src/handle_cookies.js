@@ -6,25 +6,43 @@ privacy-tech-lab, https://privacy-tech-lab.github.io/
 
 
 /*
-cookies_3p.js
+cookies_fetch.js
 ================================================================================
-cookies_3p.js updates the opt-out 3rd party cookies as specified in 
-cookies_3p.json when the extension is loaded
+cookies_fetch.js updates fetches all files mentioned in cookieJSONS, retrieves 
+the cookies there (custom & 3rd party), and sets them. 
 */
 
+
+////////////////////////////////////////////////////////////////////////////////
+
+const cookieJSONS = [
+  "cookies_3p.JSON",
+  "cookies_custom.JSON"
+]
+
+for (let loc in cookieJSONS) {
+  console.log(cookieJSONS[loc])
+  retrieveCookieJSON(cookieJSONS[loc], setAllRetrievedCookies)
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+/// Sets all cookies from cookieJSONS on OptMeowt install
 
 /**
  * Retrieves the cookie data stored in the 3rd_party_cookies json file
  * @param {string} location - Location/name of the JSON to be fetched
  * @return {Object} Data inside JSON object
  */
-fetch("cookies_3p.json")
+function retrieveCookieJSON(location, callback) {
+  fetch(location)
   .then(response => { return response.json() })
   .then(json => {
-    console.log("Retrieved 3rd party cookies: ", json)
-    handleThirdParties(json)
+    console.log(`Retrieved ${location}: ${json}`)
+    callback(json)
   })
-  .catch(e => console.log(`Failed while setting 3rd party cookies: ${e}`))
+  .catch(e => console.log(`Failed while setting ${location} cookies: ${e}`))
+}
 
 /**
  * Sets a cookie at the given domain for each item in the passed in 
@@ -33,7 +51,7 @@ fetch("cookies_3p.json")
  *                           party cookie to be set
  * Each item in `cookies` must contain a 'name', 'value', and 'domain'
  */
-function handleThirdParties(cookies) {
+function setAllRetrievedCookies(cookies) {
   // Updates time once
   var date = new Date()
   var now = date.getTime()
@@ -69,3 +87,29 @@ function handleThirdParties(cookies) {
 
   }
 }
+
+////////////////////////////////////////////////////////////////////////////////
+
+/// Functions for updating the cookie JSON files
+
+function updateJSONandSetCookie(cookies, file) {
+  console.log("Starting updateJSONandSetCookie...")
+  setAllRetrievedCookies(cookies)
+  addAllCookiesToStorage(cookies)
+  // retrieveCookieJSON(file, function (json) {
+    // console.log("updateJSONandSetCookie worked, here's JSON, ", json)
+    // setNewJSON(json, cookies)
+  // })
+}
+
+function addAllCookiesToStorage(cookies) {
+  chrome.storage.local.get(["CUSTOM_COOKIES"], function (result) {
+    var custom_cookies = result.CUSTOM_COOKIES;
+
+    chrome.storage.local.set({"DOMAINS": domains})
+  })
+}
+
+// updateJSONandSetCookie(data, "cookies_custom.JSON")
+
+////////////////////////////////////////////////////////////////////////////////

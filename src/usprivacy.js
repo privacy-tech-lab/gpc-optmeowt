@@ -6,9 +6,9 @@ privacy-tech-lab, https://privacy-tech-lab.github.io/
 
 
 /*
-us_privacy.js
+cookies_usprivacy.js
 ================================================================================
-us_privacy.js handles the IAB CCPA `us_privacy` proposal cookie 
+cookies_usprivacy.js handles the IAB CCPA `usprivacy` proposal cookie 
 modification process
 */
 
@@ -58,7 +58,7 @@ iab_vars = [  // Make this not case-sensitive
   "us-privacy",
   "us_privacy"
 ]
-default_name = 'us_privacy'
+default_name = 'usprivacy'
 default_value = '1NYN'
 
 /**
