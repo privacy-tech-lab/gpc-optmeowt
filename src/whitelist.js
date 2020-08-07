@@ -18,11 +18,17 @@ browser storage
  */
 export async function handleDownload() {
     console.log("Downloading ...");
-    chrome.storage.local.get(["DOMAINS"], function (result) {
-      var domains = result.DOMAINS;
-      var blob = new Blob([JSON.stringify(domains, null, 4)], 
+    chrome.storage.local.get(["DOMAINS", "CUSTOM_COOKIES"], function (result) {
+      var DOMAINS = result.DOMAINS;
+      var CUSTOM_COOKIES = result.CUSTOM_COOKIES
+      var file = {
+        CUSTOM_COOKIES,
+        DOMAINS
+      }
+      
+      var blob = new Blob([JSON.stringify(file, null, 4)], 
                           {type: "text/plain;charset=utf-8"});
-      saveAs(blob, "whitelist_backup.txt");
+      saveAs(blob, "OptMeowt_backup.txt");
     })
     console.log("Downloaded!")
 }

@@ -20,9 +20,16 @@ const cookieJSONS = [
   "cookies_custom.JSON"
 ]
 
+chrome.storage.local.get(["CUSTOM_COOKIES"], 
+  function (result) {
+    if (result.CUSTOM_COOKIES === undefined) {
+      chrome.storage.local.set({ CUSTOM_COOKIES: {} });
+  }
+});
+
 for (let loc in cookieJSONS) {
   console.log(cookieJSONS[loc])
-  retrieveCookieJSON(cookieJSONS[loc], setAllRetrievedCookies)
+  retrieveCookieJSON(cookieJSONS[loc], setAllCookies)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -51,7 +58,7 @@ function retrieveCookieJSON(location, callback) {
  *                           party cookie to be set
  * Each item in `cookies` must contain a 'name', 'value', and 'domain'
  */
-function setAllRetrievedCookies(cookies) {
+function setAllCookies(cookies) {
   // Updates time once
   var date = new Date()
   var now = date.getTime()
@@ -92,9 +99,9 @@ function setAllRetrievedCookies(cookies) {
 
 /// Functions for updating the cookie JSON files
 
-function updateJSONandSetCookie(cookies, file) {
+function setCustomCookies(cookies) {
   console.log("Starting updateJSONandSetCookie...")
-  setAllRetrievedCookies(cookies)
+  setAllCookies(cookies)
   addAllCookiesToStorage(cookies)
   // retrieveCookieJSON(file, function (json) {
     // console.log("updateJSONandSetCookie worked, here's JSON, ", json)
@@ -106,10 +113,26 @@ function addAllCookiesToStorage(cookies) {
   chrome.storage.local.get(["CUSTOM_COOKIES"], function (result) {
     var custom_cookies = result.CUSTOM_COOKIES;
 
-    chrome.storage.local.set({"DOMAINS": domains})
+    for (var cookie in cookies) {
+      console.log("Current cookie: ", JSON.stringify(cookies[cookie]) )
+      let name = cookies[cookie].name
+      let domain = cookies[cookie].domain
+      let n = `${domain}[${name}]`
+      custom_cookies[n] = cookies[cookie]
+
+      chrome.storage.local.set({"CUSTOM_COOKIES": custom_cookies})
+    }
   })
 }
 
-// updateJSONandSetCookie(data, "cookies_custom.JSON")
+cc = {
+  "SUCCESS": {
+      "name": "SUCCESS",
+      "value": ":))))",
+      "domain": ".google.com"
+  }
+}
+setCustomCookies(cc)
+
 
 ////////////////////////////////////////////////////////////////////////////////
