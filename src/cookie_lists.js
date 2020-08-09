@@ -6,9 +6,9 @@ privacy-tech-lab, https://privacy-tech-lab.github.io/
 
 
 /*
-cookies_fetch.js
+cookie_lists.js
 ================================================================================
-cookies_fetch.js updates fetches all files mentioned in cookieJSONS, retrieves 
+cookie_lists.js updates fetches all files mentioned in cookieJSONS, retrieves 
 the cookies there (custom & 3rd party), and sets them. 
 */
 
@@ -17,15 +17,15 @@ the cookies there (custom & 3rd party), and sets them.
 
 const cookieJSONS = [
   "cookies_3p.JSON",
-  "cookies_custom.JSON"
+  "cookies_usercustom.JSON"
 ]
 
-chrome.storage.local.get(["CUSTOM_COOKIES"], 
-  function (result) {
-    if (result.CUSTOM_COOKIES === undefined) {
-      chrome.storage.local.set({ CUSTOM_COOKIES: {} });
-  }
-});
+// chrome.storage.local.get(["CUSTOM_COOKIES"], 
+//   function (result) {
+//     if (result.CUSTOM_COOKIES === undefined) {
+//       chrome.storage.local.set({ CUSTOM_COOKIES: {} });
+//   }
+// });
 
 for (let loc in cookieJSONS) {
   console.log(cookieJSONS[loc])
@@ -63,6 +63,7 @@ function setAllCookies(cookies) {
   var date = new Date()
   var now = date.getTime()
   var cookie_time = now/1000 + 31557600
+  var path = '/'
   
   for (var item in cookies) {
 
@@ -75,13 +76,19 @@ function setAllCookies(cookies) {
     }
     cookie_url = `https://${cookie_url}/`
     console.log(`Current cookie url... ${cookie_url}`)
+    if (cookies[item].path !== null) {
+      path = cookies[item].path
+    } else {
+      path = '/'
+    }
 
     // Sets cookie parameters
     let cookie_param = {
       url: cookie_url,
       name: cookies[item].name,
       value: cookies[item].value,
-      expirationDate: cookie_time
+      expirationDate: cookie_time,
+      path: path
     }
     if (all_domains) {
       cookie_param["domain"] = cookies[item].domain
@@ -99,40 +106,40 @@ function setAllCookies(cookies) {
 
 /// Functions for updating the cookie JSON files
 
-function setCustomCookies(cookies) {
-  console.log("Starting updateJSONandSetCookie...")
-  setAllCookies(cookies)
-  addAllCookiesToStorage(cookies)
-  // retrieveCookieJSON(file, function (json) {
-    // console.log("updateJSONandSetCookie worked, here's JSON, ", json)
-    // setNewJSON(json, cookies)
-  // })
-}
+// function setCustomCookies(cookies) {
+//   console.log("Starting updateJSONandSetCookie...")
+//   setAllCookies(cookies)
+//   addAllCookiesToStorage(cookies)
+//   // retrieveCookieJSON(file, function (json) {
+//     // console.log("updateJSONandSetCookie worked, here's JSON, ", json)
+//     // setNewJSON(json, cookies)
+//   // })
+// }
 
-function addAllCookiesToStorage(cookies) {
-  chrome.storage.local.get(["CUSTOM_COOKIES"], function (result) {
-    var custom_cookies = result.CUSTOM_COOKIES;
+// function addAllCookiesToStorage(cookies) {
+//   chrome.storage.local.get(["CUSTOM_COOKIES"], function (result) {
+//     var custom_cookies = result.CUSTOM_COOKIES;
 
-    for (var cookie in cookies) {
-      console.log("Current cookie: ", JSON.stringify(cookies[cookie]) )
-      let name = cookies[cookie].name
-      let domain = cookies[cookie].domain
-      let n = `${domain}[${name}]`
-      custom_cookies[n] = cookies[cookie]
+//     for (var cookie in cookies) {
+//       console.log("Current cookie: ", JSON.stringify(cookies[cookie]) )
+//       let name = cookies[cookie].name
+//       let domain = cookies[cookie].domain
+//       let n = `${domain}[${name}]`
+//       custom_cookies[n] = cookies[cookie]
 
-      chrome.storage.local.set({"CUSTOM_COOKIES": custom_cookies})
-    }
-  })
-}
+//       chrome.storage.local.set({"CUSTOM_COOKIES": custom_cookies})
+//     }
+//   })
+// }
 
-cc = {
-  "SUCCESS": {
-      "name": "SUCCESS",
-      "value": ":))))",
-      "domain": ".google.com"
-  }
-}
-setCustomCookies(cc)
+// cc = {
+//   "SUCCESS": {
+//       "name": "SUCCESS",
+//       "value": ":))))",
+//       "domain": ".google.com"
+//   }
+// }
+// setCustomCookies(cc)
 
 
 ////////////////////////////////////////////////////////////////////////////////

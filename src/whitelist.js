@@ -18,15 +18,9 @@ browser storage
  */
 export async function handleDownload() {
     console.log("Downloading ...");
-    chrome.storage.local.get(["DOMAINS", "CUSTOM_COOKIES"], function (result) {
+    chrome.storage.local.get(["DOMAINS"], function (result) {
       var DOMAINS = result.DOMAINS;
-      var CUSTOM_COOKIES = result.CUSTOM_COOKIES
-      var file = {
-        CUSTOM_COOKIES,
-        DOMAINS
-      }
-      
-      var blob = new Blob([JSON.stringify(file, null, 4)], 
+      var blob = new Blob([JSON.stringify(DOMAINS, null, 4)], 
                           {type: "text/plain;charset=utf-8"});
       saveAs(blob, "OptMeowt_backup.txt");
     })

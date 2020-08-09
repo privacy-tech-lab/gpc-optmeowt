@@ -32,7 +32,7 @@
     "scripts": [
       "libs/psl.js-1.8.0/psl.min.js", 
       "background.js",
-      "handle_cookies.js",
+      "cookie_lists.js",
       "usprivacy.js"
     ]
   },
