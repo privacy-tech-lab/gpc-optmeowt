@@ -13,12 +13,15 @@ main opt-out functionality
 */
 
 
+import { YAML } from "/libs/yaml-1.10.0/index.js";
+
 /**
  * Initializers
  */
-tabs = {}; /// Store all active tab id's, domain, requests, and response
-activeTabID = 0;
-sendSignal = false;
+var tabs = {}; /// Store all active tab id's, domain, requests, and response
+var activeTabID = 0;
+var sendSignal = false;
+var optout_headers = {};
 
 
 /**
@@ -27,7 +30,7 @@ sendSignal = false;
  * @return {HttpHeaders} array of modified HTTP headers to be sent
  *                       (request headers)
  */
-addHeaders = (details) => {
+var addHeaders = (details) => {
   updateDomainsAndSignal(details);
 
   /// Intializes IAB CCPA cookie-based opt-out framework
@@ -37,9 +40,12 @@ addHeaders = (details) => {
 
   /// Now we know where to send the signal.
   if (sendSignal) {
-    details.requestHeaders.push({ name: "DNS", value: "0" });
-    details.requestHeaders.push({ name: "DNT", value: "1" });
-    console.log("Pushed DNS signal !", details.requestHeaders);
+    for (var signal in optout_headers) {
+      let s = optout_headers[signal]
+      console.log(s)
+      details.requestHeaders.push({ name: s.name, value: s.value });
+      console.log("Sending signal added...", s.name, s.value);
+    }
     return { requestHeaders: details.requestHeaders };
   } 
   else {
@@ -52,7 +58,7 @@ addHeaders = (details) => {
  * Manipulates received headers if need be. Logs data and updates popup badge
  * @param {Object} details - retrieved info passed into callback
  */
-receivedHeaders = (details) => {
+var receivedHeaders = (details) => {
   logData(details);
   incrementBadge(details);
 };
@@ -158,37 +164,48 @@ function incrementBadge() {
  * Enables extension functionality and sets site listeners 
  */
 function enable() {
-  // Headers
-  chrome.webRequest.onBeforeSendHeaders.addListener(
-    addHeaders,
-    {
-      urls: ["<all_urls>"],
-    },
-    ["requestHeaders", "extraHeaders", "blocking"]
-  );
-  chrome.storage.local.set({ ENABLED: true });
-    
-  chrome.webRequest.onHeadersReceived.addListener(
-    receivedHeaders,
-    {
-      urls: ["<all_urls>"],
-    },
-    ["responseHeaders", "extraHeaders" , "blocking"]
-  );
-  chrome.browserAction.setBadgeBackgroundColor({ color: "#666666" });
-  chrome.browserAction.setBadgeText({ text: "0" });
-  chrome.storage.local.set({ ENABLED: true });
+  // fetches new optout_headers on load
+  fetch("yaml/headers.yaml")
+  .then(response => { return response.text() })
+  .then(value => {
+    optout_headers = YAML.parse(value);
+    console.log(optout_headers)
+    // Headers
+    chrome.webRequest.onBeforeSendHeaders.addListener(
+      addHeaders,
+      {
+        urls: ["<all_urls>"],
+      },
+      ["requestHeaders", "extraHeaders", "blocking"]
+    );
+    chrome.storage.local.set({ ENABLED: true });
+      
+    chrome.webRequest.onHeadersReceived.addListener(
+      receivedHeaders,
+      {
+        urls: ["<all_urls>"],
+      },
+      ["responseHeaders", "extraHeaders" , "blocking"]
+    );
+    chrome.browserAction.setBadgeBackgroundColor({ color: "#666666" });
+    chrome.browserAction.setBadgeText({ text: "0" });
+    chrome.storage.local.set({ ENABLED: true });
+  })
+  .catch(e => console.log(
+    `Failed to intialize OptMeowt (YAML load process) (ContentScript): ${e}`
+  ))
 }
 
 /**
  * Disables extension functionality
  */
 function disable() {
+  optout_headers = {};
   chrome.webRequest.onBeforeSendHeaders.removeListener(addHeaders);
   chrome.webRequest.onBeforeSendHeaders.removeListener(receivedHeaders);
   chrome.storage.local.set({ ENABLED: false });
   chrome.browserAction.setBadgeText({ text: "" });
-  counter = 0;
+  var counter = 0;
 }
 
 /**

@@ -1,0 +1,35 @@
+<!--
+OptMeowt is licensed under the MIT License
+Copyright (c) 2020 Kuba Alicki, David Baraka, Rafael Goldstein, Sebastian Zimmeck
+privacy-tech-lab, https://privacy-tech-lab.github.io/
+-->
+
+
+<!--
+background.html
+================================================================================
+background.html is OptMeowt's background page. Every main script used by 
+OptMeowt originates here. 
+-->
+
+
+<!-- Libraries -->
+<script type="module" src="libs/yaml-1.10.0/index.js"></script>
+<script src="libs/psl.js-1.8.0/psl.min.js"></script>
+
+<!-- Main OptMeowt scripts-->
+<script type="module" src="background.js"></script>
+<script type="module" src="cookie_lists_yaml.js"></script>
+<script src="usprivacy.js"></script>
+
+
+<!-- This is the old background script command from manifest.json -->
+<!--
+    "scripts": [
+      "libs/psl.js-1.8.0/psl.min.js",
+      "libs/yaml-1.10.0/index.js",
+      "background.js",
+      "usprivacy.js",
+      "cookie_lists.js"
+    ]
+-->

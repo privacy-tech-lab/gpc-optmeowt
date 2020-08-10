@@ -68,6 +68,7 @@ OptMeowt uses the following third party libraries. We thank the developers.
 - [Switch Animation by Aaron Iker](https://codepen.io/aaroniker/pen/oaQdQZ)
 - [psl (Public Suffix List)](https://github.com/lupomontero/psl)
 - [Dark Mode Switch](https://github.com/coliff/dark-mode-switch)
+- [YAML (for JS)](https://github.com/eemeli/yaml)
 
 <p align="center">
   <img src="https://github.com/privacy-tech-lab/optmeowt-browser-extension/blob/master/plt_logo.png" width="200px" height="200px" title="privacy-tech-lab logo">
