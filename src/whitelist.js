@@ -12,6 +12,7 @@ whitelist.js handles OptMeowt's reads/writes to the local whitelist in the
 browser storage
 */
 
+import { YAML } from "/libs/yaml-1.10.0/index.js";
 
 /**
  * Exports the whitelist in local storage as a .txt file
@@ -20,7 +21,8 @@ export async function handleDownload() {
     console.log("Downloading ...");
     chrome.storage.local.get(["DOMAINS"], function (result) {
       var DOMAINS = result.DOMAINS;
-      var blob = new Blob([JSON.stringify(DOMAINS, null, 4)], 
+      // console.log(`YAML: ${YAML.stringify(DOMAINS, null)}`)
+      var blob = new Blob([YAML.stringify(DOMAINS, null)], 
                           {type: "text/plain;charset=utf-8"});
       saveAs(blob, "OptMeowt_backup.txt");
     })
@@ -43,7 +45,7 @@ export async function handleUpload() {
     const file = this.files[0];
     const fr = new FileReader();
     fr.onload = function(e) {
-      chrome.storage.local.set({ DOMAINS: JSON.parse(e.target.result) });
+      chrome.storage.local.set({ DOMAINS: YAML.parse(e.target.result) });
       console.log("Finished upload!")
     };
     fr.readAsText(file);

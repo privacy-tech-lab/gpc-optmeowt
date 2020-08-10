@@ -29,12 +29,7 @@
     "open_in_tab": true
   },
   "background": {
-    "scripts": [
-      "libs/psl.js-1.8.0/psl.min.js", 
-      "background.js",
-      "cookie_lists.js",
-      "usprivacy.js"
-    ]
+    "page": "background.html"
   },
   "manifest_version": 2
 }

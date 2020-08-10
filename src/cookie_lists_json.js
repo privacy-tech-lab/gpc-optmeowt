@@ -6,18 +6,18 @@ privacy-tech-lab, https://privacy-tech-lab.github.io/
 
 
 /*
-cookie_lists.js
+cookie_lists_json.js
 ================================================================================
-cookie_lists.js updates fetches all files mentioned in cookieJSONS, retrieves 
-the cookies there (custom & 3rd party), and sets them. 
+cookie_lists_json.js fetches all files mentioned in cookieJSONS, retrieves 
+their respective cookies (custom & 3rd party), and places them. 
 */
 
 
 ////////////////////////////////////////////////////////////////////////////////
 
 const cookieJSONS = [
-  "cookies_3p.JSON",
-  "cookies_usercustom.JSON"
+  "json/cookies_3p.JSON",
+  "json/cookies_usercustom.JSON"
 ]
 
 // chrome.storage.local.get(["CUSTOM_COOKIES"], 

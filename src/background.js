@@ -13,13 +13,15 @@ main opt-out functionality
 */
 
 
+import { YAML } from "/libs/yaml-1.10.0/index.js";
+
 /**
  * Initializers
  */
-tabs = {}; /// Store all active tab id's, domain, requests, and response
-activeTabID = 0;
-sendSignal = false;
-optout_headers = {};
+var tabs = {}; /// Store all active tab id's, domain, requests, and response
+var activeTabID = 0;
+var sendSignal = false;
+var optout_headers = {};
 
 
 /**
@@ -28,7 +30,7 @@ optout_headers = {};
  * @return {HttpHeaders} array of modified HTTP headers to be sent
  *                       (request headers)
  */
-addHeaders = (details) => {
+var addHeaders = (details) => {
   updateDomainsAndSignal(details);
 
   /// Intializes IAB CCPA cookie-based opt-out framework
@@ -56,7 +58,7 @@ addHeaders = (details) => {
  * Manipulates received headers if need be. Logs data and updates popup badge
  * @param {Object} details - retrieved info passed into callback
  */
-receivedHeaders = (details) => {
+var receivedHeaders = (details) => {
   logData(details);
   incrementBadge(details);
 };
@@ -163,10 +165,10 @@ function incrementBadge() {
  */
 function enable() {
   // fetches new optout_headers on load
-  fetch("headers.json")
-  .then(response => { return response.json() })
-  .then(json => {
-    optout_headers = json;
+  fetch("yaml/headers.yaml")
+  .then(response => { return response.text() })
+  .then(value => {
+    optout_headers = YAML.parse(value);
     console.log(optout_headers)
     // Headers
     chrome.webRequest.onBeforeSendHeaders.addListener(
@@ -190,7 +192,7 @@ function enable() {
     chrome.storage.local.set({ ENABLED: true });
   })
   .catch(e => console.log(
-    `Failed to intialize OptMeowt (JSON load process): ${e}`
+    `Failed to intialize OptMeowt (YAML load process) (ContentScript): ${e}`
   ))
 }
 
@@ -203,7 +205,7 @@ function disable() {
   chrome.webRequest.onBeforeSendHeaders.removeListener(receivedHeaders);
   chrome.storage.local.set({ ENABLED: false });
   chrome.browserAction.setBadgeText({ text: "" });
-  counter = 0;
+  var counter = 0;
 }
 
 /**

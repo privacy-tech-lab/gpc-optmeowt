@@ -1,0 +1,23 @@
+# TOOLS: 
+# Used https://jsonformatter.org/json-to-yaml to convert old JSON files
+# to this YAML format. 
+# We will need to make sure this list format is: 
+# (1) User Friendly (w/ regards to formatting w/ & w/o quotes)
+# (2) Compatible with the current cookie placing infrastructure. 
+
+cu:
+  name: cu
+  value: optout
+  domain: .ipredictive.com
+tyntOptOut:
+  name: tyntOptOut
+  value: 'true'
+  domain: .tynt.com
+33x_nc:
+  name: 33x_nc
+  value: 33Across+Optout
+  domain: .33across.com
+optout:
+  name: optout
+  value: '1'
+  domain: choices.adhaven.com
