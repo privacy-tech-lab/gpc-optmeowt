@@ -49,7 +49,7 @@ var addHeaders = (details) => {
     return { requestHeaders: details.requestHeaders };
   } 
   else {
-    console.log("Preparing to send no added signal...");
+    console.log("Preparing to send no added signal...", details.requestHeaders);
     return { requestHeaders: details.requestHeaders };
   }
 };

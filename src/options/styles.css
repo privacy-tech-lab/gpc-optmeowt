@@ -104,6 +104,34 @@ input[type='radio']:hover:not(:checked) {
 
 /********************************************************/
 
+/*
+'settings-view' whitelist import & export button style
+*/
+.importexport-button {
+  background-color: white;
+  border-color:  #888fa1;
+  color: #888fa1;
+  padding: 12px 16px;
+  text-align: center;
+  text-decoration-color: none;
+  font-size: 14px;
+  display: inline-block;
+  border-radius: 10px;
+  border-style: solid;
+  box-shadow: 0 8px 16px -1px rgba(211, 211, 211, .2);
+  outline: none;
+  transition: all ease 0.25s;
+}
+.importexport-button:hover {
+  background-color: var(--accent-color);
+  border-color: var(--accent-color);
+  color: white;
+  box-shadow: 0 6px 12px var(--accent-color-lighter-60);
+  transition: all ease 0.25s;
+}
+
+/********************************************************/
+
 /* Animated iOS style switch
 https://codepen.io/aaroniker/pen/oaQdQZ
 */

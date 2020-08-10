@@ -2,17 +2,31 @@
   <img src="https://github.com/privacy-tech-lab/optmeowt-browser-extension/blob/issue-19/src/assets/cat-w-text/optmeow-logo-circle.png" width="150px" height="150px" title="OptMeowt logo">
 <p>
 
+**Note:** If you are a publisher, we can provide you with a turnkey frontend solution for your Do Not Sell signals. Please open an issue or a pull request with your requirements (especially, for the API communicating with your server). You can also contact us at szimmeck@wesleyan.edu.
+
+We are academic researchers at Wesleyan University's [privacy-tech-lab](https://privacy-tech-lab.github.io/), and we would like to collaborate with anyone who is interested in moving Do Not Sell forward.
+
 # OptMeowt :paw_prints:
 
-OptMeowt ("Opt Me Out") is a browser extension for sending Do Not Sell signals to websites. **Note:** It is a work in progress, we are not finished yet! OptMeowt implements [current work towards a W3C specification](https://github.com/privacycg/proposals/issues/10) for opting out from the sale of personal information, especially, per the California Consumer Privacy Act (CCPA), [Regs Section 999.315(d)](https://oag.ca.gov/sites/all/files/agweb/pdfs/privacy/oal-sub-final-text-of-regs.pdf).
+OptMeowt ("Opt Me Out") is a browser extension for sending Do Not Sell signals to websites. **Note:** OptMeowt is a work in progress, we are not finished yet!
 
-OptMewot sends browser headers with Do Not Sell signals to all domains visited. Users can also whitelist domains that should not receive such signal. In addition, OptMeowt also implements functionality for sending Do Not Sell signals according to the [IAB CCPA Compliance Framework for Publishers & Technology Companies](https://iabtechlab.com/standards/ccpa/).
+## How does OptMeowt work?
 
-Feel free to make a feature request, open a pull request, or just [get in touch](https://github.com/SebastianZimmeck). We are academic researchers at Wesleyan University's [privacy-tech-lab](https://privacy-tech-lab.github.io/), and we would like to collaborate with anyone who is interested in moving Do Not Sell forward.
+OptMewot sends Do Not Sell signals to all domains a user visits when browsing the web. Such signals must be respected for California consumers per the California Consumer Privacy Act (CCPA), [Regs Section 999.315(d)](https://oag.ca.gov/sites/all/files/agweb/pdfs/privacy/oal-sub-final-text-of-regs.pdf). However, many companies respect such signals even when they are from outside of California.
+
+OptMeowt is sending Do Not Sell signals using five methods:
+
+1. A new HTTP Do Not Sell header we are developing in a [standardization effort at the W3C](https://github.com/privacycg/proposals/issues/10).
+2. The [existing DNT header](https://www.w3.org/TR/tracking-dnt/), which is interpreted by some publishers as a Do Not Sell header.
+3. The [IAB CCPA Compliance Framework for Publishers & Technology Companies](https://iabtechlab.com/standards/ccpa/), implemented in a first party cookie.
+4. Third party cookies of ad networks participating in the [DAA's CCPA Opt Out Tool for the Web](https://digitaladvertisingalliance.org/integrate-webchoices-ccpa).
+5. Custom headers and cookies used by individual websites maintained and updated in a Do Not Sell list.
+
+Users can also whitelist domains that should not receive Do Not Sell signals.
 
 ## Installing and Running OptMeowt
 
-You can install OptMeowt to any Chromium-based browser. In addition to Chrome, it should run in Brave, Edge, Opera, and Vivaldi. In the future we hope to support Firefox and Safari as well.
+OptMeowt work on any Chromium-based browser. In addition to Chrome, it should run in Brave, Edge, Opera, and Vivaldi. In the future we hope to support Firefox and Safari as well.
 
 Install OptMeowt as an unpacked extension on Chrome as follows:
 
@@ -24,7 +38,7 @@ Install OptMeowt as an unpacked extension on Chrome as follows:
 **Note:** You do not need to click on the `manifest.json` file in Chrome, though other browsers may require this.
 6. Click to finalize the install.
 
-Congratulations! You have installed OptMeowt. You can use it via the icon next to the search bar.
+You did it! You have installed OptMeowt. You can use it via the icon next to the search bar.
 
 ## Files and Directories in the Repo
 

@@ -63,7 +63,6 @@ function setAllCookies(cookies) {
   var path = '/'
   
   for (var item in cookies) {
-
     // Updates cookie url based on domain, checks for domain/subdomain spec
     let cookie_url = cookies[item].domain
     let all_domains = false
@@ -94,8 +93,7 @@ function setAllCookies(cookies) {
     // Sets cookie
     chrome.cookies.set(cookie_param, function (cookie) {
       console.log(`Updated ${cookie.name} cookie`)
-    })
-
+    })  
   }
 }
 

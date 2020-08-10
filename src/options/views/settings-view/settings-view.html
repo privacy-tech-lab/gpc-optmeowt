@@ -94,26 +94,31 @@ options page when clicked
     </label>
   </div>
   <hr>
-  <div>
-    <button 
-      id="download-button"
-    >
-      Download Whitelist Backup
-    </a>
+  <div style="font-weight: bold; font-size: medium; padding-bottom: 10px;">
+    Whitelist Import & Export
   </div>
-  <div>
-    <button
-      id="upload-button"
-    >
-      Restore Whitelist from File
-    </button>
-    <input
-      hidden
-      type="file"
-      accept="text/plain"
-      id="upload-whitelist"
-    >
-    </input>
+  <div uk-grid>  
+    <div>
+      <button 
+        id="download-button" class="importexport-button"
+      >
+        Export Whitelist
+      </a>
+    </div>
+    <div>
+      <button
+        id="upload-button" class="importexport-button"
+      >
+        Import from File
+      </button>
+      <input
+        hidden
+        type="file"
+        accept="text/plain"
+        id="upload-whitelist"
+      >
+      </input>
+    </div>
   </div>
   <hr>
   <div uk-grid class="uk-margin-top" style="margin-bottom: 4%;">
