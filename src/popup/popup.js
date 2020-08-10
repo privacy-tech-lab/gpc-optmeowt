@@ -12,7 +12,7 @@ popup.js supplements and renders complex elements on popup.html
 */
 
 
-import { toggleListener } from "../whitelist.js";
+import { toggleListener } from "../domainlist.js";
 
 /**
  * Initializes the popup window after DOM content is loaded
@@ -99,7 +99,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
   });
 
   /**
-   * Sets whitelist switch to correct position and adds listener
+   * Sets domain list switch to correct position and adds listener
    */
   chrome.storage.local.get(["DOMAINS"], function (result) {
     var s = ""

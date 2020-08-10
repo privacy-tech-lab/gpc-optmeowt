@@ -18,7 +18,7 @@ modification process
 - Add some kind of check to stop the cookie from being updated
   more than once per site refresh.
 - Think about how we will disable the feature if a certain site is 
-  "unwhitelisted" specifically
+  "not in the domainlist" specifically
 - Make sure that if a cookie exists, you are updating the specific version
   that the site has
 - Create a check that checks for mulitiple copies of the cookie, 

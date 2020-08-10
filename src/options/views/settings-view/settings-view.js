@@ -13,7 +13,7 @@ settings-view.js loads settings-view.html when clicked on the options page
 
 
 import { renderParse, fetchParse } from "../../components/util.js";
-import { handleDownload, startUpload, handleUpload } from "../../../whitelist.js";
+import { handleDownload, startUpload, handleUpload } from "../../../domainlist.js";
 import { darkSwitchFunction } from "../../../libs/dark-mode-switch-1.0.0/dark-mode-switch.js"
 import "../../../libs/FileSaver.js-2.0.2/src/FileSaver.js"
 
@@ -32,20 +32,20 @@ const headings = {
  */
 function eventListeners() {
     document.getElementById("settings-view-radio0").addEventListener('click', () => {
-        chrome.runtime.sendMessage({ ENABLED: true, WHITELIST_ENABLED: false });
-        chrome.storage.local.set({ ENABLED: true, WHITELIST_ENABLED: false });
+        chrome.runtime.sendMessage({ ENABLED: true, DOMAINLIST_ENABLED: false });
+        chrome.storage.local.set({ ENABLED: true, DOMAINLIST_ENABLED: false });
     })
     document.getElementById("settings-view-radio1").addEventListener('click', () => {
-        chrome.runtime.sendMessage({ ENABLED: false, WHITELIST_ENABLED: false });
-        chrome.storage.local.set({ ENABLED: false, WHITELIST_ENABLED: false });
+        chrome.runtime.sendMessage({ ENABLED: false, DOMAINLIST_ENABLED: false });
+        chrome.storage.local.set({ ENABLED: false, DOMAINLIST_ENABLED: false });
     })
     document.getElementById("settings-view-radio2").addEventListener('click', () => {
-        chrome.runtime.sendMessage({ ENABLED: true, WHITELIST_ENABLED: true });
-        chrome.storage.local.set({ ENABLED: true, WHITELIST_ENABLED: true });
+        chrome.runtime.sendMessage({ ENABLED: true, DOMAINLIST_ENABLED: true });
+        chrome.storage.local.set({ ENABLED: true, DOMAINLIST_ENABLED: true });
     })
     document.getElementById("download-button").addEventListener('click', handleDownload)
     document.getElementById("upload-button").addEventListener('click', startUpload)
-    document.getElementById("upload-whitelist").addEventListener('change', handleUpload, false)
+    document.getElementById("upload-domainlist").addEventListener('change', handleUpload, false)
 }
 
 /**
@@ -65,7 +65,7 @@ export async function settingsView(scaffoldTemplate) {
 
   darkSwitchFunction();
 
-  chrome.storage.local.get(["ENABLED", "WHITELIST_ENABLED"], function (result) {
+  chrome.storage.local.get(["ENABLED", "DOMAINLIST_ENABLED"], function (result) {
       console.log(result.ENABLED)
     if (result.ENABLED == undefined) {
       chrome.storage.local.set({ ENABLED: true });
@@ -75,7 +75,7 @@ export async function settingsView(scaffoldTemplate) {
     } else {
       document.getElementById("settings-view-radio1").checked = true;
     }
-    if (result.WHITELIST_ENABLED) {
+    if (result.DOMAINLIST_ENABLED) {
       document.getElementById("settings-view-radio2").checked = true;
     }
   });

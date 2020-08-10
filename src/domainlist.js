@@ -6,16 +6,17 @@ privacy-tech-lab, https://privacy-tech-lab.github.io/
 
 
 /*
-whitelist.js
+domainlist.js
 ================================================================================
-whitelist.js handles OptMeowt's reads/writes to the local whitelist in the
+domainlist.js handles OptMeowt's reads/writes to the domainlist in the local
 browser storage
 */
+
 
 import { YAML } from "/libs/yaml-1.10.0/index.js";
 
 /**
- * Exports the whitelist in local storage as a .txt file
+ * Exports the domainlist in local storage as a .txt file
  */
 export async function handleDownload() {
     console.log("Downloading ...");
@@ -24,21 +25,21 @@ export async function handleDownload() {
       // console.log(`YAML: ${YAML.stringify(DOMAINS, null)}`)
       var blob = new Blob([YAML.stringify(DOMAINS, null)], 
                           {type: "text/plain;charset=utf-8"});
-      saveAs(blob, "OptMeowt_backup.txt");
+      saveAs(blob, "OptMeowt_backup.yaml");
     })
     console.log("Downloaded!")
 }
 
 /**
- * Sets-up the process for importing a saved whitelist backup
+ * Sets-up the process for importing a saved domainlist backup
  */
 export async function startUpload() {
-  document.getElementById("upload-whitelist").value = ""
-  document.getElementById("upload-whitelist").click()
+  document.getElementById("upload-domainlist").value = ""
+  document.getElementById("upload-domainlist").click()
 }
 
 /**
- * Imports and updates the whitelist in local storage with an imported backup
+ * Imports and updates the domainlist in local storage with an imported backup
  */
 export async function handleUpload() {
     console.log("Starting upload ...");
@@ -55,37 +56,37 @@ export async function handleUpload() {
 
 /**
  * Sets DOMAINS[domainKey] to true
- * @param {string} domainKey - domain to be changed in whitelist 
+ * @param {string} domainKey - domain to be changed in domainlist 
  */
-export async function addToWhitelist(domainKey) {
+export async function addToDomainlist(domainKey) {
   var new_domains = [];
   chrome.storage.local.get(["DOMAINS"], function (result) {
     new_domains = result.DOMAINS;
     new_domains[domainKey] = true;
     chrome.storage.local.set({ DOMAINS: new_domains });
   }); 
-  console.log(domainKey, ", Added to whitelist.")
+  console.log(domainKey, ", Added to domainlist.")
 }
 
 /**
  * Sets DOMAINS[domainKey] to false
- * @param {string} domainKey - domain to be changed in whitelist 
+ * @param {string} domainKey - domain to be changed in domainlist 
  */
-export async function removeFromWhitelist(domainKey) {
+export async function removeFromDomainlist(domainKey) {
   var new_domains = [];
   chrome.storage.local.get(["DOMAINS"], function (result) {
     new_domains = result.DOMAINS;
     new_domains[domainKey] = false;
     chrome.storage.local.set({ DOMAINS: new_domains });
   });
-  console.log(domainKey, ", Removed from whitelist.")
+  console.log(domainKey, ", Removed from domainlist.")
 }
 
 /**
  * Removes DOMAINS[domainKey] from DOMAINS
- * @param {string} domainKey - domain to be changed in whitelist 
+ * @param {string} domainKey - domain to be changed in domainlist 
  */
-export async function permRemoveFromWhitelist(domainKey) {
+export async function permRemoveFromDomainlist(domainKey) {
   var new_domains = [];
   chrome.storage.local.get(["DOMAINS"], function (result) {
     new_domains = result.DOMAINS;
@@ -98,17 +99,17 @@ export async function permRemoveFromWhitelist(domainKey) {
 
 /**
  * Creates an event listener that toggles a given domain's stored value in 
- * the whitelist if a user clicks on the object with the given element ID
+ * the domainlist if a user clicks on the object with the given element ID
  * @param {string} elementId - HTML element to be linked to the listener
- * @param {string} domain - domain to be changed in whitelist 
+ * @param {string} domain - domain to be changed in domainlist 
  */
 export async function toggleListener(elementId, domain) {
   document.getElementById(elementId).addEventListener("click", () => {
     chrome.storage.local.get(["DOMAINS"], function (result) {
       if (result.DOMAINS[domain]) {
-        removeFromWhitelist(domain);
+        removeFromDomainlist(domain);
       } else {
-        addToWhitelist(domain);
+        addToDomainlist(domain);
       }
     })
   })

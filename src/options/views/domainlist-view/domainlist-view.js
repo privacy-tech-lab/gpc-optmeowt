@@ -6,14 +6,14 @@ privacy-tech-lab, https://privacy-tech-lab.github.io/
 
 
 /*
-whitelist-view.js
+domainlist-view.js
 ================================================================================
-whitelist-view.js loads whitelist-view.html when clicked on the options page
+domainlist-view.js loads domainlist-view.html when clicked on the options page
 */
 
 
 import { renderParse, fetchParse } from '../../components/util.js'
-import { toggleListener } from "../../../whitelist.js";
+import { toggleListener } from "../../../domainlist.js";
 
 /**
  * @typedef headings
@@ -21,12 +21,12 @@ import { toggleListener } from "../../../whitelist.js";
  * @property {string} headings.subtitle - Subtitle of the given page
  */
 const headings = {
-    title: 'Whitelist',
-    subtitle: "Create a custom list to send 'Do-Not-Sell' signals"
+    title: 'Domain List',
+    subtitle: "Domains toggled will be excluded from receiving Do Not Sell signals"
 }
 
 /**
- * Creates the event listeners for the `Whitelist` page buttons and options
+ * Creates the event listeners for the `domainlist` page buttons and options
  */
 function eventListeners() {
     document.getElementById('searchbar').addEventListener('keyup', filterList )
@@ -34,8 +34,8 @@ function eventListeners() {
 }
 
 /**
- * Creates the specific whitelist toggles for each rendered domain in 
- * the whitelist
+ * Creates the specific domainlist toggles for each rendered domain in 
+ * the domainlist
  */
 function createToggleListeners() {
   chrome.storage.local.get(["DOMAINS"], function (result) {
@@ -54,7 +54,7 @@ function createToggleListeners() {
 function filterList() {
   let input, list, li, count
   input = document.getElementById('searchbar').value.toLowerCase();
-  list = document.getElementById('whitelist-main')
+  list = document.getElementById('domainlist-main')
   li = list.getElementsByTagName('li')
   count = li.length
 
@@ -70,7 +70,7 @@ function filterList() {
 }
 
 /**
- * Builds the list of domains in the whitelist, and their respective 
+ * Builds the list of domains in the domainlist, and their respective 
  * options, to be displayed
  */
 function buildList() {
@@ -104,7 +104,7 @@ function buildList() {
             `
             +
             buildToggle(domain, result.DOMAINS[domain])
-            // `<input type="checkbox" id="toggle-whitelist" />`
+            // `<input type="checkbox" id="toggle-domainlist" />`
             +
             `
               <span></span>
@@ -128,15 +128,15 @@ function buildList() {
       </li>
             `
     } 
-    document.getElementById('whitelist-main').innerHTML = items;
+    document.getElementById('domainlist-main').innerHTML = items;
   });
 }
 
 /**
- * Generates the HTML that will build the whitelist switch for a given 
- * domain in the whitelist
+ * Generates the HTML that will build the domainlist switch for a given 
+ * domain in the domainlist
  * @param {string} domain - Any given domain
- * @param {bool} bool - Represents whether it is whitelisted or not
+ * @param {bool} bool - Represents whether it is domainlisted or not
  * @return {string} - The stringified checkbox HTML compontent
  */
 function buildToggle(domain, bool) {
@@ -150,12 +150,12 @@ function buildToggle(domain, bool) {
 }
 
 /**
- * Renders the `Whitelist` view in the options page
+ * Renders the `domain list` view in the options page
  * @param {string} scaffoldTemplate - stringified HTML template
  */
-export async function whitelistView(scaffoldTemplate) {
+export async function domainlistView(scaffoldTemplate) {
     const body = renderParse(scaffoldTemplate, headings, 'scaffold-component')
-    let content = await fetchParse('./views/whitelist-view/whitelist-view.html', 'whitelist-view')
+    let content = await fetchParse('./views/domainlist-view/domainlist-view.html', 'domainlist-view')
     
     document.getElementById('content').innerHTML = body.innerHTML
     document.getElementById('scaffold-component-body').innerHTML = content.innerHTML
