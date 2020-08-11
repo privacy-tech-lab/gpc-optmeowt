@@ -30,7 +30,28 @@ const headings = {
  */
 function eventListeners() {
     document.getElementById('searchbar').addEventListener('keyup', filterList )
+    // document.getElementById('plus-button').addEventListener('keyup', plusButton )
     createToggleListeners();
+
+    window.onscroll = function() { stickyNavbar() };
+    var nb = document.getElementById("domainlist-navbar");
+    var sb = document.getElementById("searchbar")
+    var sticky = nb.offsetTop;
+
+    /**
+     * Sticky navbar
+     */
+    function stickyNavbar() {
+      if (window.pageYOffset >= sticky) {
+        nb.classList.add("sticky")
+        // nb.classList.add("uk-grid")
+        // sb.classList.add("uk-width-1-2")
+        // document.getElementById("width-expand").classList.remove("uk-width-expand")
+      } else {
+        nb.classList.remove("sticky")
+        // sb.classList.remove("uk-width-3-4")
+      }
+    }
 }
 
 /**
@@ -44,6 +65,15 @@ function createToggleListeners() {
     }
   });
 }
+
+/**
+ * 
+ */
+function plusButton() {
+  console.log("Successfully pressed PLUS!")
+}
+
+
 
 /**
  * Filterd lists code heavily inspired by
@@ -83,7 +113,12 @@ function buildList() {
         <div uk-grid class="uk-grid-small uk-width-1-1" style="font-size: medium;">
           <div>
             <label>
-              <input type="checkbox" id="select" class="check text-color dark-checkbox" />
+            `
+            +
+              buildToggle(domain, result.DOMAINS[domain])
+              //<input type="checkbox" id="select" class="check text-color dark-checkbox" />
+            +
+            `
             </label>
           </div>
           <div class="domain uk-width-expand" >
@@ -102,9 +137,9 @@ function buildList() {
           >
             <label class="switch" >
             `
-            +
-            buildToggle(domain, result.DOMAINS[domain])
-            // `<input type="checkbox" id="toggle-domainlist" />`
+            // +
+            // buildToggle(domain, result.DOMAINS[domain])
+            // // `<input type="checkbox" id="toggle-domainlist" />`
             +
             `
               <span></span>
@@ -118,8 +153,8 @@ function buildList() {
               margin-top: auto;
               margin-bottom: auto;
               background-color: white;
-              border: 1px solid #f44336;
-              color: #f44336;
+              border: 1px solid #e06d62;
+              color: #e06d62;
             "
           >
             Delete
@@ -141,10 +176,14 @@ function buildList() {
  */
 function buildToggle(domain, bool) {
   let toggle;
-  if (bool) {
-    toggle = `<input type="checkbox" id="` + domain + `" checked />`;
+  if (!bool) {
+    toggle = `<input type="checkbox" id="select ` 
+      + domain 
+      + `" class="check text-color dark-checkbox" checked />`;
   } else {
-    toggle = `<input type="checkbox" id="` + domain + `" />`;
+    toggle = `<input type="checkbox" id="select ` 
+        + domain 
+        + `" class="check text-color dark-checkbox" style="transform:scale(1.2);"/>`;
   }
   return toggle
 }
