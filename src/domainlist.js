@@ -105,6 +105,9 @@ export async function permRemoveFromDomainlist(domainKey) {
  */
 export async function toggleListener(elementId, domain) {
   document.getElementById(elementId).addEventListener("click", () => {
+    
+    chrome.storage.local.set({ ENABLED: true, DOMAINLIST_ENABLED: true });
+
     chrome.storage.local.get(["DOMAINS"], function (result) {
       if (result.DOMAINS[domain]) {
         removeFromDomainlist(domain);

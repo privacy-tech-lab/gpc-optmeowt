@@ -79,7 +79,7 @@ function updateDomainsAndSignal(details) {
     console.log(d)
 
     if (domains[d] === undefined) {
-      domains[d] = false
+      domains[d] = true
       chrome.storage.local.set({"DOMAINS": domains});
       console.log("Stored current domain");
     } 
@@ -248,10 +248,10 @@ chrome.storage.local.get(["ENABLED", "DOMAINLIST_ENABLED", "DOMAINS"], function 
  * Runs on startup to enable/disable extension
  */
 chrome.storage.local.get(["ENABLED"], function (result) {
-  if (result.ENABLED) {
-    enable();
-  } else {
+  if (result.ENABLED === false) {
     disable();
+  } else {
+    enable();
   }
 });
 

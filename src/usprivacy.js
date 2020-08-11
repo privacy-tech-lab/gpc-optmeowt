@@ -79,7 +79,10 @@ function initUSP() {
       // var domain = parsed.domain;
       console.log("Current url: ", url)
 
-      checkExistsAndHandleUSP(url);
+      // Filter out chrome://* links as they are local
+      if (url.substr(0,9).toLowerCase() !== 'chrome://') {
+        checkExistsAndHandleUSP(url);
+      }
     }
   })
 }
