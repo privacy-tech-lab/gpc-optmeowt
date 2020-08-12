@@ -61,19 +61,10 @@ function eventListeners() {
 function createToggleListeners() {
   chrome.storage.local.get(["DOMAINS"], function (result) {
     for (let domain in result.DOMAINS) {
-      toggleListener(domain, domain)
+      toggleListener(`select ${domain}`, domain)
     }
   });
 }
-
-/**
- * 
- */
-function plusButton() {
-  console.log("Successfully pressed PLUS!")
-}
-
-
 
 /**
  * Filterd lists code heavily inspired by
@@ -177,13 +168,11 @@ function buildList() {
 function buildToggle(domain, bool) {
   let toggle;
   if (!bool) {
-    toggle = `<input type="checkbox" id="select ` 
-      + domain 
-      + `" class="check text-color dark-checkbox" checked />`;
+    toggle = `<input type="checkbox" id="select ${domain}" 
+              class="check text-color dark-checkbox" checked />`;
   } else {
-    toggle = `<input type="checkbox" id="select ` 
-        + domain 
-        + `" class="check text-color dark-checkbox" style="transform:scale(1.2);"/>`;
+    toggle = `<input type="checkbox" id="select ${domain}" 
+              class="check text-color dark-checkbox"/>`;
   }
   return toggle
 }
