@@ -61,7 +61,8 @@ function eventListeners() {
 function createToggleListeners() {
   chrome.storage.local.get(["DOMAINS"], function (result) {
     for (let domain in result.DOMAINS) {
-      toggleListener(`select ${domain}`, domain)
+      // MAKE SURE THE ID MATCHES EXACTLY
+      toggleListener(`${domain}`, domain)
     }
   });
 }
@@ -103,13 +104,14 @@ function buildList() {
       <li>
         <div uk-grid class="uk-grid-small uk-width-1-1" style="font-size: medium;">
           <div>
-            <label>
+            <label class="switch">
             `
             +
               buildToggle(domain, result.DOMAINS[domain])
               //<input type="checkbox" id="select" class="check text-color dark-checkbox" />
             +
             `
+              <span></span>
             </label>
           </div>
           <div class="domain uk-width-expand" >
@@ -167,12 +169,14 @@ function buildList() {
  */
 function buildToggle(domain, bool) {
   let toggle;
-  if (!bool) {
-    toggle = `<input type="checkbox" id="select ${domain}" 
-              class="check text-color dark-checkbox" checked />`;
+  if (bool) {
+    // checkbox = `<input type="checkbox" id="select ${domain}" 
+    //           class="check text-color dark-checkbox" checked />`;
+    toggle = `<input type="checkbox" id="${domain}" checked />`;
   } else {
-    toggle = `<input type="checkbox" id="select ${domain}" 
-              class="check text-color dark-checkbox"/>`;
+    // checkbox = `<input type="checkbox" id="select ${domain}" 
+    //           class="check text-color dark-checkbox"/>`;
+    toggle = `<input type="checkbox" id="${domain}" />`;
   }
   return toggle
 }

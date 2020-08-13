@@ -77,6 +77,7 @@ export async function removeFromDomainlist(domainKey) {
   chrome.storage.local.get(["DOMAINS"], function (result) {
     new_domains = result.DOMAINS;
     new_domains[domainKey] = false;
+    deleteDomainCookies(domainKey)
     chrome.storage.local.set({ DOMAINS: new_domains });
   });
   console.log(domainKey, ", Removed from domainlist.")
@@ -91,8 +92,38 @@ export async function permRemoveFromDomainlist(domainKey) {
   chrome.storage.local.get(["DOMAINS"], function (result) {
     new_domains = result.DOMAINS;
     delete new_domains[domainKey]
+    deleteDomainCookies(domainKey)
     chrome.storage.local.set({ DOMAINS: new_domains });
   });
+}
+
+//////////////////////////////////////////////////////////////////////////
+
+/**
+ * 
+ * @param {*} elementId 
+ * @param {*} domain 
+ */
+function deleteDomainCookies(domainKey) {
+  var cookie_arr = []
+  chrome.cookies.getAll({ "domain": `${domainKey}` }, function(cookies) {
+    cookie_arr = cookies
+    console.log(`Retrieved ${domainKey} cookies: ${cookies}`)
+    for (let i in cookie_arr) {
+      console.log(`Cookie #${i}: ${cookie_arr[i]}`)
+      chrome.cookies.remove({
+        "url": `https://${domainKey}/`,
+        "name": cookie_arr[i].name 
+      }, function(details) {
+        if (details === null) {
+          console.log("Delete failed.")
+        } else {
+          console.log("Successfully deleted cookie.")
+        }
+      })
+    }
+  });
+  
 }
 
 //////////////////////////////////////////////////////////////////////////
