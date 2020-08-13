@@ -19,7 +19,7 @@ import {
   animateCSS,
 } from "../../components/util.js";
 import { settingsView } from "../settings-view/settings-view.js";
-import { whitelistView } from "../whitelist-view/whitelist-view.js";
+import { domainlistView } from "../domainlist-view/domainlist-view.js";
 import { aboutView } from "../about-view/about-view.js";
 
 /**
@@ -37,17 +37,17 @@ async function displaySettings(bodyTemplate) {
 }
 
 /**
- * Opens the `Whitelist` page
+ * Opens the `Domainlist` page
  * @param {string} bodyTemplate - stringified HTML template
  */
-function displayWhitelist(bodyTemplate) {
+function displayDomainlist(bodyTemplate) {
     animateCSS("#scaffold", 'fadeOut', async function() {
         document.getElementById('scaffold').remove()
-        await whitelistView(bodyTemplate)
+        await domainlistView(bodyTemplate)
         animateCSS("#scaffold", 'fadeIn');
       });
       document.querySelector('.navbar-item.active').classList.remove('active')
-      document.querySelector('#main-view-whitelist').classList.add('active')
+      document.querySelector('#main-view-domainlist').classList.add('active')
 }
 
 /**
@@ -83,8 +83,8 @@ export async function mainView() {
     .getElementById("main-view-settings")
     .addEventListener("click", () => displaySettings(bodyTemplate));
   document
-    .getElementById("main-view-whitelist")
-    .addEventListener("click", () => displayWhitelist(bodyTemplate));
+    .getElementById("main-view-domainlist")
+    .addEventListener("click", () => displayDomainlist(bodyTemplate));
   document
     .getElementById("main-view-about")
     .addEventListener("click", () => displayAbout(bodyTemplate));

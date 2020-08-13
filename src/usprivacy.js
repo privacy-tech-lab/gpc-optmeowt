@@ -18,7 +18,7 @@ modification process
 - Add some kind of check to stop the cookie from being updated
   more than once per site refresh.
 - Think about how we will disable the feature if a certain site is 
-  "unwhitelisted" specifically
+  "not in the domainlist" specifically
 - Make sure that if a cookie exists, you are updating the specific version
   that the site has
 - Create a check that checks for mulitiple copies of the cookie, 
@@ -79,7 +79,10 @@ function initUSP() {
       // var domain = parsed.domain;
       console.log("Current url: ", url)
 
-      checkExistsAndHandleUSP(url);
+      // Filter out chrome://* links as they are local
+      if (url.substr(0,9).toLowerCase() !== 'chrome://') {
+        checkExistsAndHandleUSP(url);
+      }
     }
   })
 }

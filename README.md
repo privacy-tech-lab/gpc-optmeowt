@@ -14,7 +14,7 @@ OptMeowt ("Opt Me Out") is a browser extension for sending Do Not Sell signals t
 
 OptMewot sends Do Not Sell signals to all domains a user visits when browsing the web. Such signals must be respected for California consumers per the California Consumer Privacy Act (CCPA), [Regs Section 999.315(d)](https://oag.ca.gov/sites/all/files/agweb/pdfs/privacy/oal-sub-final-text-of-regs.pdf). However, many companies respect such signals even when they are from outside of California.
 
-OptMeowt is sending Do Not Sell signals using five methods:
+OptMeowt currently sends Do Not Sell signals using five methods:
 
 1. A new HTTP Do Not Sell header we are developing in a [standardization effort at the W3C](https://github.com/privacycg/proposals/issues/10).
 2. The [existing DNT header](https://www.w3.org/TR/tracking-dnt/), which is interpreted by some publishers as a Do Not Sell header.
@@ -22,7 +22,8 @@ OptMeowt is sending Do Not Sell signals using five methods:
 4. Third party cookies of ad networks participating in the [DAA's CCPA Opt Out Tool for the Web](https://digitaladvertisingalliance.org/integrate-webchoices-ccpa).
 5. Custom headers and cookies used by individual websites maintained and updated in a Do Not Sell list.
 
-Users can also whitelist domains that should not receive Do Not Sell signals.
+**Custom Do Not Sell functionality**
+Every domain a user visits will also be automatically added to a `domain list` whose members will receive Do Not Sell signals. Users have the option to switch specific domains to be excluded from this Do Not Sell functionality from within both the `domain list` and the `popup window`. 
 
 ## Installing and Running OptMeowt
 
@@ -49,13 +50,17 @@ You did it! You have installed OptMeowt. You can use it via the icon next to the
 - `src/libs`: Contains all of the libraries used in the browser extension.
 - `src/options`: Contains the UI elements and scripts for the supplemental options page.
 - `src/popup`: Contains the UI elements and scripts for the popup inside the extensions bar.
+- `src/yaml`: Contains the YAML configuration files for OptMeowt's Do Not Sell cookies and headers.
+- `src/yaml/cookies_3p.yaml`: Contains the 3rd party opt out cookies collected from various ad networks (especially those set by the [DAA's CCPA Opt Out Tool for the Web](https://optout.privacyrights.info/?c=1)). 
+- `src/yaml/cookies_usercustom.yaml`: YAML file where _users can place their own custom opt out cookies_ to be used by OptMeowt. 
+- `src/yaml/headers.yaml`: Contains the opt out HTTP header specs used by OptMeowt. 
+- `src/background.html`: OptMeowt's background page. Launches all critical extension scripts and libraries. 
 - `src/background.js`: This is the main script running OptMeowt. It controls all of the major backend, regarding whether the extension is on/off, sending the Do Not Sell signal, etc.
 - `src/contentScript.js`: This is the main supplemental script that passes data to `background.js` and runs on every webpage loaded.
-- `src/cookies_3p.js`: Handles placing all of the 3rd party opt out cookies stored in `cookies_3p.json`. This runs one time and places the cookies on install. 
-- `src/cookies_3p.json`: Contains all of the 3rd party opt out cookies collected from the [DAA's CCPA Opt Out Tool for the Web](https://optout.privacyrights.info/?c=1). 
+- `src/cookie_lists_yaml.js`: Handles placing all of the opt out cookies stored in `cookies_3p.yaml` and `cookies_usercustom.yaml`. This currently runs on OptMeowt's install or on an extension refresh.
+- `src/domainlist.js`: This is the main JS file that allows the extension to communicate with the `domain list` stored in the browser's local storage.
 - `src/manifest.json`: This provides the browser with metadata about the extension, regarding its name, permissions, etc.
-- `src/us_privacy.js`: Handles placing, manipulating, and updating 1st party opt out cookies for each site visited with the Do Not Sell signal (namely the IAB `usprivacy` cookies)
-- `src/whitelist.js`: This is the main JS file that allows the extension to communicate with the whitelist stored in the browser's local storage.
+- `src/usprivacy.js`: Handles placing and updating 1st party opt out cookies (namely the IAB `usprivacy` string) for each site intended to receive Do Not Sell signals. 
 - `ui-mockup`: Contains PDF and XD files demonstrating the preliminary mockup and analysis of OptMeowt.
 
 ## Third Party Libraries
@@ -68,7 +73,7 @@ OptMeowt uses the following third party libraries. We thank the developers.
 - [Switch Animation by Aaron Iker](https://codepen.io/aaroniker/pen/oaQdQZ)
 - [psl (Public Suffix List)](https://github.com/lupomontero/psl)
 - [Dark Mode Switch](https://github.com/coliff/dark-mode-switch)
-- [YAML (for JS)](https://github.com/eemeli/yaml)
+- [yaml (JavaScript parser)](https://github.com/eemeli/yaml)
 
 <p align="center">
   <img src="https://github.com/privacy-tech-lab/optmeowt-browser-extension/blob/master/plt_logo.png" width="200px" height="200px" title="privacy-tech-lab logo">
