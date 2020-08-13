@@ -13,7 +13,7 @@ domainlist-view.js loads domainlist-view.html when clicked on the options page
 
 
 import { renderParse, fetchParse } from '../../components/util.js'
-import { toggleListener } from "../../../domainlist.js";
+import { toggleListener, permRemoveFromDomainlist } from "../../../domainlist.js";
 
 /**
  * @typedef headings
@@ -55,16 +55,35 @@ function eventListeners() {
 }
 
 /**
- * Creates the specific domainlist toggles for each rendered domain in 
- * the domainlist
+ * Creates the specific Domain List toggles as well as the perm delete
+ * buttons for each domain
  */
 function createToggleListeners() {
   chrome.storage.local.get(["DOMAINS"], function (result) {
     for (let domain in result.DOMAINS) {
       // MAKE SURE THE ID MATCHES EXACTLY
-      toggleListener(`${domain}`, domain)
+      toggleListener(domain, domain)
+      deleteButtonListener(domain)
     }
   });
+}
+
+/**
+ * Delete buttons for each domain
+ * @param {string} domain 
+ */
+function deleteButtonListener (domain) {
+  document.getElementById(`delete ${domain}`).addEventListener("click", 
+    (async () => {
+      let delete_prompt = `Are you sure you would like to permanently delete this domain from the Domain List?`
+      let success_prompt = `Successfully deleted ${domain} from the Domain List. 
+NOTE: It will be automatically added back to the list when the domain is requested again.`
+      if (confirm(delete_prompt)) {
+        await permRemoveFromDomainlist(domain)
+        alert(success_prompt)
+        document.getElementById(`li ${domain}`).remove();
+      }
+  }))
 }
 
 /**
@@ -101,7 +120,7 @@ function buildList() {
     for (let domain in result.DOMAINS) {
       items += 
             `
-      <li>
+      <li id="li ${domain}">
         <div uk-grid class="uk-grid-small uk-width-1-1" style="font-size: medium;">
           <div>
             <label class="switch">
@@ -114,12 +133,8 @@ function buildList() {
               <span></span>
             </label>
           </div>
-          <div class="domain uk-width-expand" >
-            `
-            +
-            domain
-            +
-            `
+          <div class="domain uk-width-expand">
+            ${domain}
           </div>
           <div style="
             margin-right: 5px; 
@@ -138,20 +153,24 @@ function buildList() {
               <span></span>
             </label>
           </div>
-          <div
-            class="uk-badge button"
-            style="
-              margin-right: 5px; 
-              margin-left: 5px;
-              margin-top: auto;
-              margin-bottom: auto;
-              background-color: white;
-              border: 1px solid #e06d62;
-              color: #e06d62;
-            "
-          >
-            Delete
-          </div>
+
+            <button
+              id="delete ${domain}"
+              class="uk-badge button"
+              type="button"
+              style="
+                margin-right: 5px; 
+                margin-left: 5px;
+                margin-top: auto;
+                margin-bottom: auto;
+                background-color: white;
+                border: 1px solid #e06d62;
+                color: #e06d62;
+              "
+            >
+              Delete
+            </button>
+
         </div>
       </li>
             `
