@@ -22,7 +22,7 @@ import { toggleListener, permRemoveFromDomainlist } from "../../../domainlist.js
  */
 const headings = {
     title: 'Domain List',
-    subtitle: "Domains toggled will be excluded from receiving Do Not Sell signals"
+    subtitle: "Toggle which domains you would like to receive Do Not Sell signals"
 }
 
 /**
