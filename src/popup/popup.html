@@ -72,37 +72,50 @@ popup.html is the html scaffolding for OptMeowt's popup page
       </div>
     </div>
     <hr class="uk-margin-small-top" />
+
     <!-- Content -->
     <div class="uk-inline">
       <div id="content">
-        <div
-          class="uk-flex-inline uk-width-1-1 uk-flex-center uk-text-center uk-text-large uk-text-bold uk-text-truncate"
-          style="color: #4472c4;"
-          id="domain"
+
+        <!-- Domain List UI elements here -->
+        <div 
+          id="domain-ui"
         >
-          <!-- Active tab domain inflated here -->
-        </div>
-        <br />
-        <div uk-grid class="uk-margin-top" style="margin-bottom: 4%;">
+        <!-- style="padding:5px;box-shadow:0 2px 4px var(--accent-color-lighter-60);" -->
+
           <div
-            class="uk-width-expand uk-margin-auto-vertical"
-            style="font-weight: bold; font-size: medium;"
+            class="uk-flex-inline uk-width-1-1 uk-flex-center uk-text-center uk-text-large uk-text-bold uk-text-truncate"
+            style="color: #4472c4;"
+            id="domain"
           >
-            Send "Do-Not-Sell" signal
+          
+            <!-- Active tab domain inflated here -->
           </div>
-          <div>
-            <div uk-grid>
-              <div class="uk-width-auto">
-                <label class="switch" id="switch-label">
-                  <!-- Populate switch preference here -->
-                  <!-- <input type="checkbox" id="input"/>
-                  <span></span> -->
-                </label>
+          <br />
+          <div uk-grid class="uk-margin-top" style="margin-bottom: 4%;">
+            <div
+              class="uk-width-expand uk-margin-auto-vertical"
+              style="font-weight: bold; font-size: medium;"
+            >
+              Send "Do-Not-Sell" signal
+            </div>
+            <div>
+              <div uk-grid>
+                <div class="uk-width-auto">
+                  <label class="switch" id="switch-label">
+                    <!-- Populate switch preference here -->
+                    <!-- <input type="checkbox" id="input"/>
+                    <span></span> -->
+                  </label>
+                </div>
               </div>
             </div>
           </div>
         </div>
-        <div class="uk-text-bold" style="font-size: medium;">
+        <hr>
+
+        <!-- Domains connected and responses here -->
+        <div class="uk-text-bold" style="font-size: medium">
           Responses <span class="uk-badge" style="font-size: 10px; background-color: #ffe0b2; color:#e65100 !important;">RECEIVED 0/<span id='requests'>0</span></span>
         </div>
         <div class="uk-width-1-1">
