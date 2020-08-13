@@ -72,6 +72,26 @@ Navbar item style
 
 /********************************************************/
 
+/*
+Sticky Domain List Navbar
+*/
+.domainlist-navbar { 
+  background-color: white;
+  padding-top: 5px;
+}
+
+/* Added with  */
+.sticky {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  transition: all ease 0.25s;
+  box-shadow: 0 8px 8px -10px var(--accent-color-lighter-60);
+  z-index: 100;
+}
+
+/********************************************************/
+
 /* 
 Radio buttons style 
 */
@@ -95,17 +115,20 @@ input[type='radio']:hover:not(:checked) {
 /********************************************************/
 
 /* 
-`whitelist-view` options page checkbox style
+`domainlist-view` options page checkbox style
 */
 .check {
   /* appearance: none; */
-  transform: scale(1.25);
+  transform:  scale(1.25);
+  /* transform-style: inherit; */
+  /* z-index: -10; */
+  
 }
 
 /********************************************************/
 
 /*
-'settings-view' whitelist import & export button style
+'settings-view' domainlist import & export button style
 */
 .importexport-button {
   background-color: white;
