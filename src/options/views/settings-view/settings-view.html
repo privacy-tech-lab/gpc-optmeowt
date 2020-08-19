@@ -38,7 +38,31 @@ options page when clicked
             Enable
           </div>
           <div class="uk-first-column uk-width-1-1" style="font-size: small;">
-            Send a "Do-Not-Sell" signal with every network request
+            Sends 'Do Not Sell' signals to every visited domain
+          </div>
+        </div>
+      </div>
+    </label>
+    <br />
+    <label>
+      <div uk-grid class="uk-grid-column-small" style="margin-left: 0px;">
+        <div class="uk-container" style="margin: auto;">
+          <input
+            class="uk-radio"
+            type="radio"
+            name="radio"
+            id="settings-view-radio2"
+          />
+        </div>
+        <div uk-grid class="uk-grid-row-collapse uk-width-expand">
+          <div
+            class="uk-first-column uk-width-1-1 uk-text-bold"
+            style="font-size: large;"
+          >
+            Domain List
+          </div>
+          <div class="uk-first-column uk-width-1-1" style="font-size: small;">
+            Sends 'Do Not Sell' signals according to the custom Domain List
           </div>
         </div>
       </div>
@@ -63,31 +87,7 @@ options page when clicked
             Disable
           </div>
           <div class="uk-first-column uk-width-1-1" style="font-size: small;">
-            Do not send any "Do-Not-Sell" signals
-          </div>
-        </div>
-      </div>
-    </label>
-    <br />
-    <label>
-      <div uk-grid class="uk-grid-column-small" style="margin-left: 0px;">
-        <div class="uk-container" style="margin: auto;">
-          <input
-            class="uk-radio"
-            type="radio"
-            name="radio"
-            id="settings-view-radio2"
-          />
-        </div>
-        <div uk-grid class="uk-grid-row-collapse uk-width-expand">
-          <div
-            class="uk-first-column uk-width-1-1 uk-text-bold"
-            style="font-size: large;"
-          >
-            Custom
-          </div>
-          <div class="uk-first-column uk-width-1-1" style="font-size: small;">
-            Send "Do-Not-Sell" signals based on your whitelist
+            Does not send any 'Do Not Sell' signals
           </div>
         </div>
       </div>
@@ -95,14 +95,14 @@ options page when clicked
   </div>
   <hr>
   <div style="font-weight: bold; font-size: medium; padding-bottom: 10px;">
-    Whitelist Import & Export
+    Domain List Export & Import
   </div>
   <div uk-grid>  
     <div>
       <button 
         id="download-button" class="importexport-button"
       >
-        Export Whitelist
+        Export Domain List
       </a>
     </div>
     <div>
@@ -114,8 +114,8 @@ options page when clicked
       <input
         hidden
         type="file"
-        accept="text/plain"
-        id="upload-whitelist"
+        accept=".yaml"
+        id="upload-domainlist"
       >
       </input>
     </div>

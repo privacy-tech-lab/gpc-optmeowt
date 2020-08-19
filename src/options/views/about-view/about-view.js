@@ -21,7 +21,7 @@ import { renderParse, fetchParse } from '../../components/util.js'
  */
 const headings = {
     title: 'About',
-    subtitle: "Learn more about the OptMeowt"
+    subtitle: "Learn more about OptMeowt"
 }
 
 /**

@@ -12,7 +12,11 @@ popup.js supplements and renders complex elements on popup.html
 */
 
 
-import { toggleListener } from "../whitelist.js";
+import { 
+  // toggleListener, 
+  addToDomainlist, 
+  removeFromDomainlist 
+} from "../domainlist.js";
 
 /**
  * Initializes the popup window after DOM content is loaded
@@ -99,20 +103,42 @@ document.addEventListener("DOMContentLoaded", (event) => {
   });
 
   /**
-   * Sets whitelist switch to correct position and adds listener
+   * Sets domain list switch to correct position and adds listener
    */
   chrome.storage.local.get(["DOMAINS"], function (result) {
-    var s = ""
+    // Sets popup view
+    var checkbox = ""
+    var text = ""
     if (result.DOMAINS[parsed_domain]) {
-      s = `<input type="checkbox" id="input" checked/>
+      checkbox = `<input type="checkbox" id="input" checked/>
                       <span></span>`
+      text = "Do Not Sell Enabled"
     } else {
-      s = `<input type="checkbox" id="input"/>
+      checkbox = `<input type="checkbox" id="input"/>
                       <span></span>`
+      text = "Do Not Sell Disabled"
     }
-    document.getElementById("switch-label").innerHTML = s;
-    toggleListener("input", parsed_domain);
+    document.getElementById("switch-label").innerHTML = checkbox;
+    document.getElementById("dns-text").innerHTML = text;
+    // toggleListener("input", parsed_domain);
+    // This is based on the toggleListener function and creates a toggle
+    document.getElementById("switch-label").addEventListener("click", () => {
+      chrome.storage.local.set({ ENABLED: true, DOMAINLIST_ENABLED: true });
+      chrome.storage.local.get(["DOMAINS"], function (result) {
+        var t = ""
+        if (result.DOMAINS[parsed_domain]) {
+          t = "Do Not Sell Disabled"
+          removeFromDomainlist(parsed_domain);
+        } else {
+          t = "Do Not Sell Enabled"
+          addToDomainlist(parsed_domain);
+        }
+        // console.log(t)
+        document.getElementById("dns-text").innerHTML = t;
+      })
+    })
   })
+
 })
 
 /**

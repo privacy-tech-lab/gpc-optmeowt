@@ -25,7 +25,7 @@ var optout_headers = {};
 
 
 /**
- * Manipulates Headers and adds Do-Not-Sell signal if functionality is on
+ * Manipulates Headers and adds Do Not Sell signal if functionality is on
  * @param {Object} details - retrieved info passed into callback
  * @return {HttpHeaders} array of modified HTTP headers to be sent
  *                       (request headers)
@@ -64,13 +64,13 @@ var receivedHeaders = (details) => {
 };
 
 /**
- * Adds current domain to local storage whitelist. 
+ * Adds current domain to local storage domain list. 
  * Verifies a signal should be sent to a particular domain and sets 
  * `sendSignal` bool flag accordingly. 
  * @param {Object} details - retrieved info passed into callback
  */
 function updateDomainsAndSignal(details) {
-  chrome.storage.local.get(["WHITELIST_ENABLED", "DOMAINS"], function (result) {
+  chrome.storage.local.get(["DOMAINLIST_ENABLED", "DOMAINS"], function (result) {
     /// Store current domain in DOMAINS
     var url = new URL(details.url);
     var parsed = psl.parse(url.hostname);
@@ -79,13 +79,14 @@ function updateDomainsAndSignal(details) {
     console.log(d)
 
     if (domains[d] === undefined) {
-      domains[d] = false
+      domains[d] = true
       chrome.storage.local.set({"DOMAINS": domains});
       console.log("Stored current domain");
     } 
-    /// Set to true if whitelist is off, or if whitelist is on AND domain is whitelisted
+    /// Set to true if domainlist is off, or if domainlist is on 
+    /// AND domain is in domainlist
     /// Basically, we want to know if we send the signal to a given domain
-    if (result.WHITELIST_ENABLED) {
+    if (result.DOMAINLIST_ENABLED) {
       if (domains[d] === true) {
         sendSignal = true
       } else {
@@ -226,17 +227,17 @@ chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
 });
 
 /**
- * Generates DOMAINS, WHITELIST_ENABLED, NONWHITELIST keys in local storage
+ * Generates ENABLED, DOMAINLIST_ENABLED, and DOMAINS keys in local storage
  * if undefined
  */
-chrome.storage.local.get(["ENABLED", "WHITELIST_ENABLED", "DOMAINS"], function (
+chrome.storage.local.get(["ENABLED", "DOMAINLIST_ENABLED", "DOMAINS"], function (
   result
 ) {
   if (result.ENABLED == undefined) {
     chrome.storage.local.set({ ENABLED: true });
   }
-  if (result.WHITELIST_ENABLED == undefined) {
-    chrome.storage.local.set({ WHITELIST_ENABLED: false });
+  if (result.DOMAINLIST_ENABLED == undefined) {
+    chrome.storage.local.set({ DOMAINLIST_ENABLED: false });
   }
   if (result.DOMAINS == undefined) {
     chrome.storage.local.set({ DOMAINS: {} });
@@ -247,10 +248,10 @@ chrome.storage.local.get(["ENABLED", "WHITELIST_ENABLED", "DOMAINS"], function (
  * Runs on startup to enable/disable extension
  */
 chrome.storage.local.get(["ENABLED"], function (result) {
-  if (result.ENABLED) {
-    enable();
-  } else {
+  if (result.ENABLED === false) {
     disable();
+  } else {
+    enable();
   }
 });
 
