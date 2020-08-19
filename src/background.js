@@ -59,6 +59,7 @@ var addHeaders = (details) => {
  * @param {Object} details - retrieved info passed into callback
  */
 var receivedHeaders = (details) => {
+  checkResponse(details);
   logData(details);
   incrementBadge(details);
 };
@@ -97,6 +98,26 @@ function updateDomainsAndSignal(details) {
     }
     console.log(sendSignal);
   });
+}
+
+/**
+ * Verifies that a response is a Do Not Sell response
+ * @param {Object} details - retrieved info passed into callback
+ */
+function checkResponse(details) {
+  let heads = details.responseHeaders
+  for (let i in heads) {
+    // console.log("responseHeader[i]: ", heads[i])
+    if (heads[i]['name'] === 'dns' && heads[i]['value'] === 'received') {
+      chrome.browserAction.setIcon({tabId: details.tabId, path:"assets/face-icons/optmeow-face-circle-green-128.png"}, function () {
+        console.log("RECEIVED DNS AKNOWLEDGEMENT FROM SERVER.")
+      })
+    } 
+    // else {
+    //   chrome.pageAction.setIcon({tabId: details.tabId, path:"assets/face-icons/optmeow-face-circle-red-128.png"}, 
+    //   function () { })
+    // }
+  }
 }
 
 /**
@@ -150,7 +171,7 @@ function incrementBadge() {
     requests = tabs[activeTabID].REQUEST_DOMAINS;
     console.log(tabs[activeTabID])
   }
-  chrome.browserAction.setBadgeText({ text: numberOfRequests.toString() });
+  // chrome.browserAction.setBadgeText({ text: numberOfRequests.toString() });
   chrome.runtime.sendMessage({
     msg: "BADGE",
     data: numberOfRequests.toString(),
@@ -188,8 +209,8 @@ function enable() {
       },
       ["responseHeaders", "extraHeaders" , "blocking"]
     );
-    chrome.browserAction.setBadgeBackgroundColor({ color: "#666666" });
-    chrome.browserAction.setBadgeText({ text: "0" });
+    // chrome.browserAction.setBadgeBackgroundColor({ color: "#666666" });
+    // chrome.browserAction.setBadgeText({ text: "0" });
     chrome.storage.local.set({ ENABLED: true });
   })
   .catch(e => console.log(
@@ -205,7 +226,7 @@ function disable() {
   chrome.webRequest.onBeforeSendHeaders.removeListener(addHeaders);
   chrome.webRequest.onBeforeSendHeaders.removeListener(receivedHeaders);
   chrome.storage.local.set({ ENABLED: false });
-  chrome.browserAction.setBadgeText({ text: "" });
+  // chrome.browserAction.setBadgeText({ text: "" });
   var counter = 0;
 }
 
