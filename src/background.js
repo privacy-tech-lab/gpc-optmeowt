@@ -251,7 +251,7 @@ chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
  * Generates ENABLED, DOMAINLIST_ENABLED, and DOMAINS keys in local storage
  * if undefined
  */
-chrome.storage.local.get(["ENABLED", "DOMAINLIST_ENABLED", "DOMAINS"], function (
+chrome.storage.local.get(["ENABLED", "DOMAINLIST_ENABLED", "DOMAINS", "DOMAINLIST_PRESSED"], function (
   result
 ) {
   if (result.ENABLED == undefined) {
@@ -262,6 +262,9 @@ chrome.storage.local.get(["ENABLED", "DOMAINLIST_ENABLED", "DOMAINS"], function 
   }
   if (result.DOMAINS == undefined) {
     chrome.storage.local.set({ DOMAINS: {} });
+  }
+  if (result.DOMAINLIST_PRESSED == undefined) {
+    chrome.storage.local.set({ DOMAINLIST_PRESSED: false });
   }
 });
 

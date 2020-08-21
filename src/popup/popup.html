@@ -56,6 +56,21 @@ popup.html is the html scaffolding for OptMeowt's popup page
           id="img"
         />
       </div>
+      <!-- <div
+        class="uk-container"
+        style="margin: auto; padding: 0; padding-right: 8px;"
+        uk-tooltip="Dark Mode"
+        id="dark-switch"
+      >
+        <img
+          src="../assets/brightness-high-bootstrap.svg"
+          height="20"
+          width="20"
+          alt="darkSwitch"
+          uk-svg
+          id="dark-switch-img"
+        />
+      </div> -->
       <div
         class="uk-container"
         style="margin: auto; padding: 0;"
@@ -82,17 +97,20 @@ popup.html is the html scaffolding for OptMeowt's popup page
           id="domain-ui"
         >
         <!-- style="padding:5px;box-shadow:0 2px 4px var(--accent-color-lighter-60);" -->
-
+          <div 
+            id="status-text" 
+            class="uk-text-small uk-text-bold uk-text-center status-text-red" 
+          >
+            Rejected
+          </div>
           <div
             class="uk-flex-inline uk-width-1-1 uk-flex-center uk-text-center uk-text-large uk-text-bold uk-text-truncate"
             style="color: #4472c4;"
             id="domain"
           >
-          
             <!-- Active tab domain inflated here -->
           </div>
-          <br />
-          <div uk-grid class="uk-margin-top" style="margin-bottom: 4%;">
+          <div uk-grid  style="margin-top: 4%; margin-bottom: 4%;">
             <div
               id="dns-text"
               class="uk-width-expand uk-margin-auto-vertical"
@@ -112,11 +130,61 @@ popup.html is the html scaffolding for OptMeowt's popup page
               </div>
             </div>
           </div>
+          <!-- Response info -->
+          <div uk-grid uk-grid-row-collapse style="margin-top:0px;">
+            <div class="uk-width-expand">
+              <div
+                id="received-text"
+                style="font-weight: bold; font-size: medium;"
+              >
+                Do Not Sell request: 
+              </div>
+              <div
+                id="received-text"
+                style="font-weight: bold; font-size: medium;"
+              >
+                Website response: 
+              </div>
+            </div>
+            <div>
+              <div
+                id="received-check"
+                class="uk-flex uk-flex-right"
+                style="font-size: medium;"
+              >
+                <div>Sent</div>
+                <div style="padding-left: 10px;display: flex;align-items: center;">
+                  <img
+                    src="../assets/check.svg"
+                    height="17"
+                    width="17"
+                    alt="Checkmark"
+                    uk-svg
+                  />
+                </div>
+              </div>
+              <div
+                id="received-check"
+                class="uk-flex uk-flex-right"
+                style="font-size: medium;"
+              >
+                <div>Rejected</div>
+                <div style="padding-left: 10px;display: flex;align-items: center;">
+                  <img
+                    src="../assets/x.svg"
+                    height="17"
+                    width="17"
+                    alt="Checkmark"
+                    uk-svg
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-        <hr>
 
         <!-- Domains connected and responses here -->
-        <div class="uk-text-bold" style="font-size: medium">
+        <!-- <div class="uk-text-bold" style="font-size: medium">
           Responses <span class="uk-badge" style="font-size: 10px; background-color: #ffe0b2; color:#e65100 !important;">RECEIVED 0/<span id='requests'>0</span></span>
         </div>
         <div class="uk-width-1-1">
@@ -190,8 +258,44 @@ popup.html is the html scaffolding for OptMeowt's popup page
               </div>
             </div>
           </li>
-        </ul>
-        <hr>
+        </ul> -->
+        <!-- This is dummy text to preserve the spacing on the page -->
+        <div class="uk-width-1-1 uk-text-truncate" style="color:white;">
+          See responses from the 'Do Not Sell' requests below. Dummy data below
+        </div>
+        <hr style="margin:0px; ">
+
+        <!-- 3rd Party Domains expandable -->
+        <div uk-grid id="third-party-domains" class="third-party-domains" style="padding:15px; margin-right:-20px;">
+          <div
+            class="uk-container"
+            style="margin: auto; padding: 0; padding-left: 36px; padding-right: 6px"
+            uk-tooltip="Dropdown"
+            id="dropdown"
+          >
+            <img
+              src="../assets/chevron-down.svg"
+              height="15"
+              width="15"
+              alt="dropdown"
+              uk-svg
+            /> 
+          </div>
+          <div class="uk-width-expand uk-text-left" style="font-weight: bold; font-size: medium; margin-right:20px;">
+            3rd Party Domains
+          </div>
+        </div>
+        <hr style="margin:0px;">
+
+        <!-- Domain List link -->
+        <div uk-grid id="domain-list" class="domain-list" style="padding:15px; margin-right:-20px;">
+          <div class="uk-width-expand uk-text-center" style="font-weight: bold; font-size: medium; margin-right:20px;">
+            Domain List
+          </div>
+        </div>
+        <hr style="margin:0px;" >
+
+        <!-- Dark Mode -->
         <div uk-grid class="uk-margin-top" style="margin-bottom: 4%;">
           <div
             class="uk-width-expand uk-margin-auto-vertical"

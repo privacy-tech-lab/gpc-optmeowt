@@ -31,9 +31,13 @@ Colors
     --accent-color-darker-25:  #2F5597;
     --accent-color-darker-50:  #203864;
 
-    --text-color: #888fa1;
-    --text-color-darker: #5a647d ;
+    /* --text-color: #888fa1; */
+    --text-color: #5a647d;
+    /* --text-color-darker: #5a647d ; */
+    --text-color-darker: #353b4a ;
     --text-color-inactive: #d3d3d3 ;
+
+    --highlight-light: #f2f2f2;
 }
 
 .text-color-darker {

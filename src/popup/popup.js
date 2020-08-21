@@ -192,18 +192,36 @@ chrome.runtime.sendMessage({
  * Listens for messages from background page that call functions to populate 
  * the popup badge counter and build the popup domain list HTML, respectively 
  */
-chrome.runtime.onMessage.addListener(function (request, _, __) {
-  if (request.msg === "BADGE") {
-    document.getElementById("requests").innerText = request.data;
-  }
-  if (request.msg === "REQUESTS") {
-    buildDomains(request.data);
-  }
-});
+// chrome.runtime.onMessage.addListener(function (request, _, __) {
+//   if (request.msg === "BADGE") {
+//     document.getElementById("requests").innerText = request.data;
+//   }
+//   if (request.msg === "REQUESTS") {
+//     buildDomains(request.data);
+//   }
+// });
 
 /**
  * Listener for Options page button click
  */
 document.getElementById("more").addEventListener("click", () => {
   chrome.runtime.openOptionsPage();
+});
+
+document.getElementById("domain-list").addEventListener("click", () => {
+  chrome.storage.local.set({ DOMAINLIST_PRESSED: true }, ()=>{
+    chrome.runtime.openOptionsPage();
+  });
+});
+
+document.getElementById("third-party-domains").addEventListener("click", () => {
+  document.getElementById("dropdown").innerHTML = `
+  <img
+    src="../assets/chevron-up.svg"
+    height="15"
+    width="15"
+    alt="dropdown"
+    uk-svg
+  /> 
+  `
 });
