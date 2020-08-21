@@ -35,10 +35,15 @@ document.addEventListener("DOMContentLoaded", (event) => {
       var parsed = psl.parse(url.hostname)
       parsed_domain = parsed.domain;
       console.log("POPUP: ", parsed_domain);
-      if (parsed.domain === null) {
-        document.getElementById("domain").innerHTML = location.href;
+      if (parsed_domain === null) {
+        // Change this conditional in the future 
+        // if (location.href.substr(0,6) === "chrome") {
+          document.getElementById("domain").innerHTML = "Local webpage (null)";
+        // } else {
+          // document.getElementById("domain").innerHTML = location.href;
+        // }
       } else {
-        document.getElementById("domain").innerHTML = parsed.domain;
+        document.getElementById("domain").innerHTML = parsed_domain;
       }
     } catch (e) {
       document.getElementById("domain").innerHTML = location.href;
