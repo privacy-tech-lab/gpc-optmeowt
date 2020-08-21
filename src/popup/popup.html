@@ -94,7 +94,7 @@ popup.html is the html scaffolding for OptMeowt's popup page
 
         <!-- Domain List UI elements here -->
         <div 
-          id="domain-ui"
+          id="main-domain"
         >
         <!-- style="padding:5px;box-shadow:0 2px 4px var(--accent-color-lighter-60);" -->
           <div 
@@ -271,9 +271,9 @@ popup.html is the html scaffolding for OptMeowt's popup page
             class="uk-container"
             style="margin: auto; padding: 0; padding-left: 36px; padding-right: 6px"
             uk-tooltip="Dropdown"
-            id="dropdown"
           >
             <img
+              id="dropdown"
               src="../assets/chevron-down.svg"
               height="15"
               width="15"
@@ -285,9 +285,14 @@ popup.html is the html scaffolding for OptMeowt's popup page
             3rd Party Domains
           </div>
         </div>
-        <hr style="margin:0px;">
+        <hr id="divider" style="margin:0px; display: none">
+
+        <ul id="third-party-domains-list" class="uk-list uk-list-divider" style="display:none">
+          <!-- Inflate third party domains here -->
+        </ul>
 
         <!-- Domain List link -->
+        <hr style="margin:0px;">
         <div uk-grid id="domain-list" class="domain-list" style="padding:15px; margin-right:-20px;">
           <div class="uk-width-expand uk-text-center" style="font-weight: bold; font-size: medium; margin-right:20px;">
             Domain List

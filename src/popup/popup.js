@@ -17,6 +17,7 @@ import {
   addToDomainlist, 
   removeFromDomainlist 
 } from "../domainlist.js";
+import { buildToggle, toggleListener } from "../../../domainlist.js";
 
 /**
  * Initializes the popup window after DOM content is loaded
@@ -35,10 +36,10 @@ document.addEventListener("DOMContentLoaded", (event) => {
       var parsed = psl.parse(url.hostname)
       parsed_domain = parsed.domain;
       console.log("POPUP: ", parsed_domain);
-      if (parsed.domain === null) {
-        document.getElementById("domain").innerHTML = location.href;
+      if (parsed_domain === null) {
+          document.getElementById("domain").innerHTML = location.href;
       } else {
-        document.getElementById("domain").innerHTML = parsed.domain;
+        document.getElementById("domain").innerHTML = parsed_domain;
       }
     } catch (e) {
       document.getElementById("domain").innerHTML = location.href;
@@ -139,6 +140,24 @@ document.addEventListener("DOMContentLoaded", (event) => {
     })
   })
 
+  /**
+   * Generates third party domain list toggle functionality 
+   */
+  document.getElementById("third-party-domains").addEventListener("click", () => {
+    // var icon = document.getElementById("dropdown")
+    // console.log
+    if (document.getElementById("third-party-domains-list").style.display === "none") {
+      document.getElementById("dropdown").src = "../assets/chevron-up.svg"
+      document.getElementById("third-party-domains-list").style.display = ""
+      // document.getElementById("third-party-domains").classList.add("third-party-domains-click")
+      document.getElementById("divider").style.display = ""
+    } else {
+      document.getElementById("dropdown").src = "../assets/chevron-down.svg"
+      document.getElementById("third-party-domains-list").style.display = "none"
+      // document.getElementById("third-party-domains").classList.remove("third-party-domains-click")
+      document.getElementById("divider").style.display = "none"
+    }
+  });
 })
 
 /**
@@ -151,33 +170,89 @@ async function buildDomains(requests) {
   for (var request_domain in requests) {
     items +=
       `
-  <li class="uk-margin-small-left uk-margin-small-right">
-    <div uk-grid class="uk-grid-row-collapse">
+  <li>
+    <div
+      class="uk-flex-inline uk-width-1-1 uk-flex-center uk-text-center uk-text-bold uk-text-truncate"
+      style="color: #4472c4; font-size: medium"
+      id="domain"
+    >
+      ${request_domain}
+    </div>
+    <div uk-grid  style="margin-top: 4%; ">
       <div
-        class="uk-width-1-1"
-        style="font-size: small; font-weight: bold;"
+        id="dns-text"
+        class="uk-width-expand uk-margin-auto-vertical"
+        style="font-size: small;"
       >
-        Request Domain:
+        Do Not Sell Enabled
       </div>
-      <div class="uk-width-1-1 uk-text-break">
-        ` +
-      request_domain +
-      `
+      <div>
+        <div uk-grid>
+          <div class="uk-width-auto">
+            <label class="switch" id="switch-label">
+              <!-- Populate switch preference here -->
+              <!-- <input type="checkbox" id="input"/> -->
+              <span></span>
+            </label>
+          </div>
+        </div>
       </div>
-      <div
-        class="uk-width-1-1 uk-margin-small-top"
-        style="font-size: small; font-weight: bold;"
-      >
-        Responses: <span class="uk-badge" style="font-size: 10px; background-color: #cfd8dc; color:#37474f !important;">RECEIVED 0/`+Object.keys(requests[request_domain].URLS).length+`</span>
+    </div>
+    <!-- Response info -->
+    <div uk-grid uk-grid-row-collapse style="margin-top:0px;">
+      <div class="uk-width-expand">
+        <div
+          id="received-text"
+          style="font-size: small;"
+        >
+          Do Not Sell request: 
+        </div>
+        <div
+          id="received-text"
+          style="font-size: small;"
+        >
+          Website response: 
+        </div>
       </div>
-      <div class="uk-width-1-1">
-        None
+      <div>
+        <div
+          id="received-check"
+          class="uk-flex uk-flex-right"
+          style="font-size: small;"
+        >
+          <div>Sent</div>
+          <div style="padding-left: 8px;display: flex;align-items: center;">
+            <img
+              src="../assets/check.svg"
+              height="14"
+              width="14"
+              alt="Checkmark"
+              uk-svg
+            />
+          </div>
+        </div>
+        <div
+          id="received-check"
+          class="uk-flex uk-flex-right"
+          style="font-size: small;"
+        >
+          <div>Rejected</div>
+          <div style="padding-left: 8px;display: flex;align-items: center;">
+            <img
+              src="../assets/x.svg"
+              height="14"
+              width="14"
+              alt="Checkmark"
+              uk-svg
+            />
+          </div>
+        </div>
       </div>
     </div>
   </li>
   `;
   }
-  document.getElementById("urls").innerHTML = items;
+  document.getElementById("third-party-domains-list").innerHTML = items;
 }
 
 /**
@@ -192,36 +267,23 @@ chrome.runtime.sendMessage({
  * Listens for messages from background page that call functions to populate 
  * the popup badge counter and build the popup domain list HTML, respectively 
  */
-// chrome.runtime.onMessage.addListener(function (request, _, __) {
-//   if (request.msg === "BADGE") {
-//     document.getElementById("requests").innerText = request.data;
-//   }
-//   if (request.msg === "REQUESTS") {
-//     buildDomains(request.data);
-//   }
-// });
+chrome.runtime.onMessage.addListener(function (request, _, __) {
+  // if (request.msg === "BADGE") {
+  //   document.getElementById("requests").innerText = request.data;
+  // }
+  if (request.msg === "REQUESTS") {
+    buildDomains(request.data);
+  }
+});
 
 /**
- * Listener for Options page button click
+ * Various options page listeners
  */
 document.getElementById("more").addEventListener("click", () => {
   chrome.runtime.openOptionsPage();
 });
-
 document.getElementById("domain-list").addEventListener("click", () => {
   chrome.storage.local.set({ DOMAINLIST_PRESSED: true }, ()=>{
     chrome.runtime.openOptionsPage();
   });
-});
-
-document.getElementById("third-party-domains").addEventListener("click", () => {
-  document.getElementById("dropdown").innerHTML = `
-  <img
-    src="../assets/chevron-up.svg"
-    height="15"
-    width="15"
-    alt="dropdown"
-    uk-svg
-  /> 
-  `
 });

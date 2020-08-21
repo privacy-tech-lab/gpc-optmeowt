@@ -44,6 +44,11 @@ Animated 3rd party domains/domain list buttons/links
   transition: ease-out 0.1s;
 }
 
+.third-party-domains-click {
+  background-color: var(--highlight-light);
+  color: var(--text-color-darker);
+}
+
 /********************************************************/
 
 /*
