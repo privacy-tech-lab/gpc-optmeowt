@@ -17,7 +17,7 @@ import {
   addToDomainlist, 
   removeFromDomainlist 
 } from "../domainlist.js";
-import { buildToggle, toggleListener } from "../../../domainlist.js";
+// import { buildToggle, toggleListener } from "../../../domainlist.js";
 
 /**
  * Initializes the popup window after DOM content is loaded
@@ -160,14 +160,35 @@ document.addEventListener("DOMContentLoaded", (event) => {
   });
 })
 
+// function buildResponseMark () {
+
+// }
+
 /**
  * Builds the requested domains HTML of the popup window
  * @param {Object} requests - Contains all request domains for the current tab 
  * (requests = tabs[activeTabID].REQUEST_DOMAINS; passed from background page)
  */
 async function buildDomains(requests) {
+  console.log("requests: ", requests)
   let items = "";
   for (var request_domain in requests) {
+    // console.log("request_domain: ", request_domain)
+    // let responses = requests[request_domain]["RESPONSE"]
+    // let received = "rejected"
+    // for (var response in responses) {
+    //   // console.log("response: ", response)
+    //   console.log("response: ", responses[response]["name"])
+    //   if (responses[response]["name"] === "dns") {
+    //     console.log("RESPONSE RECEIVED!")
+    //     received = "Accepted!"; 
+    //     document.getElementById("status-text").classList.remove("status-text-red")
+    //     document.getElementById("status-text").classList.add("status-text-green")
+    //     document.getElementById("status-text").innerHTML = "Accepted!"
+    //     document.getElementById("response-text").innerHTML = "Accepted!"
+    //   }
+    //  }
+
     items +=
       `
   <li>
@@ -236,7 +257,9 @@ async function buildDomains(requests) {
           class="uk-flex uk-flex-right"
           style="font-size: small;"
         >
-          <div>Rejected</div>
+          <div>
+            ${received}
+          </div>
           <div style="padding-left: 8px;display: flex;align-items: center;">
             <img
               src="../assets/x.svg"
