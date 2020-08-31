@@ -228,12 +228,7 @@ async function buildDomains(requests) {
         >
           Do Not Sell request: 
         </div>
-        <div
-          id="received-text"
-          style="font-size: small;"
-        >
-          Website response: 
-        </div>
+        
       </div>
       <div>
         <div
@@ -252,24 +247,7 @@ async function buildDomains(requests) {
             />
           </div>
         </div>
-        <div
-          id="received-check"
-          class="uk-flex uk-flex-right"
-          style="font-size: small;"
-        >
-          <div>
-            ${received}
-          </div>
-          <div style="padding-left: 8px;display: flex;align-items: center;">
-            <img
-              src="../assets/x.svg"
-              height="14"
-              width="14"
-              alt="Checkmark"
-              uk-svg
-            />
-          </div>
-        </div>
+
       </div>
     </div>
   </li>
