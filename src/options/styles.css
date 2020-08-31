@@ -259,3 +259,20 @@ https://codepen.io/aaroniker/pen/oaQdQZ
   *:before, *:after {
     box-sizing: border-box;
   }
+
+
+
+.switch-smaller input + span {
+  width: 48px;
+  height: 28px;
+  border-radius: 14px;
+  transition: all 0.3s ease;
+  display: block;
+  position: relative;
+  background: #888fa1;
+  box-shadow: 0 8px 16px -1px rgba(211, 211, 211, .2);
+  transform: scale(0.7);
+}
+.switch-smaller input + span:active {
+  transform: scale(0.65);
+}

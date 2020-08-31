@@ -160,10 +160,6 @@ document.addEventListener("DOMContentLoaded", (event) => {
   });
 })
 
-// function buildResponseMark () {
-
-// }
-
 /**
  * Builds the requested domains HTML of the popup window
  * @param {Object} requests - Contains all request domains for the current tab 
@@ -172,88 +168,103 @@ document.addEventListener("DOMContentLoaded", (event) => {
 async function buildDomains(requests) {
   console.log("requests: ", requests)
   let items = "";
-  for (var request_domain in requests) {
-    // console.log("request_domain: ", request_domain)
-    // let responses = requests[request_domain]["RESPONSE"]
-    // let received = "rejected"
-    // for (var response in responses) {
-    //   // console.log("response: ", response)
-    //   console.log("response: ", responses[response]["name"])
-    //   if (responses[response]["name"] === "dns") {
-    //     console.log("RESPONSE RECEIVED!")
-    //     received = "Accepted!"; 
-    //     document.getElementById("status-text").classList.remove("status-text-red")
-    //     document.getElementById("status-text").classList.add("status-text-green")
-    //     document.getElementById("status-text").innerHTML = "Accepted!"
-    //     document.getElementById("response-text").innerHTML = "Accepted!"
-    //   }
-    //  }
+  chrome.storage.local.get(["DOMAINS"], function (result) {
+    for (var request_domain in requests) {
+      let checkbox = ""
+      let text = ""
+      if (result.DOMAINS[request_domain]) {
+        checkbox = `<input type="checkbox" id="input-${request_domain}" checked/>`
+        text = "Do Not Sell Enabled"
+      } else {
+        checkbox = `<input type="checkbox" id="input-${request_domain}"/>`
+        text = "Do Not Sell Disabled"
+      }
 
-    items +=
-      `
-  <li>
-    <div
-      class="uk-flex-inline uk-width-1-1 uk-flex-center uk-text-center uk-text-bold uk-text-truncate"
-      style="color: #4472c4; font-size: medium"
-      id="domain"
-    >
-      ${request_domain}
-    </div>
-    <div uk-grid  style="margin-top: 4%; ">
+      items +=
+        `
+    <li>
       <div
-        id="dns-text"
-        class="uk-width-expand uk-margin-auto-vertical"
-        style="font-size: small;"
+        class="uk-flex-inline uk-width-1-1 uk-flex-center uk-text-center uk-text-bold uk-text-truncate"
+        style="color: #4472c4; font-size: medium"
+        id="domain"
       >
-        Do Not Sell Enabled
+        ${request_domain}
       </div>
-      <div>
-        <div uk-grid>
-          <div class="uk-width-auto">
-            <label class="switch" id="switch-label">
-              <!-- Populate switch preference here -->
-              <!-- <input type="checkbox" id="input"/> -->
-              <span></span>
-            </label>
+      <div uk-grid  style="margin-top: 4%; ">
+        <div
+          id="dns-text-${request_domain}"
+          class="uk-width-expand uk-margin-auto-vertical"
+          style="font-size: small;"
+        >
+          ${text}
+        </div>
+        <div>
+          <div uk-grid>
+            <div class="uk-width-auto">
+              <label class="switch switch-smaller" id="switch-label-${request_domain}">
+                <!-- Populate switch preference here -->
+                <!-- <input type="checkbox" id="input"/> -->
+                ${checkbox}
+                <span></span>
+              </label>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-    <!-- Response info -->
-    <div uk-grid uk-grid-row-collapse style="margin-top:0px;">
-      <div class="uk-width-expand">
-        <div
-          id="received-text"
-          style="font-size: small;"
-        >
-          Do Not Sell request: 
-        </div>
-        
-      </div>
-      <div>
-        <div
-          id="received-check"
-          class="uk-flex uk-flex-right"
-          style="font-size: small;"
-        >
-          <div>Sent</div>
-          <div style="padding-left: 8px;display: flex;align-items: center;">
-            <img
-              src="../assets/check.svg"
-              height="14"
-              width="14"
-              alt="Checkmark"
-              uk-svg
-            />
+      <!-- Response info -->
+      <div uk-grid uk-grid-row-collapse style="margin-top:0px;">
+        <div class="uk-width-expand">
+          <div
+            id="received-text"
+            style="font-size: small;"
+          >
+            Do Not Sell request: 
           </div>
+          
         </div>
+        <div>
+          <div
+            id="received-check"
+            class="uk-flex uk-flex-right"
+            style="font-size: small;"
+          >
+            <div>Sent</div>
+            <div style="padding-left: 8px;display: flex;align-items: center;">
+              <img
+                src="../assets/check.svg"
+                height="14"
+                width="14"
+                alt="Checkmark"
+                uk-svg
+              />
+            </div>
+          </div>
 
+        </div>
       </div>
-    </div>
-  </li>
-  `;
-  }
-  document.getElementById("third-party-domains-list").innerHTML = items;
+    </li>
+    `;
+    }
+    document.getElementById("third-party-domains-list").innerHTML = items;
+
+    for (let request_domain in requests) {
+      document.getElementById(`input-${request_domain}`).addEventListener("click", () => {
+        chrome.storage.local.set({ ENABLED: true, DOMAINLIST_ENABLED: true });
+        chrome.storage.local.get(["DOMAINS"], function (result) {
+          var t = ""
+          if (result.DOMAINS[request_domain]) {
+            t = "Do Not Sell Disabled"
+            removeFromDomainlist(request_domain);
+          } else {
+            t = "Do Not Sell Enabled"
+            addToDomainlist(request_domain);
+          }
+          // console.log(t)
+          document.getElementById(`dns-text-${request_domain}`).innerHTML = t;
+        })
+      })
+    }
+  })
 }
 
 /**
