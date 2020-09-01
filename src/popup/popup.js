@@ -34,8 +34,17 @@ document.addEventListener("DOMContentLoaded", (event) => {
       parsed_domain = parsed.domain;
       console.log("POPUP: ", parsed_domain);
       if (parsed_domain === null) {
+<<<<<<< HEAD
         document.getElementById("dns-body").style.display = "none";
         document.getElementById("domain").style.display = "none";
+=======
+        // Change this conditional in the future 
+        // if (location.href.substr(0,6) === "chrome") {
+          document.getElementById("domain").innerHTML = "background page";
+        // } else {
+          // document.getElementById("domain").innerHTML = location.href;
+        // }
+>>>>>>> 154c58a91250a3d0e70e771387b6ecd2331feb81
       } else {
         document.getElementById("domain").innerHTML = parsed_domain;
       }
