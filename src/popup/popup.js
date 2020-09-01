@@ -38,7 +38,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
       if (parsed_domain === null) {
         // Change this conditional in the future 
         // if (location.href.substr(0,6) === "chrome") {
-          document.getElementById("domain").innerHTML = "Local webpage (null)";
+          document.getElementById("domain").innerHTML = "background page";
         // } else {
           // document.getElementById("domain").innerHTML = location.href;
         // }
