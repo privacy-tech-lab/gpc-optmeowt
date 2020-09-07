@@ -4,13 +4,11 @@ Copyright (c) 2020 Kuba Alicki, David Baraka, Rafael Goldstein, Sebastian Zimmec
 privacy-tech-lab, https://privacy-tech-lab.github.io/
 -->
 
-
 <!--
 popup.html
 ================================================================================
 popup.html is the html scaffolding for OptMeowt's popup page
 -->
-
 
 <!DOCTYPE html>
 <html>
@@ -29,21 +27,26 @@ popup.html is the html scaffolding for OptMeowt's popup page
 
   <!-- This is the entry point to 'Popup' -->
 
-  <body class="uk-padding-small" style="width: 320px;">
+  <body class="uk-padding-small" style="width: 320px">
     <!-- Header -->
     <div uk-grid class="uk-grid-small">
       <div>
-        <img src="../assets/cat-w-text/optmeow-logo-circle.png" height="28" width="28" alt="Logo" />
+        <img
+          src="../assets/cat-w-text/optmeow-logo-circle.png"
+          height="28"
+          width="28"
+          alt="Logo"
+        />
       </div>
       <div
         class="uk-width-expand"
-        style="font-size: medium; font-weight: bold; margin: auto;"
+        style="font-size: medium; font-weight: bold; margin: auto"
       >
         OptMeowt
       </div>
       <div
         class="uk-container"
-        style="margin: auto; padding: 0; padding-right: 8px;"
+        style="margin: auto; padding: 0; padding-right: 8px"
         uk-tooltip=""
         id="enable-disable"
       >
@@ -58,7 +61,7 @@ popup.html is the html scaffolding for OptMeowt's popup page
       </div>
       <div
         class="uk-container"
-        style="margin: auto; padding: 0;"
+        style="margin: auto; padding: 0"
         uk-tooltip="More"
         id="more"
       >
@@ -75,79 +78,106 @@ popup.html is the html scaffolding for OptMeowt's popup page
     <!-- Content -->
     <div class="uk-inline">
       <div id="content">
-        <div
-          class="uk-flex-inline uk-width-1-1 uk-flex-center uk-text-center uk-text-large uk-text-bold uk-text-truncate"
-          style="color: #4472c4;"
-          id="domain"
-        >
-          <!-- Active tab domain inflated here -->
-        </div>
-        <br />
-        <div uk-grid class="uk-margin-top" style="margin-bottom: 4%;">
+        <div id="dns-body">
           <div
-            id="dns-text"
-            class="uk-width-expand uk-margin-auto-vertical"
-            style="font-weight: bold; font-size: medium;"
+            class="uk-flex-inline uk-width-1-1 uk-flex-center uk-text-center uk-text-large uk-text-bold uk-text-truncate"
+            style="color: #4472c4"
+            id="domain"
           >
-            Do Not Sell Enabled
+            <!-- Active tab domain inflated here -->
           </div>
-          <div>
-            <div uk-grid>
-              <div class="uk-width-auto">
-                <label class="switch" id="switch-label">
-                  <!-- Populate switch preference here -->
-                  <!-- <input type="checkbox" id="input"/>
+          <br />
+          <div uk-grid class="uk-margin-top" style="margin-bottom: 4%">
+            <div
+              id="dns-text"
+              class="uk-width-expand uk-margin-auto-vertical"
+              style="font-weight: bold; font-size: medium"
+            >
+              Do Not Sell Enabled
+            </div>
+            <div>
+              <div uk-grid>
+                <div class="uk-width-auto">
+                  <label class="switch" id="switch-label">
+                    <!-- Populate switch preference here -->
+                    <!-- <input type="checkbox" id="input"/>
                   <span></span> -->
-                </label>
+                  </label>
+                </div>
               </div>
             </div>
           </div>
         </div>
-        <div class="uk-text-bold" style="font-size: medium;">
-          Responses <span class="uk-badge" style="font-size: 10px; background-color: #ffe0b2; color:#e65100 !important;">RECEIVED 0/<span id='requests'>0</span></span>
+        <div class="uk-text-bold" style="font-size: medium">
+          Responses
+          <span
+            class="uk-badge"
+            style="
+              font-size: 10px;
+              background-color: #ffe0b2;
+              color: #e65100 !important;
+            "
+            >RECEIVED 0/<span id="requests">0</span></span
+          >
         </div>
         <div class="uk-width-1-1">
           See responses from the 'Do Not Sell' requests. Dummy data below
         </div>
-        <ul class="uk-list uk-list-divider" style="margin-top: 4%; margin-bottom: 0px;" id="urls">
+        <ul
+          class="uk-list uk-list-divider"
+          style="margin-top: 4%; margin-bottom: 0px"
+          id="urls"
+        >
           <li class="uk-margin-small-left uk-margin-small-right">
             <div uk-grid class="uk-grid-row-collapse">
               <div
                 class="uk-width-1-1"
-                style="font-size: small; font-weight: bold;"
+                style="font-size: small; font-weight: bold"
               >
                 Request URL:
               </div>
-              <div class="uk-width-1-1">
-                https://facebook.com/profile
-              </div>
+              <div class="uk-width-1-1">https://facebook.com/profile</div>
               <div
                 class="uk-width-1-1 uk-margin-small-top"
-                style="font-size: small; font-weight: bold;"
+                style="font-size: small; font-weight: bold"
               >
-                Response: <span class="uk-badge" style="font-size: 10px; background-color: #e1f5fe; color:#01579b !important;">RECEIVED</span>
+                Response:
+                <span
+                  class="uk-badge"
+                  style="
+                    font-size: 10px;
+                    background-color: #e1f5fe;
+                    color: #01579b !important;
+                  "
+                  >RECEIVED</span
+                >
               </div>
-              <div class="uk-width-1-1">
-                You data will not be sold.
-              </div>
+              <div class="uk-width-1-1">You data will not be sold.</div>
             </div>
           </li>
           <li class="uk-margin-small-left uk-margin-small-right">
             <div uk-grid class="uk-grid-row-collapse">
               <div
                 class="uk-width-1-1"
-                style="font-size: small; font-weight: bold;"
+                style="font-size: small; font-weight: bold"
               >
                 Request URL:
               </div>
-              <div class="uk-width-1-1">
-                https://facebook.com/sources
-              </div>
+              <div class="uk-width-1-1">https://facebook.com/sources</div>
               <div
                 class="uk-width-1-1 uk-margin-small-top"
-                style="font-size: small; font-weight: bold;"
+                style="font-size: small; font-weight: bold"
               >
-                Response: <span class="uk-badge" style="font-size: 10px; background-color: #e1f5fe; color:#01579b !important;">RECEIVED</span>
+                Response:
+                <span
+                  class="uk-badge"
+                  style="
+                    font-size: 10px;
+                    background-color: #e1f5fe;
+                    color: #01579b !important;
+                  "
+                  >RECEIVED</span
+                >
               </div>
               <div class="uk-width-1-1">
                 We received your request to not sell your data and per your
@@ -159,53 +189,60 @@ popup.html is the html scaffolding for OptMeowt's popup page
             <div uk-grid class="uk-grid-row-collapse">
               <div
                 class="uk-width-1-1"
-                style="font-size: small; font-weight: bold;"
+                style="font-size: small; font-weight: bold"
               >
                 Request URL:
               </div>
-              <div class="uk-width-1-1">
-                https://facebook.com/public
-              </div>
+              <div class="uk-width-1-1">https://facebook.com/public</div>
               <div
                 class="uk-width-1-1 uk-margin-small-top"
-                style="font-size: small; font-weight: bold;"
+                style="font-size: small; font-weight: bold"
               >
-                Response: <span class="uk-badge" style="font-size: 10px; background-color: #cfd8dc; color:#37474f !important;">UNRECEIVED</span>
+                Response:
+                <span
+                  class="uk-badge"
+                  style="
+                    font-size: 10px;
+                    background-color: #cfd8dc;
+                    color: #37474f !important;
+                  "
+                  >UNRECEIVED</span
+                >
               </div>
-              <div class="uk-width-1-1">
-                None
-              </div>
+              <div class="uk-width-1-1">None</div>
             </div>
           </li>
         </ul>
-        <hr>
-        <div uk-grid class="uk-margin-top" style="margin-bottom: 4%;">
+        <hr />
+        <div uk-grid class="uk-margin-top" style="margin-bottom: 4%">
           <div
             class="uk-width-expand uk-margin-auto-vertical"
-            style="font-weight: bold; font-size: medium;"
+            style="font-weight: bold; font-size: medium"
           >
             Dark Mode
           </div>
           <div uk-grid>
             <div class="uk-width-auto">
               <label class="custom-control-label switch" for="darkSwitch">
-                <input type="checkbox" class="custom-control-input" id="darkSwitch" />
+                <input
+                  type="checkbox"
+                  class="custom-control-input"
+                  id="darkSwitch"
+                />
                 <span></span>
               </label>
             </div>
           </div>
         </div>
-        <script src="../../../libs/dark-mode-switch-1.0.0/dark-mode-switch.min.js" ></script>
+        <script src="../../../libs/dark-mode-switch-1.0.0/dark-mode-switch.min.js"></script>
       </div>
       <div
         class="uk-position-cover uk-flex uk-flex-center uk-flex-middle"
-        style="transition: all ease 0.25s; opacity: 0;"
+        style="transition: all ease 0.25s; opacity: 0"
         id="message"
       >
         <div class="uk-container uk-text-center">
-          <div
-            style="font-size: medium; font-weight: bold; margin-bottom: 4px;"
-          >
+          <div style="font-size: medium; font-weight: bold; margin-bottom: 4px">
             Extension Disabled
           </div>
           <div>
