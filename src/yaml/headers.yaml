@@ -1,6 +1,6 @@
-DNS:
-  name: DNS
-  value: '0'
+Sec-GPC:
+  name: Sec-GPC
+  value: '1'
 DNT:
   name: DNT
   value: '1'
