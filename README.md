@@ -23,7 +23,7 @@ OptMeowt currently sends Do Not Sell signals using five methods:
 5. Custom headers and cookies used by individual websites maintained and updated in a Do Not Sell list.
 
 **Custom Do Not Sell functionality**
-Every domain a user visits will also be automatically added to a `domain list` whose members will receive Do Not Sell signals. Users have the option to switch specific domains to be excluded from this Do Not Sell functionality from within both the `domain list` and the `popup window`. 
+Every domain a user visits will also be automatically added to a `domain list` whose members will receive Do Not Sell signals. Users have the option to switch specific domains to be excluded from this Do Not Sell functionality from within both the `domain list` and the `popup window`.
 
 ## Installing and Running OptMeowt
 
@@ -43,24 +43,22 @@ You did it! You have installed OptMeowt. You can use it via the icon next to the
 
 ## Files and Directories in the Repo
 
-- `spoc/`: Contains docs and discussions regarding a univeral opt out signal to be implemented in OptMeowt, i.e. Signal of Preference for One Controller. This is a work in progress.
-- `spoc/ui_spec.txt`: Contains the legal specification / language describing OptMeowt's CCPA opt out functionality. 
 - `src/`: Contains the main contents of the OptMeowt browser extension.
 - `src/assets`: Contains the graphical elements of the extension, including the logos and button images.
 - `src/libs`: Contains all of the libraries used in the browser extension.
 - `src/options`: Contains the UI elements and scripts for the supplemental options page.
 - `src/popup`: Contains the UI elements and scripts for the popup inside the extensions bar.
 - `src/yaml`: Contains the YAML configuration files for OptMeowt's Do Not Sell cookies and headers.
-- `src/yaml/cookies_3p.yaml`: Contains the 3rd party opt out cookies collected from various ad networks (especially those set by the [DAA's CCPA Opt Out Tool for the Web](https://optout.privacyrights.info/?c=1)). 
-- `src/yaml/cookies_usercustom.yaml`: YAML file where _users can place their own custom opt out cookies_ to be used by OptMeowt. 
-- `src/yaml/headers.yaml`: Contains the opt out HTTP header specs used by OptMeowt. 
-- `src/background.html`: OptMeowt's background page. Launches all critical extension scripts and libraries. 
+- `src/yaml/cookies_3p.yaml`: Contains the 3rd party opt out cookies collected from various ad networks (especially those set by the [DAA's CCPA Opt Out Tool for the Web](https://optout.privacyrights.info/?c=1)).
+- `src/yaml/cookies_usercustom.yaml`: YAML file where _users can place their own custom opt out cookies_ to be used by OptMeowt.
+- `src/yaml/headers.yaml`: Contains the opt out HTTP header specs used by OptMeowt.
+- `src/background.html`: OptMeowt's background page. Launches all critical extension scripts and libraries.
 - `src/background.js`: This is the main script running OptMeowt. It controls all of the major backend, regarding whether the extension is on/off, sending the Do Not Sell signal, etc.
 - `src/contentScript.js`: This is the main supplemental script that passes data to `background.js` and runs on every webpage loaded.
 - `src/cookie_lists_yaml.js`: Handles placing all of the opt out cookies stored in `cookies_3p.yaml` and `cookies_usercustom.yaml`. This currently runs on OptMeowt's install or on an extension refresh.
 - `src/domainlist.js`: This is the main JS file that allows the extension to communicate with the `domain list` stored in the browser's local storage.
 - `src/manifest.json`: This provides the browser with metadata about the extension, regarding its name, permissions, etc.
-- `src/usprivacy.js`: Handles placing and updating 1st party opt out cookies (namely the IAB `usprivacy` string) for each site intended to receive Do Not Sell signals. 
+- `src/usprivacy.js`: Handles placing and updating 1st party opt out cookies (namely the IAB `usprivacy` string) for each site intended to receive Do Not Sell signals.
 - `ui-mockup`: Contains PDF and XD files demonstrating the preliminary mockup and analysis of OptMeowt.
 
 ## Third Party Libraries
