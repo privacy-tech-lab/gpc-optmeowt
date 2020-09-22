@@ -33,24 +33,10 @@ var optout_headers = {};
 var addHeaders = (details) => {
   updateDomainsAndSignal(details);
 
-  /// Intializes IAB CCPA cookie-based opt-out framework
   if (sendSignal) {
     initUSP();
-  }
-
-  /// Now we know where to send the signal.
-  if (sendSignal) {
-    for (var signal in optout_headers) {
-      let s = optout_headers[signal]
-      console.log(s)
-      details.requestHeaders.push({ name: s.name, value: s.value });
-      console.log("Sending signal added...", s.name, s.value);
-    }
-    return { requestHeaders: details.requestHeaders };
-  } 
-  else {
-    console.log("Preparing to send no added signal...", details.requestHeaders);
-    return { requestHeaders: details.requestHeaders };
+    initDom(details);
+    return updateHeaders(details);
   }
 };
 
@@ -59,7 +45,7 @@ var addHeaders = (details) => {
  * @param {Object} details - retrieved info passed into callback
  */
 var receivedHeaders = (details) => {
-  checkResponse(details);
+  // checkResponse(details);
   logData(details);
   incrementBadge(details);
 };
@@ -98,6 +84,41 @@ function updateDomainsAndSignal(details) {
     }
     console.log(sendSignal);
   });
+}
+
+/**
+ * Updates HTTP headers with Do Not Sell headers according 
+ * to whether or not a site should recieve them. 
+ * @param {Object} details - details object
+ */
+function updateHeaders(details){
+  if (sendSignal) {
+    for (var signal in optout_headers) {
+      let s = optout_headers[signal]
+      console.log(s)
+      details.requestHeaders.push({ name: s.name, value: s.value });
+      console.log("Sending signal added...", s.name, s.value);
+    }
+    return { requestHeaders: details.requestHeaders };
+  } 
+  else {
+    console.log("Preparing to send no added signal...", details.requestHeaders);
+    return { requestHeaders: details.requestHeaders };
+  }
+}
+
+/**
+ * Initializes the GPC dom signal functionality in dom.js
+ * Places a globalPrivacyControl property on the window object
+ * @param {Object} details - details object
+ */
+function initDom(details) {
+  chrome.tabs.executeScript(
+    details.tabId, {
+      file: 'dom.js',
+      allFrames: true,
+      runAt: 'document_start'
+  })
 }
 
 /**
