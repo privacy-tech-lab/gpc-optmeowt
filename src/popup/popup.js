@@ -214,13 +214,13 @@ function startWalkthrough() {
   document.getElementsByClassName("popup1")[0].addEventListener(
     "click",
     () => {
-      var popup = document.getElementById("myPopup1");
-      popup.classList.toggle("show");
+      var popup1 = document.getElementById("myPopup1");
+      popup1.classList.toggle("show");
       document.getElementById("myPopup1").addEventListener("click", () => {
+        popup1.classList.toggle("show");
         var popup2 = document.getElementById("myPopup");
         popup2.classList.toggle("show2");
         document.getElementById("myPopup").addEventListener("click", () => {
-          popup.classList.toggle("show");
           popup2.classList.toggle("show2");
           var popup3 = document.getElementById("Popup3");
           popup3.classList.toggle("show3");

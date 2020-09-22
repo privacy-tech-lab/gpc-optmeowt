@@ -286,6 +286,7 @@ https://codepen.io/aaroniker/pen/oaQdQZ
   left: 10%;
   margin-left: -80px;
   opacity: 0.9;
+  font-size: 12px;
 }
 
 /* Popup arrow */
@@ -352,6 +353,7 @@ https://codepen.io/aaroniker/pen/oaQdQZ
   left: 10%;
   margin-left: -80px;
   opacity: 0.9;
+  font-size: 12px;
 }
 
 /* Popup arrow */
@@ -399,6 +401,7 @@ https://codepen.io/aaroniker/pen/oaQdQZ
   left: 10%;
   margin-left: -80px;
   opacity: 0.9;
+  font-size: 12px;
 }
 
 /* Popup arrow */
@@ -446,6 +449,7 @@ https://codepen.io/aaroniker/pen/oaQdQZ
   left: 200%;
   margin-left: -80px;
   opacity: 0.9;
+  font-size: 12px;
 }
 
 /* Popup arrow */
@@ -489,17 +493,18 @@ https://codepen.io/aaroniker/pen/oaQdQZ
   padding: 8px 0;
   position: absolute;
   z-index: 1;
-  bottom: -350%;
+  bottom: -250%;
   left: 90%;
   margin-left: -80px;
   opacity: 0.9;
+  font-size: 12px;
 }
 
 /* Popup arrow */
 .settings-popup5 .settings-popuptext5::after {
   content: "";
   position: absolute;
-  top: -16%;
+  top: -30%;
   left: 80%;
   margin-left: -5px;
   border-width: 5px;
