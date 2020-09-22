@@ -4,13 +4,11 @@ Copyright (c) 2020 Kuba Alicki, David Baraka, Rafael Goldstein, Sebastian Zimmec
 privacy-tech-lab, https://privacy-tech-lab.github.io/
 */
 
-
 /*
 styles.css
 ================================================================================
 styles.css is the main css page for OptMeowt's options page
 */
-
 
 /* 
 Dark Mode Switch
@@ -24,24 +22,24 @@ Based on https://github.com/coliff/dark-mode-switch
 Colors 
 */
 :root {
-    --accent-color: #4472C4;
-    --accent-color-lighter-80: #DAE3F3;
-    --accent-color-lighter-60: #B4C7E7;
-    --accent-color-lighter-40: #8FAADC;
-    --accent-color-darker-25:  #2F5597;
-    --accent-color-darker-50:  #203864;
+  --accent-color: #4472c4;
+  --accent-color-lighter-80: #dae3f3;
+  --accent-color-lighter-60: #b4c7e7;
+  --accent-color-lighter-40: #8faadc;
+  --accent-color-darker-25: #2f5597;
+  --accent-color-darker-50: #203864;
 
-    --text-color: #888fa1;
-    --text-color-darker: #5a647d ;
-    --text-color-inactive: #d3d3d3 ;
+  --text-color: #888fa1;
+  --text-color-darker: #5a647d;
+  --text-color-inactive: #d3d3d3;
 }
 
 .text-color-darker {
-    color: var(--text-color-darker)
+  color: var(--text-color-darker);
 }
 
 .text-color {
-    color: var(--text-color)
+  color: var(--text-color);
 }
 
 /********************************************************/
@@ -50,8 +48,8 @@ Colors
 Body style 
 */
 body {
-    color: var(--text-color);
-    user-select: none;
+  color: var(--text-color);
+  user-select: none;
 }
 
 /********************************************************/
@@ -60,14 +58,14 @@ body {
 Navbar item style 
 */
 .navbar-item {
-    color: var(--text-color-inactive);
-    opacity: 1;
-    cursor: pointer;
-    transition: all ease 0.5s;
+  color: var(--text-color-inactive);
+  opacity: 1;
+  cursor: pointer;
+  transition: all ease 0.5s;
 }
 
-.navbar-item.active{
-    color: var(--accent-color);
+.navbar-item.active {
+  color: var(--accent-color);
 }
 
 /********************************************************/
@@ -75,7 +73,7 @@ Navbar item style
 /*
 Sticky Domain List Navbar
 */
-.domainlist-navbar { 
+.domainlist-navbar {
   background-color: white;
   padding-top: 5px;
 }
@@ -95,22 +93,23 @@ Sticky Domain List Navbar
 /* 
 Radio buttons style 
 */
-input[type="radio"]{
-	width: 35px; height: 35px;
-	transition: all ease 0.5s;
+input[type="radio"] {
+  width: 35px;
+  height: 35px;
+  transition: all ease 0.5s;
 }
 
-input[type="radio"]:checked{
-    transition: all ease 0.25s;
-    background-image: var(--accent-color);
-    box-shadow: 0 6px 12px var(--accent-color-lighter-60);
+input[type="radio"]:checked {
+  transition: all ease 0.25s;
+  background-image: var(--accent-color);
+  box-shadow: 0 6px 12px var(--accent-color-lighter-60);
 }
 
-input[type='radio']:hover:not(:checked) {
-    transition: all ease 0.25s;
-    box-shadow: 0 6px 12px var(--accent-color-lighter-60);
-    border-color: transparent;
-  }
+input[type="radio"]:hover:not(:checked) {
+  transition: all ease 0.25s;
+  box-shadow: 0 6px 12px var(--accent-color-lighter-60);
+  border-color: transparent;
+}
 
 /********************************************************/
 
@@ -119,10 +118,9 @@ input[type='radio']:hover:not(:checked) {
 */
 .check {
   /* appearance: none; */
-  transform:  scale(1.25);
+  transform: scale(1.25);
   /* transform-style: inherit; */
   /* z-index: -10; */
-  
 }
 
 /********************************************************/
@@ -132,7 +130,7 @@ input[type='radio']:hover:not(:checked) {
 */
 .importexport-button {
   background-color: white;
-  border-color:  #888fa1;
+  border-color: #888fa1;
   color: #888fa1;
   padding: 12px 16px;
   text-align: center;
@@ -141,7 +139,7 @@ input[type='radio']:hover:not(:checked) {
   display: inline-block;
   border-radius: 10px;
   border-style: solid;
-  box-shadow: 0 8px 16px -1px rgba(211, 211, 211, .2);
+  box-shadow: 0 8px 16px -1px rgba(211, 211, 211, 0.2);
   outline: none;
   transition: all ease 0.25s;
 }
@@ -159,99 +157,359 @@ input[type='radio']:hover:not(:checked) {
 https://codepen.io/aaroniker/pen/oaQdQZ
 */
 .switch {
-    cursor: pointer;
+  cursor: pointer;
+}
+.switch input {
+  display: none;
+}
+.switch input + span {
+  width: 48px;
+  height: 28px;
+  border-radius: 14px;
+  transition: all 0.3s ease;
+  display: block;
+  position: relative;
+  background: #888fa1;
+  box-shadow: 0 8px 16px -1px rgba(211, 211, 211, 0.2);
+}
+.switch input + span:before,
+.switch input + span:after {
+  content: "";
+  display: block;
+  position: absolute;
+  transition: all 0.3s ease;
+}
+.switch input + span:before {
+  top: 5px;
+  left: 5px;
+  width: 18px;
+  height: 18px;
+  border-radius: 9px;
+  border: 5px solid #fff;
+}
+.switch input + span:after {
+  top: 5px;
+  left: 32px;
+  width: 6px;
+  height: 18px;
+  border-radius: 40%;
+  transform-origin: 50% 50%;
+  background: #fff;
+  opacity: 0;
+}
+.switch input + span:active {
+  transform: scale(0.92);
+}
+.switch input:checked + span {
+  background: #48ea8b;
+  box-shadow: 0 8px 16px -1px rgba(72, 234, 139, 0.2);
+}
+.switch input:checked + span:before {
+  width: 0px;
+  border-radius: 3px;
+  margin-left: 27px;
+  border-width: 3px;
+  background: #fff;
+}
+.switch input:checked + span:after {
+  animation: blobChecked 0.35s linear forwards 0.2s;
+}
+.switch input:not(:checked) + span:before {
+  animation: blob 0.85s linear forwards 0.2s;
+}
+@keyframes blob {
+  0%,
+  100% {
+    transform: scale(1);
   }
-  .switch input {
-    display: none;
+  30% {
+    transform: scale(1.12, 0.94);
   }
-  .switch input + span {
-    width: 48px;
-    height: 28px;
-    border-radius: 14px;
-    transition: all 0.3s ease;
-    display: block;
-    position: relative;
-    background: #888fa1;
-    box-shadow: 0 8px 16px -1px rgba(211, 211, 211, .2);
+  60% {
+    transform: scale(0.96, 1.06);
   }
-  .switch input + span:before, .switch input + span:after {
-    content: '';
-    display: block;
-    position: absolute;
-    transition: all 0.3s ease;
+}
+@keyframes blobChecked {
+  0% {
+    opacity: 1;
+    transform: scaleX(1);
   }
-  .switch input + span:before {
-    top: 5px;
-    left: 5px;
-    width: 18px;
-    height: 18px;
-    border-radius: 9px;
-    border: 5px solid #fff;
+  30% {
+    transform: scaleX(1.44);
   }
-  .switch input + span:after {
-    top: 5px;
-    left: 32px;
-    width: 6px;
-    height: 18px;
-    border-radius: 40%;
-    transform-origin: 50% 50%;
-    background: #fff;
+  70% {
+    transform: scaleX(1.18);
+  }
+  50%,
+  99% {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scaleX(1);
     opacity: 0;
   }
-  .switch input + span:active {
-    transform: scale(0.92);
+}
+* {
+  box-sizing: border-box;
+}
+*:before,
+*:after {
+  box-sizing: border-box;
+}
+
+/*=======================================================================================POPUP1*/
+/*Walkthrough pop ups for options page*/
+/* Popup container - can be anything you want */
+.settings-popup1 {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* The actual popup */
+.settings-popup1 .settings-popuptext1 {
+  visibility: hidden;
+  width: 320px;
+  background-color: #555;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 8px 0;
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  left: 10%;
+  margin-left: -80px;
+  opacity: 0.9;
+}
+
+/* Popup arrow */
+.settings-popup1 .settings-popuptext1::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #555 transparent transparent transparent;
+}
+
+/* Toggle this class - hide and show the popup */
+.settings-popup1 .settings-show1 {
+  visibility: visible;
+  -webkit-animation: fadeIn 1s;
+  animation: fadeIn 1s;
+}
+
+/* Add animation (fade in the popup) */
+@-webkit-keyframes fadeIn {
+  from {
+    opacity: 0;
   }
-  .switch input:checked + span {
-    background: #48ea8b;
-    box-shadow: 0 8px 16px -1px rgba(72, 234, 139, .2);
+  to {
+    opacity: 1;
   }
-  .switch input:checked + span:before {
-    width: 0px;
-    border-radius: 3px;
-    margin-left: 27px;
-    border-width: 3px;
-    background: #fff;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
   }
-  .switch input:checked + span:after {
-    animation: blobChecked 0.35s linear forwards 0.2s;
+  to {
+    opacity: 1;
   }
-  .switch input:not(:checked) + span:before {
-    animation: blob 0.85s linear forwards 0.2s;
-  }
-  @keyframes blob {
-    0%, 100% {
-      transform: scale(1);
-   }
-    30% {
-      transform: scale(1.12, 0.94);
-   }
-    60% {
-      transform: scale(0.96, 1.06);
-   }
-  }
-  @keyframes blobChecked {
-    0% {
-      opacity: 1;
-      transform: scaleX(1);
-   }
-    30% {
-      transform: scaleX(1.44);
-   }
-    70% {
-      transform: scaleX(1.18);
-   }
-    50%, 99% {
-      transform: scaleX(1);
-      opacity: 1;
-   }
-    100% {
-      transform: scaleX(1);
-      opacity: 0;
-   }
-  }
-  * {
-    box-sizing: border-box;
-  }
-  *:before, *:after {
-    box-sizing: border-box;
-  }
+}
+
+/*====================================================================================POPUP2*/
+.settings-popup2 {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* The actual popup */
+.settings-popup2 .settings-popuptext2 {
+  visibility: hidden;
+  width: 300px;
+  background-color: #555;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 8px 0;
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  left: 10%;
+  margin-left: -80px;
+  opacity: 0.9;
+}
+
+/* Popup arrow */
+.settings-popup2 .settings-popuptext2::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #555 transparent transparent transparent;
+}
+
+/* Toggle this class - hide and show the popup */
+.settings-popup2 .settings-show2 {
+  visibility: visible;
+  -webkit-animation: fadeIn 1s;
+  animation: fadeIn 1s;
+}
+
+/*===================================================================================================POPUP3*/
+.settings-popup3 {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* The actual popup */
+.settings-popup3 .settings-popuptext3 {
+  visibility: hidden;
+  width: 300px;
+  background-color: #555;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 8px 0;
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  left: 10%;
+  margin-left: -80px;
+  opacity: 0.9;
+}
+
+/* Popup arrow */
+.settings-popup3 .settings-popuptext3::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #555 transparent transparent transparent;
+}
+
+/* Toggle this class - hide and show the popup */
+.settings-popup3 .settings-show3 {
+  visibility: visible;
+  -webkit-animation: fadeIn 1s;
+  animation: fadeIn 1s;
+}
+
+/*===============================================================================================POPUP4*/
+.settings-popup4 {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* The actual popup */
+.settings-popup4 .settings-popuptext4 {
+  visibility: hidden;
+  width: 320px;
+  background-color: #555;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 8px 0;
+  position: absolute;
+  z-index: 1;
+  bottom: -120%;
+  left: 200%;
+  margin-left: -80px;
+  opacity: 0.9;
+}
+
+/* Popup arrow */
+.settings-popup4 .settings-popuptext4::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: -1.5%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: transparent #555 transparent transparent;
+}
+
+/* Toggle this class - hide and show the popup */
+.settings-popup4 .settings-show4 {
+  visibility: visible;
+  -webkit-animation: fadeIn 1s;
+  animation: fadeIn 1s;
+}
+
+/*==========================================================================================POPUP5*/
+.settings-popup5 {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* The actual popup */
+.settings-popup5 .settings-popuptext5 {
+  visibility: hidden;
+  width: 320px;
+  background-color: #555;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 8px 0;
+  position: absolute;
+  z-index: 1;
+  bottom: -350%;
+  left: 90%;
+  margin-left: -80px;
+  opacity: 0.9;
+}
+
+/* Popup arrow */
+.settings-popup5 .settings-popuptext5::after {
+  content: "";
+  position: absolute;
+  top: -16%;
+  left: 80%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: transparent transparent #555 transparent;
+}
+
+/* Toggle this class - hide and show the popup */
+.settings-popup5 .settings-show5 {
+  visibility: visible;
+  -webkit-animation: fadeIn 1s;
+  animation: fadeIn 1s;
+}

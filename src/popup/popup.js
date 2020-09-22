@@ -137,6 +137,8 @@ document.addEventListener("DOMContentLoaded", (event) => {
       });
     });
   });
+
+  startWalkthrough();
 });
 
 /**
@@ -207,3 +209,28 @@ chrome.runtime.onMessage.addListener(function (request, _, __) {
 document.getElementById("more").addEventListener("click", () => {
   chrome.runtime.openOptionsPage();
 });
+
+function startWalkthrough() {
+  document.getElementsByClassName("popup1")[0].addEventListener(
+    "click",
+    () => {
+      var popup = document.getElementById("myPopup1");
+      popup.classList.toggle("show");
+      document.getElementById("myPopup1").addEventListener("click", () => {
+        var popup2 = document.getElementById("myPopup");
+        popup2.classList.toggle("show2");
+        document.getElementById("myPopup").addEventListener("click", () => {
+          popup.classList.toggle("show");
+          popup2.classList.toggle("show2");
+          var popup3 = document.getElementById("Popup3");
+          popup3.classList.toggle("show3");
+          document.getElementById("Popup3").addEventListener("click", () => {
+            popup3.classList.toggle("show3");
+          });
+        });
+      });
+    },
+    { once: true }
+  );
+  document.getElementById("start-tutorial").click();
+}

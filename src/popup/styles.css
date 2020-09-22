@@ -4,19 +4,17 @@ Copyright (c) 2020 Kuba Alicki, David Baraka, Rafael Goldstein, Sebastian Zimmec
 privacy-tech-lab, https://privacy-tech-lab.github.io/
 */
 
-
 /*
 styles.css
 ================================================================================
 styles.css is the main css page for OptMeowt's popup page
 */
 
-
 /*
 SVG photo assets style
 */
 @import "../options/styles.css";
-svg{
+svg {
   fill: #d3d3d3;
   transition: all ease 0.5s;
 }
@@ -24,4 +22,148 @@ svg{
 svg:hover {
   fill: #5a647d;
   transition: all ease 0.5s;
+}
+
+.popup1 {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+}
+
+/* The actual popup (appears on top) */
+.popup1 .popuptext1 {
+  visibility: hidden;
+  width: 160px;
+  background-color: #555;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 8px 0;
+  position: absolute;
+  z-index: 1;
+  bottom: -190%;
+  left: 50%;
+  margin-left: -80px;
+  opacity: 0.8;
+}
+
+/* Popup arrow */
+.popup1 .popuptext1::after {
+  content: "";
+  position: absolute;
+  top: -23%;
+  left: 20%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: transparent transparent #555 transparent;
+}
+
+/* Toggle this class when clicking on the popup container (hide and show the popup) */
+.popup1 .show {
+  visibility: visible;
+  -webkit-animation: fadeIn 1s;
+  animation: fadeIn 1s;
+}
+
+/* Add animation (fade in the popup) */
+@-webkit-keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+/*=======================================================================================*/
+.popup2 {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+}
+/* The actual popup (appears on top) */
+.popup2 .popuptext2 {
+  visibility: hidden;
+  width: 160px;
+  background-color: #555;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 8px 0;
+  position: absolute;
+  z-index: 1;
+  bottom: -700%;
+  left: 80%;
+  margin-left: -80px;
+  opacity: 0.8;
+}
+
+/* Popup arrow */
+.popup2 .popuptext2::after {
+  content: "";
+  position: absolute;
+  top: -23%;
+  left: 85%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: transparent transparent #555 transparent;
+}
+
+/* Toggle this class when clicking on the popup container (hide and show the popup) */
+.popup2 .show2 {
+  visibility: visible;
+  -webkit-animation: fadeIn 1s;
+  animation: fadeIn 1s;
+}
+
+/*==============================================================================================*/
+.popup3 {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+}
+/* The actual popup (appears on top) */
+.popup3 .popuptext3 {
+  visibility: hidden;
+  width: 160px;
+  background-color: #555;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 8px 0;
+  position: absolute;
+  z-index: 1;
+  bottom: -20%;
+  left: 75%;
+  margin-left: -80px;
+  opacity: 0.8;
+}
+
+/* Popup arrow */
+.popup3 .popuptext3::after {
+  content: "";
+  position: absolute;
+  top: 40%;
+  left: 103%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: transparent transparent transparent #555;
+}
+
+/* Toggle this class when clicking on the popup container (hide and show the popup) */
+.popup3 .show3 {
+  visibility: visible;
+  -webkit-animation: fadeIn 1s;
+  animation: fadeIn 1s;
 }

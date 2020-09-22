@@ -4,14 +4,12 @@ Copyright (c) 2020 Kuba Alicki, David Baraka, Rafael Goldstein, Sebastian Zimmec
 privacy-tech-lab, https://privacy-tech-lab.github.io/
 */
 
-
 /*
 background.js
 ================================================================================
 background.js is the main background script handling OptMeowt's 
 main opt-out functionality
 */
-
 
 import { YAML } from "/libs/yaml-1.10.0/index.js";
 
@@ -22,7 +20,6 @@ var tabs = {}; /// Store all active tab id's, domain, requests, and response
 var activeTabID = 0;
 var sendSignal = false;
 var optout_headers = {};
-
 
 /**
  * Manipulates Headers and adds Do Not Sell signal if functionality is on
@@ -41,14 +38,13 @@ var addHeaders = (details) => {
   /// Now we know where to send the signal.
   if (sendSignal) {
     for (var signal in optout_headers) {
-      let s = optout_headers[signal]
-      console.log(s)
+      let s = optout_headers[signal];
+      console.log(s);
       details.requestHeaders.push({ name: s.name, value: s.value });
       console.log("Sending signal added...", s.name, s.value);
     }
     return { requestHeaders: details.requestHeaders };
-  } 
-  else {
+  } else {
     console.log("Preparing to send no added signal...", details.requestHeaders);
     return { requestHeaders: details.requestHeaders };
   }
@@ -65,36 +61,38 @@ var receivedHeaders = (details) => {
 };
 
 /**
- * Adds current domain to local storage domain list. 
- * Verifies a signal should be sent to a particular domain and sets 
- * `sendSignal` bool flag accordingly. 
+ * Adds current domain to local storage domain list.
+ * Verifies a signal should be sent to a particular domain and sets
+ * `sendSignal` bool flag accordingly.
  * @param {Object} details - retrieved info passed into callback
  */
 function updateDomainsAndSignal(details) {
-  chrome.storage.local.get(["DOMAINLIST_ENABLED", "DOMAINS"], function (result) {
+  chrome.storage.local.get(["DOMAINLIST_ENABLED", "DOMAINS"], function (
+    result
+  ) {
     /// Store current domain in DOMAINS
     var url = new URL(details.url);
     var parsed = psl.parse(url.hostname);
-    var d = parsed.domain
+    var d = parsed.domain;
     var domains = result.DOMAINS;
-    console.log(d)
+    console.log(d);
 
     if (domains[d] === undefined) {
-      domains[d] = true
-      chrome.storage.local.set({"DOMAINS": domains});
+      domains[d] = true;
+      chrome.storage.local.set({ DOMAINS: domains });
       console.log("Stored current domain");
-    } 
-    /// Set to true if domainlist is off, or if domainlist is on 
+    }
+    /// Set to true if domainlist is off, or if domainlist is on
     /// AND domain is in domainlist
     /// Basically, we want to know if we send the signal to a given domain
     if (result.DOMAINLIST_ENABLED) {
       if (domains[d] === true) {
-        sendSignal = true
+        sendSignal = true;
       } else {
-        sendSignal = false
+        sendSignal = false;
       }
     } else {
-      sendSignal = true /// Always send signal to all domains
+      sendSignal = true; /// Always send signal to all domains
     }
     console.log(sendSignal);
   });
@@ -105,16 +103,22 @@ function updateDomainsAndSignal(details) {
  * @param {Object} details - retrieved info passed into callback
  */
 function checkResponse(details) {
-  let heads = details.responseHeaders
+  let heads = details.responseHeaders;
   for (let i in heads) {
     // console.log("responseHeader[i]: ", heads[i])
-    if (heads[i]['name'] === 'dns' && heads[i]['value'] === 'received') {
-      chrome.browserAction.setIcon({tabId: details.tabId, path:"assets/face-icons/optmeow-face-circle-green-128.png"}, function () {
-        console.log("RECEIVED DNS AKNOWLEDGEMENT FROM SERVER.")
-      })
-    } 
+    if (heads[i]["name"] === "dns" && heads[i]["value"] === "received") {
+      chrome.browserAction.setIcon(
+        {
+          tabId: details.tabId,
+          path: "assets/face-icons/optmeow-face-circle-green-128.png",
+        },
+        function () {
+          console.log("RECEIVED DNS AKNOWLEDGEMENT FROM SERVER.");
+        }
+      );
+    }
     // else {
-    //   chrome.pageAction.setIcon({tabId: details.tabId, path:"assets/face-icons/optmeow-face-circle-red-128.png"}, 
+    //   chrome.pageAction.setIcon({tabId: details.tabId, path:"assets/face-icons/optmeow-face-circle-red-128.png"},
     //   function () { })
     // }
   }
@@ -158,7 +162,7 @@ function logData(details) {
 }
 
 /**
- * Counts and stores requests for popup window, and sends "BADGE" and 
+ * Counts and stores requests for popup window, and sends "BADGE" and
  * "REQUESTS" messages to popup.js
  */
 function incrementBadge() {
@@ -166,10 +170,12 @@ function incrementBadge() {
   let requests = {};
   if (tabs[activeTabID] !== undefined) {
     for (var key in tabs[activeTabID].REQUEST_DOMAINS) {
-      numberOfRequests += Object.keys(tabs[activeTabID].REQUEST_DOMAINS[key].URLS).length
+      numberOfRequests += Object.keys(
+        tabs[activeTabID].REQUEST_DOMAINS[key].URLS
+      ).length;
     }
     requests = tabs[activeTabID].REQUEST_DOMAINS;
-    console.log(tabs[activeTabID])
+    console.log(tabs[activeTabID]);
   }
   // chrome.browserAction.setBadgeText({ text: numberOfRequests.toString() });
   chrome.runtime.sendMessage({
@@ -183,39 +189,43 @@ function incrementBadge() {
 }
 
 /**
- * Enables extension functionality and sets site listeners 
+ * Enables extension functionality and sets site listeners
  */
 function enable() {
   // fetches new optout_headers on load
   fetch("yaml/headers.yaml")
-  .then(response => { return response.text() })
-  .then(value => {
-    optout_headers = YAML.parse(value);
-    console.log(optout_headers)
-    // Headers
-    chrome.webRequest.onBeforeSendHeaders.addListener(
-      addHeaders,
-      {
-        urls: ["<all_urls>"],
-      },
-      ["requestHeaders", "extraHeaders", "blocking"]
+    .then((response) => {
+      return response.text();
+    })
+    .then((value) => {
+      optout_headers = YAML.parse(value);
+      console.log(optout_headers);
+      // Headers
+      chrome.webRequest.onBeforeSendHeaders.addListener(
+        addHeaders,
+        {
+          urls: ["<all_urls>"],
+        },
+        ["requestHeaders", "extraHeaders", "blocking"]
+      );
+      chrome.storage.local.set({ ENABLED: true });
+
+      chrome.webRequest.onHeadersReceived.addListener(
+        receivedHeaders,
+        {
+          urls: ["<all_urls>"],
+        },
+        ["responseHeaders", "extraHeaders", "blocking"]
+      );
+      // chrome.browserAction.setBadgeBackgroundColor({ color: "#666666" });
+      // chrome.browserAction.setBadgeText({ text: "0" });
+      chrome.storage.local.set({ ENABLED: true });
+    })
+    .catch((e) =>
+      console.log(
+        `Failed to intialize OptMeowt (YAML load process) (ContentScript): ${e}`
+      )
     );
-    chrome.storage.local.set({ ENABLED: true });
-      
-    chrome.webRequest.onHeadersReceived.addListener(
-      receivedHeaders,
-      {
-        urls: ["<all_urls>"],
-      },
-      ["responseHeaders", "extraHeaders" , "blocking"]
-    );
-    // chrome.browserAction.setBadgeBackgroundColor({ color: "#666666" });
-    // chrome.browserAction.setBadgeText({ text: "0" });
-    chrome.storage.local.set({ ENABLED: true });
-  })
-  .catch(e => console.log(
-    `Failed to intialize OptMeowt (YAML load process) (ContentScript): ${e}`
-  ))
 }
 
 /**
@@ -251,19 +261,20 @@ chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
  * Generates ENABLED, DOMAINLIST_ENABLED, and DOMAINS keys in local storage
  * if undefined
  */
-chrome.storage.local.get(["ENABLED", "DOMAINLIST_ENABLED", "DOMAINS"], function (
-  result
-) {
-  if (result.ENABLED == undefined) {
-    chrome.storage.local.set({ ENABLED: true });
+chrome.storage.local.get(
+  ["ENABLED", "DOMAINLIST_ENABLED", "DOMAINS"],
+  function (result) {
+    if (result.ENABLED == undefined) {
+      chrome.storage.local.set({ ENABLED: true });
+    }
+    if (result.DOMAINLIST_ENABLED == undefined) {
+      chrome.storage.local.set({ DOMAINLIST_ENABLED: false });
+    }
+    if (result.DOMAINS == undefined) {
+      chrome.storage.local.set({ DOMAINS: {} });
+    }
   }
-  if (result.DOMAINLIST_ENABLED == undefined) {
-    chrome.storage.local.set({ DOMAINLIST_ENABLED: false });
-  }
-  if (result.DOMAINS == undefined) {
-    chrome.storage.local.set({ DOMAINS: {} });
-  }
-});
+);
 
 /**
  * Runs on startup to enable/disable extension
@@ -316,6 +327,18 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   } else if (request.msg == "INIT") {
     incrementBadge();
   }
+});
+
+chrome.runtime.onInstalled.addListener(function (object) {
+  chrome.tabs.create(
+    {
+      url:
+        "chrome-extension://mfgnakcmpgfgpmdepnckjokfnieoidmm/options/options.html",
+    },
+    function (tab) {
+      console.log("New tab launched with http://yoursite.com/");
+    }
+  );
 });
 
 /*
