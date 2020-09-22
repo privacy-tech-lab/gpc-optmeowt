@@ -213,34 +213,7 @@ async function buildDomains(requests) {
       </div>
       <!-- Response info -->
       <div uk-grid uk-grid-row-collapse style="margin-top:0px;">
-        <div class="uk-width-expand">
-          <div
-            id="received-text"
-            style="font-size: small;"
-          >
-            Do Not Sell request: 
-          </div>
-          
-        </div>
-        <div>
-          <div
-            id="received-check"
-            class="uk-flex uk-flex-right"
-            style="font-size: small;"
-          >
-            <div>Sent</div>
-            <div style="padding-left: 8px;display: flex;align-items: center;">
-              <img
-                src="../assets/check.svg"
-                height="14"
-                width="14"
-                alt="Checkmark"
-                uk-svg
-              />
-            </div>
-          </div>
-
-        </div>
+        
       </div>
     </li>
     `;
