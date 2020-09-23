@@ -25,3 +25,40 @@ svg:hover {
   fill: #5a647d;
   transition: all ease 0.5s;
 }
+
+/********************************************************/
+
+/*
+Animated 3rd party domains/domain list buttons/links
+*/
+
+.domain-list:hover {
+  background-color: var(--accent-color);
+  color: white;
+  transition: ease-out 0.1s;
+}
+
+.third-party-domains:hover {
+  background-color: var(--highlight-light);
+  color: var(--text-color-darker);
+  transition: ease-out 0.1s;
+}
+
+.third-party-domains-click {
+  background-color: var(--highlight-light);
+  color: var(--text-color-darker);
+}
+
+/********************************************************/
+
+/*
+Accepted/rejected text on popup
+*/
+
+.status-text-red {
+  color:red;
+  /* border: solid red 2px;
+  border-radius: 14px;
+  box-shadow: 0 8px 16px -1px rgba(211, 211, 211, .2);
+  outline: none; */
+}

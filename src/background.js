@@ -107,7 +107,7 @@ function updateDomainsAndSignal(details) {
 function checkResponse(details) {
   let heads = details.responseHeaders
   for (let i in heads) {
-    // console.log("responseHeader[i]: ", heads[i])
+    console.log("responseHeader[i]: ", heads[i])
     if (heads[i]['name'] === 'dns' && heads[i]['value'] === 'received') {
       chrome.browserAction.setIcon({tabId: details.tabId, path:"assets/face-icons/optmeow-face-circle-green-128.png"}, function () {
         console.log("RECEIVED DNS AKNOWLEDGEMENT FROM SERVER.")
@@ -127,6 +127,7 @@ function checkResponse(details) {
 function logData(details) {
   var url = new URL(details.url);
   var parsed = psl.parse(url.hostname);
+  console.log("Details.responseHeaders: ", details.responseHeaders)
 
   if (tabs[details.tabId] === undefined) {
     tabs[details.tabId] = { DOMAIN: null, REQUEST_DOMAINS: {}, TIMESTAMP: 0 };
@@ -251,7 +252,7 @@ chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
  * Generates ENABLED, DOMAINLIST_ENABLED, and DOMAINS keys in local storage
  * if undefined
  */
-chrome.storage.local.get(["ENABLED", "DOMAINLIST_ENABLED", "DOMAINS"], function (
+chrome.storage.local.get(["ENABLED", "DOMAINLIST_ENABLED", "DOMAINS", "DOMAINLIST_PRESSED"], function (
   result
 ) {
   if (result.ENABLED == undefined) {
@@ -262,6 +263,9 @@ chrome.storage.local.get(["ENABLED", "DOMAINLIST_ENABLED", "DOMAINS"], function 
   }
   if (result.DOMAINS == undefined) {
     chrome.storage.local.set({ DOMAINS: {} });
+  }
+  if (result.DOMAINLIST_PRESSED == undefined) {
+    chrome.storage.local.set({ DOMAINLIST_PRESSED: false });
   }
 });
 
