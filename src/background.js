@@ -20,7 +20,7 @@ var tabs = {}; /// Store all active tab id's, domain, requests, and response
 var activeTabID = 0;
 var sendSignal = false;
 var optout_headers = {};
-var domainBlackList = { image: 1, css: 1 };
+var domainBlackList = ["image", "css"];
 
 /**
  * Manipulates Headers and adds Do Not Sell signal if functionality is on
