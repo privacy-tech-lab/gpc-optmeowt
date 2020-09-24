@@ -20,7 +20,6 @@ var tabs = {}; /// Store all active tab id's, domain, requests, and response
 var activeTabID = 0;
 var sendSignal = false;
 var optout_headers = {};
-var domainBlackList = ["image", "css"];
 
 /**
  * Manipulates Headers and adds Do Not Sell signal if functionality is on
@@ -29,13 +28,13 @@ var domainBlackList = ["image", "css"];
  *                       (request headers)
  */
 var addHeaders = (details) => {
-  if (!(details.type in domainBlackList)) {
+  if (!(details.type === "image")) {
+    console.log(`the type is -> ${details.type}, ${typeof details.type}`);
     updateDomainsAndSignal(details);
     /// Intializes IAB CCPA cookie-based opt-out framework
     if (sendSignal) {
       initUSP();
     }
-    console.log("Abdallah debugging here!!", details);
 
     /// Now we know where to send the signal.
     if (sendSignal) {
