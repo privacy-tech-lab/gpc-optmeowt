@@ -76,8 +76,16 @@ export async function mainView() {
     "main-view"
   ).innerHTML;
 
-  settingsView(bodyTemplate); // First page
-  document.querySelector('#main-view-settings').classList.add('active')
+  chrome.storage.local.get(["DOMAINLIST_PRESSED"], (result)=> {
+    if (!result.DOMAINLIST_PRESSED) {
+      settingsView(bodyTemplate); // First page
+      document.querySelector('#main-view-settings').classList.add('active')
+    } else {
+      domainlistView(bodyTemplate); // First page
+      chrome.storage.local.set({ DOMAINLIST_PRESSED: false });
+      document.querySelector('#main-view-domainlist').classList.add('active')
+    }
+    
 
   document
     .getElementById("main-view-settings")
@@ -88,4 +96,5 @@ export async function mainView() {
   document
     .getElementById("main-view-about")
     .addEventListener("click", () => displayAbout(bodyTemplate));
+  })
 }
