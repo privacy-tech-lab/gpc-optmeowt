@@ -4,18 +4,20 @@ Copyright (c) 2020 Kuba Alicki, David Baraka, Rafael Goldstein, Sebastian Zimmec
 privacy-tech-lab, https://privacy-tech-lab.github.io/
 */
 
-
 /*
 settings-view.js
 ================================================================================
 settings-view.js loads settings-view.html when clicked on the options page
 */
 
-
 import { renderParse, fetchParse } from "../../components/util.js";
-import { handleDownload, startUpload, handleUpload } from "../../../domainlist.js";
-import { darkSwitchFunction } from "../../../libs/dark-mode-switch-1.0.0/dark-mode-switch.js"
-import "../../../libs/FileSaver.js-2.0.2/src/FileSaver.js"
+import {
+  handleDownload,
+  startUpload,
+  handleUpload,
+} from "../../../domainlist.js";
+import { darkSwitchFunction } from "../../../libs/dark-mode-switch-1.0.0/dark-mode-switch.js";
+import "../../../libs/FileSaver.js-2.0.2/src/FileSaver.js";
 
 /**
  * @typedef headings
@@ -31,21 +33,38 @@ const headings = {
  * Creates the event listeners for the `Settings` page buttons and options
  */
 function eventListeners() {
-    document.getElementById("settings-view-radio0").addEventListener('click', () => {
-        chrome.runtime.sendMessage({ ENABLED: true, DOMAINLIST_ENABLED: false });
-        chrome.storage.local.set({ ENABLED: true, DOMAINLIST_ENABLED: false });
-    })
-    document.getElementById("settings-view-radio1").addEventListener('click', () => {
-        chrome.runtime.sendMessage({ ENABLED: false, DOMAINLIST_ENABLED: false });
-        chrome.storage.local.set({ ENABLED: false, DOMAINLIST_ENABLED: false });
-    })
-    document.getElementById("settings-view-radio2").addEventListener('click', () => {
-        chrome.runtime.sendMessage({ ENABLED: true, DOMAINLIST_ENABLED: true });
-        chrome.storage.local.set({ ENABLED: true, DOMAINLIST_ENABLED: true });
-    })
-    document.getElementById("download-button").addEventListener('click', handleDownload)
-    document.getElementById("upload-button").addEventListener('click', startUpload)
-    document.getElementById("upload-domainlist").addEventListener('change', handleUpload, false)
+  document
+    .getElementById("settings-view-radio0")
+    .addEventListener("click", () => {
+      chrome.runtime.sendMessage({ ENABLED: true, DOMAINLIST_ENABLED: false });
+      chrome.storage.local.set({ ENABLED: true, DOMAINLIST_ENABLED: false });
+    });
+  document
+    .getElementById("settings-view-radio1")
+    .addEventListener("click", () => {
+      chrome.runtime.sendMessage({ ENABLED: false, DOMAINLIST_ENABLED: false });
+      chrome.storage.local.set({ ENABLED: false, DOMAINLIST_ENABLED: false });
+    });
+  document
+    .getElementById("settings-view-radio2")
+    .addEventListener("click", () => {
+      chrome.runtime.sendMessage({ ENABLED: true, DOMAINLIST_ENABLED: true });
+      chrome.storage.local.set({ ENABLED: true, DOMAINLIST_ENABLED: true });
+    });
+  document
+    .getElementById("download-button")
+    .addEventListener("click", handleDownload);
+  document.getElementById("upload-button").addEventListener("click", () => {
+    const verify = confirm(
+      `This option will override your current domain preferences.\n Do you wish to continue?`
+    );
+    if (verify) {
+      startUpload();
+    }
+  });
+  document
+    .getElementById("upload-domainlist")
+    .addEventListener("change", handleUpload, false);
 }
 
 /**
@@ -65,8 +84,10 @@ export async function settingsView(scaffoldTemplate) {
 
   darkSwitchFunction();
 
-  chrome.storage.local.get(["ENABLED", "DOMAINLIST_ENABLED"], function (result) {
-      console.log(result.ENABLED)
+  chrome.storage.local.get(["ENABLED", "DOMAINLIST_ENABLED"], function (
+    result
+  ) {
+    console.log(result.ENABLED);
     if (result.ENABLED == undefined) {
       chrome.storage.local.set({ ENABLED: true });
       document.getElementById("settings-view-radio0").checked = true;
