@@ -15,6 +15,7 @@ import {
   addToDomainlist,
   removeFromDomainlist,
 } from "../domainlist.js";
+// import { buildToggle, toggleListener } from "../../../domainlist.js";
 
 /**
  * Initializes the popup window after DOM content is loaded
@@ -134,10 +135,29 @@ document.addEventListener("DOMContentLoaded", (event) => {
         }
         // console.log(t)
         document.getElementById("dns-text").innerHTML = t;
-      });
-    });
+      })
+    })
+  })
+
+  /**
+   * Generates third party domain list toggle functionality 
+   */
+  document.getElementById("third-party-domains").addEventListener("click", () => {
+    // var icon = document.getElementById("dropdown")
+    // console.log
+    if (document.getElementById("third-party-domains-list").style.display === "none") {
+      document.getElementById("dropdown").src = "../assets/chevron-up.svg"
+      document.getElementById("third-party-domains-list").style.display = ""
+      // document.getElementById("third-party-domains").classList.add("third-party-domains-click")
+      document.getElementById("divider").style.display = ""
+    } else {
+      document.getElementById("dropdown").src = "../assets/chevron-down.svg"
+      document.getElementById("third-party-domains-list").style.display = "none"
+      // document.getElementById("third-party-domains").classList.remove("third-party-domains-click")
+      document.getElementById("divider").style.display = "none"
+    }
   });
-});
+})
 
 /**
  * Builds the requested domains HTML of the popup window
@@ -145,39 +165,78 @@ document.addEventListener("DOMContentLoaded", (event) => {
  * (requests = tabs[activeTabID].REQUEST_DOMAINS; passed from background page)
  */
 async function buildDomains(requests) {
+  console.log("requests: ", requests)
   let items = "";
-  for (var request_domain in requests) {
-    items +=
-      `
-  <li class="uk-margin-small-left uk-margin-small-right">
-    <div uk-grid class="uk-grid-row-collapse">
+  chrome.storage.local.get(["DOMAINS"], function (result) {
+    for (var request_domain in requests) {
+      let checkbox = ""
+      let text = ""
+      if (result.DOMAINS[request_domain]) {
+        checkbox = `<input type="checkbox" id="input-${request_domain}" checked/>`
+        text = "Do Not Sell Enabled"
+      } else {
+        checkbox = `<input type="checkbox" id="input-${request_domain}"/>`
+        text = "Do Not Sell Disabled"
+      }
+
+      items +=
+        `
+    <li>
       <div
-        class="uk-width-1-1"
-        style="font-size: small; font-weight: bold;"
+        class="uk-flex-inline uk-width-1-1 uk-flex-center uk-text-center uk-text-bold uk-text-truncate"
+        style="color: #4472c4; font-size: medium"
+        id="domain"
       >
-        Request Domain:
+        ${request_domain}
       </div>
-      <div class="uk-width-1-1 uk-text-break">
-        ` +
-      request_domain +
-      `
+      <div uk-grid  style="margin-top: 4%; ">
+        <div
+          id="dns-text-${request_domain}"
+          class="uk-width-expand uk-margin-auto-vertical"
+          style="font-size: small;"
+        >
+          ${text}
+        </div>
+        <div>
+          <div uk-grid>
+            <div class="uk-width-auto">
+              <label class="switch switch-smaller" id="switch-label-${request_domain}">
+                <!-- Populate switch preference here -->
+                <!-- <input type="checkbox" id="input"/> -->
+                ${checkbox}
+                <span></span>
+              </label>
+            </div>
+          </div>
+        </div>
       </div>
-      <div
-        class="uk-width-1-1 uk-margin-small-top"
-        style="font-size: small; font-weight: bold;"
-      >
-        Responses: <span class="uk-badge" style="font-size: 10px; background-color: #cfd8dc; color:#37474f !important;">RECEIVED 0/` +
-      Object.keys(requests[request_domain].URLS).length +
-      `</span>
+      <!-- Response info -->
+      <div uk-grid uk-grid-row-collapse style="margin-top:0px;">
+        
       </div>
-      <div class="uk-width-1-1">
-        None
-      </div>
-    </div>
-  </li>
-  `;
-  }
-  document.getElementById("urls").innerHTML = items;
+    </li>
+    `;
+    }
+    document.getElementById("third-party-domains-list").innerHTML = items;
+
+    for (let request_domain in requests) {
+      document.getElementById(`input-${request_domain}`).addEventListener("click", () => {
+        chrome.storage.local.set({ ENABLED: true, DOMAINLIST_ENABLED: true });
+        chrome.storage.local.get(["DOMAINS"], function (result) {
+          var t = ""
+          if (result.DOMAINS[request_domain]) {
+            t = "Do Not Sell Disabled"
+            removeFromDomainlist(request_domain);
+          } else {
+            t = "Do Not Sell Enabled"
+            addToDomainlist(request_domain);
+          }
+          // console.log(t)
+          document.getElementById(`dns-text-${request_domain}`).innerHTML = t;
+        })
+      })
+    }
+  })
 }
 
 /**
@@ -193,17 +252,22 @@ chrome.runtime.sendMessage({
  * the popup badge counter and build the popup domain list HTML, respectively
  */
 chrome.runtime.onMessage.addListener(function (request, _, __) {
-  if (request.msg === "BADGE") {
-    document.getElementById("requests").innerText = request.data;
-  }
+  // if (request.msg === "BADGE") {
+  //   document.getElementById("requests").innerText = request.data;
+  // }
   if (request.msg === "REQUESTS") {
     buildDomains(request.data);
   }
 });
 
 /**
- * Listener for Options page button click
+ * Various options page listeners
  */
 document.getElementById("more").addEventListener("click", () => {
   chrome.runtime.openOptionsPage();
+});
+document.getElementById("domain-list").addEventListener("click", () => {
+  chrome.storage.local.set({ DOMAINLIST_PRESSED: true }, ()=>{
+    chrome.runtime.openOptionsPage();
+  });
 });

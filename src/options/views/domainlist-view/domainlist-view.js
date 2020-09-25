@@ -13,7 +13,7 @@ domainlist-view.js loads domainlist-view.html when clicked on the options page
 
 
 import { renderParse, fetchParse } from '../../components/util.js'
-import { toggleListener, permRemoveFromDomainlist } from "../../../domainlist.js";
+import { buildToggle, toggleListener, permRemoveFromDomainlist } from "../../../domainlist.js";
 
 /**
  * @typedef headings
@@ -177,27 +177,6 @@ function buildList() {
     } 
     document.getElementById('domainlist-main').innerHTML = items;
   });
-}
-
-/**
- * Generates the HTML that will build the domainlist switch for a given 
- * domain in the domainlist
- * @param {string} domain - Any given domain
- * @param {bool} bool - Represents whether it is domainlisted or not
- * @return {string} - The stringified checkbox HTML compontent
- */
-function buildToggle(domain, bool) {
-  let toggle;
-  if (bool) {
-    // checkbox = `<input type="checkbox" id="select ${domain}" 
-    //           class="check text-color dark-checkbox" checked />`;
-    toggle = `<input type="checkbox" id="${domain}" checked />`;
-  } else {
-    // checkbox = `<input type="checkbox" id="select ${domain}" 
-    //           class="check text-color dark-checkbox"/>`;
-    toggle = `<input type="checkbox" id="${domain}" />`;
-  }
-  return toggle
 }
 
 /**

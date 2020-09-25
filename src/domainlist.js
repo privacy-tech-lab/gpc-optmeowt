@@ -129,6 +129,27 @@ function deleteDomainCookies(domainKey) {
 //////////////////////////////////////////////////////////////////////////
 
 /**
+ * Generates the HTML that will build the domainlist switch for a given 
+ * domain in the domainlist
+ * @param {string} domain - Any given domain
+ * @param {bool} bool - Represents whether it is domainlisted or not
+ * @return {string} - The stringified checkbox HTML compontent
+ */
+export function buildToggle(domain, bool) {
+  let toggle;
+  if (bool) {
+    // checkbox = `<input type="checkbox" id="select ${domain}" 
+    //           class="check text-color dark-checkbox" checked />`;
+    toggle = `<input type="checkbox" id="${domain}" checked />`;
+  } else {
+    // checkbox = `<input type="checkbox" id="select ${domain}" 
+    //           class="check text-color dark-checkbox"/>`;
+    toggle = `<input type="checkbox" id="${domain}" />`;
+  }
+  return toggle
+}
+
+/**
  * Creates an event listener that toggles a given domain's stored value in 
  * the domainlist if a user clicks on the object with the given element ID
  * @param {string} elementId - HTML element to be linked to the listener
