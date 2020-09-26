@@ -332,6 +332,9 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
       sendResponse("DONE");
     }
   }
+  if (request.msg === "WELLKNOWN") {
+    console.log(`.well-known from ContentScr: ${JSON.stringify(request.data)}`)
+  }
   if (request.msg === "TAB") {
     var url = new URL(sender.origin);
     var parsed = psl.parse(url.hostname);
