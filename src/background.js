@@ -367,17 +367,10 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
 });
 
 chrome.runtime.onInstalled.addListener(function (object) {
-  chrome.tabs.create(
-    {
-      url:
-        "chrome-extension://mfgnakcmpgfgpmdepnckjokfnieoidmm/options/options.html",
-    },
-    function (tab) {
+  chrome.runtime.openOptionsPage(
+    function () {
       console.log("New tab launched with OptMeOwt extension options page");
-      chrome.storage.local.set({ FIRSTINSTALL: true }, function () {
-        console.log("Set fresh install value");
-      });
-      chrome.storage.local.set({ FIRSTINSTALL_POPUP: true }, function () {
+      chrome.storage.local.set({ FIRSTINSTALL: true, FIRSTINSTALL_POPUP: true }, function () {
         console.log("Set fresh install value");
       });
     }
