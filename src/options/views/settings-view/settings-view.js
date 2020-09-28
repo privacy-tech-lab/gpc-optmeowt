@@ -67,6 +67,63 @@ function eventListeners() {
     .addEventListener("change", handleUpload, false);
 }
 
+function optionsWalkthrough() {
+  document.getElementsByClassName("startpop")[0].addEventListener(
+    "click",
+    () => {
+      var popup = document.getElementById(`settings-myPopup1`);
+      popup.classList.toggle(`settings-show1`);
+      onOverlay();
+
+      window.addEventListener(
+        "mouseup",
+        function (e) {
+          popup.classList.toggle(`settings-show1`);
+          offOverlay();
+
+          var popup2 = document.getElementById(`settings-myPopup2`);
+          popup2.classList.toggle(`settings-show2`);
+          onOverlay();
+
+          window.addEventListener(
+            "mouseup",
+            function (e) {
+              popup2.classList.toggle(`settings-show2`);
+              offOverlay();
+
+              var popup3 = document.getElementById(`settings-myPopup3`);
+              popup3.classList.toggle(`settings-show3`);
+              onOverlay();
+
+              window.addEventListener(
+                "mouseup",
+                function (e) {
+                  popup3.classList.toggle(`settings-show3`);
+                  offOverlay();
+                },
+                { once: true }
+              );
+            },
+            { once: true }
+          );
+        },
+        { once: true }
+      );
+    },
+    { once: true }
+  );
+  document.getElementsByClassName("startpop")[0].click();
+}
+
+function onOverlay() {
+  document.getElementById("overlay").style.display = "block";
+}
+
+function offOverlay() {
+  document.getElementById("overlay").style.display = "none";
+
+}
+
 /**
  * Renders the `Settings` view in the options page
  * @param {string} scaffoldTemplate - stringified HTML template
@@ -99,6 +156,13 @@ export async function settingsView(scaffoldTemplate) {
     if (result.DOMAINLIST_ENABLED) {
       document.getElementById("settings-view-radio2").checked = true;
     }
+  });
+
+  chrome.storage.local.get(["FIRSTINSTALL"], (result) => {
+    if (result.FIRSTINSTALL) {
+      optionsWalkthrough();
+    }
+    chrome.storage.local.set({ FIRSTINSTALL: false }, () => {});
   });
 
   eventListeners();

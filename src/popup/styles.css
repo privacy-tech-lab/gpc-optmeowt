@@ -4,19 +4,17 @@ Copyright (c) 2020 Kuba Alicki, David Baraka, Rafael Goldstein, Sebastian Zimmec
 privacy-tech-lab, https://privacy-tech-lab.github.io/
 */
 
-
 /*
 styles.css
 ================================================================================
 styles.css is the main css page for OptMeowt's popup page
 */
 
-
 /*
 SVG photo assets style
 */
 @import "../options/styles.css";
-svg{
+svg {
   fill: #d3d3d3;
   transition: all ease 0.5s;
 }
@@ -26,6 +24,67 @@ svg:hover {
   transition: all ease 0.5s;
 }
 
+
+/*=======================================================================================*/
+.popup1 {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+}
+/* The actual popup (appears on top) */
+.popup1 .popuptext1 {
+  visibility: hidden;
+  width: 220px;
+  background-color: #87cefa;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 8px 0;
+  position: absolute;
+  z-index: 1;
+  bottom: -740%;
+  left: 60%;
+  margin-left: -80px;
+  font-size: 12px;
+}
+
+/* Popup arrow */
+.popup1 .popuptext1::after {
+  content: "";
+  position: absolute;
+  top: -18%;
+  left: 85%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: transparent transparent #87cefa transparent;
+}
+
+/* Toggle this class when clicking on the popup container (hide and show the popup) */
+.popup1 .show {
+  visibility: visible;
+  -webkit-animation: fadeIn 1s;
+  animation: fadeIn 1s;
+}
+
+/* Add animation (fade in the popup) */
+@-webkit-keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
 /********************************************************/
 
 /*
@@ -62,3 +121,4 @@ Accepted/rejected text on popup
   box-shadow: 0 8px 16px -1px rgba(211, 211, 211, .2);
   outline: none; */
 }
+
