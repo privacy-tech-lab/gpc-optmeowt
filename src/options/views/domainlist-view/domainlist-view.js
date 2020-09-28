@@ -1,9 +1,8 @@
 /*
 OptMeowt is licensed under the MIT License
-Copyright (c) 2020 Kuba Alicki, David Baraka, Rafael Goldstein, Sebastian Zimmeck
+Copyright (c) 2020 Kuba Alicki, Abdallah Salia, Sebastian Zimmeck
 privacy-tech-lab, https://privacy-tech-lab.github.io/
 */
-
 
 /*
 domainlist-view.js
@@ -11,9 +10,12 @@ domainlist-view.js
 domainlist-view.js loads domainlist-view.html when clicked on the options page
 */
 
-
-import { renderParse, fetchParse } from '../../components/util.js'
-import { buildToggle, toggleListener, permRemoveFromDomainlist } from "../../../domainlist.js";
+import { renderParse, fetchParse } from "../../components/util.js";
+import {
+  buildToggle,
+  toggleListener,
+  permRemoveFromDomainlist,
+} from "../../../domainlist.js";
 
 /**
  * @typedef headings
@@ -21,37 +23,40 @@ import { buildToggle, toggleListener, permRemoveFromDomainlist } from "../../../
  * @property {string} headings.subtitle - Subtitle of the given page
  */
 const headings = {
-    title: 'Domain List',
-    subtitle: "Toggle which domains you would like to receive Do Not Sell signals"
-}
+  title: "Domain List",
+  subtitle:
+    "Toggle which domains you would like to receive Do Not Sell signals",
+};
 
 /**
  * Creates the event listeners for the `domainlist` page buttons and options
  */
 function eventListeners() {
-    document.getElementById('searchbar').addEventListener('keyup', filterList )
-    // document.getElementById('plus-button').addEventListener('keyup', plusButton )
-    createToggleListeners();
+  document.getElementById("searchbar").addEventListener("keyup", filterList);
+  // document.getElementById('plus-button').addEventListener('keyup', plusButton )
+  createToggleListeners();
 
-    window.onscroll = function() { stickyNavbar() };
-    var nb = document.getElementById("domainlist-navbar");
-    var sb = document.getElementById("searchbar")
-    var sticky = nb.offsetTop;
+  window.onscroll = function () {
+    stickyNavbar();
+  };
+  var nb = document.getElementById("domainlist-navbar");
+  var sb = document.getElementById("searchbar");
+  var sticky = nb.offsetTop;
 
-    /**
-     * Sticky navbar
-     */
-    function stickyNavbar() {
-      if (window.pageYOffset >= sticky) {
-        nb.classList.add("sticky")
-        // nb.classList.add("uk-grid")
-        // sb.classList.add("uk-width-1-2")
-        // document.getElementById("width-expand").classList.remove("uk-width-expand")
-      } else {
-        nb.classList.remove("sticky")
-        // sb.classList.remove("uk-width-3-4")
-      }
+  /**
+   * Sticky navbar
+   */
+  function stickyNavbar() {
+    if (window.pageYOffset >= sticky) {
+      nb.classList.add("sticky");
+      // nb.classList.add("uk-grid")
+      // sb.classList.add("uk-width-1-2")
+      // document.getElementById("width-expand").classList.remove("uk-width-expand")
+    } else {
+      nb.classList.remove("sticky");
+      // sb.classList.remove("uk-width-3-4")
     }
+  }
 }
 
 /**
@@ -62,74 +67,73 @@ function createToggleListeners() {
   chrome.storage.local.get(["DOMAINS"], function (result) {
     for (let domain in result.DOMAINS) {
       // MAKE SURE THE ID MATCHES EXACTLY
-      toggleListener(domain, domain)
-      deleteButtonListener(domain)
+      toggleListener(domain, domain);
+      deleteButtonListener(domain);
     }
   });
 }
 
 /**
  * Delete buttons for each domain
- * @param {string} domain 
+ * @param {string} domain
  */
-function deleteButtonListener (domain) {
-  document.getElementById(`delete ${domain}`).addEventListener("click", 
-    (async () => {
-      let delete_prompt = `Are you sure you would like to permanently delete this domain from the Domain List?`
+function deleteButtonListener(domain) {
+  document
+    .getElementById(`delete ${domain}`)
+    .addEventListener("click", async () => {
+      let delete_prompt = `Are you sure you would like to permanently delete this domain from the Domain List?`;
       let success_prompt = `Successfully deleted ${domain} from the Domain List. 
-NOTE: It will be automatically added back to the list when the domain is requested again.`
+NOTE: It will be automatically added back to the list when the domain is requested again.`;
       if (confirm(delete_prompt)) {
-        await permRemoveFromDomainlist(domain)
-        alert(success_prompt)
+        await permRemoveFromDomainlist(domain);
+        alert(success_prompt);
         document.getElementById(`li ${domain}`).remove();
       }
-  }))
+    });
 }
 
 /**
  * Filterd lists code heavily inspired by
  * `https://www.w3schools.com/howto/howto_js_filter_lists.asp`
- * 
+ *
  * Enables live filtering of domains via the search bar
  */
 function filterList() {
-  let input, list, li, count
-  input = document.getElementById('searchbar').value.toLowerCase();
-  list = document.getElementById('domainlist-main')
-  li = list.getElementsByTagName('li')
-  count = li.length
+  let input, list, li, count;
+  input = document.getElementById("searchbar").value.toLowerCase();
+  list = document.getElementById("domainlist-main");
+  li = list.getElementsByTagName("li");
+  count = li.length;
 
   for (let i = 0; i < count; i++) {
-      let d = li[i].getElementsByClassName('domain')[0];
-      let txtValue = d.innerText; 
-      if (txtValue.toLowerCase().indexOf(input) > -1) {
+    let d = li[i].getElementsByClassName("domain")[0];
+    let txtValue = d.innerText;
+    if (txtValue.toLowerCase().indexOf(input) > -1) {
       li[i].style.display = "";
     } else {
       li[i].style.display = "none";
     }
-  };
+  }
 }
 
 /**
- * Builds the list of domains in the domainlist, and their respective 
+ * Builds the list of domains in the domainlist, and their respective
  * options, to be displayed
  */
 function buildList() {
-  let items = ""
+  let items = "";
   chrome.storage.local.get(["DOMAINS"], function (result) {
     for (let domain in result.DOMAINS) {
-      items += 
-            `
+      items +=
+        `
       <li id="li ${domain}">
         <div uk-grid class="uk-grid-small uk-width-1-1" style="font-size: medium;">
           <div>
             <label class="switch">
-            `
-            +
-              buildToggle(domain, result.DOMAINS[domain])
-              //<input type="checkbox" id="select" class="check text-color dark-checkbox" />
-            +
-            `
+            ` +
+        buildToggle(domain, result.DOMAINS[domain]) +
+        //<input type="checkbox" id="select" class="check text-color dark-checkbox" />
+        `
               <span></span>
             </label>
           </div>
@@ -144,12 +148,11 @@ function buildList() {
             "
           >
             <label class="switch" >
-            `
-            // +
-            // buildToggle(domain, result.DOMAINS[domain])
-            // // `<input type="checkbox" id="toggle-domainlist" />`
-            +
-            `
+            ` +
+        // +
+        // buildToggle(domain, result.DOMAINS[domain])
+        // // `<input type="checkbox" id="toggle-domainlist" />`
+        `
               <span></span>
             </label>
           </div>
@@ -173,9 +176,9 @@ function buildList() {
 
         </div>
       </li>
-            `
-    } 
-    document.getElementById('domainlist-main').innerHTML = items;
+            `;
+    }
+    document.getElementById("domainlist-main").innerHTML = items;
   });
 }
 
@@ -184,12 +187,16 @@ function buildList() {
  * @param {string} scaffoldTemplate - stringified HTML template
  */
 export async function domainlistView(scaffoldTemplate) {
-    const body = renderParse(scaffoldTemplate, headings, 'scaffold-component')
-    let content = await fetchParse('./views/domainlist-view/domainlist-view.html', 'domainlist-view')
-    
-    document.getElementById('content').innerHTML = body.innerHTML
-    document.getElementById('scaffold-component-body').innerHTML = content.innerHTML
+  const body = renderParse(scaffoldTemplate, headings, "scaffold-component");
+  let content = await fetchParse(
+    "./views/domainlist-view/domainlist-view.html",
+    "domainlist-view"
+  );
 
-    buildList();
-    eventListeners();
+  document.getElementById("content").innerHTML = body.innerHTML;
+  document.getElementById("scaffold-component-body").innerHTML =
+    content.innerHTML;
+
+  buildList();
+  eventListeners();
 }

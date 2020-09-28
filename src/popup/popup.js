@@ -1,6 +1,6 @@
 /*
 OptMeowt is licensed under the MIT License
-Copyright (c) 2020 Kuba Alicki, David Baraka, Rafael Goldstein, Sebastian Zimmeck
+Copyright (c) 2020 Kuba Alicki, Abdallah Salia, Sebastian Zimmeck
 privacy-tech-lab, https://privacy-tech-lab.github.io/
 */
 
@@ -135,29 +135,35 @@ document.addEventListener("DOMContentLoaded", (event) => {
         }
         // console.log(t)
         document.getElementById("dns-text").innerHTML = t;
-      })
-    })
-  })
+      });
+    });
+  });
 
   /**
-   * Generates third party domain list toggle functionality 
+   * Generates third party domain list toggle functionality
    */
-  document.getElementById("third-party-domains").addEventListener("click", () => {
-    // var icon = document.getElementById("dropdown")
-    // console.log
-    if (document.getElementById("third-party-domains-list").style.display === "none") {
-      document.getElementById("dropdown").src = "../assets/chevron-up.svg"
-      document.getElementById("third-party-domains-list").style.display = ""
-      // document.getElementById("third-party-domains").classList.add("third-party-domains-click")
-      document.getElementById("divider").style.display = ""
-    } else {
-      document.getElementById("dropdown").src = "../assets/chevron-down.svg"
-      document.getElementById("third-party-domains-list").style.display = "none"
-      // document.getElementById("third-party-domains").classList.remove("third-party-domains-click")
-      document.getElementById("divider").style.display = "none"
-    }
-  });
-})
+  document
+    .getElementById("third-party-domains")
+    .addEventListener("click", () => {
+      // var icon = document.getElementById("dropdown")
+      // console.log
+      if (
+        document.getElementById("third-party-domains-list").style.display ===
+        "none"
+      ) {
+        document.getElementById("dropdown").src = "../assets/chevron-up.svg";
+        document.getElementById("third-party-domains-list").style.display = "";
+        // document.getElementById("third-party-domains").classList.add("third-party-domains-click")
+        document.getElementById("divider").style.display = "";
+      } else {
+        document.getElementById("dropdown").src = "../assets/chevron-down.svg";
+        document.getElementById("third-party-domains-list").style.display =
+          "none";
+        // document.getElementById("third-party-domains").classList.remove("third-party-domains-click")
+        document.getElementById("divider").style.display = "none";
+      }
+    });
+});
 
 /**
  * Builds the requested domains HTML of the popup window
@@ -165,22 +171,21 @@ document.addEventListener("DOMContentLoaded", (event) => {
  * (requests = tabs[activeTabID].REQUEST_DOMAINS; passed from background page)
  */
 async function buildDomains(requests) {
-  console.log("requests: ", requests)
+  console.log("requests: ", requests);
   let items = "";
   chrome.storage.local.get(["DOMAINS"], function (result) {
     for (var request_domain in requests) {
-      let checkbox = ""
-      let text = ""
+      let checkbox = "";
+      let text = "";
       if (result.DOMAINS[request_domain]) {
-        checkbox = `<input type="checkbox" id="input-${request_domain}" checked/>`
-        text = "Do Not Sell Enabled"
+        checkbox = `<input type="checkbox" id="input-${request_domain}" checked/>`;
+        text = "Do Not Sell Enabled";
       } else {
-        checkbox = `<input type="checkbox" id="input-${request_domain}"/>`
-        text = "Do Not Sell Disabled"
+        checkbox = `<input type="checkbox" id="input-${request_domain}"/>`;
+        text = "Do Not Sell Disabled";
       }
 
-      items +=
-        `
+      items += `
     <li>
       <div
         class="uk-flex-inline uk-width-1-1 uk-flex-center uk-text-center uk-text-bold uk-text-truncate"
@@ -220,23 +225,25 @@ async function buildDomains(requests) {
     document.getElementById("third-party-domains-list").innerHTML = items;
 
     for (let request_domain in requests) {
-      document.getElementById(`input-${request_domain}`).addEventListener("click", () => {
-        chrome.storage.local.set({ ENABLED: true, DOMAINLIST_ENABLED: true });
-        chrome.storage.local.get(["DOMAINS"], function (result) {
-          var t = ""
-          if (result.DOMAINS[request_domain]) {
-            t = "Do Not Sell Disabled"
-            removeFromDomainlist(request_domain);
-          } else {
-            t = "Do Not Sell Enabled"
-            addToDomainlist(request_domain);
-          }
-          // console.log(t)
-          document.getElementById(`dns-text-${request_domain}`).innerHTML = t;
-        })
-      })
+      document
+        .getElementById(`input-${request_domain}`)
+        .addEventListener("click", () => {
+          chrome.storage.local.set({ ENABLED: true, DOMAINLIST_ENABLED: true });
+          chrome.storage.local.get(["DOMAINS"], function (result) {
+            var t = "";
+            if (result.DOMAINS[request_domain]) {
+              t = "Do Not Sell Disabled";
+              removeFromDomainlist(request_domain);
+            } else {
+              t = "Do Not Sell Enabled";
+              addToDomainlist(request_domain);
+            }
+            // console.log(t)
+            document.getElementById(`dns-text-${request_domain}`).innerHTML = t;
+          });
+        });
     }
-  })
+  });
 }
 
 /**
@@ -267,7 +274,7 @@ document.getElementById("more").addEventListener("click", () => {
   chrome.runtime.openOptionsPage();
 });
 document.getElementById("domain-list").addEventListener("click", () => {
-  chrome.storage.local.set({ DOMAINLIST_PRESSED: true }, ()=>{
+  chrome.storage.local.set({ DOMAINLIST_PRESSED: true }, () => {
     chrome.runtime.openOptionsPage();
   });
 });

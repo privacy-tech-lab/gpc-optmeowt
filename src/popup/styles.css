@@ -1,9 +1,8 @@
 /*
 OptMeowt is licensed under the MIT License
-Copyright (c) 2020 Kuba Alicki, David Baraka, Rafael Goldstein, Sebastian Zimmeck
+Copyright (c) 2020 Kuba Alicki, Abdallah Salia, Sebastian Zimmeck
 privacy-tech-lab, https://privacy-tech-lab.github.io/
 */
-
 
 /*
 styles.css
@@ -11,12 +10,11 @@ styles.css
 styles.css is the main css page for OptMeowt's popup page
 */
 
-
 /*
 SVG photo assets style
 */
 @import "../options/styles.css";
-svg{
+svg {
   fill: #d3d3d3;
   transition: all ease 0.5s;
 }
@@ -56,7 +54,7 @@ Accepted/rejected text on popup
 */
 
 .status-text-red {
-  color:red;
+  color: red;
   /* border: solid red 2px;
   border-radius: 14px;
   box-shadow: 0 8px 16px -1px rgba(211, 211, 211, .2);

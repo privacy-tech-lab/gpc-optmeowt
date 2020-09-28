@@ -1,6 +1,6 @@
 /*
 OptMeowt is licensed under the MIT License
-Copyright (c) 2020 Kuba Alicki, David Baraka, Rafael Goldstein, Sebastian Zimmeck
+Copyright (c) 2020 Kuba Alicki, Abdallah Salia, Sebastian Zimmeck
 privacy-tech-lab, https://privacy-tech-lab.github.io/
 */
 
@@ -91,21 +91,20 @@ function updateDomainsAndSignal(details) {
 }
 
 /**
- * Updates HTTP headers with Do Not Sell headers according 
- * to whether or not a site should recieve them. 
+ * Updates HTTP headers with Do Not Sell headers according
+ * to whether or not a site should recieve them.
  * @param {Object} details - details object
  */
-function updateHeaders(details){
+function updateHeaders(details) {
   if (sendSignal) {
     for (var signal in optout_headers) {
-      let s = optout_headers[signal]
-      console.log(s)
+      let s = optout_headers[signal];
+      console.log(s);
       details.requestHeaders.push({ name: s.name, value: s.value });
       console.log("Sending signal added...", s.name, s.value);
     }
     return { requestHeaders: details.requestHeaders };
-  } 
-  else {
+  } else {
     console.log("Preparing to send no added signal...", details.requestHeaders);
     return { requestHeaders: details.requestHeaders };
   }
@@ -117,12 +116,11 @@ function updateHeaders(details){
  * @param {Object} details - details object
  */
 function initDom(details) {
-  chrome.tabs.executeScript(
-    details.tabId, {
-      file: 'dom.js',
-      allFrames: true,
-      runAt: 'document_start'
-  })
+  chrome.tabs.executeScript(details.tabId, {
+    file: "dom.js",
+    allFrames: true,
+    runAt: "document_start",
+  });
 }
 
 /**
@@ -333,7 +331,7 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     }
   }
   if (request.msg === "WELLKNOWN") {
-    console.log(`.well-known from ContentScr: ${JSON.stringify(request.data)}`)
+    console.log(`.well-known from ContentScr: ${JSON.stringify(request.data)}`);
   }
   if (request.msg === "TAB") {
     var url = new URL(sender.origin);

@@ -1,16 +1,14 @@
 <!--
 OptMeowt is licensed under the MIT License
-Copyright (c) 2020 Kuba Alicki, David Baraka, Rafael Goldstein, Sebastian Zimmeck
+Copyright (c) 2020 Kuba Alicki, Abdallah Salia, Sebastian Zimmeck
 privacy-tech-lab, https://privacy-tech-lab.github.io/
 -->
-
 
 <!--
 scaffold-component.html
 ================================================================================
 scaffold-component.html defines the layout of each scrollable content
 -->
-
 
 <!-- 
     This template is passed into every subpage in the options page via
@@ -19,21 +17,19 @@ scaffold-component.html defines the layout of each scrollable content
     passed into the options page and rendered.
  -->
 <template id="scaffold-component">
-    <div class="uk-container" id="scaffold" style="animation-duration: 250ms;">
-        <div class="uk-grid-large">
-            <!-- Heading and subtitle -->
-            <div class="first-column uk-margin-medium-bottom">
-                <h1 class="uk-heading-medium text-color-darker" style="display: inline;">
-                    {{ title }}
-                </h1>
-                <div class="uk-text-lead uk-text-light text-color">
-                    {{ subtitle }}
-                </div>
-            </div>
-            <!-- Body -->
-            <div class="first-column" id="scaffold-component-body">
-                <!-- Body content inflated here -->
-            </div>
-        </div>
+  <div class="uk-container" id="scaffold" style="animation-duration: 250ms">
+    <div class="uk-grid-large">
+      <!-- Heading and subtitle -->
+      <div class="first-column uk-margin-medium-bottom">
+        <h1 class="uk-heading-medium text-color-darker" style="display: inline">
+          {{ title }}
+        </h1>
+        <div class="uk-text-lead uk-text-light text-color">{{ subtitle }}</div>
+      </div>
+      <!-- Body -->
+      <div class="first-column" id="scaffold-component-body">
+        <!-- Body content inflated here -->
+      </div>
     </div>
+  </div>
 </template>

@@ -1,9 +1,8 @@
 /*
 OptMeowt is licensed under the MIT License
-Copyright (c) 2020 Kuba Alicki, David Baraka, Rafael Goldstein, Sebastian Zimmeck
+Copyright (c) 2020 Kuba Alicki, Abdallah Salia, Sebastian Zimmeck
 privacy-tech-lab, https://privacy-tech-lab.github.io/
 */
-
 
 /*
 util.js
@@ -11,22 +10,20 @@ util.js
 util.js contains global helper functions to help render the options page
 */
 
-
 /**
  * Get local html file as string
  * @param {string} path - location of HTML template
- * @returns {string|none} - Returns the stringified HTML template or 
+ * @returns {string|none} - Returns the stringified HTML template or
  *                          prints an error
  */
 export async function fetchTemplate(path) {
-    try {
-        let response = await fetch(path)
-        let data = await response.text()
-        return data
-    }
-    catch (e) {
-        console.log('Failed to fetch page: ', e);
-    }
+  try {
+    let response = await fetch(path);
+    let data = await response.text();
+    return data;
+  } catch (e) {
+    console.log("Failed to fetch page: ", e);
+  }
 }
 
 /**
@@ -35,21 +32,21 @@ export async function fetchTemplate(path) {
  * @returns {HTMLDocument} - also a Document
  */
 export function parseTemplate(template) {
-    let parser = new DOMParser()
-    let doc = parser.parseFromString(template, "text/html")
-    return doc
+  let parser = new DOMParser();
+  let doc = parser.parseFromString(template, "text/html");
+  return doc;
 }
 
 /**
  * Fetches and parses html document; returns selected html
  * @param {string} path - location of document to be parsed
- * @param {string} id - name of the element in doc to be selected 
+ * @param {string} id - name of the element in doc to be selected
  *                      after it is parsed
  * @returns {Object} - element object related to the id parameter
  */
 export async function fetchParse(path, id) {
-    let template = await fetchTemplate(path)
-    return parseTemplate(template).getElementById(id)
+  let template = await fetchTemplate(path);
+  return parseTemplate(template).getElementById(id);
 }
 
 /**
@@ -60,8 +57,8 @@ export async function fetchParse(path, id) {
  * @returns {Object} - element object related to the id parameter
  */
 export function renderParse(template, data, id) {
-    let renderedTemplate = Mustache.render(template, data)
-    return parseTemplate(renderedTemplate).getElementById(id)
+  let renderedTemplate = Mustache.render(template, data);
+  return parseTemplate(renderedTemplate).getElementById(id);
 }
 
 /**
@@ -72,8 +69,8 @@ export function renderParse(template, data, id) {
  * @returns {Object} - element object related to the id parameter
  */
 export async function fetchRenderParse(path, data, id) {
-    let template = await fetchTemplate(path)
-    return renderParse(template, data, id).getElementById(id)
+  let template = await fetchTemplate(path);
+  return renderParse(template, data, id).getElementById(id);
 }
 
 /**
@@ -84,15 +81,15 @@ export async function fetchRenderParse(path, data, id) {
  * @param {function} callback - callback function
  */
 export function animateCSS(element, animationName, callback) {
-    const node = document.querySelector(element)
-    node.classList.add('animated', animationName)
+  const node = document.querySelector(element);
+  node.classList.add("animated", animationName);
 
-    function handleAnimationEnd() {
-        node.classList.remove('animated', animationName)
-        node.removeEventListener('animationend', handleAnimationEnd)
+  function handleAnimationEnd() {
+    node.classList.remove("animated", animationName);
+    node.removeEventListener("animationend", handleAnimationEnd);
 
-        if (typeof callback === 'function') callback()
-    }
+    if (typeof callback === "function") callback();
+  }
 
-    node.addEventListener('animationend', handleAnimationEnd)
+  node.addEventListener("animationend", handleAnimationEnd);
 }

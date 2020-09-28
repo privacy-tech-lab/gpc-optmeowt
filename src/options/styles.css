@@ -1,16 +1,14 @@
 /*
 OptMeowt is licensed under the MIT License
-Copyright (c) 2020 Kuba Alicki, David Baraka, Rafael Goldstein, Sebastian Zimmeck
+Copyright (c) 2020 Kuba Alicki, Abdallah Salia, Sebastian Zimmeck
 privacy-tech-lab, https://privacy-tech-lab.github.io/
 */
-
 
 /*
 styles.css
 ================================================================================
 styles.css is the main css page for OptMeowt's options page
 */
-
 
 /* 
 Dark Mode Switch
@@ -24,28 +22,28 @@ Based on https://github.com/coliff/dark-mode-switch
 Colors 
 */
 :root {
-    --accent-color: #4472C4;
-    --accent-color-lighter-80: #DAE3F3;
-    --accent-color-lighter-60: #B4C7E7;
-    --accent-color-lighter-40: #8FAADC;
-    --accent-color-darker-25:  #2F5597;
-    --accent-color-darker-50:  #203864;
+  --accent-color: #4472c4;
+  --accent-color-lighter-80: #dae3f3;
+  --accent-color-lighter-60: #b4c7e7;
+  --accent-color-lighter-40: #8faadc;
+  --accent-color-darker-25: #2f5597;
+  --accent-color-darker-50: #203864;
 
-    /* --text-color: #888fa1; */
-    --text-color: #5a647d;
-    /* --text-color-darker: #5a647d ; */
-    --text-color-darker: #353b4a ;
-    --text-color-inactive: #d3d3d3 ;
+  /* --text-color: #888fa1; */
+  --text-color: #5a647d;
+  /* --text-color-darker: #5a647d ; */
+  --text-color-darker: #353b4a;
+  --text-color-inactive: #d3d3d3;
 
-    --highlight-light: #f2f2f2;
+  --highlight-light: #f2f2f2;
 }
 
 .text-color-darker {
-    color: var(--text-color-darker)
+  color: var(--text-color-darker);
 }
 
 .text-color {
-    color: var(--text-color)
+  color: var(--text-color);
 }
 
 /********************************************************/
@@ -54,8 +52,8 @@ Colors
 Body style 
 */
 body {
-    color: var(--text-color);
-    user-select: none;
+  color: var(--text-color);
+  user-select: none;
 }
 
 /********************************************************/
@@ -64,14 +62,14 @@ body {
 Navbar item style 
 */
 .navbar-item {
-    color: var(--text-color-inactive);
-    opacity: 1;
-    cursor: pointer;
-    transition: all ease 0.5s;
+  color: var(--text-color-inactive);
+  opacity: 1;
+  cursor: pointer;
+  transition: all ease 0.5s;
 }
 
-.navbar-item.active{
-    color: var(--accent-color);
+.navbar-item.active {
+  color: var(--accent-color);
 }
 
 /********************************************************/
@@ -79,7 +77,7 @@ Navbar item style
 /*
 Sticky Domain List Navbar
 */
-.domainlist-navbar { 
+.domainlist-navbar {
   background-color: white;
   padding-top: 5px;
 }
@@ -99,22 +97,23 @@ Sticky Domain List Navbar
 /* 
 Radio buttons style 
 */
-input[type="radio"]{
-	width: 35px; height: 35px;
-	transition: all ease 0.5s;
+input[type="radio"] {
+  width: 35px;
+  height: 35px;
+  transition: all ease 0.5s;
 }
 
-input[type="radio"]:checked{
-    transition: all ease 0.25s;
-    background-image: var(--accent-color);
-    box-shadow: 0 6px 12px var(--accent-color-lighter-60);
+input[type="radio"]:checked {
+  transition: all ease 0.25s;
+  background-image: var(--accent-color);
+  box-shadow: 0 6px 12px var(--accent-color-lighter-60);
 }
 
-input[type='radio']:hover:not(:checked) {
-    transition: all ease 0.25s;
-    box-shadow: 0 6px 12px var(--accent-color-lighter-60);
-    border-color: transparent;
-  }
+input[type="radio"]:hover:not(:checked) {
+  transition: all ease 0.25s;
+  box-shadow: 0 6px 12px var(--accent-color-lighter-60);
+  border-color: transparent;
+}
 
 /********************************************************/
 
@@ -123,10 +122,9 @@ input[type='radio']:hover:not(:checked) {
 */
 .check {
   /* appearance: none; */
-  transform:  scale(1.25);
+  transform: scale(1.25);
   /* transform-style: inherit; */
   /* z-index: -10; */
-  
 }
 
 /********************************************************/
@@ -136,7 +134,7 @@ input[type='radio']:hover:not(:checked) {
 */
 .importexport-button {
   background-color: white;
-  border-color:  #888fa1;
+  border-color: #888fa1;
   color: #888fa1;
   padding: 12px 16px;
   text-align: center;
@@ -145,7 +143,7 @@ input[type='radio']:hover:not(:checked) {
   display: inline-block;
   border-radius: 10px;
   border-style: solid;
-  box-shadow: 0 8px 16px -1px rgba(211, 211, 211, .2);
+  box-shadow: 0 8px 16px -1px rgba(211, 211, 211, 0.2);
   outline: none;
   transition: all ease 0.25s;
 }
@@ -163,104 +161,106 @@ input[type='radio']:hover:not(:checked) {
 https://codepen.io/aaroniker/pen/oaQdQZ
 */
 .switch {
-    cursor: pointer;
+  cursor: pointer;
+}
+.switch input {
+  display: none;
+}
+.switch input + span {
+  width: 48px;
+  height: 28px;
+  border-radius: 14px;
+  transition: all 0.3s ease;
+  display: block;
+  position: relative;
+  background: #888fa1;
+  box-shadow: 0 8px 16px -1px rgba(211, 211, 211, 0.2);
+}
+.switch input + span:before,
+.switch input + span:after {
+  content: "";
+  display: block;
+  position: absolute;
+  transition: all 0.3s ease;
+}
+.switch input + span:before {
+  top: 5px;
+  left: 5px;
+  width: 18px;
+  height: 18px;
+  border-radius: 9px;
+  border: 5px solid #fff;
+}
+.switch input + span:after {
+  top: 5px;
+  left: 32px;
+  width: 6px;
+  height: 18px;
+  border-radius: 40%;
+  transform-origin: 50% 50%;
+  background: #fff;
+  opacity: 0;
+}
+.switch input + span:active {
+  transform: scale(0.92);
+}
+.switch input:checked + span {
+  background: #48ea8b;
+  box-shadow: 0 8px 16px -1px rgba(72, 234, 139, 0.2);
+}
+.switch input:checked + span:before {
+  width: 0px;
+  border-radius: 3px;
+  margin-left: 27px;
+  border-width: 3px;
+  background: #fff;
+}
+.switch input:checked + span:after {
+  animation: blobChecked 0.35s linear forwards 0.2s;
+}
+.switch input:not(:checked) + span:before {
+  animation: blob 0.85s linear forwards 0.2s;
+}
+@keyframes blob {
+  0%,
+  100% {
+    transform: scale(1);
   }
-  .switch input {
-    display: none;
+  30% {
+    transform: scale(1.12, 0.94);
   }
-  .switch input + span {
-    width: 48px;
-    height: 28px;
-    border-radius: 14px;
-    transition: all 0.3s ease;
-    display: block;
-    position: relative;
-    background: #888fa1;
-    box-shadow: 0 8px 16px -1px rgba(211, 211, 211, .2);
+  60% {
+    transform: scale(0.96, 1.06);
   }
-  .switch input + span:before, .switch input + span:after {
-    content: '';
-    display: block;
-    position: absolute;
-    transition: all 0.3s ease;
+}
+@keyframes blobChecked {
+  0% {
+    opacity: 1;
+    transform: scaleX(1);
   }
-  .switch input + span:before {
-    top: 5px;
-    left: 5px;
-    width: 18px;
-    height: 18px;
-    border-radius: 9px;
-    border: 5px solid #fff;
+  30% {
+    transform: scaleX(1.44);
   }
-  .switch input + span:after {
-    top: 5px;
-    left: 32px;
-    width: 6px;
-    height: 18px;
-    border-radius: 40%;
-    transform-origin: 50% 50%;
-    background: #fff;
+  70% {
+    transform: scaleX(1.18);
+  }
+  50%,
+  99% {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scaleX(1);
     opacity: 0;
   }
-  .switch input + span:active {
-    transform: scale(0.92);
-  }
-  .switch input:checked + span {
-    background: #48ea8b;
-    box-shadow: 0 8px 16px -1px rgba(72, 234, 139, .2);
-  }
-  .switch input:checked + span:before {
-    width: 0px;
-    border-radius: 3px;
-    margin-left: 27px;
-    border-width: 3px;
-    background: #fff;
-  }
-  .switch input:checked + span:after {
-    animation: blobChecked 0.35s linear forwards 0.2s;
-  }
-  .switch input:not(:checked) + span:before {
-    animation: blob 0.85s linear forwards 0.2s;
-  }
-  @keyframes blob {
-    0%, 100% {
-      transform: scale(1);
-   }
-    30% {
-      transform: scale(1.12, 0.94);
-   }
-    60% {
-      transform: scale(0.96, 1.06);
-   }
-  }
-  @keyframes blobChecked {
-    0% {
-      opacity: 1;
-      transform: scaleX(1);
-   }
-    30% {
-      transform: scaleX(1.44);
-   }
-    70% {
-      transform: scaleX(1.18);
-   }
-    50%, 99% {
-      transform: scaleX(1);
-      opacity: 1;
-   }
-    100% {
-      transform: scaleX(1);
-      opacity: 0;
-   }
-  }
-  * {
-    box-sizing: border-box;
-  }
-  *:before, *:after {
-    box-sizing: border-box;
-  }
-
-
+}
+* {
+  box-sizing: border-box;
+}
+*:before,
+*:after {
+  box-sizing: border-box;
+}
 
 .switch-smaller input + span {
   width: 48px;
@@ -270,7 +270,7 @@ https://codepen.io/aaroniker/pen/oaQdQZ
   display: block;
   position: relative;
   background: #888fa1;
-  box-shadow: 0 8px 16px -1px rgba(211, 211, 211, .2);
+  box-shadow: 0 8px 16px -1px rgba(211, 211, 211, 0.2);
   transform: scale(0.7);
 }
 .switch-smaller input + span:active {
