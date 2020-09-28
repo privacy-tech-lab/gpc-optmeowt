@@ -1,7 +1,7 @@
 {
   "name": "OptMeowt",
-  "version": "0.0.1",
-  "description": "OptMeowt is a software system that allows users of mobile and web apps to make use of their rights to opt out from the sale of data and other privacy rights",
+  "version": "0.1",
+  "description": "OptMeowt allows Web users to make use of their rights to opt out from the sale and sharing of personal data",
   "permissions": [
     "webRequest",
     "<all_urls>",

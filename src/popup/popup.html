@@ -64,6 +64,21 @@ popup.html is the html scaffolding for OptMeowt's popup page
           id="img"
         />
       </div>
+      <!-- <div
+        class="uk-container"
+        style="margin: auto; padding: 0; padding-right: 8px;"
+        uk-tooltip="Dark Mode"
+        id="dark-switch"
+      >
+        <img
+          src="../assets/brightness-high-bootstrap.svg"
+          height="20"
+          width="20"
+          alt="darkSwitch"
+          uk-svg
+          id="dark-switch-img"
+        />
+      </div> -->
       <div
         class="uk-container"
         style="margin: auto; padding: 0"
@@ -80,10 +95,27 @@ popup.html is the html scaffolding for OptMeowt's popup page
       </div>
     </div>
     <hr class="uk-margin-small-top" />
+
     <!-- Content -->
     <div class="uk-inline">
       <div id="content">
+
+        <!-- Domain List UI elements here -->
+        <div 
+          id="main-domain"
+        >
+        <!-- style="padding:5px;box-shadow:0 2px 4px var(--accent-color-lighter-60);" -->
+        <!-- Overall Accept/Reject text -->
+          <!-- <div 
+            id="status-text" 
+            class="uk-text-small uk-text-bold uk-text-center status-text-red" 
+          >
+            Rejected
+          </div> -->
         <div id="dns-body">
+          <div
+            class="uk-flex-inline uk-width-1-1 uk-flex-center uk-text-center uk-text-large uk-text-bold uk-text-truncate"
+            style="color: #4472c4;"
           <div
             class="uk-flex-inline uk-width-1-1 uk-flex-center uk-text-center uk-text-large uk-text-bold uk-text-truncate"
             style="color: #4472c4"
@@ -91,8 +123,7 @@ popup.html is the html scaffolding for OptMeowt's popup page
           >
             <!-- Active tab domain inflated here -->
           </div>
-          <br />
-          <div uk-grid class="uk-margin-top" style="margin-bottom: 4%">
+          <div uk-grid  style="margin-top: 4%; margin-bottom: 4%;">
             <div
               id="dns-text"
               class="uk-width-expand uk-margin-auto-vertical popup2"
@@ -106,24 +137,46 @@ popup.html is the html scaffolding for OptMeowt's popup page
                   <label class="switch" id="switch-label">
                     <!-- Populate switch preference here -->
                     <!-- <input type="checkbox" id="input"/>
-                  <span></span> -->
+                    <span></span> -->
                   </label>
                 </div>
               </div>
             </div>
           </div>
+          <!-- Response info -->
+          <div uk-grid uk-grid-row-collapse style="margin-top:0px;">
+            <!-- <div class="uk-width-expand">
+              <div
+                id="received-text"
+                style="font-weight: bold; font-size: medium;"
+              >
+                Do Not Sell request: 
+              </div>          
+            </div>
+            <div>
+              <div
+                id="received-check"
+                class="uk-flex uk-flex-right"
+                style="font-size: medium;"
+              >
+                <div>Sent</div>
+                <div style="padding-left: 10px;display: flex;align-items: center;">
+                  <img
+                    src="../assets/check.svg"
+                    height="17"
+                    width="17"
+                    alt="Checkmark"
+                    uk-svg
+                  />
+                </div>
+              </div>
+            </div> -->
+          </div>
         </div>
-        <div class="uk-text-bold" style="font-size: medium">
-          Responses
-          <span
-            class="uk-badge"
-            style="
-              font-size: 10px;
-              background-color: #ffe0b2;
-              color: #e65100 !important;
-            "
-            >RECEIVED 0/<span id="requests">0</span></span
-          >
+
+        <!-- Domains connected and responses here -->
+        <!-- <div class="uk-text-bold" style="font-size: medium">
+          Responses <span class="uk-badge" style="font-size: 10px; background-color: #ffe0b2; color:#e65100 !important;">RECEIVED 0/<span id='requests'>0</span></span>
         </div>
         <div class="uk-width-1-1">
           See responses from the 'Do Not Sell' requests. Dummy data below
@@ -217,9 +270,50 @@ popup.html is the html scaffolding for OptMeowt's popup page
               <div class="uk-width-1-1">None</div>
             </div>
           </li>
+        </ul> -->
+        <!-- This is dummy text to preserve the spacing on the page -->
+        <div class="uk-width-1-1 uk-text-truncate" style="color:white;">
+          See responses from the 'Do Not Sell' requests below. Dummy data below
+        </div>
+        <hr style="margin:0px; ">
+
+        <!-- 3rd Party Domains expandable -->
+        <div uk-grid id="third-party-domains" class="third-party-domains" style="padding:15px; margin-right:-20px;">
+          <div
+            class="uk-container"
+            style="margin: auto; padding: 0; padding-left: 36px; padding-right: 6px"
+            uk-tooltip="Dropdown"
+          >
+            <img
+              id="dropdown"
+              src="../assets/chevron-down.svg"
+              height="15"
+              width="15"
+              alt="dropdown"
+              uk-svg
+            /> 
+          </div>
+          <div class="uk-width-expand uk-text-left" style="font-weight: bold; font-size: medium; margin-right:20px;">
+            3rd Party Domains
+          </div>
+        </div>
+        <hr id="divider" style="margin:0px; display: none">
+
+        <ul id="third-party-domains-list" class="uk-list uk-list-divider" style="display:none">
+          <!-- Inflate third party domains here -->
         </ul>
-        <hr />
-        <div uk-grid class="uk-margin-top" style="margin-bottom: 4%">
+
+        <!-- Domain List link -->
+        <hr style="margin:0px;">
+        <div uk-grid id="domain-list" class="domain-list" style="padding:15px; margin-right:-20px;">
+          <div class="uk-width-expand uk-text-center" style="font-weight: bold; font-size: medium; margin-right:20px;">
+            Domain List
+          </div>
+        </div>
+        <hr style="margin:0px;" >
+
+        <!-- Dark Mode -->
+        <div uk-grid class="uk-margin-top" style="margin-bottom: 4%;">
           <div
             class="uk-width-expand uk-margin-auto-vertical popup3"
             style="font-weight: bold; font-size: medium"

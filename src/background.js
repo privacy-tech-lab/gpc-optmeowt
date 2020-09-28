@@ -28,25 +28,18 @@ var optout_headers = {};
  *                       (request headers)
  */
 var addHeaders = (details) => {
-  updateDomainsAndSignal(details);
-
-  /// Intializes IAB CCPA cookie-based opt-out framework
-  if (sendSignal) {
-    initUSP();
-  }
-
-  /// Now we know where to send the signal.
-  if (sendSignal) {
-    for (var signal in optout_headers) {
-      let s = optout_headers[signal];
-      console.log(s);
-      details.requestHeaders.push({ name: s.name, value: s.value });
-      console.log("Sending signal added...", s.name, s.value);
+  if (!(details.type === "image")) {
+    console.log(`the type is -> ${details.type}, ${typeof details.type}`);
+    updateDomainsAndSignal(details);
+    
+    if (sendSignal) {
+      initUSP();
+      initDom(details);
+      return updateHeaders(details);
     }
-    return { requestHeaders: details.requestHeaders };
   } else {
-    console.log("Preparing to send no added signal...", details.requestHeaders);
-    return { requestHeaders: details.requestHeaders };
+    console.log("Caught unessential request");
+
   }
 };
 
@@ -55,7 +48,7 @@ var addHeaders = (details) => {
  * @param {Object} details - retrieved info passed into callback
  */
 var receivedHeaders = (details) => {
-  checkResponse(details);
+  // checkResponse(details);
   logData(details);
   incrementBadge(details);
 };
@@ -99,13 +92,49 @@ function updateDomainsAndSignal(details) {
 }
 
 /**
+ * Updates HTTP headers with Do Not Sell headers according 
+ * to whether or not a site should recieve them. 
+ * @param {Object} details - details object
+ */
+function updateHeaders(details){
+  if (sendSignal) {
+    for (var signal in optout_headers) {
+      let s = optout_headers[signal]
+      console.log(s)
+      details.requestHeaders.push({ name: s.name, value: s.value });
+      console.log("Sending signal added...", s.name, s.value);
+    }
+    return { requestHeaders: details.requestHeaders };
+  } 
+  else {
+    console.log("Preparing to send no added signal...", details.requestHeaders);
+    return { requestHeaders: details.requestHeaders };
+  }
+}
+
+/**
+ * Initializes the GPC dom signal functionality in dom.js
+ * Places a globalPrivacyControl property on the window object
+ * @param {Object} details - details object
+ */
+function initDom(details) {
+  chrome.tabs.executeScript(
+    details.tabId, {
+      file: 'dom.js',
+      allFrames: true,
+      runAt: 'document_start'
+  })
+}
+
+/**
  * Verifies that a response is a Do Not Sell response
  * @param {Object} details - retrieved info passed into callback
  */
 function checkResponse(details) {
   let heads = details.responseHeaders;
   for (let i in heads) {
-    // console.log("responseHeader[i]: ", heads[i])
+    console.log("responseHeader[i]: ", heads[i]);
+
     if (heads[i]["name"] === "dns" && heads[i]["value"] === "received") {
       chrome.browserAction.setIcon(
         {
@@ -131,6 +160,7 @@ function checkResponse(details) {
 function logData(details) {
   var url = new URL(details.url);
   var parsed = psl.parse(url.hostname);
+  console.log("Details.responseHeaders: ", details.responseHeaders);
 
   if (tabs[details.tabId] === undefined) {
     tabs[details.tabId] = { DOMAIN: null, REQUEST_DOMAINS: {}, TIMESTAMP: 0 };
@@ -262,7 +292,8 @@ chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
  * if undefined
  */
 chrome.storage.local.get(
-  ["ENABLED", "DOMAINLIST_ENABLED", "DOMAINS"],
+
+  ["ENABLED", "DOMAINLIST_ENABLED", "DOMAINS", "DOMAINLIST_PRESSED"],
   function (result) {
     if (result.ENABLED == undefined) {
       chrome.storage.local.set({ ENABLED: true });
@@ -272,6 +303,9 @@ chrome.storage.local.get(
     }
     if (result.DOMAINS == undefined) {
       chrome.storage.local.set({ DOMAINS: {} });
+    }
+    if (result.DOMAINLIST_PRESSED == undefined) {
+      chrome.storage.local.set({ DOMAINLIST_PRESSED: false });
     }
   }
 );
@@ -300,6 +334,9 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
       disable();
       sendResponse("DONE");
     }
+  }
+  if (request.msg === "WELLKNOWN") {
+    console.log(`.well-known from ContentScr: ${JSON.stringify(request.data)}`)
   }
   if (request.msg === "TAB") {
     var url = new URL(sender.origin);

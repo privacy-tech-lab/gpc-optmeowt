@@ -56,7 +56,7 @@ function eventListeners() {
     .addEventListener("click", handleDownload);
   document.getElementById("upload-button").addEventListener("click", () => {
     const verify = confirm(
-      "This option overrides your current domain list!\nDo you still wish to continue?"
+      `This option will override your current domain preferences.\n Do you wish to continue?`
     );
     if (verify) {
       startUpload();
@@ -121,6 +121,7 @@ function onOverlay() {
 
 function offOverlay() {
   document.getElementById("overlay").style.display = "none";
+
 }
 
 /**
