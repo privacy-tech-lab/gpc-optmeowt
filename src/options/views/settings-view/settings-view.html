@@ -18,7 +18,9 @@ options page when clicked
     the `settings view` is called by a user from within the options page. 
 -->
 <template id="settings-view">
-  <div>
+  <div id="overlay"></div>
+  <div class="settings-popup1">
+    <span class="settings-popuptext1" id="settings-myPopup1">Set which sites should receive a Do Not Sell signal.</span>
     <label>
       <div uk-grid class="uk-grid-column-small" style="margin-left: 0px;">
         <div class="uk-container" style="margin: auto;">
@@ -36,7 +38,6 @@ options page when clicked
             id="settings-view-radio0-text"
           >
             Enable
-            <span class="settings-popuptext1" id="settings-myPopup1">Select this to enable OptMeowt send signals to all domains</span>
           </div>
           <div class="uk-first-column uk-width-1-1" style="font-size: small;">
             Sends 'Do Not Sell' signals to every visited domain
@@ -57,11 +58,10 @@ options page when clicked
         </div>
         <div uk-grid class="uk-grid-row-collapse uk-width-expand">
           <div
-            class="uk-first-column uk-width-1-1 uk-text-bold settings-popup2"
+            class="uk-first-column uk-width-1-1 uk-text-bold"
             style="font-size: large;"
           >
             Domain List
-            <span class="settings-popuptext2" id="settings-myPopup2">Allows you to set custom domain preferences</span>
           </div>
           <div class="uk-first-column uk-width-1-1" style="font-size: small;">
             Sends 'Do Not Sell' signals according to the custom Domain List
@@ -82,12 +82,11 @@ options page when clicked
         </div>
         <div uk-grid class="uk-grid-row-collapse uk-width-expand">
           <div
-            class="uk-first-column uk-width-1-1 uk-text-bold settings-popup3"
+            class="uk-first-column uk-width-1-1 uk-text-bold"
             style="font-size: large;"
             id="settings-view-radio1-text"
           >
             Disable
-            <span class="settings-popuptext3" id="settings-myPopup3"> Stop OptMeowt from sending signals</span>
           </div>
           <div class="uk-first-column uk-width-1-1" style="font-size: small;">
             Does not send any 'Do Not Sell' signals
@@ -97,9 +96,9 @@ options page when clicked
     </label>
   </div>
   <hr>
-  <div class="settings-popup4" style="font-weight: bold; font-size: medium; padding-bottom: 10px;">
+  <div class="settings-popup2" style="font-weight: bold; font-size: medium; padding-bottom: 10px;">
     Domain List Export & Import
-    <span class="settings-popuptext4" id="settings-myPopup4">Save your preferences and upload them using this section</span>
+    <span class="settings-popuptext2" id="settings-myPopup2">Save your preferences and upload them using this section</span>
   </div>
   <div uk-grid>  
     <div>
@@ -127,11 +126,11 @@ options page when clicked
   <hr>
   <div uk-grid class="uk-margin-top" style="margin-bottom: 4%;">
     <div
-      class="uk-width-expand uk-margin-auto-vertical settings-popup5 startpop"
+      class="uk-width-expand uk-margin-auto-vertical settings-popup3 startpop"
       style="font-weight: bold; font-size: medium;"
     >
       Dark Mode
-      <span class="settings-popuptext5" id="settings-myPopup5">Toggle this to change color theme of the extension</span>
+      <span class="settings-popuptext3" id="settings-myPopup3">Toggle this to change color theme of the extension</span>
     </div>
     <div uk-grid>
       <div class="uk-width-auto">

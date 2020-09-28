@@ -38,6 +38,12 @@ document.addEventListener("DOMContentLoaded", (event) => {
         document.getElementById("domain").style.display = "none";
       } else {
         document.getElementById("domain").innerHTML = parsed_domain;
+        chrome.storage.local.get(["FIRSTINSTALL_POPUP"], (result) => {
+          if (result.FIRSTINSTALL_POPUP) {
+            popUpWalkthrough();
+          }
+          chrome.storage.local.set({ FIRSTINSTALL_POPUP: false }, () => {});
+        });
       }
     } catch (e) {
       document.getElementById("domain").innerHTML = location.href;
@@ -137,8 +143,6 @@ document.addEventListener("DOMContentLoaded", (event) => {
       });
     });
   });
-
-  startWalkthrough();
 });
 
 /**
@@ -210,27 +214,15 @@ document.getElementById("more").addEventListener("click", () => {
   chrome.runtime.openOptionsPage();
 });
 
-function startWalkthrough() {
-  document.getElementsByClassName("popup1")[0].addEventListener(
-    "click",
+function popUpWalkthrough() {
+  var popup1 = document.getElementById("popup-1");
+  popup1.classList.toggle("show");
+
+  window.addEventListener(
+    "mouseup",
     () => {
-      var popup1 = document.getElementById("myPopup1");
       popup1.classList.toggle("show");
-      document.getElementById("myPopup1").addEventListener("click", () => {
-        popup1.classList.toggle("show");
-        var popup2 = document.getElementById("myPopup");
-        popup2.classList.toggle("show2");
-        document.getElementById("myPopup").addEventListener("click", () => {
-          popup2.classList.toggle("show2");
-          var popup3 = document.getElementById("Popup3");
-          popup3.classList.toggle("show3");
-          document.getElementById("Popup3").addEventListener("click", () => {
-            popup3.classList.toggle("show3");
-          });
-        });
-      });
     },
     { once: true }
   );
-  document.getElementById("start-tutorial").click();
 }

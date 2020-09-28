@@ -336,7 +336,13 @@ chrome.runtime.onInstalled.addListener(function (object) {
         "chrome-extension://mfgnakcmpgfgpmdepnckjokfnieoidmm/options/options.html",
     },
     function (tab) {
-      console.log("New tab launched with http://yoursite.com/");
+      console.log("New tab launched with OptMeOwt extension options page");
+      chrome.storage.local.set({ FIRSTINSTALL: true }, function () {
+        console.log("Set fresh install value");
+      });
+      chrome.storage.local.set({ FIRSTINSTALL_POPUP: true }, function () {
+        console.log("Set fresh install value");
+      });
     }
   );
 });

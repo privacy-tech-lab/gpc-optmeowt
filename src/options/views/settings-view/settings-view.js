@@ -65,50 +65,64 @@ function eventListeners() {
   document
     .getElementById("upload-domainlist")
     .addEventListener("change", handleUpload, false);
-
-  const condition = true;
-  if (condition) {
-    startWalkthroughListener();
-  }
 }
 
-function startWalkthroughListener() {
+function optionsWalkthrough() {
   document.getElementsByClassName("startpop")[0].addEventListener(
     "click",
     () => {
-      var popup1 = document.getElementById("settings-myPopup1");
-      popup1.classList.toggle("settings-show1");
-      document.getElementsByClassName("settings-popup2")[0].click();
-      popup1.addEventListener("click", () => {
-        popup1.classList.toggle("settings-show1");
-        var popup2 = document.getElementById("settings-myPopup2");
-        popup2.classList.toggle("settings-show2");
-        popup2.addEventListener("click", () => {
-          popup2.classList.toggle("settings-show2");
-          var popup3 = document.getElementById("settings-myPopup3");
-          popup3.classList.toggle("settings-show3");
-          document.getElementsByClassName("settings-popup3")[0].click();
-          popup3.addEventListener("click", () => {
-            popup3.classList.toggle("settings-show3");
-            var popup4 = document.getElementById("settings-myPopup4");
-            popup4.classList.toggle("settings-show4");
-            popup4.addEventListener("click", () => {
-              popup4.classList.toggle("settings-show4");
-              var popup5 = document.getElementById("settings-myPopup5");
-              popup5.classList.toggle("settings-show5");
-              popup5.addEventListener("click", () => {
-                popup5.classList.toggle("settings-show5");
-                document.getElementsByClassName("settings-popup1")[0].click();
-              });
-            });
-          });
-        });
-      });
+      var popup = document.getElementById(`settings-myPopup1`);
+      popup.classList.toggle(`settings-show1`);
+      onOverlay();
+
+      window.addEventListener(
+        "mouseup",
+        function (e) {
+          popup.classList.toggle(`settings-show1`);
+          offOverlay();
+
+          var popup2 = document.getElementById(`settings-myPopup2`);
+          popup2.classList.toggle(`settings-show2`);
+          onOverlay();
+
+          window.addEventListener(
+            "mouseup",
+            function (e) {
+              popup2.classList.toggle(`settings-show2`);
+              offOverlay();
+
+              var popup3 = document.getElementById(`settings-myPopup3`);
+              popup3.classList.toggle(`settings-show3`);
+              onOverlay();
+
+              window.addEventListener(
+                "mouseup",
+                function (e) {
+                  popup3.classList.toggle(`settings-show3`);
+                  offOverlay();
+                },
+                { once: true }
+              );
+            },
+            { once: true }
+          );
+        },
+        { once: true }
+      );
     },
     { once: true }
   );
   document.getElementsByClassName("startpop")[0].click();
 }
+
+function onOverlay() {
+  document.getElementById("overlay").style.display = "block";
+}
+
+function offOverlay() {
+  document.getElementById("overlay").style.display = "none";
+}
+
 /**
  * Renders the `Settings` view in the options page
  * @param {string} scaffoldTemplate - stringified HTML template
@@ -141,6 +155,13 @@ export async function settingsView(scaffoldTemplate) {
     if (result.DOMAINLIST_ENABLED) {
       document.getElementById("settings-view-radio2").checked = true;
     }
+  });
+
+  chrome.storage.local.get(["FIRSTINSTALL"], (result) => {
+    if (result.FIRSTINSTALL) {
+      optionsWalkthrough();
+    }
+    chrome.storage.local.set({ FIRSTINSTALL: false }, () => {});
   });
 
   eventListeners();

@@ -258,9 +258,37 @@ https://codepen.io/aaroniker/pen/oaQdQZ
   box-sizing: border-box;
 }
 
+#overlay {
+  position: fixed; /* Sit on top of the page content */
+  display: none; /* Hidden by default */
+  width: 100%; /* Full width (cover the whole page) */
+  height: 100%; /* Full height (cover the whole page) */
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5); /* Black background with opacity */
+  z-index: 2; /* Specify a stack order in case you're using a different order for other elements */
+  cursor: pointer; /* Add a pointer on hover */
+}
+
 /*=======================================================================================POPUP1*/
 /*Walkthrough pop ups for options page*/
 /* Popup container - can be anything you want */
+#overlay {
+  position: absolute;
+  display: none;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1;
+  cursor: pointer;
+}
+
 .settings-popup1 {
   position: relative;
   display: inline-block;
@@ -274,31 +302,32 @@ https://codepen.io/aaroniker/pen/oaQdQZ
 /* The actual popup */
 .settings-popup1 .settings-popuptext1 {
   visibility: hidden;
-  width: 320px;
-  background-color: #555;
+  width: 200px;
+  background-color: #87cefa;
   color: #fff;
   text-align: center;
   border-radius: 6px;
-  padding: 8px 0;
+  padding: 8px;
   position: absolute;
   z-index: 1;
-  bottom: 125%;
-  left: 10%;
+  bottom: 50%;
+  left: 100%;
   margin-left: -80px;
   opacity: 0.9;
-  font-size: 12px;
+  font-size: 15px;
+  font-style: normal;
 }
 
 /* Popup arrow */
 .settings-popup1 .settings-popuptext1::after {
   content: "";
   position: absolute;
-  top: 100%;
-  left: 50%;
+  top: 40%;
+  left: -2%;
   margin-left: -5px;
   border-width: 5px;
   border-style: solid;
-  border-color: #555 transparent transparent transparent;
+  border-color: transparent #87cefa transparent transparent;
 }
 
 /* Toggle this class - hide and show the popup */
@@ -327,7 +356,7 @@ https://codepen.io/aaroniker/pen/oaQdQZ
   }
 }
 
-/*====================================================================================POPUP2*/
+/*===============================================================================================POPUP4*/
 .settings-popup2 {
   position: relative;
   display: inline-block;
@@ -341,31 +370,32 @@ https://codepen.io/aaroniker/pen/oaQdQZ
 /* The actual popup */
 .settings-popup2 .settings-popuptext2 {
   visibility: hidden;
-  width: 300px;
-  background-color: #555;
+  width: 320px;
+  background-color: #87cefa;
   color: #fff;
   text-align: center;
   border-radius: 6px;
   padding: 8px 0;
   position: absolute;
   z-index: 1;
-  bottom: 125%;
-  left: 10%;
+  bottom: -120%;
+  left: 200%;
   margin-left: -80px;
   opacity: 0.9;
-  font-size: 12px;
+  font-size: 15px;
+  font-weight: normal;
 }
 
 /* Popup arrow */
 .settings-popup2 .settings-popuptext2::after {
   content: "";
   position: absolute;
-  top: 100%;
-  left: 50%;
+  top: 50%;
+  left: -1.5%;
   margin-left: -5px;
   border-width: 5px;
   border-style: solid;
-  border-color: #555 transparent transparent transparent;
+  border-color: transparent #87cefa transparent transparent;
 }
 
 /* Toggle this class - hide and show the popup */
@@ -375,7 +405,7 @@ https://codepen.io/aaroniker/pen/oaQdQZ
   animation: fadeIn 1s;
 }
 
-/*===================================================================================================POPUP3*/
+/*==========================================================================================POPUP5*/
 .settings-popup3 {
   position: relative;
   display: inline-block;
@@ -389,131 +419,36 @@ https://codepen.io/aaroniker/pen/oaQdQZ
 /* The actual popup */
 .settings-popup3 .settings-popuptext3 {
   visibility: hidden;
-  width: 300px;
-  background-color: #555;
+  width: 320px;
+  background-color: #87cefa;
   color: #fff;
   text-align: center;
   border-radius: 6px;
   padding: 8px 0;
   position: absolute;
   z-index: 1;
-  bottom: 125%;
-  left: 10%;
+  bottom: -290%;
+  left: 90%;
   margin-left: -80px;
   opacity: 0.9;
-  font-size: 12px;
+  font-size: 15px;
+  font-weight: normal;
 }
 
 /* Popup arrow */
 .settings-popup3 .settings-popuptext3::after {
   content: "";
   position: absolute;
-  top: 100%;
-  left: 50%;
-  margin-left: -5px;
-  border-width: 5px;
-  border-style: solid;
-  border-color: #555 transparent transparent transparent;
-}
-
-/* Toggle this class - hide and show the popup */
-.settings-popup3 .settings-show3 {
-  visibility: visible;
-  -webkit-animation: fadeIn 1s;
-  animation: fadeIn 1s;
-}
-
-/*===============================================================================================POPUP4*/
-.settings-popup4 {
-  position: relative;
-  display: inline-block;
-  cursor: pointer;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-}
-
-/* The actual popup */
-.settings-popup4 .settings-popuptext4 {
-  visibility: hidden;
-  width: 320px;
-  background-color: #555;
-  color: #fff;
-  text-align: center;
-  border-radius: 6px;
-  padding: 8px 0;
-  position: absolute;
-  z-index: 1;
-  bottom: -120%;
-  left: 200%;
-  margin-left: -80px;
-  opacity: 0.9;
-  font-size: 12px;
-}
-
-/* Popup arrow */
-.settings-popup4 .settings-popuptext4::after {
-  content: "";
-  position: absolute;
-  top: 50%;
-  left: -1.5%;
-  margin-left: -5px;
-  border-width: 5px;
-  border-style: solid;
-  border-color: transparent #555 transparent transparent;
-}
-
-/* Toggle this class - hide and show the popup */
-.settings-popup4 .settings-show4 {
-  visibility: visible;
-  -webkit-animation: fadeIn 1s;
-  animation: fadeIn 1s;
-}
-
-/*==========================================================================================POPUP5*/
-.settings-popup5 {
-  position: relative;
-  display: inline-block;
-  cursor: pointer;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-}
-
-/* The actual popup */
-.settings-popup5 .settings-popuptext5 {
-  visibility: hidden;
-  width: 320px;
-  background-color: #555;
-  color: #fff;
-  text-align: center;
-  border-radius: 6px;
-  padding: 8px 0;
-  position: absolute;
-  z-index: 1;
-  bottom: -250%;
-  left: 90%;
-  margin-left: -80px;
-  opacity: 0.9;
-  font-size: 12px;
-}
-
-/* Popup arrow */
-.settings-popup5 .settings-popuptext5::after {
-  content: "";
-  position: absolute;
-  top: -30%;
+  top: -16%;
   left: 80%;
   margin-left: -5px;
   border-width: 5px;
   border-style: solid;
-  border-color: transparent transparent #555 transparent;
+  border-color: transparent transparent #87cefa transparent;
 }
 
 /* Toggle this class - hide and show the popup */
-.settings-popup5 .settings-show5 {
+.settings-popup3 .settings-show3 {
   visibility: visible;
   -webkit-animation: fadeIn 1s;
   animation: fadeIn 1s;
