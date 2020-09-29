@@ -35,6 +35,7 @@ var addHeaders = (details) => {
     if (sendSignal) {
       initUSP();
       initDom(details);
+      updateUI(details);
       return updateHeaders(details);
     }
   } else {
@@ -47,7 +48,6 @@ var addHeaders = (details) => {
  * @param {Object} details - retrieved info passed into callback
  */
 var receivedHeaders = (details) => {
-  // checkResponse(details);
   logData(details);
   incrementBadge(details);
 };
@@ -126,29 +126,19 @@ function initDom(details) {
 }
 
 /**
- * Verifies that a response is a Do Not Sell response
+ * Updates OptMeowt icon to reflect a Do Not Sell signal sent status
  * @param {Object} details - retrieved info passed into callback
  */
-function checkResponse(details) {
-  let heads = details.responseHeaders;
-  for (let i in heads) {
-    console.log("responseHeader[i]: ", heads[i]);
-    if (heads[i]["name"] === "dns" && heads[i]["value"] === "received") {
-      chrome.browserAction.setIcon(
-        {
-          tabId: details.tabId,
-          path: "assets/face-icons/optmeow-face-circle-green-128.png",
-        },
-        function () {
-          console.log("RECEIVED DNS AKNOWLEDGEMENT FROM SERVER.");
-        }
-      );
+function updateUI(details) {
+  chrome.browserAction.setIcon(
+    {
+      tabId: details.tabId,
+      path: "assets/face-icons/optmeow-face-circle-green-128.png",
+    },
+    function () {
+      console.log("Updated OptMeowt icon to GREEN");
     }
-    // else {
-    //   chrome.pageAction.setIcon({tabId: details.tabId, path:"assets/face-icons/optmeow-face-circle-red-128.png"},
-    //   function () { })
-    // }
-  }
+  );
 }
 
 /**
