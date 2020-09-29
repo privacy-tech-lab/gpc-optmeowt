@@ -39,6 +39,12 @@ document.addEventListener("DOMContentLoaded", (event) => {
         document.getElementById("domain").style.display = "none";
       } else {
         document.getElementById("domain").innerHTML = parsed_domain;
+        chrome.storage.local.get(["FIRSTINSTALL_POPUP"], (result) => {
+          if (result.FIRSTINSTALL_POPUP) {
+            popUpWalkthrough();
+          }
+          chrome.storage.local.set({ FIRSTINSTALL_POPUP: false }, () => {});
+        });
       }
     } catch (e) {
       document.getElementById("domain").innerHTML = location.href;
@@ -266,8 +272,23 @@ chrome.runtime.onMessage.addListener(function (request, _, __) {
 document.getElementById("more").addEventListener("click", () => {
   chrome.runtime.openOptionsPage();
 });
+
+function popUpWalkthrough() {
+  var popup1 = document.getElementById("popup-1");
+  popup1.classList.toggle("show");
+
+  window.addEventListener(
+    "mouseup",
+    () => {
+      popup1.classList.toggle("show");
+    },
+    { once: true }
+  );
+}
+
 document.getElementById("domain-list").addEventListener("click", () => {
   chrome.storage.local.set({ DOMAINLIST_PRESSED: true }, ()=>{
     chrome.runtime.openOptionsPage();
   });
 });
+

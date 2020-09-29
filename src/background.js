@@ -31,7 +31,7 @@ var addHeaders = (details) => {
   if (!(details.type === "image")) {
     console.log(`the type is -> ${details.type}, ${typeof details.type}`);
     updateDomainsAndSignal(details);
-
+    
     if (sendSignal) {
       initUSP();
       initDom(details);
@@ -40,6 +40,7 @@ var addHeaders = (details) => {
     }
   } else {
     console.log("Caught unessential request");
+
   }
 };
 
@@ -280,6 +281,7 @@ chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
  * if undefined
  */
 chrome.storage.local.get(
+
   ["ENABLED", "DOMAINLIST_ENABLED", "DOMAINS", "DOMAINLIST_PRESSED"],
   function (result) {
     if (result.ENABLED == undefined) {
@@ -351,6 +353,17 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   } else if (request.msg == "INIT") {
     incrementBadge();
   }
+});
+
+chrome.runtime.onInstalled.addListener(function (object) {
+  chrome.runtime.openOptionsPage(
+    function () {
+      console.log("New tab launched with OptMeOwt extension options page");
+      chrome.storage.local.set({ FIRSTINSTALL: true, FIRSTINSTALL_POPUP: true }, function () {
+        console.log("Set fresh install value");
+      });
+    }
+  );
 });
 
 /*
