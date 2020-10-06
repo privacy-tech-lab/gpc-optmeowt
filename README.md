@@ -2,32 +2,28 @@
   <img src="https://github.com/privacy-tech-lab/optmeowt-browser-extension/blob/issue-19/src/assets/cat-w-text/optmeow-logo-circle.png" width="150px" height="150px" title="OptMeowt logo">
 <p>
 
-**Note:** If you are a publisher, we can provide you with a turnkey frontend solution for your Do Not Sell signals. Please open an issue or a pull request with your requirements (especially, for the API communicating with your server). You can also contact us at szimmeck@wesleyan.edu.
-
-We are academic researchers at Wesleyan University's [privacy-tech-lab](https://privacy-tech-lab.github.io/), and we would like to collaborate with anyone who is interested in moving Do Not Sell forward.
-
 # OptMeowt :paw_prints:
 
-OptMeowt ("Opt Me Out") is a browser extension for sending Do Not Sell signals to websites. **Note:** OptMeowt is a work in progress, we are not finished yet!
+OptMeowt ("Opt Me Out") is a browser extension for sending Do Not Sell signals to websites.
 
 ## How does OptMeowt work?
 
-OptMewot sends Do Not Sell signals to all domains a user visits when browsing the web. Such signals must be respected for California consumers per the California Consumer Privacy Act (CCPA), [Regs Section 999.315(d)](https://oag.ca.gov/sites/all/files/agweb/pdfs/privacy/oal-sub-final-text-of-regs.pdf). However, many companies respect such signals even when they are from outside of California.
+OptMewot sends Do Not Sell signals to all domains a user visits when browsing the web. Such signals must be respected for California consumers per the California Consumer Privacy Act (CCPA), [Regs Section 999.315(d)](https://oag.ca.gov/sites/all/files/agweb/pdfs/privacy/oal-sub-final-text-of-regs.pdf). However, many companies respect such signals even when they are sent from outside of California.
 
 OptMeowt currently sends Do Not Sell signals using five methods:
 
-1. A new HTTP Do Not Sell header we are developing in a [standardization effort at the W3C](https://github.com/privacycg/proposals/issues/10).
+1. A new HTTP Do Not Sell header we are developing in a [proposed specification effort at the W3C](https://github.com/privacycg/proposals/issues/10).
 2. The [existing DNT header](https://www.w3.org/TR/tracking-dnt/), which is interpreted by some publishers as a Do Not Sell header.
 3. The [IAB CCPA Compliance Framework for Publishers & Technology Companies](https://iabtechlab.com/standards/ccpa/), implemented in a first party cookie.
 4. Third party cookies of ad networks participating in the [DAA's CCPA Opt Out Tool for the Web](https://digitaladvertisingalliance.org/integrate-webchoices-ccpa).
 5. Custom headers and cookies used by individual websites maintained and updated in a Do Not Sell list.
 
-**Custom Do Not Sell functionality**
-Every domain a user visits will also be automatically added to a `domain list` whose members will receive Do Not Sell signals. Users have the option to switch specific domains to be excluded from this Do Not Sell functionality from within both the `domain list` and the `popup window`.
+**Customizing which Sites Receive Do Not Sell Signals**
+Every domain a user visits will be automatically added to a `domain list` and will receive a Do Not Sell signal by default. However, users can exclude domains that should not receive a Do Not Sell signal. This functionality is available by accessing the domain list from the extension's popup window.
 
 ## Installing and Running OptMeowt
 
-OptMeowt work on any Chromium-based browser. In addition to Chrome, it should run in Brave, Edge, Opera, and Vivaldi. In the future we hope to support Firefox and Safari as well.
+OptMeowt works on any Chromium-based browser. In addition to Chrome, it should run in Brave, Edge, Opera, and Vivaldi. In the future we hope to support Firefox and Safari as well.
 
 Install OptMeowt as an unpacked extension on Chrome as follows:
 
