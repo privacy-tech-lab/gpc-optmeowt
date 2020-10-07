@@ -1,6 +1,6 @@
 {
   "name": "OptMeowt",
-  "version": "0.1",
+  "version": "1.0",
   "description": "OptMeowt allows Web users to make use of their rights to opt out from the sale and sharing of personal data",
   "permissions": [
     "webRequest",

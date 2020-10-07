@@ -31,7 +31,7 @@ var addHeaders = (details) => {
   if (!(details.type === "image")) {
     console.log(`the type is -> ${details.type}, ${typeof details.type}`);
     updateDomainsAndSignal(details);
-    
+
     if (sendSignal) {
       initUSP();
       initDom(details);
@@ -40,7 +40,6 @@ var addHeaders = (details) => {
     }
   } else {
     console.log("Caught unessential request");
-
   }
 };
 
@@ -92,21 +91,20 @@ function updateDomainsAndSignal(details) {
 }
 
 /**
- * Updates HTTP headers with Do Not Sell headers according 
- * to whether or not a site should recieve them. 
+ * Updates HTTP headers with Do Not Sell headers according
+ * to whether or not a site should recieve them.
  * @param {Object} details - details object
  */
-function updateHeaders(details){
+function updateHeaders(details) {
   if (sendSignal) {
     for (var signal in optout_headers) {
-      let s = optout_headers[signal]
-      console.log(s)
+      let s = optout_headers[signal];
+      console.log(s);
       details.requestHeaders.push({ name: s.name, value: s.value });
       console.log("Sending signal added...", s.name, s.value);
     }
     return { requestHeaders: details.requestHeaders };
-  } 
-  else {
+  } else {
     console.log("Preparing to send no added signal...", details.requestHeaders);
     return { requestHeaders: details.requestHeaders };
   }
@@ -118,12 +116,11 @@ function updateHeaders(details){
  * @param {Object} details - details object
  */
 function initDom(details) {
-  chrome.tabs.executeScript(
-    details.tabId, {
-      file: 'dom.js',
-      allFrames: true,
-      runAt: 'document_start'
-  })
+  chrome.tabs.executeScript(details.tabId, {
+    file: "dom.js",
+    allFrames: true,
+    runAt: "document_start",
+  });
 }
 
 /**
@@ -281,7 +278,6 @@ chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
  * if undefined
  */
 chrome.storage.local.get(
-
   ["ENABLED", "DOMAINLIST_ENABLED", "DOMAINS", "DOMAINLIST_PRESSED"],
   function (result) {
     if (result.ENABLED == undefined) {
@@ -325,7 +321,7 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     }
   }
   if (request.msg === "WELLKNOWN") {
-    console.log(`.well-known from ContentScr: ${JSON.stringify(request.data)}`)
+    console.log(`.well-known from ContentScr: ${JSON.stringify(request.data)}`);
   }
   if (request.msg === "TAB") {
     var url = new URL(sender.origin);
@@ -356,13 +352,15 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
 });
 
 chrome.runtime.onInstalled.addListener(function (object) {
-  chrome.runtime.openOptionsPage(
+  chrome.storage.local.set(
+    { FIRSTINSTALL: true, FIRSTINSTALL_POPUP: true },
     function () {
-      console.log("New tab launched with OptMeOwt extension options page");
-      chrome.storage.local.set({ FIRSTINSTALL: true, FIRSTINSTALL_POPUP: true }, function () {
-        console.log("Set fresh install value");
-      });
+      console.log("Set fresh install value");
     }
+  );
+  chrome.tabs.create(
+    { url: "https://privacy-tech-lab.github.io/optmeowt" },
+    function (tab) {}
   );
 });
 
