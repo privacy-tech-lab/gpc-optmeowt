@@ -1,5 +1,5 @@
 function setDomSignal () {
-    const GPCDomVal = `Object.defineProperty(window, "globalPrivacyControl", {
+    const GPCDomVal = `Object.defineProperty(navigator, "globalPrivacyControl", {
         value: 1,
         configurable: false,
         writable: false
