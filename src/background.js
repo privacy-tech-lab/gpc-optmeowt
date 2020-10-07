@@ -352,7 +352,6 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
 });
 
 chrome.runtime.onInstalled.addListener(function (object) {
-  console.log("New tab launched with OptMeOwt extension options page");
   chrome.storage.local.set(
     { FIRSTINSTALL: true, FIRSTINSTALL_POPUP: true },
     function () {
