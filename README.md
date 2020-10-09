@@ -4,7 +4,7 @@
 
 # OptMeowt :paw_prints:
 
-OptMeowt ("Opt Me Out") is a browser extension for sending Do Not Sell signals to websites.
+OptMeowt ("Opt Me Out") is a browser extension for sending Do Not Sell signals to websites per the [Global Privacy Control draft spec](https://globalprivacycontrol.org/).
 
 ## How does OptMeowt work?
 
