@@ -34,7 +34,6 @@ var addHeaders = (details) => {
 
     if (sendSignal) {
       initUSP();
-      initDom(details);
       updateUI(details);
       return updateHeaders(details);
     }
@@ -115,12 +114,23 @@ function updateHeaders(details) {
  * Places a globalPrivacyControl property on the window object
  * @param {Object} details - details object
  */
-function initDom(details) {
+function initDomJS(details) {
   chrome.tabs.executeScript(details.tabId, {
     file: "dom.js",
     allFrames: true,
     runAt: "document_start",
   });
+}
+
+/**
+ * Checks to see if DOM signal should be set, then inits DOM signal set
+ * @param {Object} details  - retrieved info passed into callback
+ */
+function addDomSignal(details) {
+  updateDomainsAndSignal(details);
+  if (sendSignal) {
+    initDomJS(details);
+  }
 }
 
 /**
@@ -236,6 +246,14 @@ function enable() {
       // chrome.browserAction.setBadgeBackgroundColor({ color: "#666666" });
       // chrome.browserAction.setBadgeText({ text: "0" });
       chrome.storage.local.set({ ENABLED: true });
+
+      // DOM signal to navigator
+      chrome.webNavigation.onCommitted.addListener(
+        addDomSignal,
+        {
+          urls: ["<all_urls>"],
+        }
+      )
     })
     .catch((e) =>
       console.log(
@@ -251,6 +269,7 @@ function disable() {
   optout_headers = {};
   chrome.webRequest.onBeforeSendHeaders.removeListener(addHeaders);
   chrome.webRequest.onBeforeSendHeaders.removeListener(receivedHeaders);
+  chrome.webNavigation.onCommitted.removeListener(addDomSignal)
   chrome.storage.local.set({ ENABLED: false });
   // chrome.browserAction.setBadgeText({ text: "" });
   var counter = 0;
