@@ -286,25 +286,30 @@ https://codepen.io/aaroniker/pen/oaQdQZ
 /*Walkthrough popups css*/
 
 .tippy-box[data-theme~="tomato"] {
-  background-color: rgb(118, 214, 247);
+  background-color: #87cefa;
+  box-shadow: 5px 5px #dcdcdc;
   color: white;
   border-radius: 10px;
   padding: 10px;
   text-align: center;
 }
 
+.tippy-box[data-theme~="tomato"] button {
+  color: white;
+}
+
 .tippy-box[data-theme~="tomato"][data-placement^="top"] > .tippy-arrow::before {
-  border-top-color: rgb(118, 214, 247);
+  border-top-color: #87cefa;
 }
 .tippy-box[data-theme~="tomato"][data-placement^="bottom"]
   > .tippy-arrow::before {
-  border-bottom-color: lightblue;
+  border-bottom-color: #87cefa;
 }
 .tippy-box[data-theme~="tomato"][data-placement^="left"]
   > .tippy-arrow::before {
-  border-left-color: lightblue;
+  border-left-color: #87cefa;
 }
 .tippy-box[data-theme~="tomato"][data-placement^="right"]
   > .tippy-arrow::before {
-  border-right-color: lightblue;
+  border-right-color: #87cefa;
 }

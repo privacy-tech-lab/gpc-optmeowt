@@ -67,6 +67,80 @@ function eventListeners() {
     .addEventListener("change", handleUpload, false);
 }
 
+/*Gives user a walkthrough of install page on first install */
+function walkthrough() {
+  var modal = UIkit.modal("#my-id");
+  modal.show();
+  document.getElementById("modal-button2").onclick = function () {
+    var modal = UIkit.modal("#my-id");
+    modal.hide();
+  }
+
+  function trigger4() {
+    let modal = UIkit.modal("#my-id2")
+    modal.show()
+  }
+
+  function trigger3() {
+    tippy(".tutorial-tooltip3", {
+      content:
+        "<p>Set which sites should receive a Do Not Sell signal<p> <button class='uk-button uk-button-default'>Finish</button>",
+      allowHTML: true,
+      trigger: "manual",
+      duration: 1000,
+      theme: "tomato",
+      placement: "bottom",
+      offset: [-100, 20],
+      onHide() {
+        trigger4();
+      },
+    });
+    let tooltip = document.getElementsByClassName("tutorial-tooltip3")[0]
+      ._tippy;
+    tooltip.show();
+  }
+
+  function trigger2() {
+    tippy(".tutorial-tooltip2", {
+      content:
+        "<p>Set which sites should receive a Do Not Sell signal<p>  <button class='uk-button uk-button-default'>Next</button>",
+      allowHTML: true,
+      trigger: "manual",
+      duration: 1000,
+      theme: "tomato",
+      placement: "right",
+      offset: [0, 60],
+      onHide() {
+        trigger3();
+      },
+    });
+    let tooltip = document.getElementsByClassName("tutorial-tooltip2")[0]
+      ._tippy;
+    tooltip.show();
+  }
+
+  document.getElementById("modal-button").onclick = function () {
+    var modal = UIkit.modal("#my-id");
+    modal.hide();
+    tippy(".tutorial-tooltip1", {
+      content:
+        "<p>Set which sites should receive a Do Not Sell signal<p>  <button class='uk-button uk-button-default'>Next</button>",
+      allowHTML: true,
+      trigger: "manual",
+      placement: "right",
+      offset: [0, -600],
+      duration: 1000,
+      theme: "tomato",
+      onHide(instance) {
+        trigger2();
+      },
+    });
+    let tooltip = document.getElementsByClassName("tutorial-tooltip1")[0]
+      ._tippy;
+    tooltip.show();
+  };
+}
+
 /**
  * Renders the `Settings` view in the options page
  * @param {string} scaffoldTemplate - stringified HTML template
@@ -101,70 +175,12 @@ export async function settingsView(scaffoldTemplate) {
     }
   });
 
-  // chrome.storage.local.get(["FIRSTINSTALL"], (result) => {
-  //   if (result.FIRSTINSTALL) {
-  //     optionsWalkthrough();
-  //   }
-  //   chrome.storage.local.set({ FIRSTINSTALL: false }, () => {});
-  // });
+  chrome.storage.local.get(["FIRSTINSTALL"], (result) => {
+    if (result.FIRSTINSTALL) {
+      walkthrough();
+    }
+    chrome.storage.local.set({ FIRSTINSTALL: false }, () => {});
+  });
 
   eventListeners();
-
-  var modal = UIkit.modal("#my-id");
-  modal.show();
-
-  function trigger3() {
-    tippy(".tutorial-tooltip3", {
-      content:
-        "<p>Set which sites should receive a Do Not Sell signal<p> <button class='uk-button uk-button-default' style='color:white;'>Finish</button>",
-      allowHTML: true,
-      trigger: "manual",
-      delay: 1000,
-      duration: 1000,
-      theme: "tomato",
-      placement: "bottom",
-    });
-    let tooltip = document.getElementsByClassName("tutorial-tooltip3")[0]
-      ._tippy;
-    tooltip.show();
-  }
-
-  function trigger2() {
-    tippy(".tutorial-tooltip2", {
-      content:
-        "<p>Set which sites should receive a Do Not Sell signal<p>  <button class='uk-button uk-button-default' style='color:white;'>Next</button>",
-      allowHTML: true,
-      trigger: "manual",
-      delay: 1000,
-      duration: 1000,
-      theme: "tomato",
-      placement: "right",
-      onHide() {
-        trigger3();
-      },
-    });
-    let tooltip = document.getElementsByClassName("tutorial-tooltip2")[0]
-      ._tippy;
-    tooltip.show();
-  }
-
-  document.getElementById("modal-button").onclick = function () {
-    var modal = UIkit.modal("#my-id");
-    modal.hide();
-    tippy(".tutorial-tooltip1", {
-      content:
-        "<p>Set which sites should receive a Do Not Sell signal<p>  <button class='uk-button uk-button-default' style='color:white;'>Next</button>",
-      allowHTML: true,
-      trigger: "manual",
-      delay: 10000,
-      duration: 1000,
-      theme: "tomato",
-      onHide(instance) {
-        trigger2();
-      },
-    });
-    let tooltip = document.getElementsByClassName("tutorial-tooltip1")[0]
-      ._tippy;
-    tooltip.show();
-  };
 }
