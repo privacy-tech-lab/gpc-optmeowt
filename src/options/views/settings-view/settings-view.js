@@ -69,7 +69,7 @@ function eventListeners() {
 
 /*Gives user a walkthrough of install page on first install */
 function walkthrough() {
-  var modal = UIkit.modal("#my-id");
+  var modal = UIkit.modal("#welcome-modal");
   modal.show();
   document.getElementById("modal-button2").onclick = function () {
     var modal = UIkit.modal("#my-id");
@@ -77,18 +77,24 @@ function walkthrough() {
   }
 
   function trigger4() {
-    let modal = UIkit.modal("#my-id2")
+    let modal = UIkit.modal("#thank-you-modal")
     modal.show()
+    document.getElementById("modal-button2").onclick = () => {
+      chrome.tabs.create(
+        { url: "https://privacy-tech-lab.github.io/optmeowt" },
+        function (tab) {}
+      );
+    }
   }
 
   function trigger3() {
     tippy(".tutorial-tooltip3", {
       content:
-        "<p>Set which sites should receive a Do Not Sell signal<p> <button class='uk-button uk-button-default'>Finish</button>",
+        "<p>Toggle this switch to change the color theme of OptMeowt<p> <button class='uk-button uk-button-default'>Finish</button>",
       allowHTML: true,
       trigger: "manual",
       duration: 1000,
-      theme: "tomato",
+      theme: "custom-1",
       placement: "bottom",
       offset: [-100, 20],
       onHide() {
@@ -103,11 +109,11 @@ function walkthrough() {
   function trigger2() {
     tippy(".tutorial-tooltip2", {
       content:
-        "<p>Set which sites should receive a Do Not Sell signal<p>  <button class='uk-button uk-button-default'>Next</button>",
+        "<p>Import and export your customized list of sites that should receive a signal<p>  <button class='uk-button uk-button-default'>Next</button>",
       allowHTML: true,
       trigger: "manual",
       duration: 1000,
-      theme: "tomato",
+      theme: "custom-1",
       placement: "right",
       offset: [0, 60],
       onHide() {
@@ -120,7 +126,7 @@ function walkthrough() {
   }
 
   document.getElementById("modal-button").onclick = function () {
-    var modal = UIkit.modal("#my-id");
+    var modal = UIkit.modal("#welcome-modal");
     modal.hide();
     tippy(".tutorial-tooltip1", {
       content:
@@ -130,7 +136,7 @@ function walkthrough() {
       placement: "right",
       offset: [0, -600],
       duration: 1000,
-      theme: "tomato",
+      theme: "custom-1",
       onHide(instance) {
         trigger2();
       },

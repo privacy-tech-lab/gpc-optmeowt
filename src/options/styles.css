@@ -285,31 +285,32 @@ https://codepen.io/aaroniker/pen/oaQdQZ
 /*========================================================================================*/
 /*Walkthrough popups css*/
 
-.tippy-box[data-theme~="tomato"] {
+.tippy-box[data-theme~="custom-1"] {
   background-color: #87cefa;
-  box-shadow: 5px 5px #dcdcdc;
+  box-shadow: 10px 10px 5px 0px rgba(0, 0, 0, 0.43);
   color: white;
-  border-radius: 10px;
+  border-radius: 5px;
   padding: 10px;
   text-align: center;
 }
 
-.tippy-box[data-theme~="tomato"] button {
+.tippy-box[data-theme~="custom-1"] button {
   color: white;
 }
 
-.tippy-box[data-theme~="tomato"][data-placement^="top"] > .tippy-arrow::before {
+.tippy-box[data-theme~="custom-1"][data-placement^="top"]
+  > .tippy-arrow::before {
   border-top-color: #87cefa;
 }
-.tippy-box[data-theme~="tomato"][data-placement^="bottom"]
+.tippy-box[data-theme~="custom-1"][data-placement^="bottom"]
   > .tippy-arrow::before {
   border-bottom-color: #87cefa;
 }
-.tippy-box[data-theme~="tomato"][data-placement^="left"]
+.tippy-box[data-theme~="custom-1"][data-placement^="left"]
   > .tippy-arrow::before {
   border-left-color: #87cefa;
 }
-.tippy-box[data-theme~="tomato"][data-placement^="right"]
+.tippy-box[data-theme~="custom-1"][data-placement^="right"]
   > .tippy-arrow::before {
   border-right-color: #87cefa;
 }
