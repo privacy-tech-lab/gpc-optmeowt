@@ -31,5 +31,6 @@
   "background": {
     "page": "background.html"
   },
-  "manifest_version": 2
+  "manifest_version": 2,
+  "content_security_policy": "script-src 'self' 'unsafe-eval' https://unpkg.com/tippy.js@6 https://unpkg.com/@popperjs/core@2; object-src 'self'"
 }

@@ -67,63 +67,6 @@ function eventListeners() {
     .addEventListener("change", handleUpload, false);
 }
 
-function optionsWalkthrough() {
-  document.getElementsByClassName("startpop")[0].addEventListener(
-    "click",
-    () => {
-      var popup = document.getElementById(`settings-myPopup1`);
-      popup.classList.toggle(`settings-show1`);
-      onOverlay();
-
-      window.addEventListener(
-        "mouseup",
-        function (e) {
-          popup.classList.toggle(`settings-show1`);
-          offOverlay();
-
-          var popup2 = document.getElementById(`settings-myPopup2`);
-          popup2.classList.toggle(`settings-show2`);
-          onOverlay();
-
-          window.addEventListener(
-            "mouseup",
-            function (e) {
-              popup2.classList.toggle(`settings-show2`);
-              offOverlay();
-
-              var popup3 = document.getElementById(`settings-myPopup3`);
-              popup3.classList.toggle(`settings-show3`);
-              onOverlay();
-
-              window.addEventListener(
-                "mouseup",
-                function (e) {
-                  popup3.classList.toggle(`settings-show3`);
-                  offOverlay();
-                },
-                { once: true }
-              );
-            },
-            { once: true }
-          );
-        },
-        { once: true }
-      );
-    },
-    { once: true }
-  );
-  document.getElementsByClassName("startpop")[0].click();
-}
-
-function onOverlay() {
-  document.getElementById("overlay").style.display = "block";
-}
-
-function offOverlay() {
-  document.getElementById("overlay").style.display = "none";
-
-}
-
 /**
  * Renders the `Settings` view in the options page
  * @param {string} scaffoldTemplate - stringified HTML template
@@ -158,12 +101,70 @@ export async function settingsView(scaffoldTemplate) {
     }
   });
 
-  chrome.storage.local.get(["FIRSTINSTALL"], (result) => {
-    if (result.FIRSTINSTALL) {
-      optionsWalkthrough();
-    }
-    chrome.storage.local.set({ FIRSTINSTALL: false }, () => {});
-  });
+  // chrome.storage.local.get(["FIRSTINSTALL"], (result) => {
+  //   if (result.FIRSTINSTALL) {
+  //     optionsWalkthrough();
+  //   }
+  //   chrome.storage.local.set({ FIRSTINSTALL: false }, () => {});
+  // });
 
   eventListeners();
+
+  var modal = UIkit.modal("#my-id");
+  modal.show();
+
+  function trigger3() {
+    tippy(".tutorial-tooltip3", {
+      content:
+        "<p>Set which sites should receive a Do Not Sell signal<p> <button class='uk-button uk-button-default' style='color:white;'>Finish</button>",
+      allowHTML: true,
+      trigger: "manual",
+      delay: 1000,
+      duration: 1000,
+      theme: "tomato",
+      placement: "bottom",
+    });
+    let tooltip = document.getElementsByClassName("tutorial-tooltip3")[0]
+      ._tippy;
+    tooltip.show();
+  }
+
+  function trigger2() {
+    tippy(".tutorial-tooltip2", {
+      content:
+        "<p>Set which sites should receive a Do Not Sell signal<p>  <button class='uk-button uk-button-default' style='color:white;'>Next</button>",
+      allowHTML: true,
+      trigger: "manual",
+      delay: 1000,
+      duration: 1000,
+      theme: "tomato",
+      placement: "right",
+      onHide() {
+        trigger3();
+      },
+    });
+    let tooltip = document.getElementsByClassName("tutorial-tooltip2")[0]
+      ._tippy;
+    tooltip.show();
+  }
+
+  document.getElementById("modal-button").onclick = function () {
+    var modal = UIkit.modal("#my-id");
+    modal.hide();
+    tippy(".tutorial-tooltip1", {
+      content:
+        "<p>Set which sites should receive a Do Not Sell signal<p>  <button class='uk-button uk-button-default' style='color:white;'>Next</button>",
+      allowHTML: true,
+      trigger: "manual",
+      delay: 10000,
+      duration: 1000,
+      theme: "tomato",
+      onHide(instance) {
+        trigger2();
+      },
+    });
+    let tooltip = document.getElementsByClassName("tutorial-tooltip1")[0]
+      ._tippy;
+    tooltip.show();
+  };
 }
