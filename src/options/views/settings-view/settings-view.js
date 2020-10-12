@@ -69,22 +69,50 @@ function eventListeners() {
 
 /*Gives user a walkthrough of install page on first install */
 function walkthrough() {
-  var modal = UIkit.modal("#welcome-modal");
+  let modal = UIkit.modal("#welcome-modal");
   modal.show();
-  document.getElementById("modal-button2").onclick = function () {
-    var modal = UIkit.modal("#my-id");
+
+  document.getElementById("modal-button-1").onclick = function () {
     modal.hide();
   }
 
-  function trigger4() {
-    let modal = UIkit.modal("#thank-you-modal")
-    modal.show()
-    document.getElementById("modal-button2").onclick = () => {
-      chrome.tabs.create(
-        { url: "https://privacy-tech-lab.github.io/optmeowt" },
-        function (tab) {}
-      );
-    }
+  document.getElementById("modal-button-2").onclick = function () {
+    modal.hide();
+    tippy(".tutorial-tooltip1", {
+      content:
+        "<p>Set which sites should receive a Do Not Sell signal<p>  <button class='uk-button uk-button-default'>Next</button>",
+      allowHTML: true,
+      trigger: "manual",
+      placement: "right",
+      offset: [0, -600],
+      duration: 1000,
+      theme: "custom-1",
+      onHide(instance) {
+        trigger2();
+      },
+    });
+    let tooltip = document.getElementsByClassName("tutorial-tooltip1")[0]
+      ._tippy;
+    tooltip.show();
+  };
+
+  function trigger2() {
+    tippy(".tutorial-tooltip2", {
+      content:
+        "<p>Import and export your customized list of sites that should receive a signal<p>  <button class='uk-button uk-button-default'>Next</button>",
+      allowHTML: true,
+      trigger: "manual",
+      duration: 1000,
+      theme: "custom-1",
+      placement: "right",
+      offset: [0, 60],
+      onHide() {
+        trigger3();
+      },
+    });
+    let tooltip = document.getElementsByClassName("tutorial-tooltip2")[0]
+      ._tippy;
+    tooltip.show();
   }
 
   function trigger3() {
@@ -106,45 +134,16 @@ function walkthrough() {
     tooltip.show();
   }
 
-  function trigger2() {
-    tippy(".tutorial-tooltip2", {
-      content:
-        "<p>Import and export your customized list of sites that should receive a signal<p>  <button class='uk-button uk-button-default'>Next</button>",
-      allowHTML: true,
-      trigger: "manual",
-      duration: 1000,
-      theme: "custom-1",
-      placement: "right",
-      offset: [0, 60],
-      onHide() {
-        trigger3();
-      },
-    });
-    let tooltip = document.getElementsByClassName("tutorial-tooltip2")[0]
-      ._tippy;
-    tooltip.show();
+  function trigger4() {
+    let modal = UIkit.modal("#thank-you-modal")
+    modal.show()
+    document.getElementById("modal-button-3").onclick = () => {
+      chrome.tabs.create(
+        { url: "https://privacy-tech-lab.github.io/optmeowt" },
+        function (tab) {}
+      );
+    }
   }
-
-  document.getElementById("modal-button").onclick = function () {
-    var modal = UIkit.modal("#welcome-modal");
-    modal.hide();
-    tippy(".tutorial-tooltip1", {
-      content:
-        "<p>Set which sites should receive a Do Not Sell signal<p>  <button class='uk-button uk-button-default'>Next</button>",
-      allowHTML: true,
-      trigger: "manual",
-      placement: "right",
-      offset: [0, -600],
-      duration: 1000,
-      theme: "custom-1",
-      onHide(instance) {
-        trigger2();
-      },
-    });
-    let tooltip = document.getElementsByClassName("tutorial-tooltip1")[0]
-      ._tippy;
-    tooltip.show();
-  };
 }
 
 /**
