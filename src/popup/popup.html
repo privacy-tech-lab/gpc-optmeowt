@@ -39,15 +39,11 @@ popup.html is the html scaffolding for OptMeowt's popup page
         />
       </div>
       <div
-        class="uk-width-expand popup1"
+        class="uk-width-expand"
         style="font-size: medium; font-weight: bold; margin: auto"
         id="start-tutorial"
       >
         OptMeowt
-        <span class="popuptext1" id="popup-1">
-          Toggle this switch to enable or disable sending Do Not Sell signals to
-          this site.</span
-        >
       </div>
       <div
         class="uk-container"
@@ -126,7 +122,7 @@ popup.html is the html scaffolding for OptMeowt's popup page
           <div uk-grid  style="margin-top: 4%; margin-bottom: 4%;">
             <div
               id="dns-text"
-              class="uk-width-expand uk-margin-auto-vertical popup2"
+              class="uk-width-expand uk-margin-auto-vertical"
               style="font-weight: bold; font-size: medium"
             >
               Do Not Sell Enabled!
@@ -134,7 +130,7 @@ popup.html is the html scaffolding for OptMeowt's popup page
             <div>
               <div uk-grid>
                 <div class="uk-width-auto">
-                  <label class="switch" id="switch-label">
+                  <label class="switch tooltip-1" id="switch-label">
                     <!-- Populate switch preference here -->
                     <!-- <input type="checkbox" id="input"/>
                     <span></span> -->
@@ -315,7 +311,7 @@ popup.html is the html scaffolding for OptMeowt's popup page
         <!-- Dark Mode -->
         <div uk-grid class="uk-margin-top" style="margin-bottom: 4%;">
           <div
-            class="uk-width-expand uk-margin-auto-vertical popup3"
+            class="uk-width-expand uk-margin-auto-vertical"
             style="font-weight: bold; font-size: medium"
           >
             Dark Mode
@@ -350,5 +346,7 @@ popup.html is the html scaffolding for OptMeowt's popup page
         </div>
       </div>
     </div>
+    <script src="https://unpkg.com/@popperjs/core@2/dist/umd/popper.min.js"></script>
+    <script src="https://unpkg.com/tippy.js@6/dist/tippy-bundle.umd.js"></script>
   </body>
 </html>

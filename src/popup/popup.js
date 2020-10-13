@@ -210,7 +210,7 @@ async function buildDomains(requests) {
                 <!-- Populate switch preference here -->
                 <!-- <input type="checkbox" id="input"/> -->
                 ${checkbox}
-                <span></span>
+                <span class="tooltip-1"></span>
               </label>
             </div>
           </div>
@@ -274,16 +274,18 @@ document.getElementById("more").addEventListener("click", () => {
 });
 
 function popUpWalkthrough() {
-  var popup1 = document.getElementById("popup-1");
-  popup1.classList.toggle("show");
-
-  window.addEventListener(
-    "mouseup",
-    () => {
-      popup1.classList.toggle("show");
-    },
-    { once: true }
-  );
+  tippy(".tooltip-1", {
+    content:
+      "Toggle this switch to enable or disable sending Do Not Sell signals to this site",
+    trigger: "manual",
+    placement: "bottom",
+    duration: 1000,
+    theme: "custom-2",
+    maxWidth: 250,
+  });
+  let tooltip = document.getElementsByClassName("tooltip-1")[0]
+    ._tippy;
+  tooltip.show();
 }
 
 document.getElementById("domain-list").addEventListener("click", () => {

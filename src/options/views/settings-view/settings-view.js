@@ -67,61 +67,83 @@ function eventListeners() {
     .addEventListener("change", handleUpload, false);
 }
 
-function optionsWalkthrough() {
-  document.getElementsByClassName("startpop")[0].addEventListener(
-    "click",
-    () => {
-      var popup = document.getElementById(`settings-myPopup1`);
-      popup.classList.toggle(`settings-show1`);
-      onOverlay();
+/*Gives user a walkthrough of install page on first install */
+function walkthrough() {
+  let modal = UIkit.modal("#welcome-modal");
+  modal.show();
 
-      window.addEventListener(
-        "mouseup",
-        function (e) {
-          popup.classList.toggle(`settings-show1`);
-          offOverlay();
+  document.getElementById("modal-button-1").onclick = function () {
+    modal.hide();
+  }
 
-          var popup2 = document.getElementById(`settings-myPopup2`);
-          popup2.classList.toggle(`settings-show2`);
-          onOverlay();
+  document.getElementById("modal-button-2").onclick = function () {
+    modal.hide();
+    tippy(".tutorial-tooltip1", {
+      content:
+        "<p>Set which sites should receive a Do Not Sell signal<p>  <button class='uk-button uk-button-default'>Next</button>",
+      allowHTML: true,
+      trigger: "manual",
+      placement: "right",
+      offset: [0, -600],
+      duration: 1000,
+      theme: "custom-1",
+      onHide(instance) {
+        trigger2();
+      },
+    });
+    let tooltip = document.getElementsByClassName("tutorial-tooltip1")[0]
+      ._tippy;
+    tooltip.show();
+  };
 
-          window.addEventListener(
-            "mouseup",
-            function (e) {
-              popup2.classList.toggle(`settings-show2`);
-              offOverlay();
+  function trigger2() {
+    tippy(".tutorial-tooltip2", {
+      content:
+        "<p>Import and export your customized list of sites that should receive a signal<p>  <button class='uk-button uk-button-default'>Next</button>",
+      allowHTML: true,
+      trigger: "manual",
+      duration: 1000,
+      theme: "custom-1",
+      placement: "right",
+      offset: [0, 60],
+      onHide() {
+        trigger3();
+      },
+    });
+    let tooltip = document.getElementsByClassName("tutorial-tooltip2")[0]
+      ._tippy;
+    tooltip.show();
+  }
 
-              var popup3 = document.getElementById(`settings-myPopup3`);
-              popup3.classList.toggle(`settings-show3`);
-              onOverlay();
+  function trigger3() {
+    tippy(".tutorial-tooltip3", {
+      content:
+        "<p>Toggle this switch to change the color theme of OptMeowt<p> <button class='uk-button uk-button-default'>Finish</button>",
+      allowHTML: true,
+      trigger: "manual",
+      duration: 1000,
+      theme: "custom-1",
+      placement: "bottom",
+      offset: [-100, 20],
+      onHide() {
+        trigger4();
+      },
+    });
+    let tooltip = document.getElementsByClassName("tutorial-tooltip3")[0]
+      ._tippy;
+    tooltip.show();
+  }
 
-              window.addEventListener(
-                "mouseup",
-                function (e) {
-                  popup3.classList.toggle(`settings-show3`);
-                  offOverlay();
-                },
-                { once: true }
-              );
-            },
-            { once: true }
-          );
-        },
-        { once: true }
+  function trigger4() {
+    let modal = UIkit.modal("#thank-you-modal")
+    modal.show()
+    document.getElementById("modal-button-3").onclick = () => {
+      chrome.tabs.create(
+        { url: "https://privacy-tech-lab.github.io/optmeowt" },
+        function (tab) {}
       );
-    },
-    { once: true }
-  );
-  document.getElementsByClassName("startpop")[0].click();
-}
-
-function onOverlay() {
-  document.getElementById("overlay").style.display = "block";
-}
-
-function offOverlay() {
-  document.getElementById("overlay").style.display = "none";
-
+    }
+  }
 }
 
 /**
@@ -160,7 +182,7 @@ export async function settingsView(scaffoldTemplate) {
 
   chrome.storage.local.get(["FIRSTINSTALL"], (result) => {
     if (result.FIRSTINSTALL) {
-      optionsWalkthrough();
+      walkthrough();
     }
     chrome.storage.local.set({ FIRSTINSTALL: false }, () => {});
   });
