@@ -378,7 +378,7 @@ chrome.runtime.onInstalled.addListener(function (object) {
     }
   );
   chrome.tabs.create(
-    { url: "https://privacy-tech-lab.github.io/optmeowt" },
+    { url: "chrome-extension://mfgnakcmpgfgpmdepnckjokfnieoidmm/options/options.html" },
     function (tab) {}
   );
 });

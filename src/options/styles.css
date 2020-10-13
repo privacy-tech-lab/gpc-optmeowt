@@ -291,7 +291,8 @@ https://codepen.io/aaroniker/pen/oaQdQZ
   color: white;
   border-radius: 5px;
   padding: 10px;
-  text-align: center;
+  text-align: left;
+  float: left;
 }
 
 .tippy-box[data-theme~="custom-1"] button {
