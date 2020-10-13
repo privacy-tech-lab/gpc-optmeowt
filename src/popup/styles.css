@@ -32,7 +32,8 @@ svg:hover {
   color: white;
   padding: 10px;
   border-radius: 5px;
-  text-align: center;
+  text-align: left;
+  float: left;
 }
 
 .tippy-box[data-theme~="custom-2"][data-placement^="bottom"]
