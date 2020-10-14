@@ -1,6 +1,6 @@
 /*
 OptMeowt is licensed under the MIT License
-Copyright (c) 2020 Kuba Alicki, David Baraka, Rafael Goldstein, Sebastian Zimmeck
+Copyright (c) 2020 Kuba Alicki, Daniel Knopf, Abdallah Salia, Sebastian Zimmeck
 privacy-tech-lab, https://privacy-tech-lab.github.io/
 */
 
@@ -15,7 +15,7 @@ util.js contains global helper functions to help render the options page
 /**
  * Get local html file as string
  * @param {string} path - location of HTML template
- * @returns {string|none} - Returns the stringified HTML template or 
+ * @returns {string|none} - Returns the stringified HTML template or
  *                          prints an error
  */
 export async function fetchTemplate(path) {
@@ -43,7 +43,7 @@ export function parseTemplate(template) {
 /**
  * Fetches and parses html document; returns selected html
  * @param {string} path - location of document to be parsed
- * @param {string} id - name of the element in doc to be selected 
+ * @param {string} id - name of the element in doc to be selected
  *                      after it is parsed
  * @returns {Object} - element object related to the id parameter
  */

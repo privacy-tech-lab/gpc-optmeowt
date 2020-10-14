@@ -1,6 +1,6 @@
 /*
 OptMeowt is licensed under the MIT License
-Copyright (c) 2020 Kuba Alicki, David Baraka, Rafael Goldstein, Sebastian Zimmeck
+Copyright (c) 2020 Kuba Alicki, Daniel Knopf, Abdallah Salia, Sebastian Zimmeck
 privacy-tech-lab, https://privacy-tech-lab.github.io/
 */
 
@@ -70,13 +70,13 @@ function createToggleListeners() {
 
 /**
  * Delete buttons for each domain
- * @param {string} domain 
+ * @param {string} domain
  */
 function deleteButtonListener (domain) {
-  document.getElementById(`delete ${domain}`).addEventListener("click", 
+  document.getElementById(`delete ${domain}`).addEventListener("click",
     (async () => {
       let delete_prompt = `Are you sure you would like to permanently delete this domain from the Domain List?`
-      let success_prompt = `Successfully deleted ${domain} from the Domain List. 
+      let success_prompt = `Successfully deleted ${domain} from the Domain List.
 NOTE: It will be automatically added back to the list when the domain is requested again.`
       if (confirm(delete_prompt)) {
         await permRemoveFromDomainlist(domain)
@@ -89,7 +89,7 @@ NOTE: It will be automatically added back to the list when the domain is request
 /**
  * Filterd lists code heavily inspired by
  * `https://www.w3schools.com/howto/howto_js_filter_lists.asp`
- * 
+ *
  * Enables live filtering of domains via the search bar
  */
 function filterList() {
@@ -101,7 +101,7 @@ function filterList() {
 
   for (let i = 0; i < count; i++) {
       let d = li[i].getElementsByClassName('domain')[0];
-      let txtValue = d.innerText; 
+      let txtValue = d.innerText;
       if (txtValue.toLowerCase().indexOf(input) > -1) {
       li[i].style.display = "";
     } else {
@@ -111,14 +111,14 @@ function filterList() {
 }
 
 /**
- * Builds the list of domains in the domainlist, and their respective 
+ * Builds the list of domains in the domainlist, and their respective
  * options, to be displayed
  */
 function buildList() {
   let items = ""
   chrome.storage.local.get(["DOMAINS"], function (result) {
     for (let domain in result.DOMAINS) {
-      items += 
+      items +=
             `
       <li id="li ${domain}">
         <div uk-grid class="uk-grid-small uk-width-1-1" style="font-size: medium;">
@@ -137,7 +137,7 @@ function buildList() {
             ${domain}
           </div>
           <div style="
-            margin-right: 5px; 
+            margin-right: 5px;
             margin-left: 5px;
             margin-top: auto;
             margin-bottom: auto;
@@ -159,7 +159,7 @@ function buildList() {
               class="uk-badge button"
               type="button"
               style="
-                margin-right: 5px; 
+                margin-right: 5px;
                 margin-left: 5px;
                 margin-top: auto;
                 margin-bottom: auto;
@@ -174,7 +174,7 @@ function buildList() {
         </div>
       </li>
             `
-    } 
+    }
     document.getElementById('domainlist-main').innerHTML = items;
   });
 }
@@ -186,7 +186,7 @@ function buildList() {
 export async function domainlistView(scaffoldTemplate) {
     const body = renderParse(scaffoldTemplate, headings, 'scaffold-component')
     let content = await fetchParse('./views/domainlist-view/domainlist-view.html', 'domainlist-view')
-    
+
     document.getElementById('content').innerHTML = body.innerHTML
     document.getElementById('scaffold-component-body').innerHTML = content.innerHTML
 

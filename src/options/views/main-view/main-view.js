@@ -1,6 +1,6 @@
 /*
 OptMeowt is licensed under the MIT License
-Copyright (c) 2020 Kuba Alicki, David Baraka, Rafael Goldstein, Sebastian Zimmeck
+Copyright (c) 2020 Kuba Alicki, Daniel Knopf, Abdallah Salia, Sebastian Zimmeck
 privacy-tech-lab, https://privacy-tech-lab.github.io/
 */
 
@@ -85,7 +85,7 @@ export async function mainView() {
       chrome.storage.local.set({ DOMAINLIST_PRESSED: false });
       document.querySelector('#main-view-domainlist').classList.add('active')
     }
-    
+
 
   document
     .getElementById("main-view-settings")

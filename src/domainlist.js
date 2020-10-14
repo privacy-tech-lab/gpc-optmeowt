@@ -1,6 +1,6 @@
 /*
 OptMeowt is licensed under the MIT License
-Copyright (c) 2020 Kuba Alicki, David Baraka, Rafael Goldstein, Sebastian Zimmeck
+Copyright (c) 2020 Kuba Alicki, Daniel Knopf, Abdallah Salia, Sebastian Zimmeck
 privacy-tech-lab, https://privacy-tech-lab.github.io/
 */
 
@@ -23,7 +23,7 @@ export async function handleDownload() {
     chrome.storage.local.get(["DOMAINS"], function (result) {
       var DOMAINS = result.DOMAINS;
       // console.log(`YAML: ${YAML.stringify(DOMAINS, null)}`)
-      var blob = new Blob([YAML.stringify(DOMAINS, null)], 
+      var blob = new Blob([YAML.stringify(DOMAINS, null)],
                           {type: "text/plain;charset=utf-8"});
       saveAs(blob, "OptMeowt_backup.yaml");
     })
@@ -56,7 +56,7 @@ export async function handleUpload() {
 
 /**
  * Sets DOMAINS[domainKey] to true
- * @param {string} domainKey - domain to be changed in domainlist 
+ * @param {string} domainKey - domain to be changed in domainlist
  */
 export async function addToDomainlist(domainKey) {
   var new_domains = [];
@@ -64,13 +64,13 @@ export async function addToDomainlist(domainKey) {
     new_domains = result.DOMAINS;
     new_domains[domainKey] = true;
     chrome.storage.local.set({ DOMAINS: new_domains });
-  }); 
+  });
   console.log(domainKey, ", Added to domainlist.")
 }
 
 /**
  * Sets DOMAINS[domainKey] to false
- * @param {string} domainKey - domain to be changed in domainlist 
+ * @param {string} domainKey - domain to be changed in domainlist
  */
 export async function removeFromDomainlist(domainKey) {
   var new_domains = [];
@@ -85,7 +85,7 @@ export async function removeFromDomainlist(domainKey) {
 
 /**
  * Removes DOMAINS[domainKey] from DOMAINS
- * @param {string} domainKey - domain to be changed in domainlist 
+ * @param {string} domainKey - domain to be changed in domainlist
  */
 export async function permRemoveFromDomainlist(domainKey) {
   var new_domains = [];
@@ -100,9 +100,9 @@ export async function permRemoveFromDomainlist(domainKey) {
 //////////////////////////////////////////////////////////////////////////
 
 /**
- * 
- * @param {*} elementId 
- * @param {*} domain 
+ *
+ * @param {*} elementId
+ * @param {*} domain
  */
 function deleteDomainCookies(domainKey) {
   var cookie_arr = []
@@ -113,7 +113,7 @@ function deleteDomainCookies(domainKey) {
       console.log(`Cookie #${i}: ${cookie_arr[i]}`)
       chrome.cookies.remove({
         "url": `https://${domainKey}/`,
-        "name": cookie_arr[i].name 
+        "name": cookie_arr[i].name
       }, function(details) {
         if (details === null) {
           console.log("Delete failed.")
@@ -123,13 +123,13 @@ function deleteDomainCookies(domainKey) {
       })
     }
   });
-  
+
 }
 
 //////////////////////////////////////////////////////////////////////////
 
 /**
- * Generates the HTML that will build the domainlist switch for a given 
+ * Generates the HTML that will build the domainlist switch for a given
  * domain in the domainlist
  * @param {string} domain - Any given domain
  * @param {bool} bool - Represents whether it is domainlisted or not
@@ -138,11 +138,11 @@ function deleteDomainCookies(domainKey) {
 export function buildToggle(domain, bool) {
   let toggle;
   if (bool) {
-    // checkbox = `<input type="checkbox" id="select ${domain}" 
+    // checkbox = `<input type="checkbox" id="select ${domain}"
     //           class="check text-color dark-checkbox" checked />`;
     toggle = `<input type="checkbox" id="${domain}" checked />`;
   } else {
-    // checkbox = `<input type="checkbox" id="select ${domain}" 
+    // checkbox = `<input type="checkbox" id="select ${domain}"
     //           class="check text-color dark-checkbox"/>`;
     toggle = `<input type="checkbox" id="${domain}" />`;
   }
@@ -150,13 +150,13 @@ export function buildToggle(domain, bool) {
 }
 
 /**
- * Creates an event listener that toggles a given domain's stored value in 
+ * Creates an event listener that toggles a given domain's stored value in
  * the domainlist if a user clicks on the object with the given element ID
  * @param {string} elementId - HTML element to be linked to the listener
- * @param {string} domain - domain to be changed in domainlist 
+ * @param {string} domain - domain to be changed in domainlist
  */
 export async function toggleListener(elementId, domain) {
-  
+
   document.getElementById(elementId).addEventListener("click", () => {
     chrome.storage.local.set({ ENABLED: true, DOMAINLIST_ENABLED: true });
     chrome.storage.local.get(["DOMAINS"], function (result) {
