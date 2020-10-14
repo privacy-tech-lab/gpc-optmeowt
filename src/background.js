@@ -1,13 +1,13 @@
 /*
 OptMeowt is licensed under the MIT License
-Copyright (c) 2020 Kuba Alicki, David Baraka, Rafael Goldstein, Sebastian Zimmeck
+Copyright (c) 2020 Kuba Alicki, Daniel Knopf, Abdallah Salia, Sebastian Zimmeck
 privacy-tech-lab, https://privacy-tech-lab.github.io/
 */
 
 /*
 background.js
 ================================================================================
-background.js is the main background script handling OptMeowt's 
+background.js is the main background script handling OptMeowt's
 main opt-out functionality
 */
 
@@ -386,7 +386,7 @@ chrome.runtime.onInstalled.addListener(function (object) {
 /*
 *
 *
-We could use this to get and update the tab url, but it requires this 
+We could use this to get and update the tab url, but it requires this
 demanding permission in manifest
 *
 *
@@ -395,8 +395,8 @@ demanding permission in manifest
 ]
 *
 *
-The content script approach only uses the activeTab permission. If the 
-conent script approach is not working or if you feel this is better, 
+The content script approach only uses the activeTab permission. If the
+conent script approach is not working or if you feel this is better,
 you are welcome to switch
 *
 *

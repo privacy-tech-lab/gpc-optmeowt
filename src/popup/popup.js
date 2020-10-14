@@ -1,6 +1,6 @@
 /*
 OptMeowt is licensed under the MIT License
-Copyright (c) 2020 Kuba Alicki, David Baraka, Rafael Goldstein, Sebastian Zimmeck
+Copyright (c) 2020 Kuba Alicki, Daniel Knopf, Abdallah Salia, Sebastian Zimmeck
 privacy-tech-lab, https://privacy-tech-lab.github.io/
 */
 
@@ -146,7 +146,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
   })
 
   /**
-   * Generates third party domain list toggle functionality 
+   * Generates third party domain list toggle functionality
    */
   document.getElementById("third-party-domains").addEventListener("click", () => {
     // var icon = document.getElementById("dropdown")
@@ -218,7 +218,7 @@ async function buildDomains(requests) {
       </div>
       <!-- Response info -->
       <div uk-grid uk-grid-row-collapse style="margin-top:0px;">
-        
+
       </div>
     </li>
     `;
@@ -293,4 +293,3 @@ document.getElementById("domain-list").addEventListener("click", () => {
     chrome.runtime.openOptionsPage();
   });
 });
-

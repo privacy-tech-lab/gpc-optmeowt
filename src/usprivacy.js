@@ -1,6 +1,6 @@
 /*
 OptMeowt is licensed under the MIT License
-Copyright (c) 2020 Kuba Alicki, David Baraka, Rafael Goldstein, Sebastian Zimmeck
+Copyright (c) 2020 Kuba Alicki, Daniel Knopf, Abdallah Salia, Sebastian Zimmeck
 privacy-tech-lab, https://privacy-tech-lab.github.io/
 */
 
@@ -8,7 +8,7 @@ privacy-tech-lab, https://privacy-tech-lab.github.io/
 /*
 usprivacy.js
 ================================================================================
-usprivacy.js handles the IAB CCPA `usprivacy` proposal cookie 
+usprivacy.js handles the IAB CCPA `usprivacy` proposal cookie
 modification process
 */
 
@@ -17,20 +17,20 @@ modification process
                     ----- To-Do -----
 - Add some kind of check to stop the cookie from being updated
   more than once per site refresh.
-- Think about how we will disable the feature if a certain site is 
+- Think about how we will disable the feature if a certain site is
   "not in the domainlist" specifically
 - Make sure that if a cookie exists, you are updating the specific version
   that the site has
-- Create a check that checks for mulitiple copies of the cookie, 
+- Create a check that checks for mulitiple copies of the cookie,
   say if `usprivacy` and `us_privacy` exists, you want to keep the one
-  that we did NOT add in, i.e. keep `usprivacy`. 
+  that we did NOT add in, i.e. keep `usprivacy`.
 - Implement a UI feature to note if a site says youre 'outside of California'
 - We have the issue of cookies being sent to sites that don't really
   need them, i.e. 'chrome://...' sites and our background/'options.html'
-  pages, so we need to filter this out. 
-  (Unchecked runtime.lastError: No host permissions for cookies at url: 
+  pages, so we need to filter this out.
+  (Unchecked runtime.lastError: No host permissions for cookies at url:
     "chrome://extensions/".)
-- Error: (Unchecked runtime.lastError: Failed to parse or set cookie named 
+- Error: (Unchecked runtime.lastError: Failed to parse or set cookie named
     "us_privacy".)
 - Once you set a cookie, create a listener that checks
   if the cookie is modified, and check it agains the last
@@ -40,7 +40,7 @@ modification process
                     ----- Done -----
 - Implemented check for different versions with iab_vars in `us_privacy.js`,
   (though not with a JSON)
-- Have it respond if a cookie exists and parse it (though doesn't update 
+- Have it respond if a cookie exists and parse it (though doesn't update
     the cookie name)
 
                   ----- Parsing JSON -----
@@ -97,7 +97,7 @@ function checkExistsAndHandleUSP(url) {
 
   chrome.cookies.getAll({
     "url": url
-  }, 
+  },
   function (cookie_arr) {
     // fetchAndHandleJSON('iab_cookies.json');
     console.log("cookie_arr: ", cookie_arr)
@@ -128,8 +128,8 @@ the domain of the CCPA.", cookie_matches[0]["domain"])
     if (cookie_matches.length > 1) {
       console.log("MULTIPLE COOKIES EXIST!")
       for (var c in cookie_matches) {
-        if (cookie_matches[c].name == default_name && 
-          cookie_matches[c].domain.substr(0,1) !== ".") 
+        if (cookie_matches[c].name == default_name &&
+          cookie_matches[c].domain.substr(0,1) !== ".")
         {
           console.log("initializing delete cookie...")
           deleteCookie(url, cookie_matches[c].name)
@@ -139,7 +139,7 @@ the domain of the CCPA.", cookie_matches[0]["domain"])
 
   })
 }
-  
+
 /**
  * If a cookie exists, it will be updated and set
  * If a cookie does not exist, it will be created then set
@@ -152,16 +152,16 @@ function updateUSP(cookie, value, url) {
   // Maybe check to see if current_domain === origin_domain
   // Also try chrome.cookies.getAll() to check all windows?
 
-  // chrome.cookies.get({ 
+  // chrome.cookies.get({
   //   "name": 'us_privacy', // Make this not case-sensitive
   //   "url": url
-  // }, 
+  // },
   // function (cookie) {
-    /* 
+    /*
       This next block of code was originally written with
-      the assumption that this cookie call would check to 
+      the assumption that this cookie call would check to
       see if the cookie exists, and then modify it, but
-      then only sites with this specific cookie already in 
+      then only sites with this specific cookie already in
       place at the moment this runs, would recieve a cookie.
 
       For testing purposes, it is commented out so that
@@ -191,7 +191,7 @@ function updateUSP(cookie, value, url) {
 
   /*
     Here maybe I could just pass in the whole cookie, and
-    have make cookie just update the cookie values. 
+    have make cookie just update the cookie values.
   */
   let new_cookie = {}
 
@@ -202,7 +202,7 @@ function updateUSP(cookie, value, url) {
   }
   console.log("Updated cookie to be set: ", new_cookie)
   chrome.cookies.set(
-    new_cookie, 
+    new_cookie,
     function (details) {
       console.log("Created new cookie.")
     }
@@ -214,7 +214,7 @@ function updateUSP(cookie, value, url) {
 /**
  * Parses a IAB cookie value given one exists, and updates
  * it according to its current value
- * @param {string} signal - the value of an IAB cookie. Example: `1YNN`. 
+ * @param {string} signal - the value of an IAB cookie. Example: `1YNN`.
  * @return {string} - Updated IAB value to be set
  */
 function parseUSP(signal) {
@@ -236,7 +236,7 @@ function parseUSP(signal) {
 /**
  * "Prunes" the values a retrieved cookie has set that a cookie
  * "to-be-set" cannot have. Also updates the value and url according
- * to the passed in values. 
+ * to the passed in values.
  * @param {object} cookie - Cookie to be "pruned"
  * @param {string} value - value the updated cookie should have
  * @param {string} url - url the updated cookie should have
@@ -289,7 +289,7 @@ function makeCookieUSP(name, value, url) {
 function deleteCookie(url, name) {
   chrome.cookies.remove({
     "url": url,
-    "name": name 
+    "name": name
   }, function(details) {
     if (details === null) {
       console.log("Delete failed.")
@@ -307,8 +307,8 @@ function deleteCookie(url, name) {
  */
 function isValidSignalUSP(signal) {
   var valid_chars = ['y', 'n', 'Y', 'N', '-']
-  if (signal.length != 4) { 
-    return false 
+  if (signal.length != 4) {
+    return false
   }
   if (signal.charAt(0) !== '1') {
     return false
@@ -324,40 +324,40 @@ function isValidSignalUSP(signal) {
   }
   if (!valid_chars.includes(signal.charAt(3))) {
     return false
-  } 
+  }
   return true
 }
 
 /**
  * Stores the url, assuming a IAB cookie was found by the extension,
- * to a special location for debuggin purposes. 
- * --- TO BE REMOVED IN FINAL VERSION --- 
+ * to a special location for debuggin purposes.
+ * --- TO BE REMOVED IN FINAL VERSION ---
  * @param {string} url - url to be stored
  */
 function storeURLforDev(url) {
-  chrome.storage.local.get(["IAB"], 
+  chrome.storage.local.get(["IAB"],
   function (result) {
     var iab = result.IAB
     if (iab[url] === undefined) {
       iab[url] = false
       chrome.storage.local.set({"IAB": iab});
       console.log("Stored current iab website");
-    } 
+    }
   })
 }
 
-/* 
+/*
 Proposed JSON file handling for IAB signal variations
 */
 
 // function handleExistsUSP (json) {
 //   iab_vars = json["iab"]
 //   console.log("iab_vars", iab_vars)
-//   if 
+//   if
 // }
 
 // /**
-//  * 
+//  *
 //  * @param {string} location - Location/name of the JSON to be fetched
 //  * @return {Object} Data inside JSON object
 //  */
@@ -366,10 +366,10 @@ Proposed JSON file handling for IAB signal variations
 //   .then(
 //     response => {
 //       console.log('Retrieved iab cookie JSON!')
-// // Add error cases - 
+// // Add error cases -
 // // https://stackoverflow.com/questions/47267221/fetch-response-json-and
         // -response-status
-//       response.json().then(json => 
+//       response.json().then(json =>
 //         {
 //           console.log("JSON: ", json)
 //           // fun(json)

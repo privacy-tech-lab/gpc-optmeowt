@@ -1,9 +1,14 @@
-# TOOLS: 
+#
+# OptMeowt is licensed under the MIT License
+# Copyright (c) 2020 Kuba Alicki, Daniel Knopf, Abdallah Salia, Sebastian Zimmeck
+# privacy-tech-lab, https://privacy-tech-lab.github.io/
+#
+# TOOLS:
 # Used https://jsonformatter.org/json-to-yaml to convert old JSON files
-# to this YAML format. 
-# We will need to make sure this list format is: 
+# to this YAML format.
+# We will need to make sure this list format is:
 # (1) User Friendly (w/ regards to formatting w/ & w/o quotes)
-# (2) Compatible with the current cookie placing infrastructure. 
+# (2) Compatible with the current cookie placing infrastructure.
 
 33Across<33x_nc>:
     name: 33x_nc

@@ -1,6 +1,6 @@
 /*
 OptMeowt is licensed under the MIT License
-Copyright (c) 2020 Kuba Alicki, David Baraka, Rafael Goldstein, Sebastian Zimmeck
+Copyright (c) 2020 Kuba Alicki, Daniel Knopf, Abdallah Salia, Sebastian Zimmeck
 privacy-tech-lab, https://privacy-tech-lab.github.io/
 */
 
@@ -8,8 +8,8 @@ privacy-tech-lab, https://privacy-tech-lab.github.io/
 /*
 cookie_lists_YAML.js
 ================================================================================
-cookie_lists_YAML.js fetches all files mentioned in cookieYAMLS, retrieves 
-their respective cookies (custom & 3rd party), and places them.  
+cookie_lists_YAML.js fetches all files mentioned in cookieYAMLS, retrieves
+their respective cookies (custom & 3rd party), and places them.
 */
 
 
@@ -36,9 +36,9 @@ for (let loc in cookieYAMLS) {
  */
 function retrieveCookieYAML(location, callback) {
   fetch(location)
-  .then(response => { 
+  .then(response => {
     // console.log("Response before text(): ",response)
-    return response.text() 
+    return response.text()
   })
   .then(value => {
     console.log(`Retrieved ${location}`)
@@ -49,9 +49,9 @@ function retrieveCookieYAML(location, callback) {
 }
 
 /**
- * Sets a cookie at the given domain for each item in the passed in 
+ * Sets a cookie at the given domain for each item in the passed in
  * cookies object. Currently updates cookie url info based on domain.
- * @param {Object} cookies - Collection of info regarding each 3rd 
+ * @param {Object} cookies - Collection of info regarding each 3rd
  *                           party cookie to be set
  * Each item in `cookies` must contain a 'name', 'value', and 'domain'
  */
@@ -61,7 +61,7 @@ function setAllCookies(cookies) {
   var now = date.getTime()
   var cookie_time = now/1000 + 31557600
   var path = '/'
-  
+
   for (var item in cookies) {
     // Updates cookie url based on domain, checks for domain/subdomain spec
     let cookie_url = cookies[item].domain
@@ -93,7 +93,7 @@ function setAllCookies(cookies) {
     // Sets cookie
     chrome.cookies.set(cookie_param, function (cookie) {
       console.log(`Updated ${cookie.name} cookie`)
-    })  
+    })
   }
 }
 

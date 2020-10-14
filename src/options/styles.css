@@ -1,6 +1,6 @@
 /*
 OptMeowt is licensed under the MIT License
-Copyright (c) 2020 Kuba Alicki, David Baraka, Rafael Goldstein, Sebastian Zimmeck
+Copyright (c) 2020 Kuba Alicki, Daniel Knopf, Abdallah Salia, Sebastian Zimmeck
 privacy-tech-lab, https://privacy-tech-lab.github.io/
 */
 
@@ -10,7 +10,7 @@ styles.css
 styles.css is the main css page for OptMeowt's options page
 */
 
-/* 
+/*
 Dark Mode Switch
 Based on https://github.com/coliff/dark-mode-switch
 */
@@ -18,8 +18,8 @@ Based on https://github.com/coliff/dark-mode-switch
 
 /********************************************************/
 
-/* 
-Colors 
+/*
+Colors
 */
 :root {
   --accent-color: #4472c4;
@@ -48,8 +48,8 @@ Colors
 
 /********************************************************/
 
-/* 
-Body style 
+/*
+Body style
 */
 body {
   color: var(--text-color);
@@ -58,8 +58,8 @@ body {
 
 /********************************************************/
 
-/* 
-Navbar item style 
+/*
+Navbar item style
 */
 .navbar-item {
   color: var(--text-color-inactive);
@@ -94,8 +94,8 @@ Sticky Domain List Navbar
 
 /********************************************************/
 
-/* 
-Radio buttons style 
+/*
+Radio buttons style
 */
 input[type="radio"] {
   width: 35px;
@@ -117,7 +117,7 @@ input[type="radio"]:hover:not(:checked) {
 
 /********************************************************/
 
-/* 
+/*
 `domainlist-view` options page checkbox style
 */
 .check {
