@@ -374,12 +374,9 @@ chrome.runtime.onInstalled.addListener(function (object) {
   chrome.storage.local.set(
     { FIRSTINSTALL: true, FIRSTINSTALL_POPUP: true },
     function () {
-      console.log("Set fresh install value");
+      console.log("Set fresh install value. Opening options page...");
+      chrome.runtime.openOptionsPage(() => console.log("Opened options page."));
     }
-  );
-  chrome.tabs.create(
-    { url: "chrome-extension://mfgnakcmpgfgpmdepnckjokfnieoidmm/options/options.html" },
-    function (tab) {}
   );
 });
 
