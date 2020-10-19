@@ -59,6 +59,7 @@ You did it! You have installed OptMeowt. You can use it via the icon next to the
 - `src/cookie_lists_yaml.js`: Handles placing all of the opt out cookies stored in `cookies_3p.yaml` and `cookies_usercustom.yaml`. This currently runs on OptMeowt's install or on an extension refresh.
 - `src/domainlist.js`: This is the main JS file that allows the extension to communicate with the `domain list` stored in the browser's local storage.
 - `src/manifest.json`: This provides the browser with metadata about the extension, regarding its name, permissions, etc.
+- `src/dom.js`: This is a JS file that implements the functionality of setting a DOM GPC signal to an outgoing request
 - `src/usprivacy.js`: Handles placing and updating 1st party opt out cookies (namely the IAB `usprivacy` string) for each site intended to receive Do Not Sell signals.
 - `ui-mockup`: Contains PDF and XD files demonstrating the preliminary mockup and analysis of OptMeowt.
 
@@ -82,4 +83,4 @@ OptMeowt uses the following third party libraries. We thank the developers.
 
 ## More Information
 
-Visit Our Landing Page to learn more about us and what we do
+Visit Our [Landing Page](https://privacy-tech-lab.github.io/optmeowt) to learn more about us and what we do.
