@@ -23,16 +23,21 @@ Every domain a user visits will be automatically added to a `domain list` and wi
 
 ## Installing and Running OptMeowt
 
-OptMeowt works on any Chromium-based browser. In addition to Chrome, it should run in Brave, Edge, Opera, and Vivaldi. In the future we hope to support Firefox and Safari as well.
+OptMeowt works on any Chromium-based browser. In addition to Chrome, it should run in Brave, Edge, Opera, and Vivaldi. In the future we hope to support Firefox and Safari as well. There are two main ways you can install OptMeowt on your computer:
 
-Install OptMeowt as an unpacked extension on Chrome as follows:
+### 1. Install OptMeowt via the Chrome Web Store
+
+1. You can simply add OptMeowt to your browser by donwloading the extension from the Chrome Web Store using this [link.](https://chrome.google.com/webstore/detail/optmeowt/hdbnkdbhglahihjdbodmfefogcjbpgbo)
+2. Click Add to Chrome to install OptMeowt.
+
+### 2. Install OptMeowt as an unpacked extension on Chrome as follows:
 
 1. Clone this repo or download a zipped copy and unzip it.
 2. In Chrome, navigate to the extensions page at `chrome://extensions/`.
 3. If you have not done so yet, enable `Developer mode` with the slider on the top right corner of the extension page.
 4. Click the `Load unpacked` button in the top left of the page.
 5. Navigate to where you unzipped the OptMeowt folder and open up the `src` folder.
-**Note:** You do not need to click on the `manifest.json` file in Chrome, though other browsers may require this.
+   **Note:** You do not need to click on the `manifest.json` file in Chrome, though other browsers may require this.
 6. Click to finalize the install.
 
 You did it! You have installed OptMeowt. You can use it via the icon next to the search bar.
@@ -60,6 +65,7 @@ You did it! You have installed OptMeowt. You can use it via the icon next to the
 ## Third Party Libraries
 
 OptMeowt uses the following third party libraries. We thank the developers.
+
 - [animate.css](https://github.com/animate-css/animate.css)
 - [mustache.js](https://github.com/janl/mustache.js)
 - [FileSaver.js](https://github.com/eligrey/FileSaver.js)
@@ -68,7 +74,12 @@ OptMeowt uses the following third party libraries. We thank the developers.
 - [psl (Public Suffix List)](https://github.com/lupomontero/psl)
 - [Dark Mode Switch](https://github.com/coliff/dark-mode-switch)
 - [yaml (JavaScript parser)](https://github.com/eemeli/yaml)
+- [tippy.js](https://github.com/atomiks/tippyjs)
 
 <p align="center">
   <img src="https://github.com/privacy-tech-lab/optmeowt-browser-extension/blob/master/plt_logo.png" width="200px" height="200px" title="privacy-tech-lab logo">
 <p>
+
+## More Information
+
+Visit Our Landing Page to learn more about us and what we do
