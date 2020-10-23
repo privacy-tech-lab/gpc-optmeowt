@@ -1,7 +1,7 @@
 /*
 OptMeowt is licensed under the MIT License
 Copyright (c) 2020 Kuba Alicki, Daniel Knopf, Abdallah Salia, Sebastian Zimmeck
-privacy-tech-lab, https://privacy-tech-lab.github.io/
+privacy-tech-lab, https://privacytechlab.org/
 */
 
 /*
@@ -139,7 +139,7 @@ function walkthrough() {
     modal.show()
     document.getElementById("modal-button-3").onclick = () => {
       chrome.tabs.create(
-        { url: "https://privacy-tech-lab.github.io/optmeowt" },
+        { url: "https://privacytechlab.org/optmeowt" },
         function (tab) {}
       );
     }

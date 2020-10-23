@@ -83,4 +83,4 @@ OptMeowt uses the following third party libraries. We thank the developers.
 
 ## More Information
 
-Visit Our [Landing Page](https://privacy-tech-lab.github.io/optmeowt) to learn more about us and what we do.
+Visit Our [Landing Page](https://privacytechlab.org/optmeowt) to learn more about us and what we do.
