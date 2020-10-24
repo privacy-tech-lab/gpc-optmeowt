@@ -1,0 +1,79 @@
+/*
+OptMeowt is licensed under the MIT License
+Copyright (c) 2020 Kuba Alicki, Daniel Knopf, Abdallah Salia, Sebastian Zimmeck
+privacy-tech-lab, https://privacy-tech-lab.github.io/
+*/
+
+/*
+styles.css
+================================================================================
+styles.css is the main css page for OptMeowt's popup page
+*/
+
+/*
+SVG photo assets style
+*/
+@import "../options/styles.css";
+svg {
+  fill: #d3d3d3;
+  transition: all ease 0.5s;
+}
+
+svg:hover {
+  fill: #5a647d;
+  transition: all ease 0.5s;
+}
+
+/*=======================================================================================*/
+/*tutorial popup css*/
+.tippy-box[data-theme~="custom-2"] {
+  background-color: #87cefa;
+  box-shadow: 10px 10px 5px 0px rgba(0, 0, 0, 0.31);
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+  text-align: left;
+  float: left;
+}
+
+.tippy-box[data-theme~="custom-2"][data-placement^="bottom"]
+  > .tippy-arrow::before {
+  border-bottom-color: #87cefa;
+}
+
+/********************************************************/
+
+/*
+Animated 3rd party domains/domain list buttons/links
+*/
+
+.domain-list:hover {
+  background-color: var(--accent-color);
+  color: white;
+  transition: ease-out 0.1s;
+}
+
+.third-party-domains:hover {
+  background-color: var(--highlight-light);
+  color: var(--text-color-darker);
+  transition: ease-out 0.1s;
+}
+
+.third-party-domains-click {
+  background-color: var(--highlight-light);
+  color: var(--text-color-darker);
+}
+
+/********************************************************/
+
+/*
+Accepted/rejected text on popup
+*/
+
+.status-text-red {
+  color: red;
+  /* border: solid red 2px;
+  border-radius: 14px;
+  box-shadow: 0 8px 16px -1px rgba(211, 211, 211, .2);
+  outline: none; */
+}

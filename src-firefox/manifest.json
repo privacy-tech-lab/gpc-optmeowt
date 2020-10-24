@@ -1,0 +1,37 @@
+{
+  "name": "OptMeowt",
+  "version": "1.0.1",
+  "description": "OptMeowt allows Web users to make use of their rights to opt out from the sale and sharing of personal data",
+  "permissions": [
+    "webRequest",
+    "<all_urls>",
+    "webRequestBlocking",
+    "webNavigation",
+    "storage",
+    "activeTab",
+    "cookies"
+  ],
+  "icons": {
+    "128": "assets/face-icons/icon128-face-circle.png"
+  },
+  "browser_action": {
+    "default_title": "OptMeowt",
+    "default_popup": "popup/popup.html"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["contentScript.js"],
+      "run_at": "document_start"
+    }
+  ],
+  "options_ui": {
+    "page": "options/options.html",
+    "open_in_tab": true
+  },
+  "background": {
+    "page": "background.html"
+  },
+  "manifest_version": 2,
+  "content_security_policy": "script-src 'self' 'unsafe-eval' https://unpkg.com/tippy.js@6 https://unpkg.com/@popperjs/core@2; object-src 'self'"
+}

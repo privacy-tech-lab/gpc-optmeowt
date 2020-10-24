@@ -1,0 +1,98 @@
+<!--
+OptMeowt is licensed under the MIT License
+Copyright (c) 2020 Kuba Alicki, Daniel Knopf, Abdallah Salia, Sebastian Zimmeck
+privacy-tech-lab, https://privacy-tech-lab.github.io/
+-->
+
+
+<!--
+domainlist-view.html
+================================================================================
+domainlist-view.html contains the 'domainlist' view template to be loaded into the
+options page when clicked
+-->
+
+
+<!--
+    This is the body content inflated into scaffold-component.html when
+    the `domainlist view` is called by a user from within the options page.
+-->
+<template id="domainlist-view">
+  <div uk-grid>
+    <div class="uk-width-3-4" style="margin-top: 0px;">
+
+      <!-- Navbar -->
+      <div class="domainlist-navbar" id="domainlist-navbar">
+        <div class="uk-text-lead uk-text-bold text-color-darker">
+          Domains
+        </div>
+        <form
+          class="uk-search uk-search-default uk-width-3-4"
+          style="margin-top: 1%;"
+        >
+          <div class="uk-margin">
+            <div class="uk-inline uk-width-expand">
+              <span
+                class="uk-form-icon uk-form-icon-flip"
+                uk-icon="icon: plus"
+              ></span>
+              <input
+                class="uk-input search"
+                style="border-radius: 5px;"
+                id="searchbar"
+                type="text"
+                placeholder="Type to search for a domain" />
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <!-- Domainlist -->
+      <ul
+        class="uk-list uk-list-divider uk-width-1-1"
+        style="margin-top: 0px; margin-bottom: 0px;"
+        id="domainlist-main"
+      >
+      <li>
+        <div uk-grid class="uk-grid-small uk-width-1-1" style="font-size: medium;">
+          <div>
+            <label>
+              <input type="checkbox" id="select" class="check text-color dark-checkbox" />
+            </label>
+          </div>
+          <div class="domain uk-width-expand" >
+            instagram.com
+          </div>
+          <div style="
+            margin-right: 5px;
+            margin-left: 5px;
+            margin-top: auto;
+            margin-bottom: auto;
+            "
+          >
+            <label class="switch" >
+              <input type="checkbox" id="instagram.com" />
+              <span></span>
+            </label>
+          </div>
+          <div
+            class="uk-badge button"
+            style="
+              margin-right: 5px;
+              margin-left: 5px;
+              margin-top: auto;
+              margin-bottom: auto;
+              background-color: white;
+              border: 1px solid #f44336;
+              color: #f44336;
+            "
+          >
+            Delete
+          </div>
+        </div>
+      </li>
+      </ul>
+
+    </div>
+  </div>
+</template>

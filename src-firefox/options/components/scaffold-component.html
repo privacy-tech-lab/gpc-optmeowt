@@ -1,0 +1,39 @@
+<!--
+OptMeowt is licensed under the MIT License
+Copyright (c) 2020 Kuba Alicki, Daniel Knopf, Abadallah Salia, Sebastian Zimmeck
+privacy-tech-lab, https://privacy-tech-lab.github.io/
+-->
+
+
+<!--
+scaffold-component.html
+================================================================================
+scaffold-component.html defines the layout of each scrollable content
+-->
+
+
+<!--
+    This template is passed into every subpage in the options page via
+    the given JS function. The correct information for each page is inflated
+    in the sections below, and then the newly filled scaffold template is
+    passed into the options page and rendered.
+ -->
+<template id="scaffold-component">
+    <div class="uk-container" id="scaffold" style="animation-duration: 250ms;">
+        <div class="uk-grid-large">
+            <!-- Heading and subtitle -->
+            <div class="first-column uk-margin-medium-bottom">
+                <h1 class="uk-heading-medium text-color-darker" style="display: inline;">
+                    {{ title }}
+                </h1>
+                <div class="uk-text-lead uk-text-light text-color">
+                    {{ subtitle }}
+                </div>
+            </div>
+            <!-- Body -->
+            <div class="first-column" id="scaffold-component-body">
+                <!-- Body content inflated here -->
+            </div>
+        </div>
+    </div>
+</template>
