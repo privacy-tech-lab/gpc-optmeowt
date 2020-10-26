@@ -20,6 +20,7 @@ var tabs = {}; /// Store all active tab id's, domain, requests, and response
 var activeTabID = 0;
 var sendSignal = false;
 var optout_headers = {};
+var userAgent = window.navigator.userAgent
 
 /**
  * Manipulates Headers and adds Do Not Sell signal if functionality is on
@@ -204,14 +205,21 @@ function incrementBadge() {
     console.log(tabs[activeTabID]);
   }
   // chrome.browserAction.setBadgeText({ text: numberOfRequests.toString() });
+  function handleSendMessageError() {
+    const error = chrome.runtime.lastError;
+    if (error){
+      console.warn(error.message)
+    }
+  }
+
   chrome.runtime.sendMessage({
     msg: "BADGE",
     data: numberOfRequests.toString(),
-  });
+  }, handleSendMessageError);
   chrome.runtime.sendMessage({
     msg: "REQUESTS",
     data: requests,
-  });
+  }, handleSendMessageError);
 }
 
 /**
@@ -227,33 +235,43 @@ function enable() {
       optout_headers = YAML.parse(value);
       console.log(optout_headers);
       // Headers
+      var extraSpecInfo;
+      var domFilter;
+      // set extraSpecInfo param for listeners based on browser user agent
+      if (userAgent !== null && userAgent.indexOf("Firefox") > -1) {
+        extraSpecInfo = ["requestHeaders", "blocking"]
+      } else {
+        extraSpecInfo = ["requestHeaders", "extraHeaders", "blocking"]
+        domFilter = {
+          urls: ["<all_urls>"],
+        }
+      }
+
       chrome.webRequest.onBeforeSendHeaders.addListener(
         addHeaders,
         {
           urls: ["<all_urls>"],
         },
-        ["requestHeaders", "extraHeaders", "blocking"]
+        extraSpecInfo
       );
       chrome.storage.local.set({ ENABLED: true });
+
+      // DOM signal to navigator
+      chrome.webNavigation.onCommitted.addListener(
+        addDomSignal,
+        domFilter
+      )
 
       chrome.webRequest.onHeadersReceived.addListener(
         receivedHeaders,
         {
           urls: ["<all_urls>"],
         },
-        ["responseHeaders", "extraHeaders", "blocking"]
+        extraSpecInfo
       );
       // chrome.browserAction.setBadgeBackgroundColor({ color: "#666666" });
       // chrome.browserAction.setBadgeText({ text: "0" });
       chrome.storage.local.set({ ENABLED: true });
-
-      // DOM signal to navigator
-      chrome.webNavigation.onCommitted.addListener(
-        addDomSignal,
-        {
-          urls: ["<all_urls>"],
-        }
-      )
     })
     .catch((e) =>
       console.log(
