@@ -20,6 +20,8 @@ var tabs = {}; /// Store all active tab id's, domain, requests, and response
 var activeTabID = 0;
 var sendSignal = false;
 var optout_headers = {};
+var userAgent = window.navigator.userAgent.indexOf("Firefox") > -1 ? "moz" : "chrome"
+
 
 /**
  * Manipulates Headers and adds Do Not Sell signal if functionality is on
@@ -115,6 +117,7 @@ function updateHeaders(details) {
  * @param {Object} details - details object
  */
 function initDomJS(details) {
+  console.log("Initializing DOM signal...")
   chrome.tabs.executeScript(details.tabId, {
     file: "dom.js",
     allFrames: true,
@@ -127,6 +130,7 @@ function initDomJS(details) {
  * @param {Object} details  - retrieved info passed into callback
  */
 function addDomSignal(details) {
+  console.log("Adding dom signal...")
   updateDomainsAndSignal(details);
   if (sendSignal) {
     initDomJS(details);
@@ -204,14 +208,21 @@ function incrementBadge() {
     console.log(tabs[activeTabID]);
   }
   // chrome.browserAction.setBadgeText({ text: numberOfRequests.toString() });
+  function handleSendMessageError() {
+    const error = chrome.runtime.lastError;
+    if (error){
+      console.warn(error.message)
+    }
+  }
+
   chrome.runtime.sendMessage({
     msg: "BADGE",
     data: numberOfRequests.toString(),
-  });
+  }, handleSendMessageError);
   chrome.runtime.sendMessage({
     msg: "REQUESTS",
     data: requests,
-  });
+  }, handleSendMessageError);
 }
 
 /**
@@ -226,34 +237,66 @@ function enable() {
     .then((value) => {
       optout_headers = YAML.parse(value);
       console.log(optout_headers);
+      
       // Headers
-      chrome.webRequest.onBeforeSendHeaders.addListener(
-        addHeaders,
-        {
-          urls: ["<all_urls>"],
-        },
-        ["requestHeaders", "extraHeaders", "blocking"]
-      );
-      chrome.storage.local.set({ ENABLED: true });
+      if (userAgent === "moz") {
+        chrome.webRequest.onBeforeSendHeaders.addListener(
+          addHeaders,
+          {
+            urls: ["<all_urls>"],
+          },
+          ["requestHeaders", "blocking"]
+        );
+        chrome.storage.local.set({ ENABLED: true });
 
-      chrome.webRequest.onHeadersReceived.addListener(
-        receivedHeaders,
-        {
-          urls: ["<all_urls>"],
-        },
-        ["responseHeaders", "extraHeaders", "blocking"]
-      );
-      // chrome.browserAction.setBadgeBackgroundColor({ color: "#666666" });
-      // chrome.browserAction.setBadgeText({ text: "0" });
-      chrome.storage.local.set({ ENABLED: true });
+        console.log("DOM signal to navigator");
+        chrome.webNavigation.onCommitted.addListener(
+          addDomSignal
+        )
+        // .then(response => {console.log("Setting dom signal!")})
+        // .catch(e => {console.log(e)})
 
-      // DOM signal to navigator
-      chrome.webNavigation.onCommitted.addListener(
-        addDomSignal,
-        {
-          urls: ["<all_urls>"],
-        }
-      )
+        chrome.webRequest.onHeadersReceived.addListener(
+          receivedHeaders,
+          {
+            urls: ["<all_urls>"],
+          },
+          ["responseHeaders", "blocking"]
+        );
+        // chrome.browserAction.setBadgeBackgroundColor({ color: "#666666" });
+        // chrome.browserAction.setBadgeText({ text: "0" });
+        chrome.storage.local.set({ ENABLED: true });
+      } else {
+        chrome.webRequest.onBeforeSendHeaders.addListener(
+          addHeaders,
+          {
+            urls: ["<all_urls>"],
+          },
+          ["requestHeaders", "extraHeaders", "blocking"]
+        );
+        chrome.storage.local.set({ ENABLED: true });
+
+        console.log("DOM signal to navigator");
+        chrome.webNavigation.onCommitted.addListener(
+          addDomSignal,
+          {
+            urls: ["<all_urls>"],
+          }
+        )
+        // .then(response => {console.log("Setting dom signal!")})
+        // .catch(e => {console.log(e)})
+
+        chrome.webRequest.onHeadersReceived.addListener(
+          receivedHeaders,
+          {
+            urls: ["<all_urls>"],
+          },
+          ["responseHeaders", "extraHeaders", "blocking"]
+        );
+        // chrome.browserAction.setBadgeBackgroundColor({ color: "#666666" });
+        // chrome.browserAction.setBadgeText({ text: "0" });
+        chrome.storage.local.set({ ENABLED: true });
+      }
     })
     .catch((e) =>
       console.log(
