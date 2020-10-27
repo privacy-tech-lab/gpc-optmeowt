@@ -207,23 +207,21 @@ function incrementBadge() {
     console.log(tabs[activeTabID]);
   }
   // chrome.browserAction.setBadgeText({ text: numberOfRequests.toString() });
-  var b = browser.runtime.sendMessage({
+  function handleSendMessageError() {
+    const error = chrome.runtime.lastError;
+    if (error){
+      console.warn(error.message)
+    }
+  }
+
+  chrome.runtime.sendMessage({
     msg: "BADGE",
     data: numberOfRequests.toString(),
-  })
-    .then(response => {
-      console.log("Sent REQUESTS message.")
-    })
-    .catch(e => {console.log(e)});
-
-  var r = browser.runtime.sendMessage({
+  }, handleSendMessageError);
+  chrome.runtime.sendMessage({
     msg: "REQUESTS",
     data: requests,
-  })
-    .then(response => {
-      console.log("Sent REQUESTS message.")
-    })
-    .catch(e => {console.log(e)});
+  }, handleSendMessageError);
 }
 
 /**
