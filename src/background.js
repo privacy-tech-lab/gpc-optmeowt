@@ -22,6 +22,7 @@ var sendSignal = false;
 var optout_headers = {};
 var userAgent = window.navigator.userAgent.indexOf("Firefox") > -1 ? "moz" : "chrome"
 
+
 /**
  * Manipulates Headers and adds Do Not Sell signal if functionality is on
  * @param {Object} details - retrieved info passed into callback
