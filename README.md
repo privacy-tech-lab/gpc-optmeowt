@@ -33,12 +33,18 @@ OptMeowt works on any Chromium-based browser. In addition to Chrome, it should r
 ### 2. Install OptMeowt as an unpacked extension on Chrome as follows:
 
 1. Clone this repo or download a zipped copy and unzip it.
-2. In Chrome, navigate to the extensions page at `chrome://extensions/`.
-3. If you have not done so yet, enable `Developer mode` with the slider on the top right corner of the extension page.
-4. Click the `Load unpacked` button in the top left of the page.
-5. Navigate to where you unzipped the OptMeowt folder and open up the `src` folder.
+2. Follow these steps to install npm if you do not have it already installed [here.](https://www.npmjs.com/get-npm)
+3. Install the Grunt command line tool with this command if you haven't done this already. `npm install -g grunt-cli`
+4. Open your terminal or command line and run the following commands:\
+   `cd optmeowt-browser-extension`\
+   `npm i`\
+   `grunt`
+5. In Chrome, navigate to the extensions page at `chrome://extensions/`.
+6. If you have not done so yet, enable `Developer mode` with the slider on the top right corner of the extension page.
+7. Click the `Load unpacked` button in the top left of the page.
+8. Navigate to where you unzipped the OptMeowt folder and open up the `src` folder.
    **Note:** You do not need to click on the `manifest.json` file in Chrome, though other browsers may require this.
-6. Click to finalize the install.
+9. Click to finalize the install.
 
 You did it! You have installed OptMeowt. You can use it via the icon next to the search bar.
 
@@ -80,6 +86,12 @@ OptMeowt uses the following third party libraries. We thank the developers.
 <p align="center">
   <img src="https://github.com/privacy-tech-lab/optmeowt-browser-extension/blob/master/plt_logo.png" width="200px" height="200px" title="privacy-tech-lab logo">
 <p>
+
+## Developer Guide
+
+- When contibuting, it is important to note that we manage all package dependencies with npm. Thus, it is recommended to use the `npm i` command to install packages.
+- In the event that you install a new dependency, you need to update Grantfile.js file with a new task of the form:\
+  `task: { expand: true, cwd: "./node_modules/..../", src: "*", dest: "./src/libs-js" }` depending on whether you need the js files or the css files of the newly installed library.
 
 ## More Information
 
