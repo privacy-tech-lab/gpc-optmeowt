@@ -63,6 +63,7 @@ export async function addToDomainlist(domainKey) {
   chrome.storage.local.get(["DOMAINS"], function (result) {
     new_domains = result.DOMAINS;
     new_domains[domainKey] = true;
+    addDomainCookies(domainKey)
     chrome.storage.local.set({ DOMAINS: new_domains });
   });
   console.log(domainKey, ", Added to domainlist.")
@@ -104,6 +105,27 @@ export async function permRemoveFromDomainlist(domainKey) {
  * @param {*} elementId
  * @param {*} domain
  */
+function addDomainCookies(domainKey) {
+  // var domainFilter;
+  if (domainKey.substr(0,1) === '.') {
+    var domainFilter = [domainKey.substr(1), domainKey, `www${domainKey.substr(1)}`]
+  } else if (domainKey.substr(0,1) === 'w') {
+    var domainFilter = [domainKey.substr(3), domainKey.substr(4), domainKey]
+  } else {
+    var domainFilter = [domainKey, `.${domainKey}`, `www.${domainKey}`]
+  }
+
+  chrome.runtime.sendMessage({
+    msg: "FETCHCOOKIES",
+    data: domainFilter,
+  });
+}
+
+/**
+ *
+ * @param {*} elementId
+ * @param {*} domain
+ */
 function deleteDomainCookies(domainKey) {
   var cookie_arr = []
   chrome.cookies.getAll({ "domain": `${domainKey}` }, function(cookies) {
@@ -113,6 +135,16 @@ function deleteDomainCookies(domainKey) {
       console.log(`Cookie #${i}: ${cookie_arr[i]}`)
       chrome.cookies.remove({
         "url": `https://${domainKey}/`,
+        "name": cookie_arr[i].name
+      }, function(details) {
+        if (details === null) {
+          console.log("Delete failed.")
+        } else {
+          console.log("Successfully deleted cookie.")
+        }
+      })
+      chrome.cookies.remove({
+        "url": `https://www.${domainKey}/`,
         "name": cookie_arr[i].name
       }, function(details) {
         if (details === null) {

@@ -369,6 +369,69 @@ chrome.storage.local.get(["ENABLED"], function (result) {
 });
 
 /**
+ * Sets a cookie at the given domain for each item in the passed in
+ * cookies object. Currently updates cookie url info based on domain.
+ * @param {Object} cookies - Collection of info regarding each 3rd
+ *                           party cookie to be set
+ * Each item in `cookies` must contain a 'name', 'value', and 'domain'
+ */
+function setFilteredCookies(cookiesList, domainFilter) {
+  // Updates time once
+  var date = new Date()
+  var now = date.getTime()
+  var cookie_time = now/1000 + 31557600
+  var path = '/'
+
+  console.log("cookiesLIst, ", cookiesList)
+  chrome.storage.local.get([ cookiesList ], function(result) { 
+    if (result.THIRDPARTYCOOKIES != undefined) {
+      var cookies = result.THIRDPARTYCOOKIES
+    } else {
+      var cookies = result.CUSTOMCOOKIES
+    }
+    console.log("new cookies: ", cookies)
+
+    for (var item in cookies) {
+      console.log("This is the cookies domain...", cookies[item].domain)
+      for (var domain in domainFilter) {
+        if (domainFilter[domain] == cookies[item].domain) {
+          console.log("cookies[item].domain ", cookies[item].domain, " is in domain filter!")
+          // Updates cookie url based on domain, checks for domain/subdomain spec
+          let cookie_url = cookies[item].domain
+          let all_domains = false
+          if (cookie_url.substr(0,1) === '.') {
+            cookie_url = cookie_url.substr(1)
+            all_domains = true
+          }
+          cookie_url = `https://${cookie_url}/`
+          console.log(`Current cookie url... ${cookie_url}`)
+          if (cookies[item].path !== null) {
+            path = cookies[item].path
+          } else {
+            path = '/'
+          }
+          // Sets cookie parameters
+          let cookie_param = {
+            url: cookie_url,
+            name: cookies[item].name,
+            value: cookies[item].value,
+            expirationDate: cookie_time,
+            path: path
+          }
+          if (all_domains) {
+            cookie_param["domain"] = cookies[item].domain
+          }
+          // Sets cookie
+          chrome.cookies.set(cookie_param, function (cookie) {
+            console.log(`Updated ${cookie.name} cookie`)
+          })
+        }
+      }
+    }
+  })
+}
+
+/**
  * Listener for runtime messages, in partuclar "TAB" from contentScript.js
  * or for "INIT" to start popup badge counter
  */
@@ -384,6 +447,10 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   }
   if (request.msg === "WELLKNOWN") {
     console.log(`.well-known from ContentScr: ${JSON.stringify(request.data)}`);
+  }
+  if (request.msg === "FETCHCOOKIES") {
+    setFilteredCookies("THIRDPARTYCOOKIES", request.data)
+    setFilteredCookies("USERCUSTOMCOOKIES", request.data)
   }
   if (request.msg === "TAB") {
     var url = new URL(sender.origin);
