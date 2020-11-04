@@ -1,0 +1,34 @@
+{
+  "name": "optmeowt-browser-extension",
+  "version": "1.0.0",
+  "description": "A privacy extension that allows users to exercise rights under GPC",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/privacy-tech-lab/optmeowt-browser-extension.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/privacy-tech-lab/optmeowt-browser-extension/issues"
+  },
+  "homepage": "https://github.com/privacy-tech-lab/optmeowt-browser-extension#readme",
+  "dependencies": {
+    "@popperjs/core": "^2.5.4",
+    "FileSaver": "^0.10.0",
+    "animate.css": "^4.1.1",
+    "dark-mode-switch": "^1.0.0",
+    "mustache": "^4.0.1",
+    "psl": "^1.8.0",
+    "tippy.js": "^6.2.7",
+    "uikit": "3.4.0",
+    "yaml": "^1.10.0"
+  },
+  "devDependencies": {
+    "grunt": "~0.4.5",
+    "grunt-contrib-copy": "^1.0.0"
+  }
+}
