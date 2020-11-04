@@ -23,7 +23,7 @@ chrome.runtime.sendMessage({
 
 console.log(location)
 var url = new URL(location);
-fetch(`${url.origin}/.well-known/GPC`)
+fetch(`${url.origin}/.well-known/gpc.json`)
   .then((response) => {
     return response.json()
   })

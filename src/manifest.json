@@ -9,7 +9,8 @@
     "webNavigation",
     "storage",
     "activeTab",
-    "cookies"
+    "cookies",
+    "tabs"
   ],
   "icons": {
     "128": "assets/face-icons/icon128-face-circle.png"
