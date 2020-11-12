@@ -83,10 +83,6 @@ OptMeowt uses the following third party libraries. We thank the developers.
 - [yaml (JavaScript parser)](https://github.com/eemeli/yaml)
 - [tippy.js](https://github.com/atomiks/tippyjs)
 
-<p align="center">
-  <img src="https://github.com/privacy-tech-lab/optmeowt-browser-extension/blob/master/plt_logo.png" width="200px" height="200px" title="privacy-tech-lab logo">
-<p>
-
 ## Developer Guide
 
 - When contibuting, it is important to note that we manage all package dependencies with npm. Thus, it is recommended to use the `npm i` command to install packages.
@@ -96,3 +92,7 @@ OptMeowt uses the following third party libraries. We thank the developers.
 ## More Information
 
 Visit Our [Landing Page](https://privacytechlab.org/optmeowt) to learn more about us and what we do.
+
+<p align="center">
+  <img src="https://github.com/privacy-tech-lab/optmeowt-browser-extension/blob/master/plt_logo.png" width="200px" height="200px" title="privacy-tech-lab logo">
+<p>
