@@ -17,6 +17,7 @@ import { YAML } from "/libs/yaml-1.10.0/index.js";
  * Initializers
  */
 var tabs = {}; /// Store all active tab id's, domain, requests, and response
+var wellknown = {} /// Store information about `well-known/gpc` files per tabs
 var activeTabID = 0;
 var sendSignal = false;
 var optout_headers = {};
@@ -138,19 +139,48 @@ function addDomSignal(details) {
 }
 
 /**
+ * Allows for all background page resets necessary on a page
+ * navigate. 
+ * Mainly to reset the well-known boolean check for a specific tab.
+ * @param {Object} details - retrieved info passed into callback
+ */
+function beforeNavigate(details) {
+  if (wellknown[details.tabId] === undefined) {
+    wellknown[details.tabId] = false
+  }
+}
+
+/**
  * Updates OptMeowt icon to reflect a Do Not Sell signal sent status
  * @param {Object} details - retrieved info passed into callback
  */
 function updateUI(details) {
-  chrome.browserAction.setIcon(
-    {
-      tabId: details.tabId,
-      path: "assets/face-icons/optmeow-face-circle-green-128.png",
-    },
-    function () {
-      console.log("Updated OptMeowt icon to GREEN");
-    }
-  );
+  console.log(`TAB ID FOR UPDATEUI ${details.tabId}`)
+  if (wellknown[details.tabId] === undefined) {
+    wellknown[details.tabId] = false
+  }
+  if (wellknown[details.tabId] === true) {
+    console.log("ITS TRUE")
+    chrome.browserAction.setIcon(
+      {
+        tabId: details.tabID,
+        path: "assets/face-icons/optmeow-face-circle-green-128.png",
+      },
+      function () {
+        console.log("Updated OptMeowt icon to SOLID GREEN.");
+      }
+    );
+  } else {
+    chrome.browserAction.setIcon(
+      {
+        tabId: details.tabId,
+        path: "assets/face-icons/optmeow-face-circle-green-ring-128.png",
+      },
+      function () {
+        console.log("Updated OptMeowt icon to GREEN");
+      }
+    );
+  }
 }
 
 /**
@@ -256,6 +286,10 @@ function enable() {
         // .then(response => {console.log("Setting dom signal!")})
         // .catch(e => {console.log(e)})
 
+        chrome.webNavigation.onBeforeNavigate.addListener(
+          beforeNavigate
+        )
+
         chrome.webRequest.onHeadersReceived.addListener(
           receivedHeaders,
           {
@@ -286,6 +320,13 @@ function enable() {
         // .then(response => {console.log("Setting dom signal!")})
         // .catch(e => {console.log(e)})
 
+        chrome.webNavigation.onBeforeNavigate.addListener(
+          beforeNavigate,
+          {
+            urls: ["<all_urls>"],
+          }
+        )
+
         chrome.webRequest.onHeadersReceived.addListener(
           receivedHeaders,
           {
@@ -312,7 +353,8 @@ function disable() {
   optout_headers = {};
   chrome.webRequest.onBeforeSendHeaders.removeListener(addHeaders);
   chrome.webRequest.onBeforeSendHeaders.removeListener(receivedHeaders);
-  chrome.webNavigation.onCommitted.removeListener(addDomSignal)
+  chrome.webNavigation.onCommitted.removeListener(addDomSignal);
+  chrome.webNavigation.onBeforeNavigate.removeListener(beforeNavigate);
   chrome.storage.local.set({ ENABLED: false });
   // chrome.browserAction.setBadgeText({ text: "" });
   var counter = 0;
@@ -447,6 +489,11 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   }
   if (request.msg === "WELLKNOWN") {
     console.log(`.well-known from ContentScr: ${JSON.stringify(request.data)}`);
+    var tabID = sender.tab.id;
+    console.log("TAB ID: ", tabID)
+    if (request.data["gpc"] === true){
+        wellknown[tabID] = true
+    }
   }
   if (request.msg === "FETCHCOOKIES") {
     setFilteredCookies("THIRDPARTYCOOKIES", request.data)
