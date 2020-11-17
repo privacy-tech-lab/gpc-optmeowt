@@ -145,6 +145,18 @@ document.addEventListener("DOMContentLoaded", (event) => {
     })
   })
 
+  chrome.storage.local.get(["DOMAINS"], (result) => {
+    var count = Object.keys(result.DOMAINS).filter((key) => {
+      return result.DOMAINS[key] == true;
+    }).length
+    document.getElementById("block-count").innerHTML = `<p style="color:#4472c4; font-size:25px">${count}</p> domains receiving signals`;
+  })
+
+  // chrome.storage.onChanged.addListener(() => {
+  //   document.getElementById("block-count").innerHTML = `${count} has been blocked so far!`;
+  //   count += 1;
+  // })
+
   /**
    * Generates third party domain list toggle functionality
    */
