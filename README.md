@@ -91,7 +91,7 @@ OptMeowt uses the following third party libraries. We thank the developers.
 
 ## More Information
 
-Visit Our [Landing Page](https://privacytechlab.org/optmeowt) to learn more about us and what we do.
+Visit our [site](https://privacytechlab.org/optmeowt) to learn more.
 
 <p align="center">
   <img src="https://github.com/privacy-tech-lab/optmeowt-browser-extension/blob/master/plt_logo.png" width="200px" height="200px" title="privacy-tech-lab logo">
