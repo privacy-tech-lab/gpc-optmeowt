@@ -11,8 +11,6 @@ background.js is the main background script handling OptMeowt's
 main opt-out functionality
 */
 
-import { YAML } from "/libs/yaml-1.10.0/index.js";
-
 /**
  * Initializers
  */
@@ -247,12 +245,12 @@ function incrementBadge() {
  */
 function enable() {
   // fetches new optout_headers on load
-  fetch("yaml/headers.yaml")
+  fetch("json/headers.json")
     .then((response) => {
       return response.text();
     })
     .then((value) => {
-      optout_headers = YAML.parse(value);
+      optout_headers = JSON.parse(value);
       console.log(optout_headers);
       
       // Headers
@@ -328,7 +326,7 @@ function enable() {
     })
     .catch((e) =>
       console.log(
-        `Failed to intialize OptMeowt (YAML load process) (ContentScript): ${e}`
+        `Failed to intialize OptMeowt (JSON load process) (ContentScript): ${e}`
       )
     );
 }

@@ -24,8 +24,7 @@
     "mustache": "^4.0.1",
     "psl": "^1.8.0",
     "tippy.js": "^6.2.7",
-    "uikit": "3.4.0",
-    "yaml": "^1.10.0"
+    "uikit": "3.4.0"
   },
   "devDependencies": {
     "grunt": "~0.4.5",

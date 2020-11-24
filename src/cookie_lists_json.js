@@ -6,24 +6,22 @@ privacy-tech-lab, https://privacytechlab.org/
 
 
 /*
-cookie_lists_YAML.js
+cookie_lists_JSON.js
 ================================================================================
-cookie_lists_YAML.js fetches all files mentioned in cookieYAMLS, retrieves
+cookie_lists_JSON.js fetches all files mentioned in cookieJSONS, retrieves
 their respective cookies (custom & 3rd party), and places them.
 */
 
 
-import { YAML } from "../libs/yaml-1.10.0/index.js";
-
-export const cookieYAMLS = [
-  "yaml/cookies_3p.YAML",
-  "yaml/cookies_usercustom.YAML"
+export const cookieJSONS = [
+  "json/cookies_3p.JSON",
+  "json/cookies_usercustom.JSON"
 ]
 
 function checkCookieLists(callback, domainFilter) {
-  for (let loc in cookieYAMLS) {
-    console.log(cookieYAMLS[loc])
-    retrieveCookieYAML(cookieYAMLS[loc], callback, domainFilter)
+  for (let loc in cookieJSONS) {
+    console.log(cookieJSONS[loc])
+    retrieveCookieJSON(cookieJSONS[loc], callback, domainFilter)
   }
 }
 
@@ -31,14 +29,14 @@ checkCookieLists(setAllCookies);
 
 ////////////////////////////////////////////////////////////////////////////////
 
-/// Sets all cookies from cookieYAMLS on OptMeowt install
+/// Sets all cookies from cookieJSONS on OptMeowt install
 
 /**
- * Retrieves the cookie data stored in the 3rd_party_cookies yaml file
- * @param {string} location - Location/name of the YAML to be fetched
- * @return {Object} Data inside YAML file in an object
+ * Retrieves the cookie data stored in the 3rd_party_cookies json file
+ * @param {string} location - Location/name of the JSON to be fetched
+ * @return {Object} Data inside JSON file in an object
  */
-function retrieveCookieYAML(location, callback, domainFilter) {
+function retrieveCookieJSON(location, callback, domainFilter) {
   fetch(location)
   .then(response => {
     // console.log("Response before text(): ",response)
@@ -46,15 +44,15 @@ function retrieveCookieYAML(location, callback, domainFilter) {
   })
   .then(value => {
     console.log(`Retrieved ${location}`)
-    var json = YAML.parse(value)
+    var json = JSON.parse(value)
     var locname = location.substring(5, (location.length - 5))
     console.log("locname", locname)
     console.log(json)
     if (locname === "cookies_3p") {
-      chrome.storage.local.set({ "THIRDPARTYCOOKIES": YAML.parse(value) })
+      chrome.storage.local.set({ "THIRDPARTYCOOKIES": JSON.parse(value) })
     }
     if (locname === "cookies_usercustom") {
-      chrome.storage.local.set({ "CUSTOMCOOKIES": YAML.parse(value) })
+      chrome.storage.local.set({ "CUSTOMCOOKIES": JSON.parse(value) })
     }
     callback(json, domainFilter)
   })
