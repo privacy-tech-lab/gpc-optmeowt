@@ -6,9 +6,9 @@ privacy-tech-lab, https://privacytechlab.org/
 
 
 /*
-cookie_lists_YAML.js
+cookie_lists_JSON.js
 ================================================================================
-cookie_lists_YAML.js fetches all files mentioned in cookieYAMLS, retrieves
+cookie_lists_JSON.js fetches all files mentioned in cookieJSONS, retrieves
 their respective cookies (custom & 3rd party), and places them.
 */
 
