@@ -55,14 +55,14 @@ You did it! You have installed OptMeowt. You can use it via the icon next to the
 - `src/libs`: Contains all of the libraries used in the browser extension.
 - `src/options`: Contains the UI elements and scripts for the supplemental options page.
 - `src/popup`: Contains the UI elements and scripts for the popup inside the extensions bar.
-- `src/yaml`: Contains the YAML configuration files for OptMeowt's Do Not Sell cookies and headers.
-- `src/yaml/cookies_3p.yaml`: Contains the 3rd party opt out cookies collected from various ad networks (especially those set by the [DAA's CCPA Opt Out Tool for the Web](https://optout.privacyrights.info/?c=1)).
-- `src/yaml/cookies_usercustom.yaml`: YAML file where _users can place their own custom opt out cookies_ to be used by OptMeowt.
-- `src/yaml/headers.yaml`: Contains the opt out HTTP header specs used by OptMeowt.
+- `src/json`: Contains the JSON configuration files for OptMeowt's Do Not Sell cookies and headers.
+- `src/json/cookies_3p.json`: Contains the 3rd party opt out cookies collected from various ad networks (especially those set by the [DAA's CCPA Opt Out Tool for the Web](https://optout.privacyrights.info/?c=1)).
+- `src/json/cookies_usercustom.json`: JSON file where _users can place their own custom opt out cookies_ to be used by OptMeowt.
+- `src/json/headers.json`: Contains the opt out HTTP header specs used by OptMeowt.
 - `src/background.html`: OptMeowt's background page. Launches all critical extension scripts and libraries.
 - `src/background.js`: This is the main script running OptMeowt. It controls all of the major backend, regarding whether the extension is on/off, sending the Do Not Sell signal, etc.
 - `src/contentScript.js`: This is the main supplemental script that passes data to `background.js` and runs on every webpage loaded.
-- `src/cookie_lists_yaml.js`: Handles placing all of the opt out cookies stored in `cookies_3p.yaml` and `cookies_usercustom.yaml`. This currently runs on OptMeowt's install or on an extension refresh.
+- `src/cookie_lists_json.js`: Handles placing all of the opt out cookies stored in `cookies_3p.json` and `cookies_usercustom.json`. This currently runs on OptMeowt's install or on an extension refresh.
 - `src/dom.js`: This is a JS file that implements the functionality of setting a DOM GPC signal to an outgoing request
 - `src/domainlist.js`: This is the main JS file that allows the extension to communicate with the `domain list` stored in the browser's local storage.
 - `src/manifest.json`: This provides the browser with metadata about the extension, regarding its name, permissions, etc.
@@ -80,7 +80,6 @@ OptMeowt uses the following third party libraries. We thank the developers.
 - [Switch Animation by Aaron Iker](https://codepen.io/aaroniker/pen/oaQdQZ)
 - [psl (Public Suffix List)](https://github.com/lupomontero/psl)
 - [Dark Mode Switch](https://github.com/coliff/dark-mode-switch)
-- [yaml (JavaScript parser)](https://github.com/eemeli/yaml)
 - [tippy.js](https://github.com/atomiks/tippyjs)
 
 ## Developer Guide
