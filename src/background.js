@@ -16,6 +16,7 @@ main opt-out functionality
  */
 var tabs = {}; /// Store all active tab id's, domain, requests, and response
 var wellknown = {} /// Store information about `well-known/gpc` files per tabs
+var signalPerTab = {} /// Store information on a signal being sent for updateUI
 var activeTabID = 0;
 var sendSignal = false;
 var optout_headers = {};
@@ -34,6 +35,7 @@ var addHeaders = (details) => {
     updateDomainsAndSignal(details);
 
     if (sendSignal) {
+      signalPerTab[details.tabId] = true
       initUSP();
       updateUI(details);
       return updateHeaders(details);
@@ -144,6 +146,7 @@ function addDomSignal(details) {
  */
 function beforeNavigate(details) {
   wellknown[details.tabId] = false
+  signalPerTab[details.tabId] = false
 }
 
 /**
@@ -478,15 +481,17 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     console.log("TAB ID: ", tabID)
     if (request.data["gpc"] === true){
       wellknown[tabID] = true
-      chrome.browserAction.setIcon(
-        {
-          tabId: tabID,
-          path: "assets/face-icons/optmeow-face-circle-green-128.png",
-        },
-        function () {
-          console.log("Updated OptMeowt icon to SOLID GREEN.", );
-        }
-      );
+      if (signalPerTab[tabID] === true) {
+        chrome.browserAction.setIcon(
+          {
+            tabId: tabID,
+            path: "assets/face-icons/optmeow-face-circle-green-128.png",
+          },
+          function () {
+            console.log("Updated OptMeowt icon to SOLID GREEN.", );
+          }
+        );
+      }
     }
   }
   if (request.msg === "FETCHCOOKIES") {
