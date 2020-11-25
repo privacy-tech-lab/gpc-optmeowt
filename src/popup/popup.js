@@ -145,6 +145,13 @@ document.addEventListener("DOMContentLoaded", (event) => {
     })
   })
 
+  chrome.storage.local.get(["DOMAINS"], (result) => {
+    var count = Object.keys(result.DOMAINS).filter((key) => {
+      return result.DOMAINS[key] == true;
+    }).length
+    document.getElementById("block-count").innerHTML = `<p id = "domain-count" style="color:#4472c4; font-size:25px; font-weight: bold">${count}</p> domains receiving signals`;
+  })
+
   /**
    * Generates third party domain list toggle functionality
    */
