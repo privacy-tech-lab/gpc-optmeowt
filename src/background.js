@@ -11,12 +11,12 @@ background.js is the main background script handling OptMeowt's
 main opt-out functionality
 */
 
-import { YAML } from "/libs/yaml-1.10.0/index.js";
-
 /**
  * Initializers
  */
 var tabs = {}; /// Store all active tab id's, domain, requests, and response
+var wellknown = {} /// Store information about `well-known/gpc` files per tabs
+var signalPerTab = {} /// Store information on a signal being sent for updateUI
 var activeTabID = 0;
 var sendSignal = false;
 var optout_headers = {};
@@ -35,6 +35,7 @@ var addHeaders = (details) => {
     updateDomainsAndSignal(details);
 
     if (sendSignal) {
+      signalPerTab[details.tabId] = true
       initUSP();
       updateUI(details);
       return updateHeaders(details);
@@ -138,19 +139,36 @@ function addDomSignal(details) {
 }
 
 /**
+ * Allows for all background page resets necessary on a page
+ * navigate. 
+ * Mainly to reset the well-known boolean check for a specific tab.
+ * @param {Object} details - retrieved info passed into callback
+ */
+function beforeNavigate(details) {
+  wellknown[details.tabId] = false
+  signalPerTab[details.tabId] = false
+}
+
+/**
  * Updates OptMeowt icon to reflect a Do Not Sell signal sent status
  * @param {Object} details - retrieved info passed into callback
  */
 function updateUI(details) {
-  chrome.browserAction.setIcon(
-    {
-      tabId: details.tabId,
-      path: "assets/face-icons/optmeow-face-circle-green-128.png",
-    },
-    function () {
-      console.log("Updated OptMeowt icon to GREEN");
-    }
-  );
+  console.log(`TAB ID FOR UPDATEUI ${details.tabId}`)
+  if (wellknown[details.tabId] === undefined) {
+    wellknown[details.tabId] = false
+  }
+  if (wellknown[details.tabId] === false) {
+    chrome.browserAction.setIcon(
+      {
+        tabId: details.tabId,
+        path: "assets/face-icons/optmeow-face-circle-green-ring-128.png",
+      },
+      function () {
+        console.log("Updated OptMeowt icon to GREEN");
+      }
+    );
+  }
 }
 
 /**
@@ -230,12 +248,12 @@ function incrementBadge() {
  */
 function enable() {
   // fetches new optout_headers on load
-  fetch("yaml/headers.yaml")
+  fetch("json/headers.json")
     .then((response) => {
       return response.text();
     })
     .then((value) => {
-      optout_headers = YAML.parse(value);
+      optout_headers = JSON.parse(value);
       console.log(optout_headers);
       
       // Headers
@@ -255,6 +273,10 @@ function enable() {
         )
         // .then(response => {console.log("Setting dom signal!")})
         // .catch(e => {console.log(e)})
+
+        chrome.webNavigation.onBeforeNavigate.addListener(
+          beforeNavigate
+        )
 
         chrome.webRequest.onHeadersReceived.addListener(
           receivedHeaders,
@@ -286,6 +308,13 @@ function enable() {
         // .then(response => {console.log("Setting dom signal!")})
         // .catch(e => {console.log(e)})
 
+        chrome.webNavigation.onBeforeNavigate.addListener(
+          beforeNavigate,
+          {
+            urls: ["<all_urls>"],
+          }
+        )
+
         chrome.webRequest.onHeadersReceived.addListener(
           receivedHeaders,
           {
@@ -300,7 +329,7 @@ function enable() {
     })
     .catch((e) =>
       console.log(
-        `Failed to intialize OptMeowt (YAML load process) (ContentScript): ${e}`
+        `Failed to intialize OptMeowt (JSON load process) (ContentScript): ${e}`
       )
     );
 }
@@ -312,7 +341,8 @@ function disable() {
   optout_headers = {};
   chrome.webRequest.onBeforeSendHeaders.removeListener(addHeaders);
   chrome.webRequest.onBeforeSendHeaders.removeListener(receivedHeaders);
-  chrome.webNavigation.onCommitted.removeListener(addDomSignal)
+  chrome.webNavigation.onCommitted.removeListener(addDomSignal);
+  chrome.webNavigation.onBeforeNavigate.removeListener(beforeNavigate);
   chrome.storage.local.set({ ENABLED: false });
   // chrome.browserAction.setBadgeText({ text: "" });
   var counter = 0;
@@ -447,6 +477,22 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   }
   if (request.msg === "WELLKNOWN") {
     console.log(`.well-known from ContentScr: ${JSON.stringify(request.data)}`);
+    var tabID = sender.tab.id;
+    console.log("TAB ID: ", tabID)
+    if (request.data["gpc"] === true){
+      wellknown[tabID] = true
+      if (signalPerTab[tabID] === true) {
+        chrome.browserAction.setIcon(
+          {
+            tabId: tabID,
+            path: "assets/face-icons/optmeow-face-circle-green-128.png",
+          },
+          function () {
+            console.log("Updated OptMeowt icon to SOLID GREEN.", );
+          }
+        );
+      }
+    }
   }
   if (request.msg === "FETCHCOOKIES") {
     setFilteredCookies("THIRDPARTYCOOKIES", request.data)
