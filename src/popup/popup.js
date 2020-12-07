@@ -170,7 +170,48 @@ document.addEventListener("DOMContentLoaded", (event) => {
       document.getElementById("divider").style.display = "none"
     }
   });
+
+  chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+      console.log("TABS URL ", tabs[0].url)
+      buildAcceptedBadge(tabs[0].url)
+  });
 })
+
+async function buildAcceptedBadge(currentUrl) {
+  var url = new URL(currentUrl); 
+  console.log("Url: ", currentUrl)
+  console.log(`buildAcceptedBadge(), ${url.origin}/.well-known/gpc.json`)
+
+  fetch(`${url.origin}/.well-known/gpc.json`)
+    .then((response) => {
+      return response.json()
+    })
+    .then((data) => {
+      console.log(`.well-known via ContentScr: ${JSON.stringify(data)}`)
+      if (data["gpc"] === true){
+
+        document.getElementById(`accepted-badge`).innerHTML = `
+          <div
+          class="uk-badge button uk-text-center uk-text-bold uk-align-center"
+          style="
+            margin-right: auto;
+            margin-left: auto;
+            margin-top: auto;
+            margin-bottom: auto;
+            background-color: #a0e682;
+            border: 1px solid #a0e682;
+            color: var(--text-color-lighter);
+          "
+        >
+          Do Not Sell Signal Accepted
+        </div>
+        <br>    
+      `;
+
+      }
+    })
+    .catch((e) => {console.log(`.well-known error: ${e}`)})
+}
 
 /**
  * Builds the requested domains HTML of the popup window
