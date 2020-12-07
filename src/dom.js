@@ -6,7 +6,7 @@ privacy-tech-lab, https://privacytechlab.org/
 
 function setDomSignal () {
     try {
-        var GPCVal = 1
+        var GPCVal = true
         const GPCDomVal = `Object.defineProperty(navigator, "globalPrivacyControl", {
             value: ${GPCVal},
             configurable: false,
