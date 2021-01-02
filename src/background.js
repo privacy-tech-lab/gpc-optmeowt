@@ -21,6 +21,7 @@ var activeTabID = 0;
 var sendSignal = false;
 var optout_headers = {};
 var userAgent = window.navigator.userAgent.indexOf("Firefox") > -1 ? "moz" : "chrome"
+var global_domains = {};
 
 
 /**
@@ -30,7 +31,8 @@ var userAgent = window.navigator.userAgent.indexOf("Firefox") > -1 ? "moz" : "ch
  *                       (request headers)
  */
 var addHeaders = (details) => {
-  if (!(details.type === "image")) {
+  console.log("details for addHeaders with url:", details.url,  "is:", details, "sendSignal:", sendSignal);
+  if (!(details.type === "TEST")) {
     console.log(`the type is -> ${details.type}, ${typeof details.type}`);
     updateDomainsAndSignal(details);
 
@@ -61,36 +63,55 @@ var receivedHeaders = (details) => {
  * @param {Object} details - retrieved info passed into callback
  */
 function updateDomainsAndSignal(details) {
+  /// Add current domain to list of domains to send headers to on current tab
+  var url = new URL(details.url);
+  var parsed = psl.parse(url.hostname);
+  var d = parsed.domain;
+  global_domains[d] = true;
+
   chrome.storage.local.get(["DOMAINLIST_ENABLED", "DOMAINS"], function (
     result
   ) {
-    /// Store current domain in DOMAINS
-    var url = new URL(details.url);
-    var parsed = psl.parse(url.hostname);
-    var d = parsed.domain;
     var domains = result.DOMAINS;
-    console.log(d);
+    console.log("domains is:", domains, "when global_domains is:", global_domains);
 
-    if (domains[d] === undefined) {
-      domains[d] = true;
-      chrome.storage.local.set({ DOMAINS: domains });
-      console.log("Stored current domain");
+    /// Add each domain in gloabl_domains to the chrome domain list
+    /// This ensures that all domains on the page are added to the domain list 
+    /// if they haven't been already added
+    for (const domain in global_domains) {
+      if (domains[domain] === undefined) {
+        domains[domain] = true;
+      }
     }
+
+    chrome.storage.local.set({ DOMAINS: domains }, function(){
+      console.log("setting the storage for domain:", d);
+    });
+
+    console.log("parsed domain in updateDomain is:", d, "domains[d] is:", domains[d], "domains is:", domains);
+
+
     /// Set to true if domainlist is off, or if domainlist is on
     /// AND domain is in domainlist
     /// Basically, we want to know if we send the signal to a given domain
     if (result.DOMAINLIST_ENABLED) {
       if (domains[d] === true) {
         sendSignal = true;
+        console.log("set sendSignal to TRUE for domain:", d);
       } else {
+        console.log("set sendSignal to false for domain:", d);
         sendSignal = false;
       }
     } else {
+      console.log("set sendSignal to TRUE for domain:", d);
       sendSignal = true; /// Always send signal to all domains
     }
-    console.log(sendSignal);
+    console.log("sendsignal:", sendSignal);
   });
 }
+
+
+
 
 /**
  * Updates HTTP headers with Do Not Sell headers according
@@ -103,7 +124,7 @@ function updateHeaders(details) {
       let s = optout_headers[signal];
       console.log(s);
       details.requestHeaders.push({ name: s.name, value: s.value });
-      console.log("Sending signal added...", s.name, s.value);
+      console.log("Sending signal added for url:", details.url, "signal:", s.name, s.value);
     }
     return { requestHeaders: details.requestHeaders };
   } else {
@@ -461,11 +482,13 @@ function setFilteredCookies(cookiesList, domainFilter) {
   })
 }
 
+
 /**
  * Listener for runtime messages, in partuclar "TAB" from contentScript.js
  * or for "INIT" to start popup badge counter
  */
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+  console.log("request is:", request, "sendResponse:", sendResponse);
   if (request.ENABLED != null) {
     if (request.ENABLED) {
       enable();
@@ -475,6 +498,14 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
       sendResponse("DONE");
     }
   }
+  /// Once the DOM content has been loaded, global_domains is cleared
+  /// This leaves a few domains that come in after DOM has been loaded
+  /// but its only around 5 or so, nothing major.
+  if (request.msg === "LOADED") {
+    global_domains = {};
+    console.log("DOM content loaded message received in background.js. global_domains is:", global_domains);
+  }
+
   if (request.msg === "WELLKNOWN") {
     console.log(`.well-known from ContentScr: ${JSON.stringify(request.data)}`);
     var tabID = sender.tab.id;
@@ -499,6 +530,7 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     setFilteredCookies("USERCUSTOMCOOKIES", request.data)
   }
   if (request.msg === "TAB") {
+    console.log("TAB MESSAGE HAS BEEN RECEIVED")
     var url = new URL(sender.origin);
     var parsed = psl.parse(url.hostname);
     var domain = parsed.domain;
@@ -512,6 +544,7 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     } else if (tabs[tabID].DOMAIN !== domain) {
       tabs[tabID].DOMAIN = domain;
       let urls = tabs[tabID]["REQUEST_DOMAINS"];
+      console.log("urls are:", urls)
       for (var key in urls) {
         if (urls[key]["TIMESTAMP"] >= request.data) {
           tabs[tabID]["REQUEST_DOMAINS"][key] = urls[key];
@@ -519,6 +552,7 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
           delete tabs[tabID]["REQUEST_DOMAINS"][key];
         }
       }
+
       tabs[tabID]["TIMESTAMP"] = request.data;
     }
   } else if (request.msg == "INIT") {
