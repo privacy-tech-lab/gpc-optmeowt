@@ -22,6 +22,11 @@ import {
  * @param {Object} event - contains information about the event
  */
 document.addEventListener("DOMContentLoaded", (event) => {
+  ///Send the message that the DOM has loaded to background.js to clear global_domains
+  chrome.runtime.sendMessage({
+    msg: "LOADED",
+    data: Date.now(),
+  });
   var parsed_domain = "";
 
   /**
