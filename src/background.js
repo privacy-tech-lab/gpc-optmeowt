@@ -142,7 +142,8 @@ function initDomJS(details) {
   console.log("Initializing DOM signal...")
   chrome.tabs.executeScript(details.tabId, {
     file: "dom.js",
-    allFrames: true,
+    frameId: details.frameId, // Supposed to solve multiple injections
+                              // as opposed to allFrames: true
     runAt: "document_start",
   });
 }
@@ -155,6 +156,22 @@ function addDomSignal(details) {
   console.log("Adding dom signal...")
   updateDomainsAndSignal(details);
   if (sendSignal) {
+    // From DDG, regarding `Injection into non-html pages` on issue-128
+    try { 
+      const contentType = document.documentElement.ownerDocument.contentType
+      // don't inject into xml or json pages
+      if (contentType === 'application/xml' ||
+          contentType === 'application/json' ||
+          contentType === 'text/xml' ||
+          contentType === 'text/json' ||
+          contentType === 'text/rss+xml' ||
+          contentType === 'application/rss+xml'
+      ) {
+          return
+      }
+  } catch (e) {
+      // if we can't find content type, go ahead with injection
+  }
     initDomJS(details);
   }
 }
