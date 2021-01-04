@@ -90,7 +90,7 @@ OptMeowt uses the following third party libraries. We thank the developers.
   
 ## FAQ \ Known quirks \ Reporting bugs
 
-If you have questions about OptMeowt's functionality, or believe you may have found a bug, please check out our `FAQ \ Known quirks` page on the Wiki above to see if we have already addressed the issue. If you cannot find what you are looking for, please feel free to open an issue and we will address it as soon as we can! We appreciate any input from all of our users!
+If you have questions about OptMeowt's functionality, or believe you may have found a bug, please check out our [FAQ \ Known quirks](https://github.com/privacy-tech-lab/optmeowt-browser-extension/wiki/FAQ-%5C-Known-quirks) page on the [Wiki](https://github.com/privacy-tech-lab/optmeowt-browser-extension/wiki) above to see if we have already addressed the issue. If you cannot find what you are looking for, please feel free to open an issue and we will address it as soon as we can! We appreciate any input from all of our users!
 
 ## More Information
 
