@@ -87,6 +87,10 @@ OptMeowt uses the following third party libraries. We thank the developers.
 - When contibuting, it is important to note that we manage all package dependencies with npm. Thus, it is recommended to use the `npm i` command to install packages.
 - In the event that you install a new dependency, you need to update Grantfile.js file with a new task of the form:\
   `task: { expand: true, cwd: "./node_modules/..../", src: "*", dest: "./src/libs-js" }` depending on whether you need the js files or the css files of the newly installed library.
+  
+## FAQ \ Known quirks \ Reporting bugs
+
+If you have questions about OptMeowt's functionality, or believe you may have found a bug, please check out our `FAQ \ Known quirks` page on the Wiki above to see if we have already addressed the issue. If you cannot find what you are looking for, please feel free to open an issue and we will address it as soon as we can! We appreciate any input from all of our users!
 
 ## More Information
 
