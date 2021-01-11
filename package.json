@@ -17,14 +17,14 @@
   },
   "homepage": "https://github.com/privacy-tech-lab/optmeowt-browser-extension#readme",
   "dependencies": {
-    "@popperjs/core": "^2.5.4",
-    "FileSaver": "^0.10.0",
+    "@popperjs/core": "^2.6.0",
+    "file-saver": "^2.0.4",
     "animate.css": "^4.1.1",
     "dark-mode-switch": "^1.0.0",
-    "mustache": "^4.0.1",
+    "mustache": "^4.1.0",
     "psl": "^1.8.0",
     "tippy.js": "^6.2.7",
-    "uikit": "3.4.0"
+    "uikit": "3.6.9"
   },
   "devDependencies": {
     "grunt": "~0.4.5",

@@ -17,7 +17,7 @@ import {
   handleUpload,
 } from "../../../domainlist.js";
 import { darkSwitchFunction } from "../../../libs/dark-mode-switch-1.0.0/dark-mode-switch.js";
-import "../../../libs/FileSaver.js-2.0.2/src/FileSaver.js";
+import "../../../libs-js/FileSaver.js";
 
 /**
  * @typedef headings

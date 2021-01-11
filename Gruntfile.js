@@ -12,7 +12,7 @@ module.exports = function(grunt) {
             } ,
             task2: {
                 expand: true,
-                cwd: "./node_modules/FileSaver/",
+                cwd: "./node_modules/file-saver/src/",
                 src: "*.js",
                 dest: "./src/libs-js"
             },
@@ -42,16 +42,29 @@ module.exports = function(grunt) {
             }, 
             task7: {
                 expand: true,
+                cwd: "./node_modules/dark-mode-switch",
+                src: "*.js",
+                dest: "./src/libs-js"
+            },
+            task8: {
+                expand: true,
+                cwd: "./node_modules/dark-mode-switch",
+                src: "*.css",
+                dest: "./src/libs-css"
+            },
+            task9: {
+                expand: true,
                 cwd: "./node_modules/uikit/dist/css/",
                 src: "*.css",
                 dest: "./src/libs-css"
             },
-            task8: {
+            task10: {
                 expand: true,
                 cwd: "./node_modules/animate.css/",
                 src: "*.css",
                 dest: "./src/libs-css"
-            }      
+            },
+                     
 
         },
     })

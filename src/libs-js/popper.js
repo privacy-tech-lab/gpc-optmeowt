@@ -1,5 +1,5 @@
 /**
- * @popperjs/core v2.5.4 - MIT License
+ * @popperjs/core v2.6.0 - MIT License
  */
 
 (function (global, factory) {
@@ -88,8 +88,9 @@
   }
 
   function getDocumentElement(element) {
-    // $FlowFixMe: assume body is always available
-    return ((isElement(element) ? element.ownerDocument : element.document) || window.document).documentElement;
+    // $FlowFixMe[incompatible-return]: assume body is always available
+    return ((isElement(element) ? element.ownerDocument : // $FlowFixMe[prop-missing]
+    element.document) || window.document).documentElement;
   }
 
   function getWindowScrollBarX(element) {
@@ -175,12 +176,14 @@
       return element;
     }
 
-    return (// $FlowFixMe: this is a quicker (but less type safe) way to save quite some bytes from the bundle
+    return (// this is a quicker (but less type safe) way to save quite some bytes from the bundle
+      // $FlowFixMe[incompatible-return]
+      // $FlowFixMe[prop-missing]
       element.assignedSlot || // step into the shadow DOM of the parent of a slotted node
       element.parentNode || // DOM Element detected
-      // $FlowFixMe: need a better way to handle this...
+      // $FlowFixMe[incompatible-return]: need a better way to handle this...
       element.host || // ShadowRoot detected
-      // $FlowFixMe: HTMLElement is a Node
+      // $FlowFixMe[incompatible-call]: HTMLElement is a Node
       getDocumentElement(element) // fallback
 
     );
@@ -188,7 +191,7 @@
 
   function getScrollParent(node) {
     if (['html', 'body', '#document'].indexOf(getNodeName(node)) >= 0) {
-      // $FlowFixMe: assume body is always available
+      // $FlowFixMe[incompatible-return]: assume body is always available
       return node.ownerDocument.body;
     }
 
@@ -202,7 +205,7 @@
   /*
   given a DOM element, return the list of all scroll parents, up the list of ancesors
   until we get to the top window object. This list is what we attach scroll listeners
-  to, because if any of these parent elements scroll, we'll need to re-calculate the 
+  to, because if any of these parent elements scroll, we'll need to re-calculate the
   reference element's position.
   */
 
@@ -216,7 +219,7 @@
     var win = getWindow(scrollParent);
     var target = isBody ? [win].concat(win.visualViewport || [], isScrollParent(scrollParent) ? scrollParent : []) : scrollParent;
     var updatedList = list.concat(target);
-    return isBody ? updatedList : // $FlowFixMe: isBody tells us target will be an HTMLElement here
+    return isBody ? updatedList : // $FlowFixMe[incompatible-call]: isBody tells us target will be an HTMLElement here
     updatedList.concat(listScrollParents(getParentNode(target)));
   }
 
@@ -559,7 +562,7 @@
         do {
           if (next && parent.isSameNode(next)) {
             return true;
-          } // $FlowFixMe: need a better way to handle this...
+          } // $FlowFixMe[prop-missing]: need a better way to handle this...
 
 
           next = next.parentNode || next.host;
@@ -606,7 +609,7 @@
 
     if (!isElement(clipperElement)) {
       return [];
-    } // $FlowFixMe: https://github.com/facebook/flow/issues/1414
+    } // $FlowFixMe[incompatible-return]: https://github.com/facebook/flow/issues/1414
 
 
     return clippingParents.filter(function (clippingParent) {
@@ -696,11 +699,11 @@
 
       switch (variation) {
         case start:
-          offsets[mainAxis] = Math.floor(offsets[mainAxis]) - Math.floor(reference[len] / 2 - element[len] / 2);
+          offsets[mainAxis] = offsets[mainAxis] - (reference[len] / 2 - element[len] / 2);
           break;
 
         case end:
-          offsets[mainAxis] = Math.floor(offsets[mainAxis]) + Math.ceil(reference[len] / 2 - element[len] / 2);
+          offsets[mainAxis] = offsets[mainAxis] + (reference[len] / 2 - element[len] / 2);
           break;
       }
     }
@@ -1106,7 +1109,7 @@
   // Zooming can change the DPR, but it seems to report a value that will
   // cleanly divide the values into the appropriate subpixels.
 
-  function roundOffsets(_ref) {
+  function roundOffsetsByDPR(_ref) {
     var x = _ref.x,
         y = _ref.y;
     var win = window;
@@ -1126,11 +1129,14 @@
         offsets = _ref2.offsets,
         position = _ref2.position,
         gpuAcceleration = _ref2.gpuAcceleration,
-        adaptive = _ref2.adaptive;
+        adaptive = _ref2.adaptive,
+        roundOffsets = _ref2.roundOffsets;
 
-    var _roundOffsets = roundOffsets(offsets),
-        x = _roundOffsets.x,
-        y = _roundOffsets.y;
+    var _ref3 = roundOffsets ? roundOffsetsByDPR(offsets) : offsets,
+        _ref3$x = _ref3.x,
+        x = _ref3$x === void 0 ? 0 : _ref3$x,
+        _ref3$y = _ref3.y,
+        y = _ref3$y === void 0 ? 0 : _ref3$y;
 
     var hasX = offsets.hasOwnProperty('x');
     var hasY = offsets.hasOwnProperty('y');
@@ -1143,7 +1149,7 @@
 
       if (offsetParent === getWindow(popper)) {
         offsetParent = getDocumentElement(popper);
-      } // $FlowFixMe: force type refinement, we compare offsetParent with window above, but Flow doesn't detect it
+      } // $FlowFixMe[incompatible-cast]: force type refinement, we compare offsetParent with window above, but Flow doesn't detect it
 
       /*:: offsetParent = (offsetParent: Element); */
 
@@ -1174,13 +1180,15 @@
     return Object.assign(Object.assign({}, commonStyles), {}, (_Object$assign2 = {}, _Object$assign2[sideY] = hasY ? y + "px" : '', _Object$assign2[sideX] = hasX ? x + "px" : '', _Object$assign2.transform = '', _Object$assign2));
   }
 
-  function computeStyles(_ref3) {
-    var state = _ref3.state,
-        options = _ref3.options;
+  function computeStyles(_ref4) {
+    var state = _ref4.state,
+        options = _ref4.options;
     var _options$gpuAccelerat = options.gpuAcceleration,
         gpuAcceleration = _options$gpuAccelerat === void 0 ? true : _options$gpuAccelerat,
         _options$adaptive = options.adaptive,
-        adaptive = _options$adaptive === void 0 ? true : _options$adaptive;
+        adaptive = _options$adaptive === void 0 ? true : _options$adaptive,
+        _options$roundOffsets = options.roundOffsets,
+        roundOffsets = _options$roundOffsets === void 0 ? true : _options$roundOffsets;
 
     {
       var transitionProperty = getComputedStyle(state.elements.popper).transitionProperty || '';
@@ -1203,7 +1211,8 @@
       state.styles.popper = Object.assign(Object.assign({}, state.styles.popper), mapToStyles(Object.assign(Object.assign({}, commonStyles), {}, {
         offsets: state.modifiersData.popperOffsets,
         position: state.options.strategy,
-        adaptive: adaptive
+        adaptive: adaptive,
+        roundOffsets: roundOffsets
       })));
     }
 
@@ -1211,7 +1220,8 @@
       state.styles.arrow = Object.assign(Object.assign({}, state.styles.arrow), mapToStyles(Object.assign(Object.assign({}, commonStyles), {}, {
         offsets: state.modifiersData.arrow,
         position: 'absolute',
-        adaptive: false
+        adaptive: false,
+        roundOffsets: roundOffsets
       })));
     }
 
@@ -1242,7 +1252,7 @@
         return;
       } // Flow doesn't support to extend this property, but it's the most
       // effective way to apply styles to an HTMLElement
-      // $FlowFixMe
+      // $FlowFixMe[cannot-write]
 
 
       Object.assign(element.style, style);
@@ -1291,10 +1301,7 @@
 
         if (!isHTMLElement(element) || !getNodeName(element)) {
           return;
-        } // Flow doesn't support to extend this property, but it's the most
-        // effective way to apply styles to an HTMLElement
-        // $FlowFixMe
-
+        }
 
         Object.assign(element.style, style);
         Object.keys(attributes).forEach(function (attribute) {
@@ -1407,8 +1414,7 @@
     var variation = getVariation(placement);
     var placements$1 = variation ? flipVariations ? variationPlacements : variationPlacements.filter(function (placement) {
       return getVariation(placement) === variation;
-    }) : basePlacements; // $FlowFixMe
-
+    }) : basePlacements;
     var allowedPlacements = placements$1.filter(function (placement) {
       return allowedAutoPlacements.indexOf(placement) >= 0;
     });
@@ -1419,7 +1425,7 @@
       {
         console.error(['Popper: The `allowedAutoPlacements` option did not allow any', 'placements. Ensure the `placement` option matches the variation', 'of the allowed placements.', 'For example, "auto" cannot be used to allow "bottom-start".', 'Use "auto-start" instead.'].join(' '));
       }
-    } // $FlowFixMe: Flow seems to have problems with two array unions...
+    } // $FlowFixMe[incompatible-type]: Flow seems to have problems with two array unions...
 
 
     var overflows = allowedPlacements.reduce(function (acc, placement) {
