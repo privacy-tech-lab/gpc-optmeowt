@@ -59,6 +59,23 @@ body {
 /********************************************************/
 
 /*
+About page Q/A heading style
+*/
+.question {
+  color: var(--text-color-darker);
+  font-size: x-large;
+  user-select: none;
+}
+
+.answer {
+  color: var(--text-color);
+  font-size: medium;
+  user-select: none;
+}
+
+/********************************************************/
+
+/*
 Navbar item style
 */
 .navbar-item {
