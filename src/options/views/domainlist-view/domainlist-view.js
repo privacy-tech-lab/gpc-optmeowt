@@ -163,6 +163,8 @@ function buildList() {
                 margin-left: 5px;
                 margin-top: auto;
                 margin-bottom: auto;
+                padding-right: 5px;
+                padding-left: 5px;
                 background-color: white;
                 border: 1px solid #e06d62;
                 color: #e06d62;
