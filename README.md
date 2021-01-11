@@ -74,13 +74,14 @@ You did it! You have installed OptMeowt. You can use it via the icon next to the
 OptMeowt uses the following third party libraries. We thank the developers.
 
 - [animate.css](https://github.com/animate-css/animate.css)
-- [mustache.js](https://github.com/janl/mustache.js)
-- [FileSaver.js](https://github.com/eligrey/FileSaver.js)
-- [uikit](https://github.com/uikit/uikit)
-- [Switch Animation by Aaron Iker](https://codepen.io/aaroniker/pen/oaQdQZ)
-- [psl (Public Suffix List)](https://github.com/lupomontero/psl)
 - [Dark Mode Switch](https://github.com/coliff/dark-mode-switch)
+- [FileSaver.js](https://github.com/eligrey/FileSaver.js)
+- [mustache.js](https://github.com/janl/mustache.js)
+- [popper.js](https://github.com/popperjs/popper-core)
+- [psl (Public Suffix List)](https://github.com/lupomontero/psl)
+- [Switch Animation by Aaron Iker](https://codepen.io/aaroniker/pen/oaQdQZ)
 - [tippy.js](https://github.com/atomiks/tippyjs)
+- [uikit](https://github.com/uikit/uikit)
 
 ## Developer Guide
 
