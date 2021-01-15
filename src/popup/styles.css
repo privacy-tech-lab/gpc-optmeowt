@@ -53,13 +53,13 @@ Animated 3rd party domains/domain list buttons/links
   transition: ease-out 0.1s;
 }
 
-.third-party-domains:hover {
+.dropdown-tab:hover {
   background-color: var(--highlight-light);
   color: var(--text-color-darker);
   transition: ease-out 0.1s;
 }
 
-.third-party-domains-click {
+.dropdown-tab-click {
   background-color: var(--highlight-light);
   color: var(--text-color-darker);
 }
