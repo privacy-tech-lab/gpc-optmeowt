@@ -150,29 +150,52 @@ document.addEventListener("DOMContentLoaded", (event) => {
     })
   })
 
+  /**
+   * Generates `X domains receiving signals` section in popup
+   */
   chrome.storage.local.get(["DOMAINS"], (result) => {
     var count = Object.keys(result.DOMAINS).filter((key) => {
       return result.DOMAINS[key] == true;
     }).length
-    document.getElementById("block-count").innerHTML = `<p id = "domain-count" style="color:#4472c4; font-size:25px; font-weight: bold">${count}</p> domains receiving signals`;
+    document.getElementById("block-count").innerHTML = `
+        <p id = "domain-count" style="color:#4472c4; font-size:25px; 
+        font-weight: bold">${count}</p> domains receiving signals
+    `;
   })
 
   /**
-   * Generates third party domain list toggle functionality
+   * Generates third party domain list droptdown toggle functionality
    */
   document.getElementById("third-party-domains").addEventListener("click", () => {
     // var icon = document.getElementById("dropdown")
     // console.log
     if (document.getElementById("third-party-domains-list").style.display === "none") {
-      document.getElementById("dropdown").src = "../assets/chevron-up.svg"
+      document.getElementById("dropdown-1").src = "../assets/chevron-up.svg"
       document.getElementById("third-party-domains-list").style.display = ""
-      // document.getElementById("third-party-domains").classList.add("third-party-domains-click")
-      document.getElementById("divider").style.display = ""
+      document.getElementById("third-party-domains").classList.add("dropdown-tab-click")
+      document.getElementById("divider-1").style.display = ""
     } else {
-      document.getElementById("dropdown").src = "../assets/chevron-down.svg"
+      document.getElementById("dropdown-1").src = "../assets/chevron-down.svg"
       document.getElementById("third-party-domains-list").style.display = "none"
-      // document.getElementById("third-party-domains").classList.remove("third-party-domains-click")
-      document.getElementById("divider").style.display = "none"
+      document.getElementById("third-party-domains").classList.remove("dropdown-tab-click")
+      document.getElementById("divider-1").style.display = "none"
+    }
+  });
+
+  /**
+   * Generates well-known json dropdown list toggle functionality
+   */
+  document.getElementById("well-known-response").addEventListener("click", () => {
+    if (document.getElementById("well-known-response-list").style.display === "none") {
+      document.getElementById("dropdown-2").src = "../assets/chevron-up.svg"
+      document.getElementById("well-known-response-list").style.display = ""
+      document.getElementById("well-known-response").classList.add("dropdown-tab-click")
+      document.getElementById("divider-2").style.display = ""
+    } else {
+      document.getElementById("dropdown-2").src = "../assets/chevron-down.svg"
+      document.getElementById("well-known-response-list").style.display = "none"
+      document.getElementById("well-known-response").classList.remove("dropdown-tab-click")
+      document.getElementById("divider-2").style.display = "none"
     }
   });
 })
@@ -258,6 +281,86 @@ async function buildDomains(requests) {
 }
 
 /**
+ * Builds the Well Known HTML for the popup window
+ * @param {Object} requests - Contains all well-known info in current tab
+ * (requests passed from contentScript.js page as of v1.1.3)
+ */
+async function buildWellKnown(requests) {
+  console.log("Well-Known info: ", requests);
+  console.log(JSON.stringify(requests, null, 4))
+
+  let explainer;
+  // let tabDetails;
+  
+  /*
+  This iterates over the cases of possible combinations of 
+  having found a GPC policy, and whether or not a site respects
+  the signal or not, setting both the `explainer` and `tabDetails`
+  for GPC v1
+  */
+  if (requests !== null && requests["gpc"] == true) {
+    // tabDetails = `GPC Signals Accepted`;
+    explainer = `
+      <li>
+        <p class="uk-text-center uk-text-small uk-text-bold">
+          GPC Signals Accepted
+        </p>
+      </li>
+      <li>
+        <p class="uk-text-center uk-text-small">
+          This website respects GPC signals
+        </p>
+      </li>
+      `
+  } else if (requests !== null && requests["gpc"] == false) {
+    // tabDetails = `GPC Signals Rejected`;
+    explainer = `
+      <li>
+        <p class="uk-text-center uk-text-small uk-text-bold">
+          GPC Signals Rejected
+        </p>
+      </li>
+      <li>
+        <p class="uk-text-center uk-text-small">
+          This website does not respect GPC signals
+        </p>
+      </li>
+      `
+  } else if (requests === null) {
+    // tabDetails = `GPC Policy Missing`;
+    explainer = `
+      <li>
+        <p class="uk-text-center uk-text-small uk-text-bold">
+          GPC Policy Missing
+        </p>
+      </li>
+      <li>
+        <p class="uk-text-center uk-text-small">
+          It seems this website does not have a GPC signal processing policy!
+        </p>
+      </li>
+      `
+  }
+
+  let wellknown = (requests !== null) ? `
+    <li class="uk-text-center uk-text-small">
+      Here is the GPC policy:
+    </li>
+    <li>
+      <pre>
+        ${JSON.stringify(requests, null, 4)
+            .replace(/['"\{\}\n]/g, '')
+            .replace(/,/g, "\n")
+          }
+      </pre>
+    </li>
+  ` : ``;
+
+  document.getElementById("well-known-response-list").innerHTML = `${explainer} ${wellknown}`;
+  // document.getElementById("website-response-tab").innerHTML = tabDetails;
+}
+
+/**
  * Sends "INIT" message to background page to start badge counter
  */
 chrome.runtime.sendMessage({
@@ -276,7 +379,25 @@ chrome.runtime.onMessage.addListener(function (request, _, __) {
   if (request.msg === "REQUESTS") {
     buildDomains(request.data);
   }
+  if (request.msg === "WELLKNOWNRESPONSE") {
+    console.log(`Received WELLKNOWNREQUEST response: ${JSON.stringify(request.data)}`)
+    buildWellKnown(request.data);
+  }
 });
+
+console.log(`test`)
+/**
+ * Requests Well Known info from Background page
+ */
+chrome.runtime.sendMessage({
+    msg: "WELLKNOWNREQUEST",
+    data: null,
+    return: true,
+  }, (response) => {
+    console.log(`Received WELLKNOWNREQUEST response: ${JSON.stringify(response.data)}`)
+    buildWellKnown(response.data);
+  }
+);
 
 /**
  * Various options page listeners

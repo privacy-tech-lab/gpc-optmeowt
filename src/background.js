@@ -183,7 +183,7 @@ function addDomSignal(details) {
  * @param {Object} details - retrieved info passed into callback
  */
 function beforeNavigate(details) {
-  wellknown[details.tabId] = false
+  wellknown[details.tabId] = null
   signalPerTab[details.tabId] = false
 }
 
@@ -194,9 +194,9 @@ function beforeNavigate(details) {
 function updateUI(details) {
   console.log(`TAB ID FOR UPDATEUI ${details.tabId}`)
   if (wellknown[details.tabId] === undefined) {
-    wellknown[details.tabId] = false
+    wellknown[details.tabId] = null
   }
-  if (wellknown[details.tabId] === false) {
+  if (wellknown[details.tabId] === null) {
     chrome.browserAction.setIcon(
       {
         tabId: details.tabId,
@@ -523,12 +523,31 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     console.log("DOM content loaded message received in background.js. global_domains is:", global_domains);
   }
 
-  if (request.msg === "WELLKNOWN") {
+  if (request.msg === "WELLKNOWNREQUEST") {
+    chrome.tabs.query({active: true, currentWindow: true}, function(tabs){
+      console.log("Received wellknown request")
+      console.log("Received wellknown tabs callback: ", tabs[0]["id"])
+      tabID = tabs[0]["id"]
+      console.log(`tabID for wellknownrequest: ${tabID}`)
+      let wellKnownData = wellknown[tabID]
+      console.log("wellKnownData: ", wellKnownData)
+
+      chrome.runtime.sendMessage({
+        msg: "WELLKNOWNRESPONSE",
+        data: wellKnownData,
+      });
+    });
+   }
+
+  if (request.msg === "WELLKNOWNCS") {
     console.log(`.well-known from ContentScr: ${JSON.stringify(request.data)}`);
     var tabID = sender.tab.id;
-    console.log("TAB ID: ", tabID)
-    if (request.data["gpc"] === true){
-      wellknown[tabID] = true
+    wellknown[tabID] = request.data
+    console.log(`wellknown: ${JSON.stringify(wellknown)}`)
+    console.log(`wellknown[tabid]: ${JSON.stringify(wellknown[tabID])}`)
+    // console.log("TAB ID: ", tabID)
+    if (wellknown[tabID]["gpc"] === true){
+      // wellknown[tabID] = true
       if (signalPerTab[tabID] === true) {
         chrome.browserAction.setIcon(
           {

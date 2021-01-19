@@ -30,7 +30,7 @@ fetch(`${url.origin}/.well-known/gpc.json`)
   .then((data) => {
     console.log(`.well-known via ContentScr: ${JSON.stringify(data)}`)
     chrome.runtime.sendMessage({
-      msg: "WELLKNOWN",
+      msg: "WELLKNOWNCS",
       data: data,
     });
   })

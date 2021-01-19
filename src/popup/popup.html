@@ -280,14 +280,14 @@ popup.html is the html scaffolding for OptMeowt's popup page
         <hr style="margin:0px; ">
 
         <!-- 3rd Party Domains expandable -->
-        <div uk-grid id="third-party-domains" class="third-party-domains" style="padding:15px; margin-right:-30px;">
+        <div uk-grid id="third-party-domains" class="dropdown-tab" style="padding:15px; margin-right:-30px;">
           <div
             class="uk-container"
             style="margin: auto; padding: 0; padding-left: 30px;"
             uk-tooltip="Dropdown"
           >
             <img
-              id="dropdown"
+              id="dropdown-1"
               src="../assets/chevron-down.svg"
               height="15"
               width="15"
@@ -299,10 +299,38 @@ popup.html is the html scaffolding for OptMeowt's popup page
             3rd Party Domains
           </div>
         </div>
-        <hr id="divider" style="margin:0px; display: none">
+        <hr id="divider-1" style="margin:0px; display: none">
 
         <ul id="third-party-domains-list" class="uk-list uk-list-divider" style="display:none">
           <!-- Inflate third party domains here -->
+        </ul>
+
+        <hr style="margin:0px;">
+
+        <!-- 3rd Party Domains expandable -->
+        <div uk-grid id="well-known-response" class="dropdown-tab" style="padding:15px; margin-right:-30px;">
+          <div
+            class="uk-container"
+            style="margin: auto; padding: 0; padding-left: 30px;"
+            uk-tooltip="Dropdown"
+          >
+            <img
+              id="dropdown-2"
+              src="../assets/chevron-down.svg"
+              height="15"
+              width="15"
+              alt="dropdown"
+              uk-svg
+            />
+          </div>
+          <div id="website-response-tab" class="uk-width-expand uk-text-left" style="font-weight: bold; font-size: medium; margin-right:20px;">
+            Website Response
+          </div>
+        </div>
+        <hr id="divider-2" style="margin:0px; display: none">
+
+        <ul id="well-known-response-list" class="uk-list" style="display:none">
+          <!-- Inflate well-known info here -->
         </ul>
 
         <!-- Domain List link -->
