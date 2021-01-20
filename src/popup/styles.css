@@ -24,6 +24,15 @@ svg:hover {
   transition: all ease 0.5s;
 }
 
+/********************************************************/
+
+/*
+Blue Heading
+*/
+.blue-heading {
+  color: #4472c4;
+}
+
 /*=======================================================================================*/
 /*tutorial popup css*/
 .tippy-box[data-theme~="custom-2"] {
@@ -77,3 +86,16 @@ Accepted/rejected text on popup
   box-shadow: 0 8px 16px -1px rgba(211, 211, 211, .2);
   outline: none; */
 }
+
+
+.divide {
+  border: 0;
+  /* height: 1px;
+  background: black; */
+}
+
+/* .uk-list-divide {
+  border: 0;
+  height: 1px;
+  background: black;
+} */

@@ -158,7 +158,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
       return result.DOMAINS[key] == true;
     }).length
     document.getElementById("block-count").innerHTML = `
-        <p id = "domain-count" style="color:#4472c4; font-size:25px; 
+        <p id = "domain-count" class="blue-heading" style="font-size:25px; 
         font-weight: bold">${count}</p> domains receiving signals
     `;
   })
@@ -224,8 +224,8 @@ async function buildDomains(requests) {
         `
     <li>
       <div
-        class="uk-flex-inline uk-width-1-1 uk-flex-center uk-text-center uk-text-bold uk-text-truncate"
-        style="color: #4472c4; font-size: medium"
+        class="blue-heading uk-flex-inline uk-width-1-1 uk-flex-center uk-text-center uk-text-bold uk-text-truncate"
+        style="font-size: medium"
         id="domain"
       >
         ${request_domain}
@@ -347,7 +347,7 @@ async function buildWellKnown(requests) {
       Here is the GPC policy:
     </li>
     <li>
-      <pre>
+      <pre class="wellknown-bg">
         ${JSON.stringify(requests, null, 4)
             .replace(/['"\{\}\n]/g, '')
             .replace(/,/g, "\n")
