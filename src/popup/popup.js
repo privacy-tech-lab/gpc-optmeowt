@@ -289,31 +289,58 @@ async function buildWellKnown(requests) {
   console.log("Well-Known info: ", requests);
   console.log(JSON.stringify(requests, null, 4))
 
-  let explainer = (requests !== null && requests["gpc"] == true) ? `
-    <li>
-      <p class="uk-text-center uk-text-small uk-text-bold">
-        GPC Policy Found
-      </p>
-    </li>
-    <li>
-      <p class="uk-text-center uk-text-small">
-        This website respects GPC signals
-      </p>
-    </li>
-    ` : `
-    <li>
-      <p class="uk-text-center uk-text-small uk-text-bold">
-        GPC Policy Missing / Denies Request
-      </p>
-    </li>
-    <li>
-      <p class="uk-text-center uk-text-small">
-        This website is either missing a GPC signal processing
-        policy or does not respect GPC requests
-      </p>
-    </li>
-    `;
-  // Alt text: It seems this website does not have a GPC signal processing policy!
+  let explainer;
+  // let tabDetails;
+  
+  /*
+  This iterates over the cases of possible combinations of 
+  having found a GPC policy, and whether or not a site respects
+  the signal or not, setting both the `explainer` and `tabDetails`
+  for GPC v1
+  */
+  if (requests !== null && requests["gpc"] == true) {
+    // tabDetails = `GPC Signals Accepted`;
+    explainer = `
+      <li>
+        <p class="uk-text-center uk-text-small uk-text-bold">
+          GPC Signals Accepted
+        </p>
+      </li>
+      <li>
+        <p class="uk-text-center uk-text-small">
+          This website respects GPC signals
+        </p>
+      </li>
+      `
+  } else if (requests !== null && requests["gpc"] == false) {
+    // tabDetails = `GPC Signals Rejected`;
+    explainer = `
+      <li>
+        <p class="uk-text-center uk-text-small uk-text-bold">
+          GPC Signals Rejected
+        </p>
+      </li>
+      <li>
+        <p class="uk-text-center uk-text-small">
+          This website does not respect GPC signals
+        </p>
+      </li>
+      `
+  } else if (requests === null) {
+    // tabDetails = `GPC Policy Missing`;
+    explainer = `
+      <li>
+        <p class="uk-text-center uk-text-small uk-text-bold">
+          GPC Policy Missing
+        </p>
+      </li>
+      <li>
+        <p class="uk-text-center uk-text-small">
+          It seems this website does not have a GPC signal processing policy!
+        </p>
+      </li>
+      `
+  }
 
   let wellknown = (requests !== null) ? `
     <li class="uk-text-center uk-text-small">
@@ -329,14 +356,6 @@ async function buildWellKnown(requests) {
     </li>
   ` : ``;
 
-  // let tabDetails;
-  // if (requests !== null && requests["gpc"] == true) {
-  //   tabDetails = `GPC Signals Accepted`;
-  // } else if (requests !== null && requests["gpc"] == false) {
-  //   tabDetails = `GPC Signals Denied`;
-  // } else if (requests === null) {
-  //   tabDetails = `GPC Policy Missing`;
-  // }
   document.getElementById("well-known-response-list").innerHTML = `${explainer} ${wellknown}`;
   // document.getElementById("website-response-tab").innerHTML = tabDetails;
 }
