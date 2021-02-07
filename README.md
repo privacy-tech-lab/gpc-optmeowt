@@ -98,5 +98,5 @@ If you have questions about OptMeowt's functionality, or believe you may have fo
 Visit our [site](https://privacytechlab.org/optmeowt) to learn more.
 
 <p align="center">
-  <img src="https://github.com/privacy-tech-lab/optmeowt-browser-extension/blob/master/plt_logo.png" width="200px" height="200px" title="privacy-tech-lab logo">
+  <img src="https://github.com/privacy-tech-lab/optmeowt-browser-extension/blob/main/plt_logo.png" width="200px" height="200px" title="privacy-tech-lab logo">
 <p>
