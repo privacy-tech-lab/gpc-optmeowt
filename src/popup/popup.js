@@ -326,7 +326,7 @@ async function buildWellKnown(requests) {
         </p>
       </li>
       `
-  } else if (requests === null) {
+  } else if (requests === null || requests["gpc"] == null) {
     // tabDetails = `GPC Policy Missing`;
     explainer = `
       <li>
@@ -342,7 +342,7 @@ async function buildWellKnown(requests) {
       `
   }
 
-  let wellknown = (requests !== null) ? `
+  let wellknown = (requests !== null && requests["gpc"] != null) ? `
     <li class="uk-text-center uk-text-small">
       Here is the GPC policy:
     </li>
