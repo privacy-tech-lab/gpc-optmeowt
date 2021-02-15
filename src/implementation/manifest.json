@@ -1,0 +1,25 @@
+{
+    "name": "Example",
+    "version": "0.1",
+    "description": "Sample GPC implementation",
+    "permissions": [
+      "webRequest",
+      "<all_urls>",
+      "webRequestBlocking",
+      "webNavigation",
+      "storage",
+      "activeTab",
+      "cookies",
+      "tabs"
+    ],
+    "icons": {
+    },
+    "browser_action": {
+      "default_title": "Example"
+    },
+    "background": {
+      "page": "background.html"
+    },
+    "manifest_version": 2
+  }
+  
