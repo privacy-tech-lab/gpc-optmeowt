@@ -12,5 +12,5 @@ This version also contains a recent copy of `dom.js`, however this can be incorp
 
 
 ## Potential Discussions
-☑️ As a side note, we should also potentially address Chrome vs. Firefox compatability
-☑️ This version does not account for reading and displaying `.well-known` information
+- As a side note, we should also potentially address Chrome vs. Firefox compatability
+- This version does not account for reading and displaying `.well-known` information
