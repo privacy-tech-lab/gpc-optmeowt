@@ -203,7 +203,7 @@ function updateUI(details) {
         path: "assets/face-icons/optmeow-face-circle-green-ring-128.png",
       },
       function () {
-        console.log("Updated OptMeowt icon to GREEN");
+        console.log("Updated OptMeowt icon to GREEN RING");
       }
     );
   }
@@ -547,6 +547,7 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     console.log(`wellknown[tabid]: ${JSON.stringify(wellknown[tabID])}`)
     // console.log("TAB ID: ", tabID)
     if (wellknown[tabID]["gpc"] === true){
+      console.log(`.well-known from ContentScr "gpc" === true`)
       // wellknown[tabID] = true
       if (signalPerTab[tabID] === true) {
         chrome.browserAction.setIcon(
