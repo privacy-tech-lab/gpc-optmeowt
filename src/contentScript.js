@@ -14,24 +14,34 @@ https://developer.chrome.com/extensions/content_scripts
 
 
 /**
- * Gets Frame:0 Tab content and sends to background script
- */
-chrome.runtime.sendMessage({
-  msg: "TAB",
-  data: Date.now(),
-});
+ *  Ensures extension is ON before processing anything 
+ */ 
+chrome.storage.local.get(["ENABLED"], (result) => {
+  if (result.ENABLED === true) {
 
-console.log(location)
-var url = new URL(location);
-fetch(`${url.origin}/.well-known/gpc.json`)
-  .then((response) => {
-    return response.json()
-  })
-  .then((data) => {
-    console.log(`.well-known via ContentScr: ${JSON.stringify(data)}`)
+    /* MAIN CONTENT SCRIPT PROCESSES GO HERE */
+
+    /* Gets Frame:0 Tab content and sends to background script */
     chrome.runtime.sendMessage({
-      msg: "WELLKNOWNCS",
-      data: data,
+      msg: "TAB",
+      data: Date.now(),
     });
-  })
-  .catch((e) => {console.log(`.well-known error: ${e}`)})
+
+    console.log(location)
+    var url = new URL(location);
+
+    /* Fetches .well-known file and sends message to background script */
+    fetch(`${url.origin}/.well-known/gpc.json`)
+      .then((response) => {
+        return response.json()
+      })
+      .then((data) => {
+        console.log(`.well-known via ContentScr: ${JSON.stringify(data)}`)
+        chrome.runtime.sendMessage({
+          msg: "WELLKNOWNCS",
+          data: data,
+        });
+      })
+      .catch((e) => {console.log(`.well-known error: ${e}`)})
+  }
+});

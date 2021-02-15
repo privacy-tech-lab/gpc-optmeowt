@@ -7,7 +7,7 @@ privacy-tech-lab, https://privacytechlab.org/
 function setDomSignal () {
     try {
         if (navigator.globalPrivacyControl) {
-            console.log("Found globalPrivacyControl, doing nothing!")
+            console.log("Found globalPrivacyControl DOM signal, doing nothing!")
             return
         };
 
