@@ -88,6 +88,7 @@ OptMeowt uses the following third party libraries. We thank the developers.
 - When contibuting, it is important to note that we manage all package dependencies with npm. Thus, it is recommended to use the `npm i` command to install packages.
 - In the event that you install a new dependency, you need to update Grantfile.js file with a new task of the form:\
   `task: { expand: true, cwd: "./node_modules/..../", src: "*", dest: "./src/libs-js" }` depending on whether you need the js files or the css files of the newly installed library.
+- When viewing your browser's console on a site you are sending GPC signals to, a 404 error regarding the site's GPC status file (`/.well-known/gpc.json`) may be shown. Note that this is perfectly normal, and will occur frequently (1) on sites that do not support GPC and (2) may even occur on sites that do respect GPC simply if the website does not host such a `/.well-known/gpc.json` file. 
   
 ## FAQ \ Known quirks \ Reporting bugs
 
