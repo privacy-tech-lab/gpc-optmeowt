@@ -183,8 +183,11 @@ function addDomSignal(details) {
  * @param {Object} details - retrieved info passed into callback
  */
 function beforeNavigate(details) {
-  wellknown[details.tabId] = null
-  signalPerTab[details.tabId] = false
+  console.log("beforeNavigate ran!")
+  if (details.frameId === 0) {
+    wellknown[details.tabId] = null
+    signalPerTab[details.tabId] = false
+  }
 }
 
 /**
@@ -549,6 +552,9 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     if (wellknown[tabID]["gpc"] === true){
       console.log(`.well-known from ContentScr "gpc" === true`)
       // wellknown[tabID] = true
+      console.log("signalPerTab 1: ", signalPerTab);
+      setTimeout(()=>{}, 10000);
+      console.log("signalPerTab 2: ", signalPerTab);
       if (signalPerTab[tabID] === true) {
         chrome.browserAction.setIcon(
           {
