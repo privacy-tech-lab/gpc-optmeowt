@@ -25,9 +25,9 @@ Every domain a user visits will be automatically added to a `domain list` and wi
 
 OptMeowt works on any Chromium-based browser. In addition to Chrome, it should run in Brave, Edge, Opera, and Vivaldi. In the future we hope to support Firefox and Safari as well. There are two main ways you can install OptMeowt on your computer:
 
-### 1. Install OptMeowt via the Chrome Web Store
+### 1. Install OptMeowt via the Chrome Web Store or Firefox Add-Ons
 
-1. You can simply add OptMeowt to your browser by donwloading the extension from the Chrome Web Store using this [link.](https://chrome.google.com/webstore/detail/optmeowt/hdbnkdbhglahihjdbodmfefogcjbpgbo)
+1. You can add OptMeowt to your browser at the [Chrome Web Store](https://chrome.google.com/webstore/detail/optmeowt/hdbnkdbhglahihjdbodmfefogcjbpgbo) or as a [Firefox Add-On](https://addons.mozilla.org/en-US/firefox/addon/optmeowt/).
 2. Click Add to Chrome to install OptMeowt.
 
 ### 2. Install OptMeowt as an unpacked extension on Chrome as follows:
