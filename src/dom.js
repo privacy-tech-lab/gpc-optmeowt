@@ -6,16 +6,16 @@ privacy-tech-lab, https://privacytechlab.org/
 
 function setDomSignal () {
     try {
-        if (navigator.globalPrivacyControl) {
+        if ('globalPrivacyControl' in Navigator.prototype) {
             console.log("Found globalPrivacyControl DOM signal, doing nothing!")
             return
         };
 
         var GPCVal = true
-        const GPCDomVal = `Object.defineProperty(navigator, "globalPrivacyControl", {
-            value: ${GPCVal},
-            configurable: false,
-            writable: false
+        const GPCDomVal = `Object.defineProperty(Navigator.prototype, "globalPrivacyControl", {
+            get: () => ${GPCVal},
+            configurable: true,
+            enumerable: true
         });
         document.currentScript.parentElement.removeChild(document.currentScript);
         `
