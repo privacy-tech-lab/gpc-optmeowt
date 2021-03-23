@@ -6,9 +6,34 @@
 
 OptMeowt ("Opt Me Out") is a browser extension for sending Do Not Sell signals to websites per the [Global Privacy Control draft spec](https://globalprivacycontrol.org/).
 
+## Installing and Running OptMeowt
+
+OptMeowt works on Chromium-based browsers as well as on Firefox.
+
+### 1. Install OptMeowt via the Chrome Web Store or as Firefox Add-On
+
+You can add OptMeowt to your browser at the [Chrome Web Store](https://chrome.google.com/webstore/detail/optmeowt/hdbnkdbhglahihjdbodmfefogcjbpgbo) or as a [Firefox Add-On](https://addons.mozilla.org/en-US/firefox/addon/optmeowt/).
+
+### 2. Install OptMeowt as an Unpacked Extension on Chromium-based Browsers
+
+1. Clone this repo or download a zipped copy and unzip it.
+2. Follow [these steps](https://www.npmjs.com/get-npm) to install npm.
+3. Install the Grunt command line tool and run in your terminal\
+   `npm install -g grunt-cli`
+4. Then, run:\
+   `cd optmeowt-browser-extension`\
+   `npm i`\
+   `grunt`
+5. In your browser, navigate to the extensions page at `chrome://extensions/`.
+6. Enable `Developer mode` with the slider on the top right corner of the extension page.
+7. Click the `Load unpacked` button in the top left of the page.
+8. Navigate to where you unzipped the OptMeowt folder and open up the `src` folder.\
+   **Note:** You do not need to click on the `manifest.json` file in Chrome, though other browsers may require this.
+9. Click to finalize the install.
+
 ## How does OptMeowt work?
 
-OptMewot sends Do Not Sell signals to all domains a user visits when browsing the web. Such signals must be respected for California consumers per the California Consumer Privacy Act (CCPA), [Regs Section 999.315(d)](https://oag.ca.gov/sites/all/files/agweb/pdfs/privacy/oal-sub-final-text-of-regs.pdf). However, many companies respect such signals even when they are sent from outside of California.
+OptMewot sends Do Not Sell signals to all domains a user visits when browsing the web. Such signals must be respected for California consumers per the California Consumer Privacy Act (CCPA), [Regs Section 999.315(d)](https://oag.ca.gov/sites/all/files/agweb/pdfs/privacy/oal-sub-final-text-of-regs.pdf). However, some companies respect such signals even when they are sent from outside of California.
 
 OptMeowt currently sends Do Not Sell signals using five methods:
 
@@ -19,36 +44,9 @@ OptMeowt currently sends Do Not Sell signals using five methods:
 5. Custom headers and cookies used by individual websites maintained and updated in a Do Not Sell list.
 
 **Customizing which Sites Receive Do Not Sell Signals**
-Every domain a user visits will be automatically added to a `domain list` and will receive a Do Not Sell signal by default. However, users can exclude domains that should not receive a Do Not Sell signal. This functionality is available by accessing the domain list from the extension's popup window.
+For every domain you visit OptMeowt will automatically add it to the `domain list` meaning that it will receive a Do Not Sell signal. However, you can exclude domains that should not receive a Do Not Sell signal. This functionality is available on OptMeowt's settings page that you can access from the popup window.
 
-## Installing and Running OptMeowt
-
-OptMeowt works on any Chromium-based browser. In addition to Chrome, it should run in Brave, Edge, Opera, and Vivaldi. In the future we hope to support Firefox and Safari as well. There are two main ways you can install OptMeowt on your computer:
-
-### 1. Install OptMeowt via the Chrome Web Store or Firefox Add-Ons
-
-1. You can add OptMeowt to your browser at the [Chrome Web Store](https://chrome.google.com/webstore/detail/optmeowt/hdbnkdbhglahihjdbodmfefogcjbpgbo) or as a [Firefox Add-On](https://addons.mozilla.org/en-US/firefox/addon/optmeowt/).
-2. Click Add to Chrome to install OptMeowt.
-
-### 2. Install OptMeowt as an unpacked extension on Chrome as follows:
-
-1. Clone this repo or download a zipped copy and unzip it.
-2. Follow these steps to install npm if you do not have it already installed [here.](https://www.npmjs.com/get-npm)
-3. Install the Grunt command line tool with this command if you haven't done this already. `npm install -g grunt-cli`
-4. Open your terminal or command line and run the following commands:\
-   `cd optmeowt-browser-extension`\
-   `npm i`\
-   `grunt`
-5. In Chrome, navigate to the extensions page at `chrome://extensions/`.
-6. If you have not done so yet, enable `Developer mode` with the slider on the top right corner of the extension page.
-7. Click the `Load unpacked` button in the top left of the page.
-8. Navigate to where you unzipped the OptMeowt folder and open up the `src` folder.
-   **Note:** You do not need to click on the `manifest.json` file in Chrome, though other browsers may require this.
-9. Click to finalize the install.
-
-You did it! You have installed OptMeowt. You can use it via the icon next to the search bar.
-
-## Files and Directories in the Repo
+## Files and Directories in this Repo
 
 - `src/`: Contains the main contents of the OptMeowt browser extension.
 - `src/assets`: Contains the graphical elements of the extension, including the logos and button images.
@@ -88,7 +86,7 @@ OptMeowt uses the following third party libraries. We thank the developers.
 - When contibuting, it is important to note that we manage all package dependencies with npm. Thus, it is recommended to use the `npm i` command to install packages.
 - In the event that you install a new dependency, you need to update Grantfile.js file with a new task of the form:\
   `task: { expand: true, cwd: "./node_modules/..../", src: "*", dest: "./src/libs-js" }` depending on whether you need the js files or the css files of the newly installed library.
-- When viewing your browser's console on a site you are sending GPC signals to, a 404 error regarding the site's GPC status file (`/.well-known/gpc.json`) may be shown. Note that this is perfectly normal, and will occur frequently (1) on sites that do not support GPC and (2) may even occur on sites that do respect GPC simply if the website does not host such a `/.well-known/gpc.json` file. 
+- When viewing your browser's console on a site you are sending GPC signals to, a 404 error regarding the site's GPC status file (`/.well-known/gpc.json`) may be shown. Note that this is perfectly normal, and will occur frequently (1) on sites that do not support GPC and (2) may even occur on sites that do respect GPC simply if the website does not host such a `/.well-known/gpc.json` file.
   
 ## FAQ \ Known quirks \ Reporting bugs
 
