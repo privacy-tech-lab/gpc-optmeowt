@@ -22,8 +22,7 @@ You can add OptMeowt to your browser at the [Chrome Web Store](https://chrome.go
    `npm install -g grunt-cli`
 4. Then, run:\
    `cd optmeowt-browser-extension`\
-   `npm i`\
-   `grunt`
+   `npm i grunt`
 5. In your browser, navigate to the extensions page at `chrome://extensions/`.
 6. Enable `Developer mode` with the slider on the top right corner of the extension page.
 7. Click the `Load unpacked` button in the top left of the page.
