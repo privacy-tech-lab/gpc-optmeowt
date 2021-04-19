@@ -14,6 +14,7 @@ main opt-out functionality
 /**
  * Initializers
  */
+
 var tabs = {}; /// Store all active tab id's, domain, requests, and response
 var wellknown = {} /// Store information about `well-known/gpc` files per tabs
 var signalPerTab = {} /// Store information on a signal being sent for updateUI
