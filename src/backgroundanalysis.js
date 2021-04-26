@@ -19,9 +19,12 @@ urlFlags.forEach(flag => {
 	unsetFlags[flag] = 0; }
 )
 
+var websitesFlagsDict = {}
+
 //Finds DNS words in webpages.
 //TODO: Check if words are in link
 //TODO: Check for similar/noncompliant wording
+//TODO: port to chrome
 async function checkForDNSLink(tabId, changeInfo, tabInfo){
 	if (changeInfo.status != "complete") {return;}
 
@@ -38,22 +41,44 @@ function checkTruthy(flag, value){
 	return false;
 }
 
+function generateEmptyFlagsDictTuple(){
+	var setFlagsDict = [];
+	var unsetFlagsDict = [];
+
+	urlFlags.forEach(flag => {
+		setFlagsDict[flag] = 0;
+		unsetFlagsDict[flag] = 0; }
+	);
+	return [unsetFlagsDict, setFlagsDict];
+}
+
 //Handles all http requests
 function logRequest(requestDetails){
-  	//console.log("Request to: " + requestDetails.Url);
+  	console.log("Request to: " + requestDetails.url + " FROM " + requestDetails.initiator);
 	//console.log(requestDetails.documentUrl);
 	var flagSettingsDict = parseURLForSignal(requestDetails.url);
 	
-	for(var flag in flagSettingsDict){
-		if(checkTruthy(flag, flagSettingsDict[flag])){
-			setFlags[flag] += 1;
-		}
-		else{
-			unsetFlags[flag] += 1;
+	//Check if the request initiator is already in the websites dictionary. If not, set it up!
+	if(Object.keys(flagSettingsDict).length > 0){
+		if(!(requestDetails.initiator in websitesFlagsDict)){
+			console.log("Setting up flag logger for requestor " + requestDetails.initiator);
+			websitesFlagsDict[requestDetails.initiator] = generateEmptyFlagsDictTuple();
+			console.log(generateEmptyFlagsDictTuple());
 		}
 	}
-	for(flag in unsetFlags){
-		console.log(flag + " count " + unsetFlags[flag]);
+	
+	for(var flag in flagSettingsDict){
+		if(checkTruthy(flag, flagSettingsDict[flag])){
+			websitesFlagsDict[requestDetails.initiator][1][flag] += 1;
+		}
+		else{
+			websitesFlagsDict[requestDetails.initiator][0][flag] += 1;
+		}
+	}
+	for(var website in websitesFlagsDict){
+		for(var flag in websitesFlagsDict[website][0]){
+			console.log(website + " flag " + flag + " has " + websitesFlagsDict[website][0][flag]);
+		}
 	}
 }
 
@@ -77,14 +102,10 @@ function parseURLForSignal(url){
 		}
 	});
 
-	//for(flag in flagSettingsDict){
-	//	console.log(flag + " is set to " + flagSettingsDict[flag]);
-	//}
-
 	return flagSettingsDict;
 }
 
-chrome.tabs.onUpdated.addListener(checkForDNSLink);
+//chrome.tabs.onUpdated.addListener(checkForDNSLink);
 chrome.webRequest.onBeforeRequest.addListener(
   logRequest,
   {urls: ["<all_urls>"]}
