@@ -45,6 +45,33 @@ OptMeowt currently sends Do Not Sell signals using five methods:
 **Customizing which Sites Receive Do Not Sell Signals**
 For every domain you visit OptMeowt will automatically add it to the `domain list` meaning that it will receive a Do Not Sell signal. However, you can exclude domains that should not receive a Do Not Sell signal. This functionality is available on OptMeowt's settings page that you can access from the popup window.
 
+## OptMeowt's Permissions
+
+OptMeowt has a set number of permissions that are required for the functionality we use. These include: 
+
+`
+"permissions": [
+    "webRequest",
+    "<all_urls>",
+    "webRequestBlocking",
+    "webNavigation",
+    "storage",
+    "activeTab",
+    "cookies",
+    "tabs"
+  ]
+`
+
+- `webRequest`: Pauses outgoing requests to append out HTTP request headers
+- `<all_urls>`: Allows us to modify all outgoing requests
+- `webRequestBlocking`: Necessary for pausing outgoing requests
+- `webNavigation`: Similar to webRequest, allows us to check when navigation requests are made to reset our processes
+- `storage`: Allows us to save preferences
+- `activeTab`: Allows us to set opt-out signals on your active tab
+- `cookies`: Allows us to place opt-out cookies on your browser
+- `tabs`: Allows us to keep track of headers per tab for our popup
+
+
 ## Files and Directories in this Repo
 
 - `src/`: Contains the main contents of the OptMeowt browser extension.
