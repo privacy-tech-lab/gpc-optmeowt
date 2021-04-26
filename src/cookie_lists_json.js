@@ -20,7 +20,7 @@ export const cookieJSONS = [
 
 function checkCookieLists(callback, domainFilter) {
   for (let loc in cookieJSONS) {
-    console.log(cookieJSONS[loc])
+    //console.log(cookieJSONS[loc])
     retrieveCookieJSON(cookieJSONS[loc], callback, domainFilter)
   }
 }
@@ -43,11 +43,11 @@ function retrieveCookieJSON(location, callback, domainFilter) {
     return response.text()
   })
   .then(value => {
-    console.log(`Retrieved ${location}`)
+    //console.log(`Retrieved ${location}`)
     var json = JSON.parse(value)
     var locname = location.substring(5, (location.length - 5))
-    console.log("locname", locname)
-    console.log(json)
+    //console.log("locname", locname)
+    //console.log(json)
     if (locname === "cookies_3p") {
       chrome.storage.local.set({ "THIRDPARTYCOOKIES": JSON.parse(value) })
     }
@@ -56,7 +56,10 @@ function retrieveCookieJSON(location, callback, domainFilter) {
     }
     callback(json, domainFilter)
   })
-  .catch(e => console.log(`Failed while setting ${location} cookies: ${e}`))
+  .catch(e => 
+    //console.log(`Failed while setting ${location} cookies: ${e}`)
+    {}
+    )
 }
 
 /**
@@ -82,7 +85,7 @@ function setAllCookies(cookies) {
       all_domains = true
     }
     cookie_url = `https://${cookie_url}/`
-    console.log(`Current cookie url... ${cookie_url}`)
+    //console.log(`Current cookie url... ${cookie_url}`)
     if (cookies[item].path !== null) {
       path = cookies[item].path
     } else {
@@ -103,7 +106,7 @@ function setAllCookies(cookies) {
 
     // Sets cookie
     chrome.cookies.set(cookie_param, function (cookie) {
-      console.log(`Updated ${cookie.name} cookie`)
+      //console.log(`Updated ${cookie.name} cookie`)
     })
   }
 }
@@ -133,7 +136,7 @@ function setFilteredCookies(cookies, domainFilter) {
         all_domains = true
       }
       cookie_url = `https://${cookie_url}/`
-      console.log(`Current cookie url... ${cookie_url}`)
+      //console.log(`Current cookie url... ${cookie_url}`)
       if (cookies[item].path !== null) {
         path = cookies[item].path
       } else {
@@ -154,7 +157,7 @@ function setFilteredCookies(cookies, domainFilter) {
 
       // Sets cookie
       chrome.cookies.set(cookie_param, function (cookie) {
-        console.log(`Updated ${cookie.name} cookie`)
+        //console.log(`Updated ${cookie.name} cookie`)
       })
     }
   }

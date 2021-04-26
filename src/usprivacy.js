@@ -69,7 +69,7 @@ default_value = '1NYN'
 function initUSP() {
 
   chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-    console.log("tabs: ", tabs)
+    //console.log("tabs: ", tabs)
     if (tabs[0] != undefined && tabs[0].url != undefined) {
       var tab = tabs[0];
       var url_obj = new URL(tab.url);
@@ -77,7 +77,7 @@ function initUSP() {
       // var url = url_obj.origin + '/'
       // var parsed = psl.parse(url_obj.hostname)
       // var domain = parsed.domain;
-      console.log("Current url: ", url)
+      //console.log("Current url: ", url)
 
       // Filter out chrome://* links as they are local
       if (url.substr(0,9).toLowerCase() !== 'chrome://') {
@@ -100,11 +100,11 @@ function checkExistsAndHandleUSP(url) {
   },
   function (cookie_arr) {
     // fetchAndHandleJSON('iab_cookies.json');
-    console.log("cookie_arr: ", cookie_arr)
+    //console.log("cookie_arr: ", cookie_arr)
     for (var cookie in cookie_arr) {
-      console.log("iterating...", cookie_arr[cookie]["name"]);
+      //console.log("iterating...", cookie_arr[cookie]["name"]);
       if ( iab_vars.includes(cookie_arr[cookie]["name"]) ){
-        console.log("An iab variation exists!!!")
+        //console.log("An iab variation exists!!!")
         storeURLforDev(cookie_arr[cookie]["domain"])
         cookie_matches.push(cookie_arr[cookie])
       }
@@ -114,8 +114,8 @@ function checkExistsAndHandleUSP(url) {
     if (cookie_matches.length === 1) {
       value = parseUSP(cookie_matches[0]["value"])
       if (value == '1---') {
-        console.log("This site recognized you are outside of \
-the domain of the CCPA.", cookie_matches[0]["domain"])
+        //("This site recognized you are outside of \
+//the domain of the CCPA.", cookie_matches[0]["domain"])
       } else {
         updateUSP(cookie_matches[0], value, url);
       }
@@ -126,12 +126,12 @@ the domain of the CCPA.", cookie_matches[0]["domain"])
     // If there are multiple cookies, handle here.
     // Currently deletes default cookie
     if (cookie_matches.length > 1) {
-      console.log("MULTIPLE COOKIES EXIST!")
+      //console.log("MULTIPLE COOKIES EXIST!")
       for (var c in cookie_matches) {
         if (cookie_matches[c].name == default_name &&
           cookie_matches[c].domain.substr(0,1) !== ".")
         {
-          console.log("initializing delete cookie...")
+          //console.log("initializing delete cookie...")
           deleteCookie(url, cookie_matches[c].name)
         }
       }
@@ -200,11 +200,11 @@ function updateUSP(cookie, value, url) {
   } else {
     new_cookie = pruneCookieUSP(cookie, value, url)
   }
-  console.log("Updated cookie to be set: ", new_cookie)
+  //console.log("Updated cookie to be set: ", new_cookie)
   chrome.cookies.set(
     new_cookie,
     function (details) {
-      console.log("Created new cookie.")
+      //console.log("Created new cookie.")
     }
   )
     // }
@@ -218,17 +218,17 @@ function updateUSP(cookie, value, url) {
  * @return {string} - Updated IAB value to be set
  */
 function parseUSP(signal) {
-  console.log("parsing signal: ", signal)
+  //console.log("parsing signal: ", signal)
   if (!isValidSignalUSP(signal)) {
-    console.log('Existing domain is not Valid! Updating signal to \
-                valid form...')
+    //('Existing domain is not Valid! Updating signal to \
+    //            valid form...')
     return '1NYN'
   }
   if (signal === '1---') {
     return '1---'
   } else {
     signal = signal.substr(0,2) + 'Y' + signal.substr(3, 1)
-    console.log("Updated signal before push: ", signal)
+    //console.log("Updated signal before push: ", signal)
     return signal
   }
 }
@@ -243,13 +243,13 @@ function parseUSP(signal) {
  * @return {object} - updated cookie to be returned
  */
 function pruneCookieUSP(cookie, value, url) {
-  console.log("cookie pruning: ", cookie)
+  //console.log("cookie pruning: ", cookie)
   cookie.value = value
   cookie.url = url
-  console.log("Prune cookie domain: ", cookie.domain)
+  //console.log("Prune cookie domain: ", cookie.domain)
   // Checks if a cookie made by a site is stored per domain/subdomain
   if (cookie.domain.substr(0,1) !== '.') {
-    console.log("Domain to be pruned starts with '.'")
+    //console.log("Domain to be pruned starts with '.'")
     cookie.domain = null;
   }
   if (cookie.hostOnly !== null) {
@@ -258,7 +258,7 @@ function pruneCookieUSP(cookie, value, url) {
   if (cookie.session !== null) {
     delete cookie.session
   }
-  console.log("Pruned cookie: ", cookie)
+  //console.log("Pruned cookie: ", cookie)
   return cookie
 }
 
@@ -270,7 +270,7 @@ function pruneCookieUSP(cookie, value, url) {
 function makeCookieUSP(name, value, url) {
   var time = new Date()
   var now = time.getTime()
-  console.log("now ", now)
+  //console.log("now ", now)
 
   let cookie = {}
   cookie.expirationDate = now/1000 + 31557600
@@ -292,9 +292,9 @@ function deleteCookie(url, name) {
     "name": name
   }, function(details) {
     if (details === null) {
-      console.log("Delete failed.")
+      //console.log("Delete failed.")
     } else {
-      console.log("Successfully deleted cookie.")
+      //console.log("Successfully deleted cookie.")
     }
   })
 }
@@ -341,7 +341,7 @@ function storeURLforDev(url) {
     if (iab[url] === undefined) {
       iab[url] = false
       chrome.storage.local.set({"IAB": iab});
-      console.log("Stored current iab website");
+      //console.log("Stored current iab website");
     }
   })
 }

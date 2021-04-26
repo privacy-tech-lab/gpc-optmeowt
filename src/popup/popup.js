@@ -38,7 +38,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
       var url = new URL(tab.url);
       var parsed = psl.parse(url.hostname);
       parsed_domain = parsed.domain;
-      console.log("POPUP: ", parsed_domain);
+      //console.log("POPUP: ", parsed_domain);
       if (parsed_domain === null) {
         document.getElementById("dns-body").style.display = "none";
         document.getElementById("domain").style.display = "none";
@@ -144,7 +144,6 @@ document.addEventListener("DOMContentLoaded", (event) => {
           t = "Do Not Sell Enabled";
           addToDomainlist(parsed_domain);
         }
-        // console.log(t)
         document.getElementById("dns-text").innerHTML = t;
       })
     })
@@ -168,7 +167,6 @@ document.addEventListener("DOMContentLoaded", (event) => {
    */
   document.getElementById("third-party-domains").addEventListener("click", () => {
     // var icon = document.getElementById("dropdown")
-    // console.log
     if (document.getElementById("third-party-domains-list").style.display === "none") {
       document.getElementById("dropdown-1").src = "../assets/chevron-up.svg"
       document.getElementById("third-party-domains-list").style.display = ""
@@ -206,7 +204,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
  * (requests = tabs[activeTabID].REQUEST_DOMAINS; passed from background page)
  */
 async function buildDomains(requests) {
-  console.log("requests: ", requests)
+  //console.log("requests: ", requests)
   let items = "";
   chrome.storage.local.get(["DOMAINS"], function (result) {
     for (var request_domain in requests) {
@@ -286,8 +284,8 @@ async function buildDomains(requests) {
  * (requests passed from contentScript.js page as of v1.1.3)
  */
 async function buildWellKnown(requests) {
-  console.log("Well-Known info: ", requests);
-  console.log(JSON.stringify(requests, null, 4))
+  //console.log("Well-Known info: ", requests);
+  //console.log(JSON.stringify(requests, null, 4))
 
   let explainer;
   // let tabDetails;
@@ -380,12 +378,11 @@ chrome.runtime.onMessage.addListener(function (request, _, __) {
     buildDomains(request.data);
   }
   if (request.msg === "WELLKNOWNRESPONSE") {
-    console.log(`Received WELLKNOWNREQUEST response: ${JSON.stringify(request.data)}`)
+    //console.log(`Received WELLKNOWNREQUEST response: ${JSON.stringify(request.data)}`)
     buildWellKnown(request.data);
   }
 });
 
-console.log(`test`)
 /**
  * Requests Well Known info from Background page
  */
@@ -394,7 +391,7 @@ chrome.runtime.sendMessage({
     data: null,
     return: true,
   }, (response) => {
-    console.log(`Received WELLKNOWNREQUEST response: ${JSON.stringify(response.data)}`)
+    //console.log(`Received WELLKNOWNREQUEST response: ${JSON.stringify(response.data)}`)
     buildWellKnown(response.data);
   }
 );

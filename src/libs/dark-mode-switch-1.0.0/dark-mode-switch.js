@@ -1,7 +1,5 @@
 export function darkSwitchFunction () {
-  console.log("ran function...")
   var darkSwitch = document.getElementById("darkSwitch");
-  console.log(darkSwitch)
   if (darkSwitch) {
     initTheme();
     darkSwitch.addEventListener("change", function(event) {

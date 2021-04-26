@@ -17,14 +17,14 @@ browser storage
  * Exports the domainlist in local storage as a .txt file
  */
 export async function handleDownload() {
-    console.log("Downloading ...");
+    //("Downloading ...");
     chrome.storage.local.get(["DOMAINS"], function (result) {
       var DOMAINS = result.DOMAINS;
       var blob = new Blob([JSON.stringify(DOMAINS, null, 4)],
                           {type: "text/plain;charset=utf-8"});
       saveAs(blob, "OptMeowt_backup.json");
     })
-    console.log("Downloaded!")
+    //console.log("Downloaded!")
 }
 
 /**
@@ -39,12 +39,12 @@ export async function startUpload() {
  * Imports and updates the domainlist in local storage with an imported backup
  */
 export async function handleUpload() {
-    console.log("Starting upload ...");
+    //console.log("Starting upload ...");
     const file = this.files[0];
     const fr = new FileReader();
     fr.onload = function(e) {
       chrome.storage.local.set({ DOMAINS: JSON.parse(e.target.result) });
-      console.log("Finished upload!")
+      //("Finished upload!")
     };
     fr.readAsText(file);
 }
@@ -63,7 +63,7 @@ export async function addToDomainlist(domainKey) {
     addDomainCookies(domainKey)
     chrome.storage.local.set({ DOMAINS: new_domains });
   });
-  console.log(domainKey, ", Added to domainlist.")
+  //console.log(domainKey, ", Added to domainlist.")
 }
 
 /**
@@ -78,7 +78,7 @@ export async function removeFromDomainlist(domainKey) {
     deleteDomainCookies(domainKey)
     chrome.storage.local.set({ DOMAINS: new_domains });
   });
-  console.log(domainKey, ", Removed from domainlist.")
+  //(domainKey, ", Removed from domainlist.")
 }
 
 /**
@@ -127,17 +127,17 @@ function deleteDomainCookies(domainKey) {
   var cookie_arr = []
   chrome.cookies.getAll({ "domain": `${domainKey}` }, function(cookies) {
     cookie_arr = cookies
-    console.log(`Retrieved ${domainKey} cookies: ${cookies}`)
+    //console.log(`Retrieved ${domainKey} cookies: ${cookies}`)
     for (let i in cookie_arr) {
-      console.log(`Cookie #${i}: ${cookie_arr[i]}`)
+      //(`Cookie #${i}: ${cookie_arr[i]}`)
       chrome.cookies.remove({
         "url": `https://${domainKey}/`,
         "name": cookie_arr[i].name
       }, function(details) {
         if (details === null) {
-          console.log("Delete failed.")
+          //console.log("Delete failed.")
         } else {
-          console.log("Successfully deleted cookie.")
+          //console.log("Successfully deleted cookie.")
         }
       })
       chrome.cookies.remove({
@@ -145,9 +145,9 @@ function deleteDomainCookies(domainKey) {
         "name": cookie_arr[i].name
       }, function(details) {
         if (details === null) {
-          console.log("Delete failed.")
+          //console.log("Delete failed.")
         } else {
-          console.log("Successfully deleted cookie.")
+          //console.log("Successfully deleted cookie.")
         }
       })
     }

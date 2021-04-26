@@ -9,7 +9,7 @@ The current implementation does not benefit with this script a whole lot,
 if the white background issue is not fixed this can probably be removed.
 */
 (function () {
-  console.log("Initializing dark mode switch...")
+  //console.log("Initializing dark mode switch...")
   function initThemeAttr() {
     var darkThemeSelected =
       localStorage.getItem("darkSwitch") !== null &&
