@@ -105,8 +105,28 @@ function parseURLForSignal(url){
 	return flagSettingsDict;
 }
 
+function checkCompliance(url){
+	var testout = "";
+	var site = "";
+
+	for(var website in websitesFlagsDict){
+		site = website;
+		for(var flag in websitesFlagsDict[website][0]){
+			testout += (flag + ": " + websitesFlagsDict[website][0][flag] + " unset, " + websitesFlagsDict[website][1][flag] + " set.\n");
+		}
+	}
+
+	alert(url + " ... \n" + testout);
+}
+
 //chrome.tabs.onUpdated.addListener(checkForDNSLink);
 chrome.webRequest.onBeforeRequest.addListener(
   logRequest,
   {urls: ["<all_urls>"]}
 );
+
+chrome.runtime.onMessage.addListener(function (request, _, __) {
+	if (request.msg === "COMPLIANCECHECK") {
+	  checkCompliance(request.data);
+	}
+});

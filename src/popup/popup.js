@@ -198,6 +198,22 @@ document.addEventListener("DOMContentLoaded", (event) => {
       document.getElementById("divider-2").style.display = "none"
     }
   });
+
+    //Compliance analysis mode UI. WIP!
+
+    var btn = document.getElementById('complianceAnalysisButton');
+    btn.addEventListener('click', function() {
+      alert("Compliance checked! Check console...");
+      chrome.runtime.sendMessage({
+        msg: "COMPLIANCECHECK",
+        data: "https://www.dailymail.co.uk",
+        return: true,
+      }, (response) => {
+        console.log("done...")
+      }
+      );
+    });
+
 })
 
 /**
@@ -425,4 +441,5 @@ document.getElementById("domain-list").addEventListener("click", () => {
   chrome.storage.local.set({ DOMAINLIST_PRESSED: true }, ()=>{
     chrome.runtime.openOptionsPage();
   });
+
 });
