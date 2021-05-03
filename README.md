@@ -47,7 +47,7 @@ For every domain you visit OptMeowt will automatically add it to the `domain lis
 
 ## OptMeowt's Permissions
 
-We do not collect any data from you. Third parties will also not receive your data. OptMeowt has a set number of permissions that are required for the functionality we use. These include:
+We do not collect any data from you. Third parties will also not receive your data. The permissions OptMeowt is using are required for opting you out. These permissions include:
 
 ```json
 "permissions": [
@@ -62,14 +62,14 @@ We do not collect any data from you. Third parties will also not receive your da
   ]
 ```
 
-- `webRequest`: Pauses outgoing requests to append out HTTP request headers
-- `<all_urls>`: Allows us to modify all outgoing requests
-- `webRequestBlocking`: Necessary for pausing outgoing requests
-- `webNavigation`: Similar to webRequest, allows us to check when navigation requests are made to reset our processes
-- `storage`: Allows us to save preferences
-- `activeTab`: Allows us to set opt-out signals on your active tab
-- `cookies`: Allows us to place opt-out cookies on your browser
-- `tabs`: Allows us to keep track of headers per tab for our popup
+- `webRequest`: Pauses outgoing HTTP requests to append opt out headers
+- `<all_urls>`: Allows modification of outgoing HTTP requests
+- `webRequestBlocking`: Necessary for pausing outgoing HTTP requests
+- `webNavigation`: Similar to `webRequest`, allows OptMeowt to check when navigation requests are made to reset processes
+- `storage`: Allows OptMeowt to save your opt out preferences in your browser
+- `activeTab`: Allows OptMeowt to set opt out signals on your active browser tab
+- `cookies`: Allows OptMeowt to place opt out cookies in your browser
+- `tabs`: Allows OptMeowt to keep track of HTTP headers per tab to show you the opt out status of the current site in a popup
 
 ## Files and Directories in this Repo
 
