@@ -2,7 +2,7 @@
   <img src="https://github.com/privacy-tech-lab/optmeowt-browser-extension/blob/issue-19/src/assets/cat-w-text/optmeow-logo-circle.png" width="150px" height="150px" title="OptMeowt logo">
 <p>
 
-# OptMeowt :paw_prints:
+# OptMeowt :paw_prints
 
 OptMeowt ("Opt Me Out") is a browser extension for sending Do Not Sell signals to websites per the [Global Privacy Control draft spec](https://globalprivacycontrol.org/).
 
@@ -47,9 +47,9 @@ For every domain you visit OptMeowt will automatically add it to the `domain lis
 
 ## OptMeowt's Permissions
 
-OptMeowt has a set number of permissions that are required for the functionality we use. These include: 
+We do not collect any data from you. Third parties will also not receive your data. OptMeowt has a set number of permissions that are required for the functionality we use. These include:
 
-`
+```json
 "permissions": [
     "webRequest",
     "<all_urls>",
@@ -60,7 +60,7 @@ OptMeowt has a set number of permissions that are required for the functionality
     "cookies",
     "tabs"
   ]
-`
+```
 
 - `webRequest`: Pauses outgoing requests to append out HTTP request headers
 - `<all_urls>`: Allows us to modify all outgoing requests
@@ -70,7 +70,6 @@ OptMeowt has a set number of permissions that are required for the functionality
 - `activeTab`: Allows us to set opt-out signals on your active tab
 - `cookies`: Allows us to place opt-out cookies on your browser
 - `tabs`: Allows us to keep track of headers per tab for our popup
-
 
 ## Files and Directories in this Repo
 
