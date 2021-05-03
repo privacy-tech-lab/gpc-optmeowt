@@ -1,7 +1,19 @@
-console.log("Compliance analysis mode loaded!");
+/*
+OptMeowt is licensed under the MIT License
+Copyright (c) 2021 Kuba Alicki, Daniel Knopf, Abdallah Salia, Sebastian Zimmeck, Stanley Markman
+(this file authored by Stanley Markman)
+privacy-tech-lab, https://privacytechlab.org/
+*/
 
+/*
+backgroundanalysis.js
+================================================================================
+backgroundanalysis.js manages the compliance-analysis feature which inspects HTTP traffic for the sale of regulated user data.
+*/
 
 //Privacy Opt-in Flags
+//Now in privacy_flags.json
+/*
 let urlFlags = ['gdpr', //Values: 0, 1. General Data Protection Regulation EU
 				'gdpr_consent', //URL-safe base64-encoded GDPR consent string. Only meaningful if gdpr=1
 				'gdpr_pd', //0 / 1 (optional, default: 1). GDPR indicates no personal data in request if gdpr_pd=0
@@ -10,14 +22,29 @@ let urlFlags = ['gdpr', //Values: 0, 1. General Data Protection Regulation EU
 				//Look into:
 				//MSRDP (??) flag
 				];
+*/
 
+let urlFlags = [];
+let flagObject;
 let setFlags = [];	//Number of RDP flags which are truthy
 let unsetFlags = [];//Number of RDP flgas which are falsy
 
-urlFlags.forEach(flag => {
-	setFlags[flag] = 0;
-	unsetFlags[flag] = 0; }
-)
+//Load the privacy flags from the static json file
+fetch(chrome.extension.getURL('/json/privacy_flags.json'))
+    .then((resp) => resp.json())
+    .then(function (jsonData) {
+        console.log("flagdata" + JSON.stringify(jsonData));
+		flagObject = jsonData;
+		console.log("FLAGONE" + jsonData.flags[0].name);
+		flagObject.flags.forEach(flag => {
+			urlFlags.push(flag.name);
+		});
+		console.log("URLFLAGS" + urlFlags);
+		urlFlags.forEach(flag => {
+			setFlags[flag] = 0;
+			unsetFlags[flag] = 0; }
+		)
+});
 
 var websitesFlagsDict = {}
 
@@ -59,6 +86,7 @@ function logRequest(requestDetails){
 	var flagSettingsDict = parseURLForSignal(requestDetails.url);
 	
 	//Check if the request initiator is already in the websites dictionary. If not, set it up!
+		//TODO: WARNING! as currently implemented this kind of creates a log of all web traffic. This should be moved somewhere wheere it only happens if a  flag is detected.
 	if(Object.keys(flagSettingsDict).length > 0){
 		if(!(requestDetails.initiator in websitesFlagsDict)){
 			console.log("Setting up flag logger for requestor " + requestDetails.initiator);
