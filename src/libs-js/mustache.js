@@ -1,4 +1,3 @@
-// This file has been generated from mustache.mjs
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
   typeof define === 'function' && define.amd ? define(factory) :
@@ -701,7 +700,7 @@
 
   var mustache = {
     name: 'mustache.js',
-    version: '4.1.0',
+    version: '4.2.0',
     tags: [ '{{', '}}' ],
     clearCache: undefined,
     escape: undefined,

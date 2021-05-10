@@ -32,9 +32,9 @@ var global_domains = {};
  *                       (request headers)
  */
 var addHeaders = (details) => {
-  console.log("details for addHeaders with url:", details.url,  "is:", details, "sendSignal:", sendSignal);
+  // console.log("details for addHeaders with url:", details.url,  "is:", details, "sendSignal:", sendSignal);
   if (!(details.type === "TEST")) {
-    console.log(`the type is -> ${details.type}, ${typeof details.type}`);
+    // console.log(`the type is -> ${details.type}, ${typeof details.type}`);
     updateDomainsAndSignal(details);
 
     if (sendSignal) {
@@ -44,7 +44,7 @@ var addHeaders = (details) => {
       return updateHeaders(details);
     }
   } else {
-    console.log("Caught unessential request");
+    // console.log("Caught unessential request");
   }
 };
 
@@ -74,7 +74,7 @@ function updateDomainsAndSignal(details) {
     result
   ) {
     var domains = result.DOMAINS;
-    console.log("domains is:", domains, "when global_domains is:", global_domains);
+    // console.log("domains is:", domains, "when global_domains is:", global_domains);
 
     /// Add each domain in gloabl_domains to the chrome domain list
     /// This ensures that all domains on the page are added to the domain list 
@@ -86,10 +86,10 @@ function updateDomainsAndSignal(details) {
     }
 
     chrome.storage.local.set({ DOMAINS: domains }, function(){
-      console.log("setting the storage for domain:", d);
+      // console.log("setting the storage for domain:", d);
     });
 
-    console.log("parsed domain in updateDomain is:", d, "domains[d] is:", domains[d], "domains is:", domains);
+    // console.log("parsed domain in updateDomain is:", d, "domains[d] is:", domains[d], "domains is:", domains);
 
 
     /// Set to true if domainlist is off, or if domainlist is on
@@ -98,16 +98,16 @@ function updateDomainsAndSignal(details) {
     if (result.DOMAINLIST_ENABLED) {
       if (domains[d] === true) {
         sendSignal = true;
-        console.log("set sendSignal to TRUE for domain:", d);
+        // console.log("set sendSignal to TRUE for domain:", d);
       } else {
-        console.log("set sendSignal to false for domain:", d);
+        // console.log("set sendSignal to false for domain:", d);
         sendSignal = false;
       }
     } else {
-      console.log("set sendSignal to TRUE for domain:", d);
+      // console.log("set sendSignal to TRUE for domain:", d);
       sendSignal = true; /// Always send signal to all domains
     }
-    console.log("sendsignal:", sendSignal);
+    // console.log("sendsignal:", sendSignal);
   });
 }
 
@@ -123,13 +123,13 @@ function updateHeaders(details) {
   if (sendSignal) {
     for (var signal in optout_headers) {
       let s = optout_headers[signal];
-      console.log(s);
+      // console.log(s);
       details.requestHeaders.push({ name: s.name, value: s.value });
-      console.log("Sending signal added for url:", details.url, "signal:", s.name, s.value);
+      // console.log("Sending signal added for url:", details.url, "signal:", s.name, s.value);
     }
     return { requestHeaders: details.requestHeaders };
   } else {
-    console.log("Preparing to send no added signal...", details.requestHeaders);
+    // console.log("Preparing to send no added signal...", details.requestHeaders);
     return { requestHeaders: details.requestHeaders };
   }
 }
@@ -140,7 +140,7 @@ function updateHeaders(details) {
  * @param {Object} details - details object
  */
 function initDomJS(details) {
-  console.log("Initializing DOM signal...")
+  // console.log("Initializing DOM signal...")
   chrome.tabs.executeScript(details.tabId, {
     file: "dom.js",
     frameId: details.frameId, // Supposed to solve multiple injections
@@ -154,7 +154,7 @@ function initDomJS(details) {
  * @param {Object} details  - retrieved info passed into callback
  */
 function addDomSignal(details) {
-  console.log("Adding dom signal...")
+  // console.log("Adding dom signal...")
   updateDomainsAndSignal(details);
   if (sendSignal) {
     // From DDG, regarding `Injection into non-html pages` on issue-128
@@ -184,7 +184,7 @@ function addDomSignal(details) {
  * @param {Object} details - retrieved info passed into callback
  */
 function beforeNavigate(details) {
-  console.log("beforeNavigate ran!")
+  // console.log("beforeNavigate ran!")
   if (details.frameId === 0) {
     wellknown[details.tabId] = null
     signalPerTab[details.tabId] = false
@@ -196,7 +196,7 @@ function beforeNavigate(details) {
  * @param {Object} details - retrieved info passed into callback
  */
 function updateUI(details) {
-  console.log(`TAB ID FOR UPDATEUI ${details.tabId}`)
+  // console.log(`TAB ID FOR UPDATEUI ${details.tabId}`)
   if (wellknown[details.tabId] === undefined) {
     wellknown[details.tabId] = null
   }
@@ -207,7 +207,7 @@ function updateUI(details) {
         path: "assets/face-icons/optmeow-face-circle-green-ring-128.png",
       },
       function () {
-        console.log("Updated OptMeowt icon to GREEN RING");
+        // console.log("Updated OptMeowt icon to GREEN RING");
       }
     );
   }
@@ -220,7 +220,7 @@ function updateUI(details) {
 function logData(details) {
   var url = new URL(details.url);
   var parsed = psl.parse(url.hostname);
-  console.log("Details.responseHeaders: ", details.responseHeaders);
+  // console.log("Details.responseHeaders: ", details.responseHeaders);
 
   if (tabs[details.tabId] === undefined) {
     tabs[details.tabId] = { DOMAIN: null, REQUEST_DOMAINS: {}, TIMESTAMP: 0 };
@@ -265,7 +265,7 @@ function incrementBadge() {
       ).length;
     }
     requests = tabs[activeTabID].REQUEST_DOMAINS;
-    console.log(tabs[activeTabID]);
+    // console.log(tabs[activeTabID]);
   }
   // chrome.browserAction.setBadgeText({ text: numberOfRequests.toString() });
   function handleSendMessageError() {
@@ -296,7 +296,7 @@ function enable() {
     })
     .then((value) => {
       optout_headers = JSON.parse(value);
-      console.log(optout_headers);
+      // console.log(optout_headers);
       
       // Headers
       if (userAgent === "moz") {
@@ -309,7 +309,7 @@ function enable() {
         );
         chrome.storage.local.set({ ENABLED: true });
 
-        console.log("DOM signal to navigator");
+        // console.log("DOM signal to navigator");
         chrome.webNavigation.onCommitted.addListener(
           addDomSignal
         )
@@ -340,7 +340,7 @@ function enable() {
         );
         chrome.storage.local.set({ ENABLED: true });
 
-        console.log("DOM signal to navigator");
+        // console.log("DOM signal to navigator");
         chrome.webNavigation.onCommitted.addListener(
           addDomSignal,
           {
@@ -370,10 +370,10 @@ function enable() {
       }
     })
     .catch((e) =>
-      console.log(
-        `Failed to intialize OptMeowt (JSON load process) (ContentScript): ${e}`
-      )
-    );
+      // console.log(
+      //   `Failed to intialize OptMeowt (JSON load process) (ContentScript): ${e}`
+      // )
+    {});
 }
 
 /**
@@ -454,20 +454,20 @@ function setFilteredCookies(cookiesList, domainFilter) {
   var cookie_time = now/1000 + 31557600
   var path = '/'
 
-  console.log("cookiesLIst, ", cookiesList)
+  // console.log("cookiesLIst, ", cookiesList)
   chrome.storage.local.get([ cookiesList ], function(result) { 
     if (result.THIRDPARTYCOOKIES != undefined) {
       var cookies = result.THIRDPARTYCOOKIES
     } else {
       var cookies = result.CUSTOMCOOKIES
     }
-    console.log("new cookies: ", cookies)
+    // console.log("new cookies: ", cookies)
 
     for (var item in cookies) {
-      console.log("This is the cookies domain...", cookies[item].domain)
+      // console.log("This is the cookies domain...", cookies[item].domain)
       for (var domain in domainFilter) {
         if (domainFilter[domain] == cookies[item].domain) {
-          console.log("cookies[item].domain ", cookies[item].domain, " is in domain filter!")
+          // console.log("cookies[item].domain ", cookies[item].domain, " is in domain filter!")
           // Updates cookie url based on domain, checks for domain/subdomain spec
           let cookie_url = cookies[item].domain
           let all_domains = false
@@ -476,7 +476,7 @@ function setFilteredCookies(cookiesList, domainFilter) {
             all_domains = true
           }
           cookie_url = `https://${cookie_url}/`
-          console.log(`Current cookie url... ${cookie_url}`)
+          // console.log(`Current cookie url... ${cookie_url}`)
           if (cookies[item].path !== null) {
             path = cookies[item].path
           } else {
@@ -495,7 +495,7 @@ function setFilteredCookies(cookiesList, domainFilter) {
           }
           // Sets cookie
           chrome.cookies.set(cookie_param, function (cookie) {
-            console.log(`Updated ${cookie.name} cookie`)
+            // console.log(`Updated ${cookie.name} cookie`)
           })
         }
       }
@@ -509,7 +509,7 @@ function setFilteredCookies(cookiesList, domainFilter) {
  * or for "INIT" to start popup badge counter
  */
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-  console.log("request is:", request, "sendResponse:", sendResponse);
+  // console.log("request is:", request, "sendResponse:", sendResponse);
   if (request.ENABLED != null) {
     if (request.ENABLED) {
       enable();
@@ -524,17 +524,17 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   /// but its only around 5 or so, nothing major.
   if (request.msg === "LOADED") {
     global_domains = {};
-    console.log("DOM content loaded message received in background.js. global_domains is:", global_domains);
+    // console.log("DOM content loaded message received in background.js. global_domains is:", global_domains);
   }
 
   if (request.msg === "WELLKNOWNREQUEST") {
     chrome.tabs.query({active: true, currentWindow: true}, function(tabs){
-      console.log("Received wellknown request")
-      console.log("Received wellknown tabs callback: ", tabs[0]["id"])
+      // console.log("Received wellknown request")
+      // console.log("Received wellknown tabs callback: ", tabs[0]["id"])
       tabID = tabs[0]["id"]
-      console.log(`tabID for wellknownrequest: ${tabID}`)
+      // console.log(`tabID for wellknownrequest: ${tabID}`)
       let wellKnownData = wellknown[tabID]
-      console.log("wellKnownData: ", wellKnownData)
+      // console.log("wellKnownData: ", wellKnownData)
 
       chrome.runtime.sendMessage({
         msg: "WELLKNOWNRESPONSE",
@@ -544,18 +544,18 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
    }
 
   if (request.msg === "WELLKNOWNCS") {
-    console.log(`.well-known from ContentScr: ${JSON.stringify(request.data)}`);
+    // console.log(`.well-known from ContentScr: ${JSON.stringify(request.data)}`);
     var tabID = sender.tab.id;
     wellknown[tabID] = request.data
-    console.log(`wellknown: ${JSON.stringify(wellknown)}`)
-    console.log(`wellknown[tabid]: ${JSON.stringify(wellknown[tabID])}`)
+    // console.log(`wellknown: ${JSON.stringify(wellknown)}`)
+    // console.log(`wellknown[tabid]: ${JSON.stringify(wellknown[tabID])}`)
     // console.log("TAB ID: ", tabID)
     if (wellknown[tabID]["gpc"] === true){
-      console.log(`.well-known from ContentScr "gpc" === true`)
+      // console.log(`.well-known from ContentScr "gpc" === true`)
       // wellknown[tabID] = true
-      console.log("signalPerTab 1: ", signalPerTab);
+      // console.log("signalPerTab 1: ", signalPerTab);
       setTimeout(()=>{}, 10000);
-      console.log("signalPerTab 2: ", signalPerTab);
+      // console.log("signalPerTab 2: ", signalPerTab);
       if (signalPerTab[tabID] === true) {
         chrome.browserAction.setIcon(
           {
@@ -563,7 +563,7 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
             path: "assets/face-icons/optmeow-face-circle-green-128.png",
           },
           function () {
-            console.log("Updated OptMeowt icon to SOLID GREEN.", );
+            // console.log("Updated OptMeowt icon to SOLID GREEN.", );
           }
         );
       }
@@ -574,7 +574,7 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     setFilteredCookies("USERCUSTOMCOOKIES", request.data)
   }
   if (request.msg === "TAB") {
-    console.log("TAB MESSAGE HAS BEEN RECEIVED")
+    // console.log("TAB MESSAGE HAS BEEN RECEIVED")
     var url = new URL(sender.origin);
     var parsed = psl.parse(url.hostname);
     var domain = parsed.domain;
@@ -588,7 +588,7 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     } else if (tabs[tabID].DOMAIN !== domain) {
       tabs[tabID].DOMAIN = domain;
       let urls = tabs[tabID]["REQUEST_DOMAINS"];
-      console.log("urls are:", urls)
+      // console.log("urls are:", urls)
       for (var key in urls) {
         if (urls[key]["TIMESTAMP"] >= request.data) {
           tabs[tabID]["REQUEST_DOMAINS"][key] = urls[key];
@@ -608,8 +608,10 @@ chrome.runtime.onInstalled.addListener(function (object) {
   chrome.storage.local.set(
     { FIRSTINSTALL: true, FIRSTINSTALL_POPUP: true },
     function () {
-      console.log("Set fresh install value. Opening options page...");
-      chrome.runtime.openOptionsPage(() => console.log("Opened options page."));
+      // console.log("Set fresh install value. Opening options page...");
+      chrome.runtime.openOptionsPage(() => 
+      // console.log("Opened options page.")
+      {});
     }
   );
 });

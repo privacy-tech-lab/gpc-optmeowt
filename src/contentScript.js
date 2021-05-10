@@ -27,7 +27,7 @@ chrome.storage.local.get(["ENABLED"], (result) => {
       data: Date.now(),
     });
 
-    console.log(location)
+    //console.log(location)
     var url = new URL(location);
 
     /* Fetches .well-known file and sends message to background script */
@@ -36,12 +36,14 @@ chrome.storage.local.get(["ENABLED"], (result) => {
         return response.json()
       })
       .then((data) => {
-        console.log(`.well-known via ContentScr: ${JSON.stringify(data)}`)
+        //console.log(`.well-known via ContentScr: ${JSON.stringify(data)}`)
         chrome.runtime.sendMessage({
           msg: "WELLKNOWNCS",
           data: data,
         });
       })
-      .catch((e) => {console.log(`.well-known error: ${e}`)})
+      .catch((e) => {
+        //console.log(`.well-known error: ${e}`)
+      })
   }
 });

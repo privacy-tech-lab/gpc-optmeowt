@@ -2,7 +2,7 @@
   <img src="https://github.com/privacy-tech-lab/optmeowt-browser-extension/blob/issue-19/src/assets/cat-w-text/optmeow-logo-circle.png" width="150px" height="150px" title="OptMeowt logo">
 <p>
 
-# OptMeowt :paw_prints:
+# OptMeowt 🐾
 
 OptMeowt ("Opt Me Out") is a browser extension for sending Do Not Sell signals to websites per the [Global Privacy Control draft spec](https://globalprivacycontrol.org/).
 
@@ -44,6 +44,32 @@ OptMeowt currently sends Do Not Sell signals using five methods:
 
 **Customizing which Sites Receive Do Not Sell Signals**
 For every domain you visit OptMeowt will automatically add it to the `domain list` meaning that it will receive a Do Not Sell signal. However, you can exclude domains that should not receive a Do Not Sell signal. This functionality is available on OptMeowt's settings page that you can access from the popup window.
+
+## OptMeowt's Permissions
+
+We do not collect any data from you. Third parties will also not receive your data. The permissions OptMeowt is using are required for opting you out. These permissions include:
+
+```json
+"permissions": [
+    "webRequest",
+    "<all_urls>",
+    "webRequestBlocking",
+    "webNavigation",
+    "storage",
+    "activeTab",
+    "cookies",
+    "tabs"
+  ]
+```
+
+- `webRequest`: Pauses outgoing HTTP requests to append opt out headers
+- `<all_urls>`: Allows modification of outgoing HTTP requests
+- `webRequestBlocking`: Necessary for pausing outgoing HTTP requests
+- `webNavigation`: Similar to `webRequest`, allows OptMeowt to check when navigation requests are made to reset processes
+- `storage`: Allows OptMeowt to save your opt out preferences in your browser
+- `activeTab`: Allows OptMeowt to set opt out signals on your active browser tab
+- `cookies`: Allows OptMeowt to place opt out cookies in your browser
+- `tabs`: Allows OptMeowt to keep track of HTTP headers per tab to show you the opt out status of the current site in a popup
 
 ## Files and Directories in this Repo
 
