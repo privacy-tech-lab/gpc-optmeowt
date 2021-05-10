@@ -6,6 +6,8 @@
 
 OptMeowt ("Opt Me Out") is a browser extension for sending Do Not Sell signals to websites per the [Global Privacy Control draft spec](https://globalprivacycontrol.org/).
 
+Please note that OptMeowt is currently in active development and new features are frequently being added, some of which may be broken. The stable releast version of OptMeowt is available on the Chrome Webstore and Mozilla Add-Ons site.
+
 ## Installing and Running OptMeowt
 
 OptMeowt works on Chromium-based browsers as well as on Firefox.
