@@ -13,11 +13,11 @@ OptMeowt ("Opt Me Out") is a browser extension for opting you out from web track
 
 ## How does OptMeowt work?
 
-OptMewot sends Do Not Sell signals to all sites you visit when browsing the web. Such signals must be respected for California consumers per the California Consumer Privacy Act (CCPA), [Regs Section 999.315(d)](https://oag.ca.gov/sites/all/files/agweb/pdfs/privacy/oal-sub-final-text-of-regs.pdf). Some companies also respect such signals when they are sent from outside of California.
+OptMewot sends Do Not Sell signals to all sites you visit when browsing the web. Such signals must be respected for California consumers per the California Consumer Privacy Act (CCPA), [Regs Section 999.315(d)](https://oag.ca.gov/sites/all/files/agweb/pdfs/privacy/oal-sub-final-text-of-regs.pdf). Some companies also respect such signals when they are sent from outside of California. OptMeowt also places opt out cookies.
 
-OptMeowt currently sends Do Not Sell signals and places opt out cookies based on five methods:
+In detail, OptMeowt uses five methods to opt your out:
 
-1. A new HTTP Do Not Sell header we are developing in a [at the W3C](https://github.com/privacycg/proposals/issues/10).
+1. A new HTTP Do Not Sell header we are developing [at the W3C](https://github.com/privacycg/proposals/issues/10).
 2. The [existing DNT header](https://www.w3.org/TR/tracking-dnt/).
 3. The [IAB CCPA Compliance Framework for Publishers & Technology Companies](https://iabtechlab.com/standards/ccpa/), implemented in a first party cookie.
 4. Third party cookies of ad networks participating in the [DAA's CCPA Opt Out Tool for the Web](https://digitaladvertisingalliance.org/integrate-webchoices-ccpa).
