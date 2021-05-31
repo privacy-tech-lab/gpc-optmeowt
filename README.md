@@ -7,8 +7,8 @@
 OptMeowt ("Opt Me Out") is a browser extension for opting you out from web tracking. OptMeowt works by sending Do Not Sell signals to visited websites per the [Global Privacy Control draft spec](https://globalprivacycontrol.org/) and placing opt out cookies.
 
 <p align="center">
-  <img src="https://github.com/privacy-tech-lab/optmeowt-browser-extension/blob/main/firefox-add-ons-badge.png" width="172px" href="https://addons.mozilla.org/en-US/firefox/addon/optmeowt/" alt="Firefox Add Ons badge">
-  <img src="https://github.com/privacy-tech-lab/optmeowt-browser-extension/blob/main/chrome-web-store-badge.png" width="185px" href="https://chrome.google.com/webstore/detail/optmeowt/hdbnkdbhglahihjdbodmfefogcjbpgbo" alt="Chrome Web Store badge">
+  <a href="https://addons.mozilla.org/en-US/firefox/addon/optmeowt/"><img src="https://github.com/privacy-tech-lab/optmeowt-browser-extension/blob/main/firefox-add-ons-badge.png" width="172px" alt="Firefox Add Ons badge"></a>
+  <a href="https://chrome.google.com/webstore/detail/optmeowt/hdbnkdbhglahihjdbodmfefogcjbpgbo"><img src="https://github.com/privacy-tech-lab/optmeowt-browser-extension/blob/main/chrome-web-store-badge.png" width="195px" alt="Chrome Web Store badge"></a>
 <p>
 
 ## How does OptMeowt work?
@@ -26,7 +26,7 @@ OptMeowt currently sends Do Not Sell signals and places opt out cookies based on
 **Customizing which Sites Receive Do Not Sell Signals**
 For every website you visit OptMeowt will automatically add its domain to the `domain list` meaning that it will receive a Do Not Sell signal. However, you can exclude domains that should not receive a Do Not Sell signal. This functionality is available on OptMeowt's settings page that you can access from OptMeowt's popup window.
 
-## Installing and Running OptMeowt from Source as an Unpacked Extension on Chromium-based Browsers
+## Installing and Running OptMeowt from Source on Chromium-based Browsers
 
 1. Clone this repo or download a zipped copy and unzip it.
 2. Follow [these steps](https://www.npmjs.com/get-npm) to install npm.
