@@ -1,22 +1,32 @@
 <p align="center">
-  <img src="https://github.com/privacy-tech-lab/optmeowt-browser-extension/blob/issue-19/src/assets/cat-w-text/optmeow-logo-circle.png" width="150px" height="150px" title="OptMeowt logo">
+  <img src="https://github.com/privacy-tech-lab/optmeowt-browser-extension/blob/issue-19/src/assets/cat-w-text/optmeow-logo-circle.png" width="150px" height="150px" alt="OptMeowt logo">
 <p>
 
 # OptMeowt 🐾
 
-OptMeowt ("Opt Me Out") is a browser extension for sending Do Not Sell signals to websites per the [Global Privacy Control draft spec](https://globalprivacycontrol.org/).
+OptMeowt ("Opt Me Out") is a browser extension for opting you out from web tracking. OptMeowt works by sending Do Not Sell signals to visited websites per the [Global Privacy Control draft spec](https://globalprivacycontrol.org/) and placing opt out cookies.
 
-Please note that OptMeowt is currently in active development and new features are frequently being added, some of which may be broken. The stable releast version of OptMeowt is available on the Chrome Webstore and Mozilla Add-Ons site.
+<p align="center">
+  <img src="https://github.com/privacy-tech-lab/optmeowt-browser-extension/blob/main/firefox-add-ons-badge.png" width="172px" alt="Firefox Add Ons badge">
+  <img src="https://github.com/privacy-tech-lab/optmeowt-browser-extension/blob/main/chrome-web-store-badge.png" width="172px" alt="Chrome Web Store badge">
+<p>
 
-## Installing and Running OptMeowt
+## How does OptMeowt work?
 
-OptMeowt works on Chromium-based browsers as well as on Firefox.
+OptMewot sends Do Not Sell signals to all sites you visit when browsing the web. Such signals must be respected for California consumers per the California Consumer Privacy Act (CCPA), [Regs Section 999.315(d)](https://oag.ca.gov/sites/all/files/agweb/pdfs/privacy/oal-sub-final-text-of-regs.pdf). Some companies also respect such signals when they are sent from outside of California.
 
-### 1. Install OptMeowt via the Chrome Web Store or as Firefox Add-On
+OptMeowt currently sends Do Not Sell signals and places opt out cookies based on five methods:
 
-You can add OptMeowt to your browser at the [Chrome Web Store](https://chrome.google.com/webstore/detail/optmeowt/hdbnkdbhglahihjdbodmfefogcjbpgbo) or as a [Firefox Add-On](https://addons.mozilla.org/en-US/firefox/addon/optmeowt/).
+1. A new HTTP Do Not Sell header we are developing in a [at the W3C](https://github.com/privacycg/proposals/issues/10).
+2. The [existing DNT header](https://www.w3.org/TR/tracking-dnt/).
+3. The [IAB CCPA Compliance Framework for Publishers & Technology Companies](https://iabtechlab.com/standards/ccpa/), implemented in a first party cookie.
+4. Third party cookies of ad networks participating in the [DAA's CCPA Opt Out Tool for the Web](https://digitaladvertisingalliance.org/integrate-webchoices-ccpa).
+5. Custom headers and cookies used by individual websites maintained and updated in OptMeowt's Do Not Sell list.
 
-### 2. Install OptMeowt as an Unpacked Extension on Chromium-based Browsers
+**Customizing which Sites Receive Do Not Sell Signals**
+For every website you visit OptMeowt will automatically add its domain to the `domain list` meaning that it will receive a Do Not Sell signal. However, you can exclude domains that should not receive a Do Not Sell signal. This functionality is available on OptMeowt's settings page that you can access from OptMeowt's popup window.
+
+## Installing and Running OptMeowt from Source as an Unpacked Extension on Chromium-based Browsers
 
 1. Clone this repo or download a zipped copy and unzip it.
 2. Follow [these steps](https://www.npmjs.com/get-npm) to install npm.
@@ -32,24 +42,11 @@ You can add OptMeowt to your browser at the [Chrome Web Store](https://chrome.go
    **Note:** You do not need to click on the `manifest.json` file in Chrome, though other browsers may require this.
 9. Click to finalize the install.
 
-## How does OptMeowt work?
+Please note that OptMeowt is in active development and new features are frequently added, some of which may cause errors. You can always get the stable release version on the [Chrome Web Store](https://chrome.google.com/webstore/detail/optmeowt/hdbnkdbhglahihjdbodmfefogcjbpgbo) and on [Firefox Add-Ons](https://addons.mozilla.org/en-US/firefox/addon/optmeowt/).
 
-OptMewot sends Do Not Sell signals to all domains a user visits when browsing the web. Such signals must be respected for California consumers per the California Consumer Privacy Act (CCPA), [Regs Section 999.315(d)](https://oag.ca.gov/sites/all/files/agweb/pdfs/privacy/oal-sub-final-text-of-regs.pdf). However, some companies respect such signals even when they are sent from outside of California.
+## OptMeowt's Permission Use
 
-OptMeowt currently sends Do Not Sell signals using five methods:
-
-1. A new HTTP Do Not Sell header we are developing in a [proposed specification effort at the W3C](https://github.com/privacycg/proposals/issues/10).
-2. The [existing DNT header](https://www.w3.org/TR/tracking-dnt/), which is interpreted by some publishers as a Do Not Sell header.
-3. The [IAB CCPA Compliance Framework for Publishers & Technology Companies](https://iabtechlab.com/standards/ccpa/), implemented in a first party cookie.
-4. Third party cookies of ad networks participating in the [DAA's CCPA Opt Out Tool for the Web](https://digitaladvertisingalliance.org/integrate-webchoices-ccpa).
-5. Custom headers and cookies used by individual websites maintained and updated in a Do Not Sell list.
-
-**Customizing which Sites Receive Do Not Sell Signals**
-For every domain you visit OptMeowt will automatically add it to the `domain list` meaning that it will receive a Do Not Sell signal. However, you can exclude domains that should not receive a Do Not Sell signal. This functionality is available on OptMeowt's settings page that you can access from the popup window.
-
-## OptMeowt's Permissions
-
-We do not collect any data from you. Third parties will also not receive your data. The permissions OptMeowt is using are required for opting you out. These permissions include:
+We do not collect any data from you. Third parties will also not receive your data. The permissions OptMeowt is using are required for opting you out. OptMeowt uses the following permissions:
 
 ```json
 "permissions": [
@@ -110,6 +107,8 @@ OptMeowt uses the following third party libraries. We thank the developers.
 
 ## Developer Guide
 
+Consider contributing to OptMeowt.
+
 - When contibuting, it is important to note that we manage all package dependencies with npm. Thus, it is recommended to use the `npm i` command to install packages.
 - In the event that you install a new dependency, you need to update Grantfile.js file with a new task of the form:\
   `task: { expand: true, cwd: "./node_modules/..../", src: "*", dest: "./src/libs-js" }` depending on whether you need the js files or the css files of the newly installed library.
@@ -117,12 +116,12 @@ OptMeowt uses the following third party libraries. We thank the developers.
   
 ## FAQ \ Known quirks \ Reporting bugs
 
-If you have questions about OptMeowt's functionality, or believe you may have found a bug, please check out our [FAQ \ Known quirks](https://github.com/privacy-tech-lab/optmeowt-browser-extension/wiki/FAQ-%5C-Known-quirks) page on the [Wiki](https://github.com/privacy-tech-lab/optmeowt-browser-extension/wiki) above to see if we have already addressed the issue. If you cannot find what you are looking for, please feel free to open an issue and we will address it as soon as we can! We appreciate any input from all of our users!
+If you have questions about OptMeowt's functionality or have found a bug, please check out our [FAQ \ Known quirks](https://github.com/privacy-tech-lab/optmeowt-browser-extension/wiki/FAQ-%5C-Known-quirks) page on the [Wiki](https://github.com/privacy-tech-lab/optmeowt-browser-extension/wiki) first to see if we have already addressed the issue. If you cannot find what you are looking for, please feel free to open an issue and we will address it as soon as we can!
 
 ## More Information
 
-Visit our [site](https://privacytechlab.org/optmeowt) to learn more.
+Learn more on our [site](https://privacytechlab.org/optmeowt).
 
 <p align="center">
-  <img src="https://github.com/privacy-tech-lab/optmeowt-browser-extension/blob/main/plt_logo.png" width="200px" height="200px" title="privacy-tech-lab logo">
+  <img src="https://github.com/privacy-tech-lab/optmeowt-browser-extension/blob/main/plt_logo.png" width="200px" height="200px" alt="privacy-tech-lab logo">
 <p>
