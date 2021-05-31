@@ -7,8 +7,8 @@
 OptMeowt ("Opt Me Out") is a browser extension for opting you out from web tracking. OptMeowt works by sending Do Not Sell signals to visited websites per the [Global Privacy Control draft spec](https://globalprivacycontrol.org/) and placing opt out cookies.
 
 <p align="center">
-  <img src="https://github.com/privacy-tech-lab/optmeowt-browser-extension/blob/main/firefox-add-ons-badge.png" width="172px" alt="Firefox Add Ons badge">
-  <img src="https://github.com/privacy-tech-lab/optmeowt-browser-extension/blob/main/chrome-web-store-badge.png" width="172px" alt="Chrome Web Store badge">
+  <img src="https://github.com/privacy-tech-lab/optmeowt-browser-extension/blob/main/firefox-add-ons-badge.png" width="172px" href="https://addons.mozilla.org/en-US/firefox/addon/optmeowt/" alt="Firefox Add Ons badge">
+  <img src="https://github.com/privacy-tech-lab/optmeowt-browser-extension/blob/main/chrome-web-store-badge.png" width="185px" href="https://chrome.google.com/webstore/detail/optmeowt/hdbnkdbhglahihjdbodmfefogcjbpgbo" alt="Chrome Web Store badge">
 <p>
 
 ## How does OptMeowt work?
