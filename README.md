@@ -2,7 +2,7 @@
   <img src="https://github.com/privacy-tech-lab/optmeowt-browser-extension/blob/issue-19/src/assets/cat-w-text/optmeow-logo-circle.png" width="150px" height="150px" alt="OptMeowt logo">
 <p>
 
-# OptMeowt 🐾
+# OptMeowt 🐾🐈
 
 OptMeowt ("Opt Me Out") is a browser extension for opting you out from web tracking. OptMeowt works by sending Do Not Sell signals to visited websites per the [Global Privacy Control draft spec](https://globalprivacycontrol.org/) and placing opt out cookies.
 
