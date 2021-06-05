@@ -2,7 +2,7 @@
   <img src="https://github.com/privacy-tech-lab/optmeowt-browser-extension/blob/issue-19/src/assets/cat-w-text/optmeow-logo-circle.png" width="150px" height="150px" alt="OptMeowt logo">
 <p>
 
-# OptMeowt 🐾🐈
+# OptMeowt 🐾
 
 OptMeowt ("Opt Me Out") is a browser extension for opting you out from web tracking. OptMeowt works by sending Do Not Sell signals to visited websites per the [Global Privacy Control draft spec](https://globalprivacycontrol.org/) and placing opt out cookies.
 
@@ -13,7 +13,7 @@ OptMeowt ("Opt Me Out") is a browser extension for opting you out from web track
 
 ## How does OptMeowt work?
 
-OptMewot sends Do Not Sell signals to all sites you visit when browsing the web. Such signals must be respected for California consumers per the California Consumer Privacy Act (CCPA), [Regs Section 999.315(d)](https://oag.ca.gov/sites/all/files/agweb/pdfs/privacy/oal-sub-final-text-of-regs.pdf). Some companies also respect such signals when they are sent from outside of California. OptMeowt also places opt out cookies.
+OptMeowt sends Do Not Sell signals to all sites you visit when browsing the web. Such signals must be respected for California consumers per the California Consumer Privacy Act (CCPA), [Regs Section 999.315(d)](https://oag.ca.gov/sites/all/files/agweb/pdfs/privacy/oal-sub-final-text-of-regs.pdf). Some companies also respect such signals when they are sent from outside of California. OptMeowt also places opt out cookies.
 
 In detail, OptMeowt uses five methods to opt you out:
 
@@ -109,8 +109,8 @@ OptMeowt uses the following third party libraries. We thank the developers.
 
 Consider contributing to OptMeowt.
 
-- When contibuting, it is important to note that we manage all package dependencies with npm. Thus, it is recommended to use the `npm i` command to install packages.
-- In the event that you install a new dependency, you need to update Grantfile.js file with a new task of the form:\
+- When contributing, it is important to note that we manage all package dependencies with npm. Thus, it is recommended to use the `npm i` command to install packages.
+- In the event that you install a new dependency, you need to update Gruntfile.js file with a new task of the form:\
   `task: { expand: true, cwd: "./node_modules/..../", src: "*", dest: "./src/libs-js" }` depending on whether you need the js files or the css files of the newly installed library.
 - When viewing your browser's console on a site you are sending GPC signals to, a 404 error regarding the site's GPC status file (`/.well-known/gpc.json`) may be shown. Note that this is perfectly normal, and will occur frequently (1) on sites that do not support GPC and (2) may even occur on sites that do respect GPC simply if the website does not host such a `/.well-known/gpc.json` file.
   
@@ -118,7 +118,7 @@ Consider contributing to OptMeowt.
 
 If you have questions about OptMeowt's functionality or have found a bug, please check out our [FAQ \ Known quirks](https://github.com/privacy-tech-lab/optmeowt-browser-extension/wiki/FAQ-%5C-Known-quirks) page on the [Wiki](https://github.com/privacy-tech-lab/optmeowt-browser-extension/wiki) first to see if we have already addressed the issue. If you cannot find what you are looking for, please feel free to open an issue and we will address it as soon as we can!
 
-## More Information
+## More Information 🐈
 
 Learn more on our [site](https://privacytechlab.org/optmeowt).
 
