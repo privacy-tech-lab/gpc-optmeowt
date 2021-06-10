@@ -18,6 +18,8 @@ import {
   onBeforeNavigate,
   onCommitted
 } from "./events.js"
+import { setToStorage, getFromStorage } from "./storage.js"
+import { initDomainlist, addToDomainlist } from "./domainlist.js"
 
 // https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/webRequest/onBeforeRequest
 // https://developer.chrome.com/docs/extensions/reference/webRequest/
@@ -92,4 +94,19 @@ function disable() {
 }
 
 
-enable()
+/* initialize */
+async function init() {
+  enable()
+
+  // storage tests
+  setToStorage({ ENABLED: true })
+  getFromStorage("ENABLED", (res) => { console.log(res) })
+
+  initDomainlist()
+  getFromStorage("DOMAINLIST", (res) => { console.log("DOMAINS = ", res) })
+
+  await addToDomainlist("http://google.com/")
+  getFromStorage("DOMAINLIST", (res) => { console.log("DOMAINS = ", res) })
+}
+
+init()
