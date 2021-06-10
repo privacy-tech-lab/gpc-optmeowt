@@ -22,7 +22,7 @@
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["contentScript.js"],
+      "js": ["background/contentScript.js"],
       "run_at": "document_start"
     }
   ],

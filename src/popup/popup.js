@@ -14,7 +14,7 @@ import {
   // toggleListener,
   addToDomainlist,
   removeFromDomainlist,
-} from "../domainlist.js";
+} from "../background/domainlist.js";
 // import { buildToggle, toggleListener } from "../../../domainlist.js";
 
 /**
