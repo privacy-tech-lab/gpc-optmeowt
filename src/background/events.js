@@ -14,12 +14,43 @@ import { headers } from "./headers.js"
 
 // attach headers before headers are sent with request
 const onBeforeSendHeaders = (details) => {
-  return updateHeaders(details);
+  return addHeaders(details);
 }
 
 const onHeadersReceived = (details) => {
   // logData(details);
   // incrementBadge(details);
+}
+
+const onBeforeNavigate = (details) => {
+}
+  
+// add DOM property
+const onCommitted = (details) => {
+  addDomSignal(details)
+}
+
+/******************************************************************************/
+
+function addHeaders(details) {
+  // if (sendSignal) {
+    for (var signal in headers) {
+      let s = headers[signal]
+      details.requestHeaders.push({ name: s.name, value: s.value })
+    }
+    return { requestHeaders: details.requestHeaders }
+  // } else {
+  //   return { requestHeaders: details.requestHeaders };
+  // }
+}
+
+function addDomSignal(details) {
+  chrome.tabs.executeScript(details.tabId, {
+    file: "dom.js",
+    frameId: details.frameId, // Supposed to solve multiple injections
+                              // as opposed to allFrames: true
+    runAt: "document_start",
+  });
 }
 
 function updateDomainsAndSignal(details) {
@@ -68,40 +99,7 @@ function updateDomainsAndSignal(details) {
     // console.log("sendsignal:", sendSignal);
   })
 }
-  
-  
-function updateHeaders(details) {
-  // if (sendSignal) {
-    for (var signal in headers) {
-      let s = headers[signal];
-      // console.log(s);
-      details.requestHeaders.push({ name: s.name, value: s.value });
-      // console.log("Sending signal added for url:", details.url, "signal:", s.name, s.value);
-    }
-    return { requestHeaders: details.requestHeaders };
-  // } else {
-  //   // console.log("Preparing to send no added signal...", details.requestHeaders);
-  //   return { requestHeaders: details.requestHeaders };
-  // }
-}
-  
-function initDomJS(details) {
-  // console.log("Initializing DOM signal...")
-  chrome.tabs.executeScript(details.tabId, {
-    file: "dom.js",
-    frameId: details.frameId, // Supposed to solve multiple injections
-                              // as opposed to allFrames: true
-    runAt: "document_start",
-  });
-}
 
-function onBeforeNavigate(details) {
-}
-  
-// add DOM property
-function onCommitted(details) {
-}
-  
 function updateUI(details) {
   // console.log(`TAB ID FOR UPDATEUI ${details.tabId}`)
   if (wellknown[details.tabId] === undefined) {
