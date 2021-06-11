@@ -12,11 +12,42 @@ storage.js handles OptMeowt's reads/writes of data to some local location
 */
 
 function setToStorage(data) {
-    chrome.storage.local.set(data, () => {})
+    return new Promise ((resolve, reject) => {
+        chrome.storage.local.set(data, (result) => {
+            if (chrome.runtime.lastError) {
+                console.error(chrome.runtime.lastError.message)
+                reject(chorme.runtime.lastError.message)
+            } else {
+                resolve()
+            }
+        })
+    })
 }
 
-function getFromStorage(key, func) {
-    chrome.storage.local.get(key, (result) => func(result[key]))
+// function getFromStorage(key, callback) {
+//         chrome.storage.local.get(key, (result) => callback(result[key]))
+// }
+
+// returns promise with info called from storage
+// for use with async / await
+// Make sure the data is not undefined pls 🥺
+function getFromStorage(key) {
+    return new Promise((resolve, reject) => {
+        chrome.storage.local.get(key, (items) => {
+            // error handling for promise
+            if (chrome.runtime.lastError) {
+                console.error(chrome.runtime.lastError.message)
+                reject(chorme.runtime.lastError.message)
+            } else {
+                // Data retrieved successfully
+                // if (items[key] != undefined) {
+                    resolve(items[key])
+                // } else {
+                //     reject("Attempted data retrieval is undefined")
+                // }
+            }
+        })
+    })
 }
 
 export { setToStorage, getFromStorage }
