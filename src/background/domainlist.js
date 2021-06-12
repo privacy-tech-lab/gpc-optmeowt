@@ -11,28 +11,22 @@ domainlist.js
 domainlist.js handles OptMeowt's reads/writes to the domainlist locally
 */
 
+
+// we should probably add error handling 
+// 1) try / catch when using awaits for their failure?
+// 2) use reject() inside promises?
+
 import { setToStorage, getFromStorage } from "./storage.js"
 
-async function initDomainlist() {
-        // try {
-            const domains = await getFromStorage("DOMAINLIST")
-            if (domains == undefined) {
-                const set = await setToStorage({ DOMAINLIST: {} })
-            } 
-            return new Promise ((resolve, reject) => {
-                resolve()
-            })
-        // }
-        // catch {
-        //     console.error("Failed initializing domainlist.")
-        // }
-    
-        // getFromStorage("DOMAINLIST", (domainlist) => {
-        //     if (domainlist == undefined) {
-        //         setToStorage({ DOMAINLIST: {} })
-        //         // chrome.storage.local.set({ DOMAINLIST: {} })
-        //     }
-        // })    
+
+function initDomainlist() {
+    return new Promise (async (resolve, reject) => {
+        const domains = await getFromStorage("DOMAINLIST")
+        if (domains == undefined) {
+            await setToStorage({ DOMAINLIST: {} })
+        } 
+        resolve()
+    })  
 }
 
 function getDomainlist() {
@@ -42,19 +36,17 @@ function getDomainlist() {
     })
 }
 
-// to be implemented
-async function getFromDomainlist(domainkey) {
-
+// this could be sped up: it calls the whole domainlist,
+// then grabs the one domain we want, which could be slow
+// NOTE: undefined if domain does not exist
+function getFromDomainlist(domainkey) {
+    return new Promise (async (resolve, reject) => {
+        const domainlist = await getFromStorage("DOMAINLIST")
+        resolve(domainlist[domainkey])
+    })
 }
 
 function addToDomainlist(domainkey) {
-    // var new_domainlist = []
-    // getFromStorage("DOMAINLIST", async (domainlist) => {
-    //     new_domainlist = domainlist
-    //     new_domainlist[domainkey] = true
-    //     setToStorage({ DOMAINLIST: new_domainlist })
-    // })
-
     return new Promise (async (resolve, reject) => {
         var new_domainlist = []
         const domainlist = await getFromStorage("DOMAINLIST")
@@ -65,22 +57,34 @@ function addToDomainlist(domainkey) {
     })
 }
 
-// to be implemented
-async function removeFromDomainlist(domainkey) {
-
+function removeFromDomainlist(domainkey) {
+    return new Promise (async (resolve, reject) => {
+        var new_domainlist = []
+        const domainlist = await getFromStorage("DOMAINLIST")
+        new_domainlist = domainlist
+        new_domainlist[domainkey] = false
+        await setToStorage({ DOMAINLIST: new_domainlist })
+        resolve()
+    })
 }
  
-// to be implemented
-async function permRemoveFromDomainlist(domainkey) {
-
+function permRemoveFromDomainlist(domainkey) {
+    return new Promise (async (resolve, reject) => {
+        var new_domainlist = []
+        const domainlist = await getFromStorage("DOMAINLIST")
+        new_domainlist = domainlist
+        delete new_domainlist[domainkey]
+        await setToStorage({ DOMAINLIST: new_domainlist })
+        resolve()
+    })
 }
 
 
 export { 
     initDomainlist,
+    getDomainlist,
+    getFromDomainlist,
     addToDomainlist, 
     removeFromDomainlist, 
-    permRemoveFromDomainlist,
-    getFromDomainlist,
-    getDomainlist
+    permRemoveFromDomainlist
 }

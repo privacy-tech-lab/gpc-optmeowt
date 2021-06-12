@@ -19,7 +19,13 @@ import {
   onCommitted
 } from "./events.js"
 import { setToStorage, getFromStorage } from "./storage.js"
-import { initDomainlist, addToDomainlist, getDomainlist } from "./domainlist.js"
+import { 
+  initDomainlist,
+  addToDomainlist, 
+  removeFromDomainlist, 
+  permRemoveFromDomainlist,
+  getFromDomainlist,
+  getDomainlist } from "./domainlist.js"
 
 // https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/webRequest/onBeforeRequest
 // https://developer.chrome.com/docs/extensions/reference/webRequest/
@@ -104,8 +110,21 @@ async function init() {
   await addToDomainlist("google.com")
 
 
-  const domains = await getDomainlist()
+  let domains = await getDomainlist()
   console.log("DOMAINLIST = ", domains)
+  console.log("AMAZON = ", domains["google.com"])
+
+  const amazon = await getFromDomainlist("http://amazon.com/")
+  console.log("amazon = ", amazon)
+
+  await removeFromDomainlist("google.com")
+  domains = await getDomainlist()
+  console.log("DOMAINLIST after removing google = ", domains)
+
+  await permRemoveFromDomainlist("google.com")
+  domains = await getDomainlist()
+  console.log("DOMAINLIST after perm removing google = ", domains)
+
 
   /*
   console.log("starting writing to regular...")

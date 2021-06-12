@@ -11,6 +11,7 @@ storage.js
 storage.js handles OptMeowt's reads/writes of data to some local location
 */
 
+
 function setToStorage(data) {
     return new Promise ((resolve, reject) => {
         chrome.storage.local.set(data, (result) => {
@@ -49,5 +50,6 @@ function getFromStorage(key) {
         })
     })
 }
+
 
 export { setToStorage, getFromStorage }
