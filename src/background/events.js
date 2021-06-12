@@ -10,28 +10,55 @@ events.js
 events.js implmements our per-site functionality for the background listeners
 */
 
+
 import { headers } from "./headers.js"
 
-// attach headers before headers are sent with request
+
+/*
+ * The four following functions are all related to the four main listeners in 
+ * `background.js`. These four functions implement all the other helper 
+ * functions below
+ */
+
+
+/**
+ * Handles all signal processessing prior to sending request headers
+ * @param {object} details - retrieved info passed into callback
+ * @returns {array} details.requestHeaders from addHeaders 
+ */
 const onBeforeSendHeaders = (details) => {
   return addHeaders(details);
 }
 
+/**
+ * @param {object} details - retrieved info passed into callback
+ */
 const onHeadersReceived = (details) => {
   // logData(details);
   // incrementBadge(details);
 }
 
+/**
+ * @param {object} details - retrieved info passed into callback
+ */
 const onBeforeNavigate = (details) => {
 }
   
-// add DOM property
+/**
+ * Adds DOM property
+ * @param {object} details - retrieved info passed into callback
+ */
 const onCommitted = (details) => {
   addDomSignal(details)
 }
 
 /******************************************************************************/
 
+/**
+ * Attaches headers from `headers.js` to details.requestHeaders
+ * @param {object} details - retrieved info passed into callback
+ * @returns {array} details.requestHeaders
+ */
 function addHeaders(details) {
   // if (sendSignal) {
     for (var signal in headers) {
@@ -44,6 +71,10 @@ function addHeaders(details) {
   // }
 }
 
+/**
+ * Runs `dom.js` to attach DOM signal
+ * @param {object} details - retrieved info passed into callback
+ */
 function addDomSignal(details) {
   chrome.tabs.executeScript(details.tabId, {
     file: "dom.js",

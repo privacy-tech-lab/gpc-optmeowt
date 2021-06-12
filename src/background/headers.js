@@ -7,7 +7,7 @@ privacy-tech-lab, https://privacytechlab.org/
 /*
 headers.js
 ================================================================================
-headers.js exports all optout headers to be attached per request
+headers.js exports all opt-out headers to be attached per request
 */
 
 

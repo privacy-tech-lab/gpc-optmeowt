@@ -50,10 +50,15 @@ var global_domains = {};
 
 /**
  * Enables extension functionality and sets site listeners
+ * Information regarding the functionality and timing of webRequest and webNavigation 
+ * can be found on Mozilla's & Chrome's API docuentation sites (also linked above)
+ * 
+ * The functions called on event occurance are located in `events.js`
  */
 function enable() {   
   if (userAgent === "moz") {
 
+    // (4) global Firefox listeners
     chrome.webRequest.onBeforeSendHeaders.addListener(
       onBeforeSendHeaders,
       filter,
@@ -66,10 +71,11 @@ function enable() {
     )
     chrome.webNavigation.onBeforeNavigate.addListener(onBeforeNavigate)
     chrome.webNavigation.onCommitted.addListener(onCommitted)
-    chrome.storage.local.set({ ENABLED: true })
+    setToStorage({ ENABLED: true })
 
   } else {
     
+    // (4) global Chrome listeners
     chrome.webRequest.onBeforeSendHeaders.addListener(
       onBeforeSendHeaders,
       filter,
@@ -82,7 +88,7 @@ function enable() {
     )
     chrome.webNavigation.onBeforeNavigate.addListener(onBeforeNavigate, filter)
     chrome.webNavigation.onCommitted.addListener(onCommitted, filter)
-    chrome.storage.local.set({ ENABLED: true })
+    setToStorage({ ENABLED: true })
 
   }
 }
@@ -95,70 +101,19 @@ function disable() {
   chrome.webRequest.onHeadersReceived.removeListener(onHeadersReceived);
   chrome.webNavigation.onBeforeNavigate.removeListener(onBeforeNavigate);
   chrome.webNavigation.onCommitted.removeListener(onCommitted);
-  chrome.storage.local.set({ ENABLED: false });
+  setToStorage({ ENABLED: false });
   var counter = 0;
 }
 
 
-/* initialize extension */
+/**
+ * Initializes the extension
+ * Place all initialization necessary, as high level as can be, here
+ */
 async function init() {
-  enable()
-
-  // init domainlist test
   await initDomainlist() // initializes DOMAINLIST keyword in storage
-  await setToStorage({ DOMAINLIST: {"http://amazon.com/": true} })
-  await addToDomainlist("google.com")
-
-
-  let domains = await getDomainlist()
-  console.log("DOMAINLIST = ", domains)
-  console.log("AMAZON = ", domains["google.com"])
-
-  const amazon = await getFromDomainlist("http://amazon.com/")
-  console.log("amazon = ", amazon)
-
-  await removeFromDomainlist("google.com")
-  domains = await getDomainlist()
-  console.log("DOMAINLIST after removing google = ", domains)
-
-  await permRemoveFromDomainlist("google.com")
-  domains = await getDomainlist()
-  console.log("DOMAINLIST after perm removing google = ", domains)
-
-
-  /*
-  console.log("starting writing to regular...")
-  const set = await setToStorage({ ENABLED: true })
-  const get = await getFromStorage("ENABLED")
-  console.log("['ENABLED'] = ", get)
-  console.log("wrote and read successfully")
-  */
-
-  // initDomainlist()
-  // getFromStorage("DOMAINLIST", (res) => { console.log("DOMAINLIST = ", res) })
-
-  // addToDomainlist("http://amazon.com/")
-  // getFromStorage("DOMAINLIST", (res) => { console.log("DOMAINS2 = ", res) })
-
-
-
-
-  // //init domain list
-  // await chrome.storage.local.get(["DOMAINLIST"], (result) => {
-  //   if (result["DOMAINLIST"] === undefined) {
-  //       chrome.storage.local.set({ DOMAINLIST: {"amazon.com": true} })
-  //   }
-  // })
-
-  // // get blank from storage
-  // await chrome.storage.local.get(["DOMAINLIST"], (result) => {
-  //   console.log(result["DOMAINLIST"])
-  // })
-
-  // store value in storage
-
-  // get new updated value from storage (not blank)
-
+  enable()
 }
 
+// Initialize call
 init()

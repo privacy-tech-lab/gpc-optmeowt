@@ -10,6 +10,10 @@ dom.js
 dom.js sets the GPC DOM property
 */
 
+
+/**
+ * Sets GPC DOM property
+ */
 function setDomSignal () {
     try {
         if ('globalPrivacyControl' in Navigator.prototype) {
@@ -29,9 +33,8 @@ function setDomSignal () {
         const GPCDomElem = document.createElement('script');
         GPCDomElem.innerHTML = GPCDomVal;
         document.documentElement.prepend(GPCDomElem);
-        //console.log("Set GPC signal.")
     } catch(e) {
-        //console.log(`Failed to set DOM signal: ${e}`)
+        console.error(`Failed to set DOM signal: ${e}`)
     }
 }
 
