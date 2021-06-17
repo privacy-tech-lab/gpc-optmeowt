@@ -11,11 +11,11 @@ settings-view.js loads settings-view.html when clicked on the options page
 */
 
 import { renderParse, fetchParse } from "../../components/util.js";
-import {
-  handleDownload,
-  startUpload,
-  handleUpload,
-} from "../../../domainlist.js";
+// import {
+//   handleDownload,
+//   startUpload,
+//   handleUpload,
+// } from "../../../background/domainlist.js";
 import { darkSwitchFunction } from "../../../libs/dark-mode-switch-1.0.0/dark-mode-switch.js";
 import "../../../libs-js/FileSaver.js";
 

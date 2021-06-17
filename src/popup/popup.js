@@ -17,6 +17,39 @@ import {
 } from "../background/domainlist.js";
 // import { buildToggle, toggleListener } from "../../../domainlist.js";
 
+
+/*
+The following imports have been moved from their respective imports in 
+`popup.html` into this file `popup.js` in order to allow Webpack to 
+do our heavy lifting for us.
+
+Some functionality may be broken! 
+
+If you find something not working, please open an issue or address it in Teams.
+Otherwise if stuff is redundtant, or not needed, or better done with a node library,
+implement it if you have the time and know-how :)
+*/
+
+
+// CSS TO JS IMPORTS
+import "../libs-css/uikit.min.css"
+import "../libs-css/animate.min.css"
+import "./styles.css"
+
+// HTML TO JS IMPORTS - TOP OF `popup.html`
+import "../libs-js/psl.min.js"
+import "../libs-js/uikit.min.js"
+import "../libs-js/uikit-icons.min.js"
+import "./popup.js"
+
+// HTML TO JS IMPORTS - BOTTOM OF `popup.html`
+import "../libs-js/popper.js"
+import "../libs-js/tippy-bundle.umd.min.js"
+
+// MISC. IMPORTS THRUOUT FILE
+import "../libs/dark-mode-switch-1.0.0/dark-mode-switch.min.js"
+
+
 /**
  * Initializes the popup window after DOM content is loaded
  * @param {Object} event - contains information about the event
