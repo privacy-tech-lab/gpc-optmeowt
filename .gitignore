@@ -6,6 +6,9 @@
 # Node.js
 node_modules
 
+# Distribution files
+dist
+
 # local env files
 .env.local
 .env.*.local

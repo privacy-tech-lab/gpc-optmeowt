@@ -19,7 +19,7 @@ import {
   onCommitted
 } from "./events.js"
 import { setToStorage, getFromStorage } from "./storage.js"
-import { 
+import {
   initDomainlist,
   addToDomainlist, 
   removeFromDomainlist, 
