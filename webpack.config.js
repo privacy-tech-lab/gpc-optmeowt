@@ -27,7 +27,7 @@ module.exports = {
 		rules: [
 			{
 				test: /\.js$/,
-				// exclude: /node_modules/,
+				exclude: /node_modules/,
 				use: {
 					// without additional settings, this will reference .babelrc ?
 					loader: 'babel-loader'
@@ -39,7 +39,8 @@ module.exports = {
 			}
 		]
 	},
-	// devtool: 'source-map'
+	// This is useful, plus we need it b/c otherwise we get an "unsafe eval" problem
+	devtool: 'source-map',
 	
 	// All of our "extra" stuff is currently being copies over
 	// When time permits, lets have everything compile correclty
