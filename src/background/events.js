@@ -14,6 +14,10 @@ events.js implmements our per-site functionality for the background listeners
 import { headers } from "./headers.js"
 
 
+
+import { openDB } from 'idb'
+
+
 /*
  * The four following functions are all related to the four main listeners in 
  * `background.js`. These four functions implement all the other helper 
@@ -95,7 +99,7 @@ function updateDomainsAndSignal(details) {
     result
   ) {
     var domains = result.DOMAINS;
-    // console.log("domains is:", domains, "when global_domains is:", global_domains);
+    console.log("domains is:", domains, "when global_domains is:", global_domains);
   
     /// Add each domain in gloabl_domains to the chrome domain list
     /// This ensures that all domains on the page are added to the domain list 
@@ -107,7 +111,7 @@ function updateDomainsAndSignal(details) {
     }
   
     chrome.storage.local.set({ DOMAINS: domains }, function(){
-      // console.log("setting the storage for domain:", d);
+      console.log("setting the storage for domain:", d);
     });
   
     // console.log("parsed domain in updateDomain is:", d, "domains[d] is:", domains[d], "domains is:", domains);
