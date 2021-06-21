@@ -11,8 +11,8 @@ background.js is the main background script handling OptMeowt's
 main opt-out functionality
 */
 
-import { openDB } from 'idb';
-import { 
+
+import {
   onBeforeSendHeaders, 
   onHeadersReceived, 
   onBeforeNavigate,
@@ -25,7 +25,9 @@ import {
   removeFromDomainlist, 
   permRemoveFromDomainlist,
   getFromDomainlist,
-  getDomainlist } from "./domainlist.js"
+  getDomainlist 
+} from "./domainlist.js"
+
 
 
 

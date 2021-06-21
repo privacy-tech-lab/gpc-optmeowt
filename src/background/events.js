@@ -11,7 +11,14 @@ events.js implmements our per-site functionality for the background listeners
 */
 
 
-import { headers } from "./headers.js"
+import { headers } from "../data/headers.js"
+import {
+  addToDomainlist, 
+  getFromDomainlist,
+} from "./domainlist.js"
+var psl = require('psl')
+
+var sendSignal = true
 
 
 
@@ -31,7 +38,9 @@ import { openDB } from 'idb'
  * @returns {array} details.requestHeaders from addHeaders 
  */
 const onBeforeSendHeaders = (details) => {
-  return addHeaders(details);
+  updateDomainsAndSignal(details)
+  if (sendSignal) return addHeaders(details)
+  else return details
 }
 
 /**
@@ -88,51 +97,25 @@ function addDomSignal(details) {
   });
 }
 
-function updateDomainsAndSignal(details) {
-  /// Add current domain to list of domains to send headers to on current tab
-  var url = new URL(details.url);
-  var parsed = psl.parse(url.hostname);
-  var d = parsed.domain;
-  global_domains[d] = true;
+async function updateDomainsAndSignal(details) {
+  // Parse url to get domain for domainlist
+  let url = new URL(details.url);
+  let parsed_url = psl.parse(url.hostname);
+  let parsed_domain = parsed_url.domain;
+  // global_domains[d] = true;
 
-  chrome.storage.local.get(["DOMAINLIST_ENABLED", "DOMAINS"], function (
-    result
-  ) {
-    var domains = result.DOMAINS;
-    console.log("domains is:", domains, "when global_domains is:", global_domains);
-  
-    /// Add each domain in gloabl_domains to the chrome domain list
-    /// This ensures that all domains on the page are added to the domain list 
-    /// if they haven't been already added
-    for (const domain in global_domains) {
-      if (domains[domain] === undefined) {
-        domains[domain] = true;
-      }
-    }
-  
-    chrome.storage.local.set({ DOMAINS: domains }, function(){
-      console.log("setting the storage for domain:", d);
-    });
-  
-    // console.log("parsed domain in updateDomain is:", d, "domains[d] is:", domains[d], "domains is:", domains);
-  
-    /// Set to true if domainlist is off, or if domainlist is on
-    /// AND domain is in domainlist
-    /// Basically, we want to know if we send the signal to a given domain
-    if (result.DOMAINLIST_ENABLED) {
-      if (domains[d] === true) {
-        sendSignal = true;
-        // console.log("set sendSignal to TRUE for domain:", d);
-      } else {
-        // console.log("set sendSignal to false for domain:", d);
-        sendSignal = false;
-      }
-    } else {
-      // console.log("set sendSignal to TRUE for domain:", d);
-      sendSignal = true; /// Always send signal to all domains
-    }
-    // console.log("sendsignal:", sendSignal);
-  })
+  // Add current domain to domainlist in storage
+  let parsed_domain_val = await getFromDomainlist(parsed_domain)
+  if (parsed_domain_val === undefined) {
+    await addToDomainlist(parsed_domain)
+  }
+
+  // Check to see if we should send signal
+  if (parsed_domain_val === undefined || parsed_domain_val === true) {
+    sendSignal = true 
+  } else {
+    sendSignal = false
+  }
 }
 
 function updateUI(details) {

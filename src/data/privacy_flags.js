@@ -1,4 +1,17 @@
-{
+/*
+OptMeowt is licensed under the MIT License
+Copyright (c) 2020 Kuba Alicki, Daniel Knopf, Abdallah Salia, Sebastian Zimmeck
+privacy-tech-lab, https://privacytechlab.org/
+*/
+
+/*
+privacy_flags.js
+================================================================================
+privacy_flags.js exports all privacy flags for analysis
+*/
+
+
+export const privacy_flags = {
     "flags":[
     {
         "name":"gdpr",

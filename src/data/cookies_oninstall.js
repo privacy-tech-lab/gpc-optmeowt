@@ -1,4 +1,17 @@
-{
+/*
+OptMeowt is licensed under the MIT License
+Copyright (c) 2020 Kuba Alicki, Daniel Knopf, Abdallah Salia, Sebastian Zimmeck
+privacy-tech-lab, https://privacytechlab.org/
+*/
+
+/*
+cookies_oninstall.js
+================================================================================
+cookies_oninstall.js holds all cookies that are placed on the browser on install
+*/
+
+
+export const cookies_oninstall = {
     "33Across<33x_nc>": {
        "name": "33x_nc",
        "value": "33Across+Optout",
