@@ -17,7 +17,7 @@
   },
   "browser_action": {
     "default_title": "OptMeowt",
-    "default_popup": "popup.html"
+    "default_popup": "popup/popup.html"
   },
   "content_scripts": [
     {
@@ -27,7 +27,7 @@
     }
   ],
   "options_ui": {
-    "page": "options.html",
+    "page": "options/options.html",
     "open_in_tab": true
   },
   "background": {
