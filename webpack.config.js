@@ -4,6 +4,8 @@ const { CleanWebpackPlugin } = require("clean-webpack-plugin")
 const path = require("path")
 
 // ! Reminder: add a isDev feature
+// ! Reminder: add Firefox vs. Chrome development modes
+// ! Set up Webpack Dev server for easy development
 
 module.exports = {
 	name: "background",

@@ -11,7 +11,7 @@ events.js implmements our per-site functionality for the background listeners
 */
 
 
-import { headers } from "./headers.js"
+import { headers } from "../data/headers.js"
 
 
 /*

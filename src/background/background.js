@@ -12,7 +12,7 @@ main opt-out functionality
 */
 
 
-import { 
+import {
   onBeforeSendHeaders, 
   onHeadersReceived, 
   onBeforeNavigate,
@@ -25,7 +25,9 @@ import {
   removeFromDomainlist, 
   permRemoveFromDomainlist,
   getFromDomainlist,
-  getDomainlist } from "./domainlist.js"
+  getDomainlist 
+} from "./domainlist.js"
+
 
 // https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/webRequest/onBeforeRequest
 // https://developer.chrome.com/docs/extensions/reference/webRequest/

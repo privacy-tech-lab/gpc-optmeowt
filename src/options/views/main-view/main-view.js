@@ -13,6 +13,11 @@ and loads them when called through the navigation bar
 */
 
 
+
+// ! We will probably have to "import" our html docs in order for Webpack to catch them
+// ! This means removing the await "docs.html" lines in all of the options page views
+
+
 import {
   fetchTemplate,
   parseTemplate,
