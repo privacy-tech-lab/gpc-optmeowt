@@ -11,34 +11,19 @@ background.js is the main background script handling OptMeowt's
 main opt-out functionality
 */
 
-
-import {
-  onBeforeSendHeaders, 
-  onHeadersReceived, 
-  onBeforeNavigate,
-  onCommitted
-} from "./events.js"
 import { setToStorage, getFromStorage } from "./storage.js"
 import {
   initDomainlist,
-  addToDomainlist, 
-  removeFromDomainlist, 
+  addToDomainlist,
+  removeFromDomainlist,
   permRemoveFromDomainlist,
   getFromDomainlist,
-  getDomainlist 
+  getDomainlist
 } from "./domainlist.js"
 
 
-// https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/webRequest/onBeforeRequest
-// https://developer.chrome.com/docs/extensions/reference/webRequest/
-// This is the extraInfoSpec array of strings
-const mozRequestSpec = ["requestHeaders", "blocking"]
-const mozResponseSpec = ["responseHeaders", "blocking"]
-const chromeRequestSpec = ["requestHeaders", "extraHeaders", "blocking"]
-const chromeResponseSpec = ["responseHeaders", "extraHeaders", "blocking"]
+import { enableListeners, disableListeners } from "./listeners-$BROWSER.js"
 
-// This is the filter object
-const filter = { urls: ["<all_urls>"] }
 
 // Initializers
 var tabs = {}; /// Store all active tab id's, domain, requests, and response
@@ -46,6 +31,7 @@ var wellknown = {} /// Store information about `well-known/gpc` files per tabs
 var signalPerTab = {} /// Store information on a signal being sent for updateUI
 var activeTabID = 0;
 var sendSignal = false;
+// We could alt. use this in place of "building" for chrome/ff, just save it to settings in storage
 var userAgent = window.navigator.userAgent.indexOf("Firefox") > -1 ? "moz" : "chrome"
 var global_domains = {};
 
@@ -55,58 +41,24 @@ var global_domains = {};
  * Information regarding the functionality and timing of webRequest and webNavigation 
  * can be found on Mozilla's & Chrome's API docuentation sites (also linked above)
  * 
+ * The actual listeners are located in `listeners-(chosen browser).js`
  * The functions called on event occurance are located in `events.js`
+ * 
+ * HIERARCHY:   manifest.json --> background.js --> listeners-$BROWSER.js --> events.js
  */
-function enable() {   
-  if (userAgent === "moz") {
-
-    // (4) global Firefox listeners
-    chrome.webRequest.onBeforeSendHeaders.addListener(
-      onBeforeSendHeaders,
-      filter,
-      mozRequestSpec
-    )
-    chrome.webRequest.onHeadersReceived.addListener(
-      onHeadersReceived,
-      filter,
-      mozResponseSpec
-    )
-    chrome.webNavigation.onBeforeNavigate.addListener(onBeforeNavigate)
-    chrome.webNavigation.onCommitted.addListener(onCommitted)
-    setToStorage({ ENABLED: true })
-
-  } else {
-    
-    // (4) global Chrome listeners
-    chrome.webRequest.onBeforeSendHeaders.addListener(
-      onBeforeSendHeaders,
-      filter,
-      chromeRequestSpec
-    )
-    chrome.webRequest.onHeadersReceived.addListener(
-      onHeadersReceived,
-      filter,
-      chromeResponseSpec
-    )
-    chrome.webNavigation.onBeforeNavigate.addListener(onBeforeNavigate, filter)
-    chrome.webNavigation.onCommitted.addListener(onCommitted, filter)
-    setToStorage({ ENABLED: true })
-
-  }
+function enable() {
+  enableListeners()
+  setToStorage({ ENABLED: true })
 }
 
 /**
  * Disables extension functionality
  */
 function disable() {
-  chrome.webRequest.onBeforeSendHeaders.removeListener(onBeforeSendHeaders);
-  chrome.webRequest.onHeadersReceived.removeListener(onHeadersReceived);
-  chrome.webNavigation.onBeforeNavigate.removeListener(onBeforeNavigate);
-  chrome.webNavigation.onCommitted.removeListener(onCommitted);
-  setToStorage({ ENABLED: false });
-  var counter = 0;
+  disableListeners()
+  setToStorage({ ENABLED: false })
+  var counter = 0
 }
-
 
 /**
  * Initializes the extension
