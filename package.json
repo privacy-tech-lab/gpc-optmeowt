@@ -11,7 +11,7 @@
 
     "prebuild": "rimraf dist",
     "build": "webpack --mode=production",
-    "build:dev": "webpack --mode=development",
+    "build:dev": "webpack --watch --mode=development",
     "build:prod": "webpack --mode=production",
 
     "build:chrome": "webpack --mode=development --env chrome",

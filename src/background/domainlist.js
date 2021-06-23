@@ -17,6 +17,7 @@ domainlist.js handles OptMeowt's reads/writes to the domainlist locally
 // 2) use reject() inside promises?
 
 
+import { openDB } from "idb"
 import { setToStorage, getFromStorage } from "./storage.js"
 
 
@@ -38,34 +39,37 @@ import { setToStorage, getFromStorage } from "./storage.js"
 
 
 // Initializes the DOMAINLIST
-function initDomainlist() {
+async function initDomainlist() {
+
+    //idb version of the same code
+    const db = await openDB("extensionDB", 1, {
+        upgrade: (db, oldVersion, newVersion, transaction) => {
+            if (oldVersion === 0) db.createObjectStore("DOMAINLIST")
+        }
+    })
+    db.close();
+
+    
+
     return new Promise (async (resolve, reject) => {
         const domains = await getFromStorage("DOMAINLIST")
         if (domains == undefined) {
             await setToStorage({ DOMAINLIST: {} })
         } 
         resolve()
-    })  
-}
-
-// Gets & returns the entire DOMAINLIST
-function getDomainlist() {
-    return new Promise (async (resolve, reject) => {
-        const domainlist = await getFromStorage("DOMAINLIST")
-        resolve(domainlist)
     })
 }
 
-// Gets DOMAINLIST, then gets value of specified domain
-function getFromDomainlist(domainkey) {
-    return new Promise (async (resolve, reject) => {
-        const domainlist = await getFromStorage("DOMAINLIST")
-        resolve(domainlist[domainkey])
-    })
-}
 
 // Adds domain to DOMAINLIST with value true
-function addToDomainlist(domainkey) {
+async function addToDomainlist(domainkey) {
+
+    //idb version of the same code
+    const db = await openDB("extensionDB", 1)
+    db.put('DOMAINLIST', true,  domainkey)
+    db.close();
+
+
     return new Promise (async (resolve, reject) => {
         var new_domainlist = []
         const domainlist = await getFromStorage("DOMAINLIST")
@@ -74,10 +78,19 @@ function addToDomainlist(domainkey) {
         await setToStorage({ DOMAINLIST: new_domainlist })
         resolve()
     })
+
+    
+
+
 }
 
 // Adds domain to DOMAINLIST with value false
-function removeFromDomainlist(domainkey) {
+async function removeFromDomainlist(domainkey) {
+    //idb version of the same code
+    const db = await openDB("extensionDB", 1)
+    db.put('DOMAINLIST', false,  domainkey)
+    db.close();
+
     return new Promise (async (resolve, reject) => {
         var new_domainlist = []
         const domainlist = await getFromStorage("DOMAINLIST")
@@ -89,7 +102,12 @@ function removeFromDomainlist(domainkey) {
 }
  
 // Removes domain entry from DOMAINLIST
-function permRemoveFromDomainlist(domainkey) {
+async function permRemoveFromDomainlist(domainkey) {
+    //idb version of the same code
+    const db = await openDB("extensionDB", 1)
+    db.delete('DOMAINLIST', domainkey)
+    db.close();
+
     return new Promise (async (resolve, reject) => {
         var new_domainlist = []
         const domainlist = await getFromStorage("DOMAINLIST")
@@ -103,8 +121,6 @@ function permRemoveFromDomainlist(domainkey) {
 
 export { 
     initDomainlist,
-    getDomainlist,
-    getFromDomainlist,
     addToDomainlist, 
     removeFromDomainlist, 
     permRemoveFromDomainlist
