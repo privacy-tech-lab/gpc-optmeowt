@@ -8,19 +8,14 @@
     "start": "concurrently -k npm:dev  npm:dev:extension",
     "dev": "webpack --mode=development",
     "dev:extension": "wait-on ./dev/manifest.json && cd dev && web-ext run --watch-file background.bundle.js --start-url about:debugging#/runtime/this-firefox",
-
     "prebuild": "rimraf dist",
     "build": "webpack --mode=production",
     "build:dev": "webpack --mode=development",
     "build:prod": "webpack --mode=production",
-
     "build:chrome": "webpack --mode=development --env chrome",
     "build:firefox": "webpack --mode=development --env firefox",
-    "build:ff": "webpack --mode=development --env firefox",
-
     "build:prod:chrome": "webpack --mode=production --env chrome",
-    "build:prod:firefox": "webpack --mode=production --env firefox",
-    "build:prod:ff": "webpack --mode=production --env firefox"
+    "build:prod:firefox": "webpack --mode=production --env firefox"
   },
   "repository": {
     "type": "git",
@@ -58,6 +53,7 @@
     "string-replace-loader": "^3.0.2",
     "style-loader": "^2.0.0",
     "wait-on": "^5.3.0",
+    "web-ext": "^6.2.0",
     "webpack": "^5.39.0",
     "webpack-cli": "^4.7.2",
     "webpack-dev-server": "^3.11.2",

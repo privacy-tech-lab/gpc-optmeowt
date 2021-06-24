@@ -1,4 +1,5 @@
 const CopyPlugin = require("copy-webpack-plugin")
+const TerserPlugin = require("terser-webpack-plugin")
 const HtmlWebpackPlugin = require("html-webpack-plugin")
 const { CleanWebpackPlugin } = require("clean-webpack-plugin")
 const path = require("path")
@@ -22,13 +23,17 @@ module.exports = (env, argv) => {
 		},
 		output: {
 			filename: "[name].bundle.js",
-			path: path.resolve(__dirname, isProduction ? "dist" : "dist")
+			path: path.resolve(__dirname, isProduction ? "dist" : "dev")
 			// 	publicPath: "/",
 		},
 		devtool: 'source-map',
 		devServer: {
 			open: true,
 			host: "localhost",
+		},
+		optimization: {
+			minimize: true,
+			minimizer: [new TerserPlugin()],
 		},
 		module: {
 			rules: [
@@ -80,7 +85,6 @@ module.exports = (env, argv) => {
 				template: "src/popup/popup.html",
 				chunks: ["popup"],
 			}),
-
 		]
 	}
 }
