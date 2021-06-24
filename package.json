@@ -20,11 +20,15 @@
   "dependencies": {
     "@popperjs/core": "^2.9.2",
     "animate.css": "^4.1.1",
+    "babel-cli": "^6.26.0",
+    "babel-preset-react": "^6.24.1",
     "dark-mode-switch": "^1.0.0",
     "file-saver": "^2.0.4",
     "idb": "^6.1.2",
     "mustache": "^4.2.0",
+    "node": "^16.3.0",
     "psl": "^1.8.0",
+    "react": "^17.0.2",
     "tippy.js": "^6.3.1",
     "uikit": "3.6.9"
   },
@@ -33,6 +37,7 @@
     "@babel/preset-env": "^7.14.5",
     "@webpack-cli/generators": "^2.2.0",
     "babel-loader": "^8.2.2",
+    "babel-preset-react-app": "^3.1.2",
     "clean-webpack-plugin": "^4.0.0-alpha.0",
     "copy-webpack-plugin": "^9.0.0",
     "css-loader": "^5.2.6",

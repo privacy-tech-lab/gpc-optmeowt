@@ -32,24 +32,3 @@ class Options extends React.Component {
 
 console.log("runing");
 ReactDOM.render(<Options/>, document.getElementById('options'));
-
-var driver = new FirefoxDriver();
-
-
-driver.
-var webdriver = require('selenium-webdriver'),
-    firefox = require('selenium-webdriver/firefox'),
-    driver = null,
-    profile = new firefox.Profile();
-profile.setAcceptUntrustedCerts(true);
-profile.setAssumeUntrustedCertIssuer(false);
-
-var opts = new firefox.Options();
-opts.setProfile(profile);
-var builder = new webdriver.Builder().forBrowser('firefox');
-builder.setFirefoxOptions(opts);
-driver = builder.build();
-
-driver.get('https://www.google.com');
-console.log("done");
-driver.quit();

@@ -27,7 +27,7 @@
     }
   ],
   "options_ui": {
-    "page": "options/options.html",
+    "page": "options-react/options-react.html",
     "open_in_tab": true
   },
   "background": {
