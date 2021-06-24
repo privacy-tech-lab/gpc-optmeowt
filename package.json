@@ -13,7 +13,7 @@
     "build:dev": "webpack --mode=development",
     "build:prod": "webpack --mode=production",
     "build:chrome": "webpack --mode=development --env chrome",
-    "build:firefox": "webpack --mode=development --env firefox",
+    "build:firefox": "webpack --watch --mode=development --env firefox",
     "build:prod:chrome": "webpack --mode=production --env chrome",
     "build:prod:firefox": "webpack --mode=production --env firefox"
   },

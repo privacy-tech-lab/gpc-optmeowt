@@ -16,7 +16,7 @@ import {
   addToDomainlist, 
   getFromDomainlist,
 } from "./domainlist.js"
-var psl = require('psl')
+import psl from "psl"
 
 var sendSignal = true
 
