@@ -11,15 +11,7 @@ background.js is the main background script handling OptMeowt's
 main opt-out functionality
 */
 
-import { setToStorage, getFromStorage } from "./storage.js"
-import {
-  initDomainlist,
-  addToDomainlist,
-  removeFromDomainlist,
-  permRemoveFromDomainlist,
-  getFromDomainlist,
-  getDomainlist
-} from "./domainlist.js"
+import { setToStorage, domainlist, settings } from "./storage.js"
 
 
 import { enableListeners, disableListeners } from "./listeners-$BROWSER.js"
@@ -46,9 +38,9 @@ var global_domains = {};
  * 
  * HIERARCHY:   manifest.json --> background.js --> listeners-$BROWSER.js --> events.js
  */
-function enable() {
+async function enable() {
   enableListeners()
-  setToStorage({ ENABLED: true })
+  setToStorage(settings, true, 'ENABLED')
 }
 
 /**
@@ -56,7 +48,7 @@ function enable() {
  */
 function disable() {
   disableListeners()
-  setToStorage({ ENABLED: false })
+  setToStorage(settings, false, 'ENABLED')
   var counter = 0
 }
 
@@ -65,7 +57,6 @@ function disable() {
  * Place all initialization necessary, as high level as can be, here
  */
 async function init() {
-  await initDomainlist() // initializes DOMAINLIST keyword in storage
   enable()
 }
 
