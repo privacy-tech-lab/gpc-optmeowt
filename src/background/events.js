@@ -13,9 +13,8 @@ events.js implmements our per-site functionality for the background listeners
 
 import { headers } from "../data/headers.js"
 import {
-  addToDomainlist, 
-  getFromDomainlist,
-} from "./domainlist.js"
+  setToStorage, domainlist
+} from "./storage.js"
 import psl from "psl"
 
 var sendSignal = true
@@ -101,13 +100,10 @@ async function updateDomainsAndSignal(details) {
   // global_domains[d] = true;
 
   // Add current domain to domainlist in storage
-  let parsed_domain_val = await getFromDomainlist(parsed_domain)
-  if (parsed_domain_val === undefined) {
-    await addToDomainlist(parsed_domain)
-  }
+  await setToStorage(domainlist, true, parsed_domain)
 
   // Check to see if we should send signal
-  if (parsed_domain_val === undefined || parsed_domain_val === true) {
+  if (parsed_domain === undefined || parsed_domain === true) {
     sendSignal = true 
   } else {
     sendSignal = false

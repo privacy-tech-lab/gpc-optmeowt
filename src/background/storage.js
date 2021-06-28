@@ -11,49 +11,32 @@ storage.js
 storage.js handles OptMeowt's reads/writes of data to some local location
 */
 
+import { openDB } from "idb"
 
 // In general, these functions should be use with async / await for 
 // syntactic sweetness & synchronous data handling 
 // i.e., await setToStorage({ ENABLED: true })
+export const settings = 'SETTINGS'
+export const domainlist = 'DOMAINLIST'
 
+const dbPromise = openDB("extensionDB", 1, {
+    upgrade: (db) => {
+        db.createObjectStore(domainlist)
+        db.createObjectStore(settings)
+    }
+})
 
-/**
- * Wrapper for storage implementation - use this in the extension
- * @param {object} data - data to be synced to storage
- * @returns resolved promise
- */
-function setToStorage(data) {
-    return new Promise ((resolve, reject) => {
-        chrome.storage.local.set(data, (result) => {
-            // error handling for promise
-            if (chrome.runtime.lastError) {
-                console.error(chrome.runtime.lastError.message)
-                reject(chorme.runtime.lastError.message)
-            } else {
-                resolve()
-            }
-        })
-    })
+async function setToStorage(store, value, key) {
+    (await dbPromise).put(store, value, key)
 }
 
-/**
- * Wrapper for retrieving data from storage - use this in the extension
- * @param {string} key - name of data to be retrieved from storage
- * @returns resolved promise with requested data
- */
-function getFromStorage(key) {
-    return new Promise((resolve, reject) => {
-        chrome.storage.local.get(key, (items) => {
-            // error handling for promise
-            if (chrome.runtime.lastError) {
-                console.error(chrome.runtime.lastError.message)
-                reject(chorme.runtime.lastError.message)
-            } else {
-                resolve(items[key])
-            }
-        })
-    })
+async function getFromStorage(store, key) {
+    (await dbPromise).get(store, key)
+}
+
+async function removeFromStorage(store, key) {
+    (await dbPromise).delete(store, key)
 }
 
 
-export { setToStorage, getFromStorage }
+export { setToStorage, getFromStorage, removeFromStorage }

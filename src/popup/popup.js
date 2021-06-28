@@ -10,11 +10,7 @@ popup.js
 popup.js supplements and renders complex elements on popup.html
 */
 
-import {
-  // toggleListener,
-  addToDomainlist,
-  removeFromDomainlist,
-} from "../background/domainlist.js";
+import { setToStorage, domainlist } from "../background/storage.js";
 // import { buildToggle, toggleListener } from "../../../domainlist.js";
 
 
@@ -47,6 +43,7 @@ import "../../node_modules/tippy.js/dist/tippy-bundle.umd"
 
 // MISC. IMPORTS THRUOUT FILE
 // import "../../node_modules/dark-mode-switch/dark-mode-switch"
+
 
 
 /**
@@ -171,10 +168,10 @@ document.addEventListener("DOMContentLoaded", (event) => {
         var t = "";
         if (result.DOMAINS[parsed_domain]) {
           t = "Do Not Sell Disabled";
-          removeFromDomainlist(parsed_domain);
+          setToStorage(domainlist, false, parsed_domain);
         } else {
           t = "Do Not Sell Enabled";
-          addToDomainlist(parsed_domain);
+          setToStorage(domainlist, true, parsed_domain);
         }
         document.getElementById("dns-text").innerHTML = t;
       })
@@ -316,7 +313,7 @@ async function buildDomains(requests) {
             removeFromDomainlist(request_domain);
           } else {
             t = "Do Not Sell Enabled"
-            addToDomainlist(request_domain);
+            setToStorage(domainlist, true, request_domain);
           }
           // console.log(t)
           document.getElementById(`dns-text-${request_domain}`).innerHTML = t;

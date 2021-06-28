@@ -10,7 +10,7 @@
     "dev:extension": "wait-on ./dev/manifest.json && cd dev && web-ext run --watch-file background.bundle.js --start-url about:debugging#/runtime/this-firefox",
     "prebuild": "rimraf dist",
     "build": "webpack --mode=production",
-    "build:dev": "webpack --mode=development",
+    "build:dev": "webpack --watch --mode=development",
     "build:prod": "webpack --mode=production",
     "build:chrome": "webpack --mode=development --env chrome",
     "build:firefox": "webpack --watch --mode=development --env firefox",

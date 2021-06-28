@@ -9,7 +9,7 @@
  */
 
 
-import { initDomainlist, addToDomainlist, getDomainlist } from "../domainlist.js"
+/* import { initDomainlist, addToDomainlist, getDomainlist } from "../domainlist.js"
 
 
 async function init() {
@@ -34,7 +34,7 @@ async function init() {
 
   await permRemoveFromDomainlist("google.com")
   domains = await getDomainlist()
-  console.log("DOMAINLIST after perm removing google = ", domains)
+  console.log("DOMAINLIST after perm removing google = ", domains) */
   
   /*
   console.log("starting writing to regular...")
@@ -67,6 +67,6 @@ async function init() {
   
   // get new updated value from storage (not blank)
   
-  }
+  //}
   
   init()
