@@ -15,7 +15,7 @@ import { headers } from "../data/headers.js"
 import {
   setToStorage, domainlist
 } from "./storage.js"
-var psl = require('psl')
+import psl from "psl"
 
 var sendSignal = true
 

@@ -28,22 +28,21 @@ implement it if you have the time and know-how :)
 
 
 // CSS TO JS IMPORTS
-import "../libs-css/uikit.min.css"
-import "../libs-css/animate.min.css"
+import "../../node_modules/uikit/dist/css/uikit.min.css"
+import "../../node_modules/animate.css/animate.min.css"
 import "./styles.css"
 
 // HTML TO JS IMPORTS - TOP OF `popup.html`
-import "../libs-js/psl.min.js"
-import "../libs-js/uikit.min.js"
-import "../libs-js/uikit-icons.min.js"
-import "./popup.js"
+import "../../node_modules/psl/dist/psl"
+import "../../node_modules/uikit/dist/js/uikit"
+import "../../node_modules/uikit/dist/js/uikit-icons"
 
 // HTML TO JS IMPORTS - BOTTOM OF `popup.html`
-import "../libs-js/popper.js"
-import "../libs-js/tippy-bundle.umd.min.js"
+import "../../node_modules/@popperjs/core/dist/umd/popper"
+import "../../node_modules/tippy.js/dist/tippy-bundle.umd"
 
 // MISC. IMPORTS THRUOUT FILE
-import "../libs/dark-mode-switch-1.0.0/dark-mode-switch.min.js"
+// import "../../node_modules/dark-mode-switch/dark-mode-switch"
 
 
 
