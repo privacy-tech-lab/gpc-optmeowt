@@ -47,8 +47,6 @@
     "copy-webpack-plugin": "^9.0.0",
     "css-loader": "^5.2.6",
     "file-loader": "^6.2.0",
-    "grunt": "^1.3.0",
-    "grunt-contrib-copy": "^1.0.0",
     "html-webpack-plugin": "^5.3.1",
     "prettier": "^2.3.1",
     "string-replace-loader": "^3.0.2",

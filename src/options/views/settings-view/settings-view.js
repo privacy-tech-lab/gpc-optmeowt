@@ -17,7 +17,8 @@ import { renderParse, fetchParse } from "../../components/util.js";
 //   handleUpload,
 // } from "../../../background/domainlist.js";
 import { darkSwitchFunction } from "../../../libs/dark-mode-switch-1.0.0/dark-mode-switch.js";
-import "../../../libs-js/FileSaver.js";
+// import "../../../libs-js/FileSaver.js";
+import "../../../../node_modules/file-saver/src/FileSaver"
 
 /**
  * @typedef headings
