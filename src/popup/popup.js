@@ -10,7 +10,7 @@ popup.js
 popup.js supplements and renders complex elements on popup.html
 */
 
-import { setToStorage, domainlist } from "../background/storage.js";
+import { setToStorage, stores } from "../background/storage.js";
 // import { buildToggle, toggleListener } from "../../../domainlist.js";
 
 
@@ -168,10 +168,10 @@ document.addEventListener("DOMContentLoaded", (event) => {
         var t = "";
         if (result.DOMAINS[parsed_domain]) {
           t = "Do Not Sell Disabled";
-          setToStorage(domainlist, false, parsed_domain);
+          setToStorage(stores.domainlist, false, parsed_domain);
         } else {
           t = "Do Not Sell Enabled";
-          setToStorage(domainlist, true, parsed_domain);
+          setToStorage(stores.domainlist, true, parsed_domain);
         }
         document.getElementById("dns-text").innerHTML = t;
       })
@@ -313,7 +313,7 @@ async function buildDomains(requests) {
             removeFromDomainlist(request_domain);
           } else {
             t = "Do Not Sell Enabled"
-            setToStorage(domainlist, true, request_domain);
+            setToStorage(stores.domainlist, true, request_domain);
           }
           // console.log(t)
           document.getElementById(`dns-text-${request_domain}`).innerHTML = t;

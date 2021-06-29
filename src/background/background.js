@@ -11,10 +11,9 @@ background.js is the main background script handling OptMeowt's
 main opt-out functionality
 */
 
-import { setToStorage, domainlist, settings } from "./storage.js"
-
-
 import { enableListeners, disableListeners } from "./listeners-$BROWSER.js"
+import { setToStorage, stores } from "./storage.js"
+import { extensionMode, defaultSettings } from "../data/settings.js"
 
 
 // Initializers
@@ -40,7 +39,6 @@ var global_domains = {};
  */
 async function enable() {
   enableListeners()
-  setToStorage(settings, true, 'ENABLED')
 }
 
 /**
@@ -48,16 +46,25 @@ async function enable() {
  */
 function disable() {
   disableListeners()
-  setToStorage(settings, false, 'ENABLED')
-  var counter = 0
 }
 
 /**
  * Initializes the extension
- * Place all initialization necessary, as high level as can be, here
+ * Place all initialization necessary, as high level as can be, here:
+ * (1) Sets settings defaults
+ * (2) Sets correct extension on/off mode
  */
 async function init() {
-  enable()
+  for (let setting in defaultSettings) {
+    await setToStorage(stores.settings, defaultSettings[setting], setting)
+  }
+
+  const mode = defaultSettings.MODE
+  if (mode === extensionMode.enabled || mode === extensionMode.domainlisted) {
+    enable()
+  } else {
+    disable()
+  }
 }
 
 // Initialize call

@@ -23,10 +23,10 @@ module.exports = (env, argv) => {
 		},
 		output: {
 			filename: "[name].bundle.js",
-			path: path.resolve(__dirname, isProduction ? "dist" : "dev")
-			// 	publicPath: "/",
+			path: path.resolve(__dirname, isProduction ? "dist" : "dev"),
+			// publicPath: "/",
 		},
-		devtool: 'source-map',
+		devtool: isProduction ? "source-map" : "eval-source-map",
 		devServer: {
 			open: true,
 			host: "localhost",

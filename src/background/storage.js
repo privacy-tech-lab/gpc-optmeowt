@@ -11,18 +11,26 @@ storage.js
 storage.js handles OptMeowt's reads/writes of data to some local location
 */
 
+// `storage.js` should import `../data/settings.js` and implement it here.
+// Then, whenever we need to update settings, we do it by importing
+// `storage.js` because it logically should be able to handle that because
+// it is always implicitly in the storage.
+
 import { openDB } from "idb"
+
 
 // In general, these functions should be use with async / await for 
 // syntactic sweetness & synchronous data handling 
-// i.e., await setToStorage({ ENABLED: true })
-export const settings = 'SETTINGS'
-export const domainlist = 'DOMAINLIST'
+// i.e., await setToStorage(stores.settings, extensionMode.enabled, 'MODE')
+const stores = Object.freeze({
+    settings: 'SETTINGS',
+    domainlist: 'DOMAINLIST'
+})
 
 const dbPromise = openDB("extensionDB", 1, {
     upgrade: (db) => {
-        db.createObjectStore(domainlist)
-        db.createObjectStore(settings)
+        db.createObjectStore(stores.domainlist)
+        db.createObjectStore(stores.settings)
     }
 })
 
@@ -39,4 +47,9 @@ async function removeFromStorage(store, key) {
 }
 
 
-export { setToStorage, getFromStorage, removeFromStorage }
+export { 
+    setToStorage, 
+    getFromStorage, 
+    removeFromStorage,
+    stores
+}
