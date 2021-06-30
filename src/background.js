@@ -22,7 +22,11 @@ var activeTabID = 0;
 var sendSignal = false;
 var optout_headers = {};
 var userAgent = window.navigator.userAgent.indexOf("Firefox") > -1 ? "moz" : "chrome"
-var global_domains = {};
+
+// Cached version of domainlist & enabled booleans in local storage
+// Make sure these are always in sync!
+var domainlistCache = {}
+var domainlistEnabledCache = false
 
 
 /**
@@ -53,9 +57,9 @@ var addHeaders = (details) => {
  * @param {Object} details - retrieved info passed into callback
  */
 var receivedHeaders = (details) => {
-  logData(details);
-  incrementBadge(details);
-};
+  logData(details)
+  incrementBadge(details)
+}
 
 /**
  * Adds current domain to local storage domain list.
@@ -64,51 +68,32 @@ var receivedHeaders = (details) => {
  * @param {Object} details - retrieved info passed into callback
  */
 function updateDomainsAndSignal(details) {
-  /// Add current domain to list of domains to send headers to on current tab
-  var url = new URL(details.url);
-  var parsed = psl.parse(url.hostname);
-  var d = parsed.domain;
-  global_domains[d] = true;
+  // console.log(domainlistCache)
 
-  chrome.storage.local.get(["DOMAINLIST_ENABLED", "DOMAINS"], function (
-    result
-  ) {
-    var domains = result.DOMAINS;
-    // console.log("domains is:", domains, "when global_domains is:", global_domains);
+  // (1) Add current domain to the domainlist cache to send headers to on current tab
+  var url = new URL(details.url)
+  var parsedURL = psl.parse(url.hostname)
+  var parsedDomain = parsedURL.domain
 
-    /// Add each domain in gloabl_domains to the chrome domain list
-    /// This ensures that all domains on the page are added to the domain list 
-    /// if they haven't been already added
-    for (const domain in global_domains) {
-      if (domains[domain] === undefined) {
-        domains[domain] = true;
-      }
-    }
+  // (2) Set domainlistCache value to true if domain doesn't exist (if set, leave alone)
+  if (domainlistCache[parsedDomain] === undefined) {
+    domainlistCache[parsedDomain] = true
+  }
 
-    chrome.storage.local.set({ DOMAINS: domains }, function(){
-      // console.log("setting the storage for domain:", d);
-    });
-
-    // console.log("parsed domain in updateDomain is:", d, "domains[d] is:", domains[d], "domains is:", domains);
-
-
-    /// Set to true if domainlist is off, or if domainlist is on
-    /// AND domain is in domainlist
-    /// Basically, we want to know if we send the signal to a given domain
-    if (result.DOMAINLIST_ENABLED) {
-      if (domains[d] === true) {
-        sendSignal = true;
-        // console.log("set sendSignal to TRUE for domain:", d);
-      } else {
-        // console.log("set sendSignal to false for domain:", d);
-        sendSignal = false;
-      }
+  // (3) Set sendSignal boolean flag according to domain preference
+  if (domainlistEnabledCache) {
+    if (domainlistCache[parsedDomain] === true) {
+      sendSignal = true
     } else {
-      // console.log("set sendSignal to TRUE for domain:", d);
-      sendSignal = true; /// Always send signal to all domains
+      sendSignal = false
     }
-    // console.log("sendsignal:", sendSignal);
-  });
+  } else {
+    sendSignal = true // Always send signal to all domains (i.e., ext is ENABLED)
+  }
+
+  // (4) Sync the domainlistCache back to local storage (We can potentially move this to a
+  // DOM content loaded listener in order to minimize expensive storage calls)
+  chrome.storage.local.set({ DOMAINS: domainlistCache });
 }
 
 
@@ -219,32 +204,32 @@ function updateUI(details) {
  */
 function logData(details) {
   var url = new URL(details.url);
-  var parsed = psl.parse(url.hostname);
+  var parsedURL = psl.parse(url.hostname);
   // console.log("Details.responseHeaders: ", details.responseHeaders);
 
   if (tabs[details.tabId] === undefined) {
     tabs[details.tabId] = { DOMAIN: null, REQUEST_DOMAINS: {}, TIMESTAMP: 0 };
-    tabs[details.tabId].REQUEST_DOMAINS[parsed.domain] = {
+    tabs[details.tabId].REQUEST_DOMAINS[parsedURL.domain] = {
       URLS: {},
       RESPONSE: details.responseHeaders,
       TIMESTAMP: details.timeStamp,
     };
-    tabs[details.tabId].REQUEST_DOMAINS[parsed.domain].URLS = {
+    tabs[details.tabId].REQUEST_DOMAINS[parsedURL.domain].URLS = {
       URL: details.url,
       RESPONSE: details.responseHeaders,
     };
   } else {
-    if (tabs[details.tabId].REQUEST_DOMAINS[parsed.domain] === undefined) {
-      tabs[details.tabId].REQUEST_DOMAINS[parsed.domain] = {
+    if (tabs[details.tabId].REQUEST_DOMAINS[parsedURL.domain] === undefined) {
+      tabs[details.tabId].REQUEST_DOMAINS[parsedURL.domain] = {
         URLS: {},
         RESPONSE: details.responseHeaders,
         TIMESTAMP: details.timeStamp,
       };
-      tabs[details.tabId].REQUEST_DOMAINS[parsed.domain].URLS[details.url] = {
+      tabs[details.tabId].REQUEST_DOMAINS[parsedURL.domain].URLS[details.url] = {
         RESPONSE: details.responseHeaders,
       };
     } else {
-      tabs[details.tabId].REQUEST_DOMAINS[parsed.domain].URLS[details.url] = {
+      tabs[details.tabId].REQUEST_DOMAINS[parsedURL.domain].URLS[details.url] = {
         RESPONSE: details.responseHeaders,
       };
     }
@@ -418,10 +403,12 @@ chrome.storage.local.get(
       chrome.storage.local.set({ ENABLED: true });
     }
     if (result.DOMAINLIST_ENABLED == undefined) {
-      chrome.storage.local.set({ DOMAINLIST_ENABLED: false });
+      // as long as domainlistEnabledCache is being used at the top of `background.js`
+      chrome.storage.local.set({ DOMAINLIST_ENABLED: domainlistEnabledCache });
     }
     if (result.DOMAINS == undefined) {
-      chrome.storage.local.set({ DOMAINS: {} });
+      // as long as domainlistCache is being used at the top of `background.js`
+      chrome.storage.local.set({ DOMAINS: domainlistCache });
     }
     if (result.DOMAINLIST_PRESSED == undefined) {
       chrome.storage.local.set({ DOMAINLIST_PRESSED: false });
@@ -439,6 +426,11 @@ chrome.storage.local.get(["ENABLED"], function (result) {
     enable();
   }
 });
+
+chrome.storage.local.get(["DOMAINS", "DOMAINLIST_ENABLED"], (result) => {
+  domainlistCache = result.DOMAINS
+  domainlistEnabledCache = result.DOMAINLIST_ENABLED
+})
 
 /**
  * Sets a cookie at the given domain for each item in the passed in
@@ -519,12 +511,12 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
       sendResponse("DONE");
     }
   }
-  /// Once the DOM content has been loaded, global_domains is cleared
-  /// This leaves a few domains that come in after DOM has been loaded
-  /// but its only around 5 or so, nothing major.
-  if (request.msg === "LOADED") {
-    global_domains = {};
-    // console.log("DOM content loaded message received in background.js. global_domains is:", global_domains);
+ 
+  if (request.msg = "FETCHDOMAINLISTFROMSTORAGE") {
+    chrome.storage.local.get(["DOMAINS", "DOMAINLIST_ENABLED"], (result) => {
+      domainlistCache = result.DOMAINS
+      domainlistEnabledCache = result.DOMAINLIST_ENABLED
+    })
   }
 
   if (request.msg === "WELLKNOWNREQUEST") {
@@ -576,8 +568,8 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   if (request.msg === "TAB") {
     // console.log("TAB MESSAGE HAS BEEN RECEIVED")
     var url = new URL(sender.origin);
-    var parsed = psl.parse(url.hostname);
-    var domain = parsed.domain;
+    var parsedURL = psl.parse(url.hostname);
+    var domain = parsedURL.domain;
     var tabID = sender.tab.id;
     if (tabs[tabID] === undefined) {
       tabs[tabID] = {

@@ -15,6 +15,7 @@ import {
   addToDomainlist,
   removeFromDomainlist,
 } from "../domainlist.js";
+// import { sendMsgUpdateDomainlist } from "../domainlist.js"
 // import { buildToggle, toggleListener } from "../../../domainlist.js";
 
 /**
@@ -22,11 +23,6 @@ import {
  * @param {Object} event - contains information about the event
  */
 document.addEventListener("DOMContentLoaded", (event) => {
-  ///Send the message that the DOM has loaded to background.js to clear global_domains
-  chrome.runtime.sendMessage({
-    msg: "LOADED",
-    data: Date.now(),
-  });
   var parsed_domain = "";
 
   /**
@@ -135,6 +131,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
     // This is based on the toggleListener function and creates a toggle
     document.getElementById("switch-label").addEventListener("click", () => {
       chrome.storage.local.set({ ENABLED: true, DOMAINLIST_ENABLED: true });
+      // sendMsgUpdateDomainlist();
       chrome.storage.local.get(["DOMAINS"], function (result) {
         var t = "";
         if (result.DOMAINS[parsed_domain]) {
@@ -278,6 +275,7 @@ async function buildDomains(requests) {
       document.getElementById(`input-${request_domain}`).addEventListener("click", () => {
         chrome.storage.local.set({ ENABLED: true, DOMAINLIST_ENABLED: true });
         chrome.storage.local.get(["DOMAINS"], function (result) {
+          // (1)
           var t = ""
           if (result.DOMAINS[request_domain]) {
             t = "Do Not Sell Disabled"
@@ -288,6 +286,7 @@ async function buildDomains(requests) {
           }
           // console.log(t)
           document.getElementById(`dns-text-${request_domain}`).innerHTML = t;
+          
         })
       })
     }

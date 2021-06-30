@@ -51,6 +51,13 @@ export async function handleUpload() {
 
 //////////////////////////////////////////////////////////////////////////
 
+export function sendMsgUpdateDomainlist() {
+  chrome.runtime.sendMessage({
+    msg: "FETCHDOMAINLISTFROMSTORAGE",
+    data: null
+  })
+}
+
 /**
  * Sets DOMAINS[domainKey] to true
  * @param {string} domainKey - domain to be changed in domainlist
@@ -62,6 +69,7 @@ export async function addToDomainlist(domainKey) {
     new_domains[domainKey] = true;
     addDomainCookies(domainKey)
     chrome.storage.local.set({ DOMAINS: new_domains });
+    sendMsgUpdateDomainlist()
   });
   //console.log(domainKey, ", Added to domainlist.")
 }
@@ -77,6 +85,7 @@ export async function removeFromDomainlist(domainKey) {
     new_domains[domainKey] = false;
     deleteDomainCookies(domainKey)
     chrome.storage.local.set({ DOMAINS: new_domains });
+    sendMsgUpdateDomainlist()
   });
   //(domainKey, ", Removed from domainlist.")
 }
@@ -92,6 +101,7 @@ export async function permRemoveFromDomainlist(domainKey) {
     delete new_domains[domainKey]
     deleteDomainCookies(domainKey)
     chrome.storage.local.set({ DOMAINS: new_domains });
+    sendMsgUpdateDomainlist()
   });
 }
 
