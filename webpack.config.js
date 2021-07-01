@@ -84,6 +84,12 @@ module.exports = (env, argv) => {
 			new CopyPlugin({
 				patterns: [{ context: path.resolve(__dirname, "src/background"), from: "contentScript.js" }],
 			}),
+			new CopyPlugin({
+				patterns: [{ context: path.resolve(__dirname, "src/options"), from: "views", to: "views" }],
+			}),
+			new CopyPlugin({
+				patterns: [{ context: path.resolve(__dirname, "src/options"), from: "components", to: "components" }],
+			}),
 			new HtmlWebpackPlugin({
 				filename: "options.html",
 				template: "src/options/options.html",
