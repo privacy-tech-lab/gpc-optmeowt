@@ -16,16 +16,16 @@ import { mainView }from './views/main-view/main-view.js'
 
 
 // CSS TO JS IMPORTS
-import "../libs-css/uikit.min.css"
-import "../libs-css/animate.compat.css"
+import "../../node_modules/uikit/dist/css/uikit.min.css"
+import "../../node_modules/animate.css/animate.min.css"
 import "./styles.css"
 
 // HTML TO JS IMPORTS - TOP OF `popup.html`
-import "../libs-js/uikit.min.js"
-import "../libs-js/uikit-icons.min.js"
+import "../../node_modules/uikit/dist/js/uikit"
+import "../../node_modules/uikit/dist/js/uikit-icons"
 // import "../libs-js/mustache.js"
-import "../libs-js/popper.js"
-import "../libs-js/tippy-bundle.umd.min.js"
+import "../../node_modules/@popperjs/core/dist/umd/popper"
+import "../../node_modules/tippy.js/dist/tippy-bundle.umd"
 import "./options.js"
 
 import "../../node_modules/mustache/mustache"
