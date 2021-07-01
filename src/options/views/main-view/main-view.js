@@ -32,6 +32,7 @@ import { aboutView } from "../about-view/about-view.js";
  * @param {string} bodyTemplate - stringified HTML template
  */
 async function displaySettings(bodyTemplate) {
+  console.log("displaySettings");
     animateCSS("#scaffold", 'fadeOut', async function() {
         document.getElementById('scaffold').remove()
         await settingsView(bodyTemplate)
@@ -46,6 +47,7 @@ async function displaySettings(bodyTemplate) {
  * @param {string} bodyTemplate - stringified HTML template
  */
 function displayDomainlist(bodyTemplate) {
+  console.log("displayDomainList");
     animateCSS("#scaffold", 'fadeOut', async function() {
         document.getElementById('scaffold').remove()
         await domainlistView(bodyTemplate)
@@ -60,6 +62,7 @@ function displayDomainlist(bodyTemplate) {
  * @param {string} bodyTemplate - stringified HTML template
  */
 function displayAbout(bodyTemplate) {
+  console.log("displayAboutPage");
     animateCSS("#scaffold", 'fadeOut', async function() {
         document.getElementById('scaffold').remove()
         await aboutView(bodyTemplate)
