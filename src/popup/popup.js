@@ -10,7 +10,8 @@ popup.js
 popup.js supplements and renders complex elements on popup.html
 */
 
-import { setToStorage, stores } from "../background/storage.js";
+import { storage, stores } from "../background/storage.js";
+import { extensionMode } from "../data/settings.js"
 // import { buildToggle, toggleListener } from "../../../domainlist.js";
 
 
@@ -26,6 +27,9 @@ Otherwise if stuff is redundtant, or not needed, or better done with a node libr
 implement it if you have the time and know-how :)
 */
 
+// ! Make sure to fix runtime.sendMessage (ENABLED : TRUE) so that the extension fixes itself
+// ! Fix buildDomains() sets wrong property 
+
 
 // CSS TO JS IMPORTS
 import "../../node_modules/uikit/dist/css/uikit.min.css"
@@ -33,7 +37,8 @@ import "../../node_modules/animate.css/animate.min.css"
 import "./styles.css"
 
 // HTML TO JS IMPORTS - TOP OF `popup.html`
-import "../../node_modules/psl/dist/psl"
+// import "../../node_modules/psl/dist/psl"
+import psl from "psl"
 import "../../node_modules/uikit/dist/js/uikit"
 import "../../node_modules/uikit/dist/js/uikit-icons"
 
@@ -50,51 +55,54 @@ import "../../node_modules/tippy.js/dist/tippy-bundle.umd"
  * Initializes the popup window after DOM content is loaded
  * @param {Object} event - contains information about the event
  */
-document.addEventListener("DOMContentLoaded", (event) => {
-  ///Send the message that the DOM has loaded to background.js to clear global_domains
-  chrome.runtime.sendMessage({
-    msg: "LOADED",
-    data: Date.now(),
-  });
+document.addEventListener("DOMContentLoaded", async (event) => {
   var parsed_domain = "";
 
   /**
    * Queries, parses, and sets active tab domain to popup
    */
-  chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-    var tab = tabs[0];
-    try {
-      var url = new URL(tab.url);
-      var parsed = psl.parse(url.hostname);
-      parsed_domain = parsed.domain;
-      //console.log("POPUP: ", parsed_domain);
-      if (parsed_domain === null) {
-        document.getElementById("dns-body").style.display = "none";
-        document.getElementById("domain").style.display = "none";
-      } else {
-        document.getElementById("domain").innerHTML = parsed_domain;
-        chrome.storage.local.get(["FIRSTINSTALL_POPUP"], (result) => {
-          if (result.FIRSTINSTALL_POPUP) {
-            popUpWalkthrough();
+  await (async () => {
+    return new Promise((resolve, reject) => {
+      chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+        var tab = tabs[0];
+        try {
+          var url = new URL(tab.url);
+          var parsed = psl.parse(url.hostname);
+          parsed_domain = parsed.domain;
+
+          if (parsed_domain === null) {
+            document.getElementById("dns-body").style.display = "none";
+            document.getElementById("domain").style.display = "none";
+          } else {
+            document.getElementById("domain").innerHTML = parsed_domain;
+            // chrome.storage.local.get(["FIRSTINSTALL_POPUP"], (result) => {
+            //   if (result.FIRSTINSTALL_POPUP) {
+            //     popUpWalkthrough();
+            //   }
+            //   chrome.storage.local.set({ FIRSTINSTALL_POPUP: false }, () => {});
+            // });
           }
-          chrome.storage.local.set({ FIRSTINSTALL_POPUP: false }, () => {});
-        });
-      }
-    } catch (e) {
-      document.getElementById("domain").innerHTML = location.href;
-    }
-  });
+          resolve()
+        } catch (e) {
+          document.getElementById("domain").innerHTML = location.href;
+          reject()
+        }
+      });
+    })
+  })();
 
   /**
    * Sets enable/disable button to correct mode
    */
-  chrome.storage.local.get(["ENABLED"], function (result) {
-    if (result.ENABLED == undefined) {
+  const mode = await storage.get(stores.settings, 'MODE')
+  // chrome.storage.local.get(["ENABLED"], function (result) {
+    // if (result.ENABLED == undefined) {
+    if (mode === undefined) {
       document.getElementById("img").src = "../assets/play-circle-outline.svg";
       document
         .getElementById("enable-disable")
         .setAttribute("uk-tooltip", "Enable");
-    } else if (result.ENABLED) {
+    } else if (mode === extensionMode.enabled || mode === extensionMode) {
       document.getElementById("img").src = "../assets/pause-circle-outline.svg";
       document
         .getElementById("enable-disable")
@@ -111,14 +119,16 @@ document.addEventListener("DOMContentLoaded", (event) => {
       document.getElementById("content").style.opacity = "0.1";
       document.getElementById("message").style.opacity = "1";
     }
-  });
+  // });
 
   /**
    * Listener for enable/disable extension switch
    */
-  document.getElementById("enable-disable").addEventListener("click", () => {
-    chrome.storage.local.get(["ENABLED"], function (result) {
-      if (result.ENABLED) {
+  document.getElementById("enable-disable").addEventListener("click", async () => {
+    const mode = await storage.get(stores.settings, 'MODE')
+    // chrome.storage.local.get(["ENABLED"], function (result) {
+      // if (result.ENABLED) {
+        if (mode === extensionMode.enabled || mode === extensionMode.domainlisted) {
         document.getElementById("message").style.display = "";
         document.getElementById("img").src =
           "../assets/play-circle-outline.svg";
@@ -137,19 +147,22 @@ document.addEventListener("DOMContentLoaded", (event) => {
         document.getElementById("content").style.opacity = "1";
         document.getElementById("message").style.opacity = "0";
         document.getElementById("message").style.display = "none";
-        chrome.runtime.sendMessage({ ENABLED: true });
+        chrome.runtime.sendMessage({ "ENABLED": true });
       }
-    });
+    // });
   });
 
   /**
    * Sets domain list switch to correct position and adds listener
    */
-  chrome.storage.local.get(["DOMAINS"], function (result) {
+  // chrome.storage.local.get(["DOMAINS"], function (result) {
+    const domainBool = await storage.get(stores.domainlist, parsed_domain)
+    console.log(`domainBool = ${domainBool} \n parsed_domain = ${parsed_domain}`)
     // Sets popup view
     var checkbox = "";
     var text = "";
-    if (result.DOMAINS[parsed_domain]) {
+    // if (result.DOMAINS[parsed_domain]) {
+      if (domainBool) {
       checkbox = `<input type="checkbox" id="input" checked/>
                       <span></span>`;
       text = "Do Not Sell Enabled";
@@ -162,34 +175,39 @@ document.addEventListener("DOMContentLoaded", (event) => {
     document.getElementById("dns-text").innerHTML = text;
     // toggleListener("input", parsed_domain);
     // This is based on the toggleListener function and creates a toggle
-    document.getElementById("switch-label").addEventListener("click", () => {
-      chrome.storage.local.set({ ENABLED: true, DOMAINLIST_ENABLED: true });
-      chrome.storage.local.get(["DOMAINS"], function (result) {
+    document.getElementById("switch-label").addEventListener("click", async () => {
+      // chrome.storage.local.set({ ENABLED: true, DOMAINLIST_ENABLED: true });
+      await storage.set(stores.settings, extensionMode.domainlisted,'MODE')
+      const currDomainBool = await storage.get(stores.domainlist, parsed_domain)
+      // chrome.storage.local.get(["DOMAINS"], function (result) {
         var t = "";
-        if (result.DOMAINS[parsed_domain]) {
+        // if (result.DOMAINS[parsed_domain]) {
+          if (currDomainBool) {
           t = "Do Not Sell Disabled";
-          setToStorage(stores.domainlist, false, parsed_domain);
+          storage.set(stores.domainlist, false, parsed_domain);
         } else {
           t = "Do Not Sell Enabled";
-          setToStorage(stores.domainlist, true, parsed_domain);
+          storage.set(stores.domainlist, true, parsed_domain);
         }
         document.getElementById("dns-text").innerHTML = t;
-      })
+      // })
     })
-  })
+  // })
 
   /**
    * Generates `X domains receiving signals` section in popup
    */
-  chrome.storage.local.get(["DOMAINS"], (result) => {
-    var count = Object.keys(result.DOMAINS).filter((key) => {
-      return result.DOMAINS[key] == true;
-    }).length
-    document.getElementById("block-count").innerHTML = `
-        <p id = "domain-count" class="blue-heading" style="font-size:25px; 
-        font-weight: bold">${count}</p> domains receiving signals
-    `;
-  })
+  // chrome.storage.local.get(["DOMAINS"], (result) => {
+    // const domainlist = await getAllFromStorage(stores.domainlist)
+    // // var count = Object.keys(result.DOMAINS).filter((key) => {
+    //   var count = Object.keys(domainlist).filter((key) => {
+    //   return domainlist[key] == true;
+    // }).length
+    // document.getElementById("block-count").innerHTML = `
+    //     <p id = "domain-count" class="blue-heading" style="font-size:25px; 
+    //     font-weight: bold">${count}</p> domains receiving signals
+    // `;
+  // })
 
   /**
    * Generates third party domain list droptdown toggle functionality
@@ -251,7 +269,8 @@ document.addEventListener("DOMContentLoaded", (event) => {
 async function buildDomains(requests) {
   //console.log("requests: ", requests)
   let items = "";
-  chrome.storage.local.get(["DOMAINS"], function (result) {
+  // chrome.storage.local.get(["DOMAINS"], function (result) {
+    const domainlist = await storage.get()
     for (var request_domain in requests) {
       let checkbox = ""
       let text = ""
@@ -313,14 +332,14 @@ async function buildDomains(requests) {
             removeFromDomainlist(request_domain);
           } else {
             t = "Do Not Sell Enabled"
-            setToStorage(stores.domainlist, true, request_domain);
+            storage.set(stores.domainlist, true, request_domain);
           }
           // console.log(t)
           document.getElementById(`dns-text-${request_domain}`).innerHTML = t;
         })
       })
     }
-  })
+  // })
 }
 
 /**
@@ -416,38 +435,29 @@ chrome.runtime.sendMessage({
  * the popup badge counter and build the popup domain list HTML, respectively
  */
 chrome.runtime.onMessage.addListener(function (request, _, __) {
-  // if (request.msg === "BADGE") {
-  //   document.getElementById("requests").innerText = request.data;
-  // }
   if (request.msg === "REQUESTS") {
     buildDomains(request.data);
   }
-  if (request.msg === "WELLKNOWNRESPONSE") {
+  // if (request.msg === "WELLKNOWNRESPONSE") {
     //console.log(`Received WELLKNOWNREQUEST response: ${JSON.stringify(request.data)}`)
-    buildWellKnown(request.data);
-  }
+    // buildWellKnown(request.data);
+  // }
 });
 
 /**
  * Requests Well Known info from Background page
  */
-chrome.runtime.sendMessage({
-    msg: "WELLKNOWNREQUEST",
-    data: null,
-    return: true,
-  }, (response) => {
-    //console.log(`Received WELLKNOWNREQUEST response: ${JSON.stringify(response.data)}`)
-    buildWellKnown(response.data);
-  }
-);
+// chrome.runtime.sendMessage({
+//     msg: "WELLKNOWNREQUEST",
+//     data: null,
+//     return: true,
+//   }, (response) => {
+//     //console.log(`Received WELLKNOWNREQUEST response: ${JSON.stringify(response.data)}`)
+//     // buildWellKnown(response.data);
+//   }
+// );
 
-/**
- * Various options page listeners
- */
-document.getElementById("more").addEventListener("click", () => {
-  chrome.runtime.openOptionsPage();
-});
-
+// Walkthrough function
 function popUpWalkthrough() {
   tippy(".tooltip-1", {
     content:
@@ -463,9 +473,16 @@ function popUpWalkthrough() {
   tooltip.show();
 }
 
+/**
+ * Various options page listeners
+ */
+ document.getElementById("more").addEventListener("click", () => {
+  chrome.runtime.openOptionsPage();
+});
+
+// Opens domainlist in settings page
 document.getElementById("domain-list").addEventListener("click", () => {
   chrome.storage.local.set({ DOMAINLIST_PRESSED: true }, ()=>{
     chrome.runtime.openOptionsPage();
   });
-
 });

@@ -12,12 +12,15 @@ events.js implmements our per-site functionality for the background listeners
 
 
 import { headers } from "../data/headers.js"
-import {
-  setToStorage, getFromStorage, stores
-} from "./storage.js"
+import { storage, stores } from "./storage.js"
+import { enable, disable } from "./background.js"
+import { extensionMode } from "../data/settings.js"
 import psl from "psl"
 
-var sendSignal = true
+var sendSignal = true // cached
+var tabs = {}         // cached for info
+var activeTabID = 0;  // for info
+
 
 
 /*
@@ -42,7 +45,7 @@ const onBeforeSendHeaders = (details) => {
  * @param {object} details - retrieved info passed into callback
  */
 const onHeadersReceived = (details) => {
-  // logData(details);
+  logData(details);
   // incrementBadge(details);
 }
 
@@ -97,12 +100,11 @@ async function updateDomainsAndSignal(details) {
   let url = new URL(details.url);
   let parsed_url = psl.parse(url.hostname);
   let parsed_domain = parsed_url.domain;
-  // global_domains[d] = true;
 
-  let parsed_domain_val = await getFromStorage(stores.domainlist, parsed_domain)
+  let parsed_domain_val = await storage.get(stores.domainlist, parsed_domain)
   if (parsed_domain_val === undefined) {
     // Add current domain to domainlist in storage
-    await setToStorage(stores.domainlist, true, parsed_domain)
+    await storage.set(stores.domainlist, true, parsed_domain)
   }
 
   // Check to see if we should send signal
@@ -164,9 +166,20 @@ function logData(details) {
     }
   }
 }
-  
-function incrementBadge() {
-  let numberOfRequests = 0;
+
+
+/******************************************************************************/
+
+
+function handleSendMessageError() {
+  const error = chrome.runtime.lastError;
+  if (error){
+    console.warn(error.message)
+  }
+}
+
+// Info back to popup
+function dataToPopup() {
   let requests = {};
   if (tabs[activeTabID] !== undefined) {
     for (var key in tabs[activeTabID].REQUEST_DOMAINS) {
@@ -177,18 +190,7 @@ function incrementBadge() {
     requests = tabs[activeTabID].REQUEST_DOMAINS;
     // console.log(tabs[activeTabID]);
   }
-  // chrome.browserAction.setBadgeText({ text: numberOfRequests.toString() });
-  function handleSendMessageError() {
-    const error = chrome.runtime.lastError;
-    if (error){
-      console.warn(error.message)
-    }
-  }
   
-  chrome.runtime.sendMessage({
-    msg: "BADGE",
-    data: numberOfRequests.toString(),
-  }, handleSendMessageError);
   chrome.runtime.sendMessage({
     msg: "REQUESTS",
     data: requests,
@@ -196,9 +198,53 @@ function incrementBadge() {
 }
 
 
+// Listeners for info from popup or settings page
+chrome.runtime.onMessage.addListener(async function (request, sender, sendResponse) {
+  console.log("recieved message")
+  if (request.ENABLED != null) {
+    if (request.ENABLED) {
+      enable();
+      await storage.set(stores.settings, extensionMode.enabled, 'MODE')
+      // sendResponse("DONE");
+      console.log("DONE")
+    } else {
+      disable();
+      await storage.set(stores.settings, extensionMode.disabled, 'MODE')
+      // sendResponse("DONE");
+      console.log("DONE")
+    }
+  }
+  if (request.msg == "INIT") {
+    dataToPopup();
+  }
+})
+
+
+/**
+ * Listener for tab switch that updates curr tab badge counter
+ */
+ chrome.tabs.onActivated.addListener(function (info) {
+  activeTabID = info.tabId
+})
+
+/**
+ * Runs on startup to query current tab
+ */
+ chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+  if (tabs.id !== undefined) {
+    activeTabID = tab.id
+  }
+})
+
+
+/******************************************************************************/
+
+
+
 export { 
   onBeforeSendHeaders, 
   onHeadersReceived, 
   onBeforeNavigate,
-  onCommitted
+  onCommitted,
+  dataToPopup
 }

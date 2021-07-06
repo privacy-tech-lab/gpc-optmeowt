@@ -12,7 +12,7 @@ main opt-out functionality
 */
 
 import { enableListeners, disableListeners } from "./listeners-$BROWSER.js"
-import { setToStorage, stores } from "./storage.js"
+import { storage, stores } from "./storage.js"
 import { extensionMode, defaultSettings } from "../data/settings.js"
 
 
@@ -24,7 +24,6 @@ var activeTabID = 0;
 var sendSignal = false;
 // We could alt. use this in place of "building" for chrome/ff, just save it to settings in storage
 var userAgent = window.navigator.userAgent.indexOf("Firefox") > -1 ? "moz" : "chrome"
-var global_domains = {};
 
 
 /**
@@ -37,14 +36,14 @@ var global_domains = {};
  * 
  * HIERARCHY:   manifest.json --> background.js --> listeners-$BROWSER.js --> events.js
  */
-async function enable() {
+export function enable() {
   enableListeners()
 }
 
 /**
  * Disables extension functionality
  */
-function disable() {
+export function disable() {
   disableListeners()
 }
 
@@ -55,17 +54,45 @@ function disable() {
  * (2) Sets correct extension on/off mode
  */
 async function init() {
-  for (let setting in defaultSettings) {
-    await setToStorage(stores.settings, defaultSettings[setting], setting)
+  // Note: this may be done after enable()/disable() are called, b/c it is async and microtasked
+  for (const setting in defaultSettings) {
+    var sample = await storage.set(stores.settings, defaultSettings[setting], setting)
+    console.log("init(1):: Set ", setting, " to storage ?")
   }
-
+  
   const mode = defaultSettings.MODE
   if (mode === extensionMode.enabled || mode === extensionMode.domainlisted) {
     enable()
   } else {
     disable()
   }
+//   // async function getAll() {
+//   // };
+//   // await getAll();
+//   // const all = getAllFromStorage(stores.domainlist)
+
+//   console.log("clearing .........")
+//   console.log("clearing .........")
+//   console.log("clearing .........")
+
+//   for (const s in defaultSettings) {
+//     var test = await getFromStorage(stores.settings, 'MODE')
+//     console.log("post_init(1):: Got ", s, " = ", test, " from storage ?")
+//   }
+
+//   const val = 'BROWSER'
+//   const all = await getFromStorage(stores.settings, val)
+//   console.log("post_init(2):: From storage", all, val)
+
+//   await setToStorage(stores.settings, "BRAVE LOL", "BROWSER")
+//   let brave = await getFromStorage(stores.settings, "BROWSER")
+//   console.log("post_init(3):: brave val = ", brave)
+// }
+
+// async function post_init(){
 }
 
 // Initialize call
 init()
+
+// post_init()
