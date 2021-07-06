@@ -18,11 +18,10 @@ storage.js handles OptMeowt's reads/writes of data to some local location
 
 import { openDB } from "idb"
 
-
 // In general, these functions should be use with async / await for 
 // syntactic sweetness & synchronous data handling 
 // i.e., await setToStorage(stores.settings, extensionMode.enabled, 'MODE')
-const stores = Object.freeze({
+export const stores = Object.freeze({
     settings: 'SETTINGS',
     domainlist: 'DOMAINLIST'
 })
@@ -34,22 +33,14 @@ const dbPromise = openDB("extensionDB", 1, {
     }
 })
 
-async function setToStorage(store, value, key) {
-    return (await dbPromise).put(store, value, key)
-}
-
-async function getFromStorage(store, key) {
-    return (await dbPromise).get(store, key)
-}
-
-async function removeFromStorage(store, key) {
-    return (await dbPromise).delete(store, key)
-}
-
-
-export { 
-    setToStorage, 
-    getFromStorage, 
-    removeFromStorage,
-    stores
+export const storage = {
+    async get(store, key) {
+        return (await dbPromise).get(store, key)
+    },
+    async set(store, value, key) {
+        return (await dbPromise).put(store, value, key)
+    },
+    async delete(store, key) {
+        return (await dbPromise).delete(store, key)
+    }
 }
