@@ -11,7 +11,7 @@ const path = require("path")
 module.exports = (env, argv) => {
 	const browser = env.chrome ? "chrome" : "firefox"	// default to firefox build
 	const mode = argv.mode 								// sets production or development
-	const isProduction = process.env.NODE_ENV == "production"	// sets bool depending on buidl
+	const isProduction = process.env.NODE_ENV == "production"	// sets bool depending on build
 
 	return {
 		name: "background",
