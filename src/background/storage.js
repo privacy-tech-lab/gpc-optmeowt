@@ -35,15 +35,15 @@ const dbPromise = openDB("extensionDB", 1, {
 })
 
 async function setToStorage(store, value, key) {
-    (await dbPromise).put(store, value, key)
+    return (await dbPromise).put(store, value, key)
 }
 
 async function getFromStorage(store, key) {
-    (await dbPromise).get(store, key)
+    return (await dbPromise).get(store, key)
 }
 
 async function removeFromStorage(store, key) {
-    (await dbPromise).delete(store, key)
+    return (await dbPromise).delete(store, key)
 }
 
 
