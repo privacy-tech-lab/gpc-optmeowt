@@ -13,154 +13,61 @@ their respective cookies (custom & 3rd party), and places them.
 */
 
 
-export const cookieJSONS = [
-  "json/cookies_3p.JSON",
-  "json/cookies_usercustom.JSON"
-]
+import { cookies_oninstall } from "../data/cookies_oninstall.js"
+import { cookies_usercustom } from "../data/cookies_usercustom.js"
 
-function checkCookieLists(callback, domainFilter) {
-  for (let loc in cookieJSONS) {
-    //console.log(cookieJSONS[loc])
-    retrieveCookieJSON(cookieJSONS[loc], callback, domainFilter)
-  }
-}
 
-checkCookieLists(setAllCookies);
-
-////////////////////////////////////////////////////////////////////////////////
-
-/// Sets all cookies from cookieJSONS on OptMeowt install
+(() => {
+  setAllCookies(cookies_oninstall)
+  setAllCookies(cookies_usercustom)
+})();
 
 /**
- * Retrieves the cookie data stored in the 3rd_party_cookies json file
- * @param {string} location - Location/name of the JSON to be fetched
- * @return {Object} Data inside JSON file in an object
- */
-function retrieveCookieJSON(location, callback, domainFilter) {
-  fetch(location)
-  .then(response => {
-    // console.log("Response before text(): ",response)
-    return response.text()
-  })
-  .then(value => {
-    //console.log(`Retrieved ${location}`)
-    var json = JSON.parse(value)
-    var locname = location.substring(5, (location.length - 5))
-    //console.log("locname", locname)
-    //console.log(json)
-    if (locname === "cookies_3p") {
-      chrome.storage.local.set({ "THIRDPARTYCOOKIES": JSON.parse(value) })
-    }
-    if (locname === "cookies_usercustom") {
-      chrome.storage.local.set({ "CUSTOMCOOKIES": JSON.parse(value) })
-    }
-    callback(json, domainFilter)
-  })
-  .catch(e => 
-    //console.log(`Failed while setting ${location} cookies: ${e}`)
-    {}
-    )
-}
-
-/**
- * Sets a cookie at the given domain for each item in the passed in
+ * Sets a cookie at the given domain for each cookie in the passed in
  * cookies object. Currently updates cookie url info based on domain.
  * @param {Object} cookies - Collection of info regarding each 3rd
  *                           party cookie to be set
- * Each item in `cookies` must contain a 'name', 'value', and 'domain'
+ * Each cookie in `cookies` must contain a 'name', 'value', and 'domain'
  */
 function setAllCookies(cookies) {
-  // Updates time once
-  var date = new Date()
-  var now = date.getTime()
-  var cookie_time = now/1000 + 31557600
-  var path = '/'
+  // Updates the time once for all new cookies
+  let date = new Date()
+  let now = date.getTime()
+  let cookieTime = now/1000 + 31557600
+  let path = '/'
 
-  for (var item in cookies) {
-    // Updates cookie url based on domain, checks for domain/subdomain spec
-    let cookie_url = cookies[item].domain
-    let all_domains = false
-    if (cookie_url.substr(0,1) === '.') {
-      cookie_url = cookie_url.substr(1)
-      all_domains = true
+  for (let cookieKey in cookies) {
+    // Updates cookie url based on its domain, checks for domain/subdomain spec
+    let cookieUrl = cookies[cookieKey].domain
+    let allDomainsFlag = false
+
+    if (cookieUrl.substr(0,1) === '.') {
+      cookieUrl = cookieUrl.substr(1)
+      allDomainsFlag = true
     }
-    cookie_url = `https://${cookie_url}/`
-    //console.log(`Current cookie url... ${cookie_url}`)
-    if (cookies[item].path !== null) {
-      path = cookies[item].path
+    cookieUrl = `https://${cookieUrl}/`
+
+    // Updates cookie path
+    if (cookies[cookieKey].path !== null) {
+      path = cookies[cookieKey].path
     } else {
       path = '/'
     }
 
-    // Sets cookie parameters
-    let cookie_param = {
-      url: cookie_url,
-      name: cookies[item].name,
-      value: cookies[item].value,
-      expirationDate: cookie_time,
+    // Sets new cookie properties
+    let newCookie = {
+      url: cookieUrl,
+      name: cookies[cookieKey].name,
+      value: cookies[cookieKey].value,
+      expirationDate: cookieTime,
       path: path
     }
-    if (all_domains) {
-      cookie_param["domain"] = cookies[item].domain
+    
+    if (allDomainsFlag) {
+      newCookie["domain"] = cookies[cookieKey].domain
     }
 
     // Sets cookie
-    chrome.cookies.set(cookie_param, function (cookie) {
-      //console.log(`Updated ${cookie.name} cookie`)
-    })
+    chrome.cookies.set(newCookie, (result) => {})
   }
 }
-
-
-/**
- * Sets a cookie at the given domain for each item in the passed in
- * cookies object. Currently updates cookie url info based on domain.
- * @param {Object} cookies - Collection of info regarding each 3rd
- *                           party cookie to be set
- * Each item in `cookies` must contain a 'name', 'value', and 'domain'
- */
-function setFilteredCookies(cookies, domainFilter) {
-  // Updates time once
-  var date = new Date()
-  var now = date.getTime()
-  var cookie_time = now/1000 + 31557600
-  var path = '/'
-
-  for (var item in cookies) {
-    if (cookies[item].domain in domainFilter) {
-      // Updates cookie url based on domain, checks for domain/subdomain spec
-      let cookie_url = cookies[item].domain
-      let all_domains = false
-      if (cookie_url.substr(0,1) === '.') {
-        cookie_url = cookie_url.substr(1)
-        all_domains = true
-      }
-      cookie_url = `https://${cookie_url}/`
-      //console.log(`Current cookie url... ${cookie_url}`)
-      if (cookies[item].path !== null) {
-        path = cookies[item].path
-      } else {
-        path = '/'
-      }
-
-      // Sets cookie parameters
-      let cookie_param = {
-        url: cookie_url,
-        name: cookies[item].name,
-        value: cookies[item].value,
-        expirationDate: cookie_time,
-        path: path
-      }
-      if (all_domains) {
-        cookie_param["domain"] = cookies[item].domain
-      }
-
-      // Sets cookie
-      chrome.cookies.set(cookie_param, function (cookie) {
-        //console.log(`Updated ${cookie.name} cookie`)
-      })
-    }
-  }
-}
-
-////////////////////////////////////////////////////////////////////////////////
