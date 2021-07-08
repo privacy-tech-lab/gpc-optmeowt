@@ -102,7 +102,7 @@ document.addEventListener("DOMContentLoaded", async (event) => {
       document
         .getElementById("enable-disable")
         .setAttribute("uk-tooltip", "Enable");
-    } else if (mode === extensionMode.enabled || mode === extensionMode) {
+    } else if (mode === extensionMode.enabled || mode === extensionMode.domainlisted) {
       document.getElementById("img").src = "../assets/pause-circle-outline.svg";
       document
         .getElementById("enable-disable")
@@ -137,7 +137,7 @@ document.addEventListener("DOMContentLoaded", async (event) => {
           .setAttribute("uk-tooltip", "Enable");
         document.getElementById("content").style.opacity = "0.1";
         document.getElementById("message").style.opacity = "1";
-        chrome.runtime.sendMessage({ ENABLED: false });
+        chrome.runtime.sendMessage({ "ENABLED": false });
       } else {
         document.getElementById("img").src =
           "../assets/pause-circle-outline.svg";
@@ -178,17 +178,25 @@ document.addEventListener("DOMContentLoaded", async (event) => {
     document.getElementById("switch-label").addEventListener("click", async () => {
       // chrome.storage.local.set({ ENABLED: true, DOMAINLIST_ENABLED: true });
       await storage.set(stores.settings, extensionMode.domainlisted,'MODE')
-      const currDomainBool = await storage.get(stores.domainlist, parsed_domain)
+      
+      const currDomainBool = await storage.get(stores.domainlist, parsed_domain);
+      console.log(`currDomainBool1 = ${currDomainBool}`);
       // chrome.storage.local.get(["DOMAINS"], function (result) {
-        var t = "";
+      var t = "";
+      var bool = false;
         // if (result.DOMAINS[parsed_domain]) {
-          if (currDomainBool) {
+        if (currDomainBool) {
           t = "Do Not Sell Disabled";
-          storage.set(stores.domainlist, false, parsed_domain);
+          bool = false
+          await storage.set(stores.domainlist, bool, parsed_domain);
+          console.log(`currDomainBool2 = ${await storage.get(stores.domainlist, parsed_domain)}`); //should show false
         } else {
           t = "Do Not Sell Enabled";
-          storage.set(stores.domainlist, true, parsed_domain);
+          bool = true
+          await storage.set(stores.domainlist, bool, parsed_domain);
+          console.log(`currDomainBool3 = ${await storage.get(stores.domainlist, parsed_domain)}`);
         }
+        
         document.getElementById("dns-text").innerHTML = t;
       // })
     })

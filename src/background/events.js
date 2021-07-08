@@ -206,12 +206,12 @@ chrome.runtime.onMessage.addListener(async function (request, sender, sendRespon
       enable();
       await storage.set(stores.settings, extensionMode.enabled, 'MODE')
       // sendResponse("DONE");
-      console.log("DONE")
+      console.log("enabled")
     } else {
       disable();
       await storage.set(stores.settings, extensionMode.disabled, 'MODE')
       // sendResponse("DONE");
-      console.log("DONE")
+      console.log("disabled")
     }
   }
   if (request.msg == "INIT") {
