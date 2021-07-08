@@ -6,19 +6,19 @@ privacy-tech-lab, https://privacytechlab.org/
 
 
 /*
-cookie_lists_JSON.js
+cookies_oninstall.js
 ================================================================================
-cookie_lists_JSON.js fetches all files mentioned in cookieJSONS, retrieves
+cookies_oninstall.js fetches all files mentioned in cookieJSONS, retrieves
 their respective cookies (custom & 3rd party), and places them.
 */
 
 
-import { cookies_oninstall } from "../data/cookies_oninstall.js"
+import { cookies_daa } from "../data/cookies_daa.js"
 import { cookies_usercustom } from "../data/cookies_usercustom.js"
 
 
 (() => {
-  setAllCookies(cookies_oninstall)
+  setAllCookies(cookies_daa)
   setAllCookies(cookies_usercustom)
 })();
 
@@ -62,7 +62,7 @@ function setAllCookies(cookies) {
       expirationDate: cookieTime,
       path: path
     }
-    
+
     if (allDomainsFlag) {
       newCookie["domain"] = cookies[cookieKey].domain
     }

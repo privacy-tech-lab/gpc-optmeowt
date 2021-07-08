@@ -6,9 +6,9 @@ privacy-tech-lab, https://privacytechlab.org/
 
 
 /*
-usprivacy.js
+cookies_iab.js
 ================================================================================
-usprivacy.js handles the IAB CCPA `usprivacy` proposal cookie
+cookies_iab.js handles the IAB CCPA `usprivacy` proposal cookie
 modification process
 */
 

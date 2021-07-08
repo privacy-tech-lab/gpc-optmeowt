@@ -15,7 +15,7 @@ import { enableListeners, disableListeners } from "./listeners-$BROWSER.js"
 import { storage, stores } from "./storage.js"
 import { extensionMode, defaultSettings } from "../data/settings.js"
 
-import "./cookie_lists_json.js"
+import "./cookies_oninstall.js"
 
 
 // Initializers
