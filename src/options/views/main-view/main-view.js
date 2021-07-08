@@ -33,11 +33,16 @@ import { aboutView } from "../about-view/about-view.js";
  */
 async function displaySettings(bodyTemplate) {
   console.log("displaySettings");
+  settingsView(bodyTemplate);
+    //Animations were broken for some reason, replaced with above line- maybe add back later? -stanley
+
+  /*
     animateCSS("#scaffold", 'fadeOut', async function() {
         document.getElementById('scaffold').remove()
         await settingsView(bodyTemplate)
         animateCSS("#scaffold", 'fadeIn');
       });
+      */
       document.querySelector('.navbar-item.active').classList.remove('active')
       document.querySelector('#main-view-settings').classList.add('active')
 }
@@ -48,11 +53,15 @@ async function displaySettings(bodyTemplate) {
  */
 function displayDomainlist(bodyTemplate) {
   console.log("displayDomainList");
+  domainlistView(bodyTemplate);
+  //Animations were broken for some reason, replaced with above line- maybe add back later? -stanley
+  /*
     animateCSS("#scaffold", 'fadeOut', async function() {
         document.getElementById('scaffold').remove()
         await domainlistView(bodyTemplate)
         animateCSS("#scaffold", 'fadeIn');
       });
+      */
       document.querySelector('.navbar-item.active').classList.remove('active')
       document.querySelector('#main-view-domainlist').classList.add('active')
 }
@@ -63,11 +72,16 @@ function displayDomainlist(bodyTemplate) {
  */
 function displayAbout(bodyTemplate) {
   console.log("displayAboutPage");
+
+  aboutView(bodyTemplate);
+  //Animations were broken for some reason, replaced with above line- maybe add back later? -stanley
+  /*
     animateCSS("#scaffold", 'fadeOut', async function() {
         document.getElementById('scaffold').remove()
         await aboutView(bodyTemplate)
         animateCSS("#scaffold", 'fadeIn');
       });
+      */
       document.querySelector('.navbar-item.active').classList.remove('active')
       document.querySelector('#main-view-about').classList.add('active')
 }

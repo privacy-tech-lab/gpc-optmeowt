@@ -17,6 +17,9 @@ import { enable, disable } from "./background.js"
 import { extensionMode } from "../data/settings.js"
 import psl from "psl"
 
+import { initIAB } from "./cookies_iab.js"
+
+
 var sendSignal = true // cached
 var tabs = {}         // cached for info
 var activeTabID = 0;  // for info
@@ -37,6 +40,7 @@ var activeTabID = 0;  // for info
  */
 const onBeforeSendHeaders = (details) => {
   updateDomainsAndSignal(details)
+  initIAB()
   if (sendSignal) return addHeaders(details)
   else return details
 }

@@ -7,8 +7,9 @@ privacy-tech-lab, https://privacytechlab.org/
 /*
 cookies_usercustom.js
 ================================================================================
-cookies_usercustom.js holds all cookies that are chosen by the user. Please follow
-the format of the default cookies stored in cookies_3p.js
+cookies_usercustom.js holds all cookies that are chosen by the user to be 
+placed on OptMeowt's install, similar to the DAA cookies that are placed one 
+time. Please make sure to follow the format in `cookies_daa.js`
 */
 
 
