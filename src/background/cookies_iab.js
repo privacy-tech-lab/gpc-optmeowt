@@ -56,7 +56,7 @@ let defaultValue = '1NYN'
  * via a `us_privacy` first-party cookie
  * Pulls data about the current tab and intializes the cookie-set process
  */
-export function initUsp() {
+export function initIAB() {
   chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
     if (tabs[0] != undefined && tabs[0].url != undefined) {
       var tab = tabs[0];
@@ -65,7 +65,7 @@ export function initUsp() {
 
       // Filter out chrome://* links as they are local
       if (url.substr(0,9).toLowerCase() !== 'chrome://') {
-        checkExistsAndHandleUsp(url);
+        checkExistsAndHandleIAB(url);
       }
     }
   })
@@ -76,7 +76,7 @@ export function initUsp() {
  * cookie, and handles them according to how many exist
  * @param {string} url - url of the current tab
  */
-function checkExistsAndHandleUsp(url) {
+function checkExistsAndHandleIAB(url) {
   let cookieMatches = []
 
   chrome.cookies.getAll({ "url": url }, function (cookieArr) {
@@ -90,17 +90,17 @@ function checkExistsAndHandleUsp(url) {
 
     // Now we have an array of all the cookie matches
     if (cookieMatches.length === 1) {
-      let value = parseUsp(cookieMatches[0]["value"])
+      let value = parseIAB(cookieMatches[0]["value"])
       if (value == '1---') {
         // Handle the case when the site says you are outside California
         // ("This site recognized you are outside of 
         // the domain of the CCPA.", cookieMatches[0]["domain"])
       } else {
-        updateUsp(cookieMatches[0], value, url);
+        updateIAB(cookieMatches[0], value, url);
       }
     }
     if (cookieMatches.length === 0) {
-        updateUsp(null, '1NYN', url);
+        updateIAB(null, '1NYN', url);
     }
     // If there are multiple cookies, handle here.
     // Currently deletes default cookie
@@ -127,13 +127,13 @@ function checkExistsAndHandleUsp(url) {
  * @param {string} value - value to be given to new cookie
  * @param {string} url - url to be set to new cookie
  */
-function updateUsp(cookie, value, url) {
+function updateIAB(cookie, value, url) {
   let new_cookie = {}
 
   if (cookie === null) {
-    new_cookie = makeCookieUsp(defaultName, defaultValue, url)
+    new_cookie = makeCookieIAB(defaultName, defaultValue, url)
   } else {
-    new_cookie = pruneCookieUsp(cookie, value, url)
+    new_cookie = pruneCookieIAB(cookie, value, url)
   }
   chrome.cookies.set( new_cookie )
 }
@@ -144,8 +144,8 @@ function updateUsp(cookie, value, url) {
  * @param {string} signal - the value of an IAB cookie. Example: `1YNN`.
  * @return {string} - Updated IAB value to be set
  */
-function parseUsp(signal) {
-  if (!isValidSignalUsp(signal)) {
+function parseIAB(signal) {
+  if (!isValidSignalIAB(signal)) {
     return '1NYN'
   }
   if (signal === '1---') {
@@ -166,7 +166,7 @@ function parseUsp(signal) {
  * @param {string} url - url the updated cookie should have
  * @return {object} - updated cookie to be returned
  */
-function pruneCookieUsp(cookie, value, url) {
+function pruneCookieIAB(cookie, value, url) {
   cookie.value = value
   cookie.url = url
   // Checks if a cookie made by a site is stored per domain/subdomain
@@ -187,7 +187,7 @@ function pruneCookieUsp(cookie, value, url) {
  * @param {string} url - The url the cookie should be assigned
  * @return {Object} - new IAB cookie
  */
-function makeCookieUsp(name, value, url) {
+function makeCookieIAB(name, value, url) {
   var time = new Date()
   var now = time.getTime()
 
@@ -218,7 +218,7 @@ function deleteCookie(url, name) {
  * @param {string} signal - `us_privacy` string
  * @returns {bool} - Represents if signal is a valid signal
  */
-function isValidSignalUsp(signal) {
+function isValidSignalIAB(signal) {
   var valid_chars = ['y', 'n', 'Y', 'N', '-']
   if (signal.length != 4) {
     return false
