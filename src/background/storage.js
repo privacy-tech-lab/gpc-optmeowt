@@ -11,36 +11,59 @@ storage.js
 storage.js handles OptMeowt's reads/writes of data to some local location
 */
 
-// `storage.js` should import `../data/settings.js` and implement it here.
-// Then, whenever we need to update settings, we do it by importing
-// `storage.js` because it logically should be able to handle that because
-// it is always implicitly in the storage.
 
 import { openDB } from "idb"
 
+
+// We could use strings instead of hard coding the following objects, however using an
+// enumerated object prevents mistyping a string as a parameter, hopefully
+// saving us some potential grief
+const extensionMode = Object.freeze({
+	enabled: 'ENABLED',
+	domainlisted: 'DOMAINLISTED',
+	disabled: 'DISABLED'
+});
+
 // In general, these functions should be use with async / await for 
 // syntactic sweetness & synchronous data handling 
-// i.e., await setToStorage(stores.settings, extensionMode.enabled, 'MODE')
-export const stores = Object.freeze({
+// i.e., await storage.set(stores.settings, extensionMode.enabled, 'MODE')
+const stores = Object.freeze({
     settings: 'SETTINGS',
     domainlist: 'DOMAINLIST'
-})
+});
+
+////////////////////////////////////////////////////////////////////////////////
 
 const dbPromise = openDB("extensionDB", 1, {
     upgrade: (db) => {
         db.createObjectStore(stores.domainlist)
         db.createObjectStore(stores.settings)
     }
-})
+});
 
-export const storage = {
+const storage = {
     async get(store, key) {
         return (await dbPromise).get(store, key)
     },
+    async getAll(store) {
+        return (await dbPromise).getAll(store)
+    },
+    async getAllKeys(store) {
+        return (await dbPromise).getAllKeys(store)
+    },
     async set(store, value, key) {
-        return (await dbPromise).put(store, value, key)
+        return new Promise(async (resolve, reject) => {
+            (await dbPromise).put(store, value, key).then(resolve())
+        })
     },
     async delete(store, key) {
         return (await dbPromise).delete(store, key)
     }
+}
+
+
+export {
+    extensionMode,
+    stores,
+    storage
 }

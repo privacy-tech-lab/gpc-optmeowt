@@ -6,20 +6,20 @@ privacy-tech-lab, https://privacytechlab.org/
 
 
 /*
-cookies_oninstall.js
+cookiesOnInstall.js
 ================================================================================
-cookies_oninstall.js fetches all files mentioned in cookieJSONS, retrieves
+cookiesOnInstall.js fetches all files mentioned in cookieJSONS, retrieves
 their respective cookies (custom & 3rd party), and places them.
 */
 
 
-import { cookies_daa } from "../data/cookies_daa.js"
-import { cookies_usercustom } from "../data/cookies_usercustom.js"
+import { cookiesDAA } from "../data/cookiesDAA.js"
+import { cookiesUserCustom } from "../data/cookiesUserCustom.js"
 
 
 (() => {
-  setAllCookies(cookies_daa)
-  setAllCookies(cookies_usercustom)
+  setAllCookies(cookiesDAA)
+  setAllCookies(cookiesUserCustom)
 })();
 
 /**

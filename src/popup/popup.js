@@ -10,8 +10,7 @@ popup.js
 popup.js supplements and renders complex elements on popup.html
 */
 
-import { storage, stores } from "../background/storage.js";
-import { extensionMode } from "../data/settings.js"
+import { extensionMode, stores, storage } from "../background/storage.js";
 // import { buildToggle, toggleListener } from "../../../domainlist.js";
 
 
@@ -56,7 +55,7 @@ import "../../node_modules/tippy.js/dist/tippy-bundle.umd"
  * @param {Object} event - contains information about the event
  */
 document.addEventListener("DOMContentLoaded", async (event) => {
-  var parsed_domain = "";
+  var parsedDomain = "";
 
   /**
    * Queries, parses, and sets active tab domain to popup
@@ -68,13 +67,13 @@ document.addEventListener("DOMContentLoaded", async (event) => {
         try {
           var url = new URL(tab.url);
           var parsed = psl.parse(url.hostname);
-          parsed_domain = parsed.domain;
+          parsedDomain = parsed.domain;
 
-          if (parsed_domain === null) {
+          if (parsedDomain === null) {
             document.getElementById("dns-body").style.display = "none";
             document.getElementById("domain").style.display = "none";
           } else {
-            document.getElementById("domain").innerHTML = parsed_domain;
+            document.getElementById("domain").innerHTML = parsedDomain;
             // chrome.storage.local.get(["FIRSTINSTALL_POPUP"], (result) => {
             //   if (result.FIRSTINSTALL_POPUP) {
             //     popUpWalkthrough();
@@ -156,13 +155,13 @@ document.addEventListener("DOMContentLoaded", async (event) => {
    * Sets domain list switch to correct position and adds listener
    */
   // chrome.storage.local.get(["DOMAINS"], function (result) {
-    const domainBool = await storage.get(stores.domainlist, parsed_domain)
-    console.log(`domainBool = ${domainBool} \n parsed_domain = ${parsed_domain}`)
+    const parsedDomainValue = await storage.get(stores.domainlist, parsedDomain)
+    console.log(`parsedDomainValue = ${parsedDomainValue} \n parsedDomain = ${parsedDomain}`)
     // Sets popup view
     var checkbox = "";
     var text = "";
-    // if (result.DOMAINS[parsed_domain]) {
-      if (domainBool) {
+    // if (result.DOMAINS[parsedDomain]) {
+      if (parsedDomainValue) {
       checkbox = `<input type="checkbox" id="input" checked/>
                       <span></span>`;
       text = "Do Not Sell Enabled";
@@ -173,34 +172,24 @@ document.addEventListener("DOMContentLoaded", async (event) => {
     }
     document.getElementById("switch-label").innerHTML = checkbox;
     document.getElementById("dns-text").innerHTML = text;
-    // toggleListener("input", parsed_domain);
-    // This is based on the toggleListener function and creates a toggle
+
+    // 1st party domain domainlist toggle listener
     document.getElementById("switch-label").addEventListener("click", async () => {
-      // chrome.storage.local.set({ ENABLED: true, DOMAINLIST_ENABLED: true });
-      await storage.set(stores.settings, extensionMode.domainlisted,'MODE')
-      
-      const currDomainBool = await storage.get(stores.domainlist, parsed_domain);
-      console.log(`currDomainBool1 = ${currDomainBool}`);
-      // chrome.storage.local.get(["DOMAINS"], function (result) {
+      await storage.set(stores.settings, extensionMode.domainlisted, 'MODE')
+      const parsedDomainValue = await storage.get(stores.domainlist, parsedDomain);
+      console.log(`parsedDomainValue1 = ${parsedDomainValue}`);
       var t = "";
-      var bool = false;
-        // if (result.DOMAINS[parsed_domain]) {
-        if (currDomainBool) {
+        if (parsedDomainValue) {
           t = "Do Not Sell Disabled";
-          bool = false
-          await storage.set(stores.domainlist, bool, parsed_domain);
-          console.log(`currDomainBool2 = ${await storage.get(stores.domainlist, parsed_domain)}`); //should show false
+          await storage.set(stores.domainlist, false, parsedDomain);
+          console.log(`setting disabled: getter - ${ storage.get(stores.domainlist, parsedDomain)}`); //should show false
         } else {
           t = "Do Not Sell Enabled";
-          bool = true
-          await storage.set(stores.domainlist, bool, parsed_domain);
-          console.log(`currDomainBool3 = ${await storage.get(stores.domainlist, parsed_domain)}`);
+          await storage.set(stores.domainlist, true, parsedDomain);
+          console.log(`setting enabled: getter -  ${ storage.get(stores.domainlist, parsedDomain)}`);
         }
-        
         document.getElementById("dns-text").innerHTML = t;
-      // })
     })
-  // })
 
   /**
    * Generates `X domains receiving signals` section in popup
@@ -272,21 +261,31 @@ document.addEventListener("DOMContentLoaded", async (event) => {
 /**
  * Builds the requested domains HTML of the popup window
  * @param {Object} requests - Contains all request domains for the current tab
- * (requests = tabs[activeTabID].REQUEST_DOMAINS; passed from background page)
+ * (requests = tabs[activeTabID].requestDomainS; passed from background page)
  */
 async function buildDomains(requests) {
   //console.log("requests: ", requests)
   let items = "";
   // chrome.storage.local.get(["DOMAINS"], function (result) {
-    const domainlist = await storage.get()
-    for (var request_domain in requests) {
+    const domainlistKeys = await storage.getAllKeys(stores.domainlist)
+    const domainlistValues = await storage.getAll(stores.domainlist)
+    // console.log("The domainlistKeys on buildDomains() is: domainlistKeys = ", domainlistKeys)
+    // console.log("The domainlistValues on buildDomains() is: domainlistValues = ", domainlistValues)
+    // console.log("requests = ", requests)
+    for (let requestDomain in requests) {
+      // console.log("testing")
       let checkbox = ""
       let text = ""
-      if (result.DOMAINS[request_domain]) {
-        checkbox = `<input type="checkbox" id="input-${request_domain}" checked/>`
+      // Find correct index
+      let index = domainlistKeys.indexOf(requestDomain)
+      // console.log("index = ", index)
+      // 
+      if (index > -1 && domainlistValues[index] === true) {
+        checkbox = `<input type="checkbox" id="input-${requestDomain}" checked/>`
         text = "Do Not Sell Enabled"
       } else {
-        checkbox = `<input type="checkbox" id="input-${request_domain}"/>`
+        // console.log("setting our domainlist value to unchecked")
+        checkbox = `<input type="checkbox" id="input-${requestDomain}"/>`
         text = "Do Not Sell Disabled"
       }
 
@@ -298,11 +297,11 @@ async function buildDomains(requests) {
         style="font-size: medium"
         id="domain"
       >
-        ${request_domain}
+        ${requestDomain}
       </div>
       <div uk-grid  style="margin-top: 4%; ">
         <div
-          id="dns-text-${request_domain}"
+          id="dns-text-${requestDomain}"
           class="uk-width-expand uk-margin-auto-vertical"
           style="font-size: small;"
         >
@@ -311,7 +310,7 @@ async function buildDomains(requests) {
         <div>
           <div uk-grid>
             <div class="uk-width-auto">
-              <label class="switch switch-smaller" id="switch-label-${request_domain}">
+              <label class="switch switch-smaller" id="switch-label-${requestDomain}">
                 <!-- Populate switch preference here -->
                 <!-- <input type="checkbox" id="input"/> -->
                 ${checkbox}
@@ -330,21 +329,28 @@ async function buildDomains(requests) {
     }
     document.getElementById("third-party-domains-list").innerHTML = items;
 
-    for (let request_domain in requests) {
-      document.getElementById(`input-${request_domain}`).addEventListener("click", () => {
-        chrome.storage.local.set({ ENABLED: true, DOMAINLIST_ENABLED: true });
-        chrome.storage.local.get(["DOMAINS"], function (result) {
-          var t = ""
-          if (result.DOMAINS[request_domain]) {
+    for (let requestDomain in requests) {
+      document.getElementById(`input-${requestDomain}`).addEventListener("click", async () => {
+        console.log("input-requestDomain button triggered.")
+        await storage.set(stores.settings, extensionMode.domainlisted, 'MODE')
+        // chrome.storage.local.set({ ENABLED: true, DOMAINLIST_ENABLED: true });
+        // chrome.storage.local.get(["DOMAINS"], function (result) {
+          const requestDomainValue = await storage.get(stores.domainlist, requestDomain)
+          let t = ""
+          // if (result.DOMAINS[requestDomain]) {
+            if (requestDomainValue) {
             t = "Do Not Sell Disabled"
-            removeFromDomainlist(request_domain);
+            // removeFromDomainlist(requestDomain);
+            // console.log("setting requestDomain = ", requestDomain, "to value = ", false)
+            await storage.set(stores.domainlist, false, requestDomain)
           } else {
             t = "Do Not Sell Enabled"
-            storage.set(stores.domainlist, true, request_domain);
+            // console.log("setting requestDomain = ", requestDomain, "to value = ", true)
+            await storage.set(stores.domainlist, true, requestDomain);
           }
           // console.log(t)
-          document.getElementById(`dns-text-${request_domain}`).innerHTML = t;
-        })
+          document.getElementById(`dns-text-${requestDomain}`).innerHTML = t;
+        // })
       })
     }
   // })
@@ -439,12 +445,30 @@ chrome.runtime.sendMessage({
 });
 
 /**
+ * Requests Well Known info from Background page
+ */
+chrome.runtime.sendMessage({
+    msg: "WELLKNOWNREQUEST",
+    data: null,
+    return: true,
+  }, (response) => {
+    //console.log(`Received WELLKNOWNREQUEST response: ${JSON.stringify(response.data)}`)
+    // buildWellKnown(response.data);
+  }
+);
+
+/**
  * Listens for messages from background page that call functions to populate
  * the popup badge counter and build the popup domain list HTML, respectively
  */
 chrome.runtime.onMessage.addListener(function (request, _, __) {
   if (request.msg === "REQUESTS") {
+    console.log("request.data", request)
     buildDomains(request.data);
+  }
+  if (request.msg === "WELLKNOWNRESPONSE") {
+    //console.log(`Received WELLKNOWNREQUEST response: ${JSON.stringify(request.data)}`)
+    buildWellKnown(request.data);
   }
   // if (request.msg === "WELLKNOWNRESPONSE") {
     //console.log(`Received WELLKNOWNREQUEST response: ${JSON.stringify(request.data)}`)
@@ -452,18 +476,6 @@ chrome.runtime.onMessage.addListener(function (request, _, __) {
   // }
 });
 
-/**
- * Requests Well Known info from Background page
- */
-// chrome.runtime.sendMessage({
-//     msg: "WELLKNOWNREQUEST",
-//     data: null,
-//     return: true,
-//   }, (response) => {
-//     //console.log(`Received WELLKNOWNREQUEST response: ${JSON.stringify(response.data)}`)
-//     // buildWellKnown(response.data);
-//   }
-// );
 
 // Walkthrough function
 function popUpWalkthrough() {

@@ -12,10 +12,10 @@ main opt-out functionality
 */
 
 import { enableListeners, disableListeners } from "./listeners-$BROWSER.js"
-import { storage, stores } from "./storage.js"
-import { extensionMode, defaultSettings } from "../data/settings.js"
+import { extensionMode, stores, storage } from "./storage.js"
+import { defaultSettings } from "../data/defaultSettings.js"
 
-import "./cookies_oninstall.js"
+import "./cookiesOnInstall.js"
 
 
 // Initializers
@@ -58,8 +58,8 @@ export function disable() {
 async function init() {
   // Note: this may be done after enable()/disable() are called, b/c it is async and microtasked
   for (const setting in defaultSettings) {
-    var sample = await storage.set(stores.settings, defaultSettings[setting], setting)
-    console.log("init(1):: Set ", setting, " to storage ?")
+    await storage.set(stores.settings, defaultSettings[setting], setting)
+    // console.log("init(1):: Set ", setting, " to storage ?")
   }
   
   const mode = defaultSettings.MODE
@@ -68,33 +68,7 @@ async function init() {
   } else {
     disable()
   }
-//   // async function getAll() {
-//   // };
-//   // await getAll();
-//   // const all = getAllFromStorage(stores.domainlist)
-
-//   console.log("clearing .........")
-//   console.log("clearing .........")
-//   console.log("clearing .........")
-
-//   for (const s in defaultSettings) {
-//     var test = await getFromStorage(stores.settings, 'MODE')
-//     console.log("post_init(1):: Got ", s, " = ", test, " from storage ?")
-//   }
-
-//   const val = 'BROWSER'
-//   const all = await getFromStorage(stores.settings, val)
-//   console.log("post_init(2):: From storage", all, val)
-
-//   await setToStorage(stores.settings, "BRAVE LOL", "BROWSER")
-//   let brave = await getFromStorage(stores.settings, "BROWSER")
-//   console.log("post_init(3):: brave val = ", brave)
-// }
-
-// async function post_init(){
 }
 
 // Initialize call
 init()
-
-// post_init()

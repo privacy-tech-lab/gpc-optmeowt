@@ -5,14 +5,14 @@ privacy-tech-lab, https://privacytechlab.org/
 */
 
 /*
-cookies_usercustom.js
+cookiesUserCustom.js
 ================================================================================
-cookies_usercustom.js holds all cookies that are chosen by the user to be 
+cookiesUserCustom.js holds all cookies that are chosen by the user to be 
 placed on OptMeowt's install, similar to the DAA cookies that are placed one 
-time. Please make sure to follow the format in `cookies_daa.js`
+time. Please make sure to follow the format in `cookiesDAA.js`
 */
 
 
-export const cookies_usercustom = {
+export const cookiesUserCustom = {
 
 }

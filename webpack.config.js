@@ -5,7 +5,7 @@ const { CleanWebpackPlugin } = require("clean-webpack-plugin")
 const path = require("path")
 
 // ! Implement a "frontend" export in order to use a dev serve
-// ! Implement terser for production 
+// ! Implement terser for production
 // ! Implement file loader for assets
 
 module.exports = (env, argv) => {
@@ -20,6 +20,7 @@ module.exports = (env, argv) => {
 			background: "./src/background/background.js",
 			popup: "./src/popup/popup.js",
 			options: "./src/options/options.js",
+			contentScript: "./src/background/contentScript.js"
 		},
 		output: {
 			filename: "[name].bundle.js",
@@ -79,10 +80,6 @@ module.exports = (env, argv) => {
 			}),
 			new CopyPlugin({
 				patterns: [{ context: path.resolve(__dirname, "src"), from: "manifest.json" }],
-			}),
-			// NOTE: This file should be temporary: when we update the content scripts, change this.
-			new CopyPlugin({
-				patterns: [{ context: path.resolve(__dirname, "src/background"), from: "contentScript.js" }],
 			}),
 			new CopyPlugin({
 				patterns: [{ context: path.resolve(__dirname, "src/background"), from: "dom.js" }],

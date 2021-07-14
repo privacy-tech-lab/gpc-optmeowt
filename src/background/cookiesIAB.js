@@ -6,16 +6,17 @@ privacy-tech-lab, https://privacytechlab.org/
 
 
 /*
-cookies_iab.js
+cookiesIAB.js
 ================================================================================
-cookies_iab.js handles the IAB CCPA `usprivacy` proposal cookie
+cookiesIAB.js handles the IAB CCPA `usprivacy` proposal cookie
 modification process
 */
 
 
 /*
-  Handle the case when the site recognizes you are outside of CA
-  is teh boolean for checking multipel cookies correct? 
+  // ! Handle the case when the site recognizes you are outside of CA
+  // ! Handle the case of trying to add cookies on a chrome:// page  or browser://
+  is the boolean for checking multipel cookies correct?
   check #checkthis
 
 
@@ -108,10 +109,8 @@ function checkExistsAndHandleIAB(url) {
       //console.log("MULTIPLE COOKIES EXIST!")
       for (var c in cookieMatches) {
         if (cookieMatches[c].name == defaultName &&
-          // is this necessary? #checkthis
           cookieMatches[c].domain.substr(0,1) !== ".")
         {
-          //console.log("initializing delete cookie...")
           deleteCookie(url, cookieMatches[c].name)
         }
       }

@@ -5,15 +5,15 @@ privacy-tech-lab, https://privacytechlab.org/
 */
 
 /*
-cookies_daa.js
+cookiesDAA.js
 ================================================================================
-cookies_daa.js holds all cookies that are placed on the browser on install,
+cookiesDAA.js holds all cookies that are placed on the browser on install,
 specifically the DAA cookies we have collected
 https://digitaladvertisingalliance.org
 */
 
 
-export const cookies_daa = {
+export const cookiesDAA = {
     "33Across<33x_nc>": {
        "name": "33x_nc",
        "value": "33Across+Optout",

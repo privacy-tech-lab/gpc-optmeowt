@@ -5,13 +5,13 @@ privacy-tech-lab, https://privacytechlab.org/
 */
 
 /*
-privacy_flags.js
+privacyFlags.js
 ================================================================================
-privacy_flags.js exports all privacy flags for analysis
+privacyFlags.js exports all privacy flags for analysis
 */
 
 
-export const privacy_flags = {
+export const privacyFlags = {
     "flags":[
     {
         "name":"gdpr",
