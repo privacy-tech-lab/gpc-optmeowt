@@ -11,24 +11,8 @@ popup.js supplements and renders complex elements on popup.html
 */
 
 import { extensionMode, stores, storage } from "../background/storage.js";
-// import { buildToggle, toggleListener } from "../../../domainlist.js";
-
-
-/*
-The following imports have been moved from their respective imports in 
-`popup.html` into this file `popup.js` in order to allow Webpack to 
-do our heavy lifting for us.
-
-Some functionality may be broken! 
-
-If you find something not working, please open an issue or address it in Teams.
-Otherwise if stuff is redundtant, or not needed, or better done with a node library,
-implement it if you have the time and know-how :)
-*/
 
 // ! Make sure to fix runtime.sendMessage (ENABLED : TRUE) so that the extension fixes itself
-// ! Fix buildDomains() sets wrong property 
-
 
 // CSS TO JS IMPORTS
 import "../../node_modules/uikit/dist/css/uikit.min.css"
@@ -36,7 +20,6 @@ import "../../node_modules/animate.css/animate.min.css"
 import "./styles.css"
 
 // HTML TO JS IMPORTS - TOP OF `popup.html`
-// import "../../node_modules/psl/dist/psl"
 import psl from "psl"
 import "../../node_modules/uikit/dist/js/uikit"
 import "../../node_modules/uikit/dist/js/uikit-icons"
@@ -47,7 +30,6 @@ import "../../node_modules/tippy.js/dist/tippy-bundle.umd"
 
 // MISC. IMPORTS THRUOUT FILE
 // import "../../node_modules/dark-mode-switch/dark-mode-switch"
-
 
 
 /**
@@ -94,117 +76,103 @@ document.addEventListener("DOMContentLoaded", async (event) => {
    * Sets enable/disable button to correct mode
    */
   const mode = await storage.get(stores.settings, 'MODE')
-  // chrome.storage.local.get(["ENABLED"], function (result) {
-    // if (result.ENABLED == undefined) {
-    if (mode === undefined) {
-      document.getElementById("img").src = "../assets/play-circle-outline.svg";
-      document
-        .getElementById("enable-disable")
-        .setAttribute("uk-tooltip", "Enable");
-    } else if (mode === extensionMode.enabled || mode === extensionMode.domainlisted) {
-      document.getElementById("img").src = "../assets/pause-circle-outline.svg";
-      document
-        .getElementById("enable-disable")
-        .setAttribute("uk-tooltip", "Disable");
-      document.getElementById("content").style.opacity = "1";
-      document.getElementById("message").style.opacity = "0";
-      document.getElementById("message").style.display = "none";
-    } else {
-      document.getElementById("message").style.display = "";
-      document.getElementById("img").src = "../assets/play-circle-outline.svg";
-      document
-        .getElementById("enable-disable")
-        .setAttribute("uk-tooltip", "Enable");
-      document.getElementById("content").style.opacity = "0.1";
-      document.getElementById("message").style.opacity = "1";
-    }
-  // });
+  if (mode === undefined) {
+    document.getElementById("img").src = "../assets/play-circle-outline.svg";
+    document
+      .getElementById("enable-disable")
+      .setAttribute("uk-tooltip", "Enable");
+  } else if (mode === extensionMode.enabled || mode === extensionMode.domainlisted) {
+    document.getElementById("img").src = "../assets/pause-circle-outline.svg";
+    document
+      .getElementById("enable-disable")
+      .setAttribute("uk-tooltip", "Disable");
+    document.getElementById("content").style.opacity = "1";
+    document.getElementById("message").style.opacity = "0";
+    document.getElementById("message").style.display = "none";
+  } else {
+    document.getElementById("message").style.display = "";
+    document.getElementById("img").src = "../assets/play-circle-outline.svg";
+    document
+      .getElementById("enable-disable")
+      .setAttribute("uk-tooltip", "Enable");
+    document.getElementById("content").style.opacity = "0.1";
+    document.getElementById("message").style.opacity = "1";
+  }
 
   /**
    * Listener for enable/disable extension switch
    */
   document.getElementById("enable-disable").addEventListener("click", async () => {
     const mode = await storage.get(stores.settings, 'MODE')
-    // chrome.storage.local.get(["ENABLED"], function (result) {
-      // if (result.ENABLED) {
-        if (mode === extensionMode.enabled || mode === extensionMode.domainlisted) {
-        document.getElementById("message").style.display = "";
-        document.getElementById("img").src =
-          "../assets/play-circle-outline.svg";
-        document
-          .getElementById("enable-disable")
-          .setAttribute("uk-tooltip", "Enable");
-        document.getElementById("content").style.opacity = "0.1";
-        document.getElementById("message").style.opacity = "1";
-        chrome.runtime.sendMessage({ "ENABLED": false });
-      } else {
-        document.getElementById("img").src =
-          "../assets/pause-circle-outline.svg";
-        document
-          .getElementById("enable-disable")
-          .setAttribute("uk-tooltip", "Disable");
-        document.getElementById("content").style.opacity = "1";
-        document.getElementById("message").style.opacity = "0";
-        document.getElementById("message").style.display = "none";
-        chrome.runtime.sendMessage({ "ENABLED": true });
-      }
-    // });
+    if (mode === extensionMode.enabled || mode === extensionMode.domainlisted) {
+      document.getElementById("message").style.display = "";
+      document.getElementById("img").src =
+        "../assets/play-circle-outline.svg";
+      document
+        .getElementById("enable-disable")
+        .setAttribute("uk-tooltip", "Enable");
+      document.getElementById("content").style.opacity = "0.1";
+      document.getElementById("message").style.opacity = "1";
+      chrome.runtime.sendMessage({ "ENABLED": false });
+    } else {
+      document.getElementById("img").src =
+        "../assets/pause-circle-outline.svg";
+      document
+        .getElementById("enable-disable")
+        .setAttribute("uk-tooltip", "Disable");
+      document.getElementById("content").style.opacity = "1";
+      document.getElementById("message").style.opacity = "0";
+      document.getElementById("message").style.display = "none";
+      chrome.runtime.sendMessage({ "ENABLED": true });
+    }
   });
 
   /**
    * Sets domain list switch to correct position and adds listener
    */
-  // chrome.storage.local.get(["DOMAINS"], function (result) {
-    const parsedDomainValue = await storage.get(stores.domainlist, parsedDomain)
-    console.log(`parsedDomainValue = ${parsedDomainValue} \n parsedDomain = ${parsedDomain}`)
-    // Sets popup view
-    var checkbox = "";
-    var text = "";
-    // if (result.DOMAINS[parsedDomain]) {
-      if (parsedDomainValue) {
-      checkbox = `<input type="checkbox" id="input" checked/>
-                      <span></span>`;
-      text = "Do Not Sell Enabled";
-    } else {
-      checkbox = `<input type="checkbox" id="input"/>
-                      <span></span>`;
-      text = "Do Not Sell Disabled";
-    }
-    document.getElementById("switch-label").innerHTML = checkbox;
-    document.getElementById("dns-text").innerHTML = text;
+  const parsedDomainValue = await storage.get(stores.domainlist, parsedDomain)
+  console.log(`parsedDomainValue = ${parsedDomainValue} \n parsedDomain = ${parsedDomain}`)
+  // Sets popup view
+  var checkbox = "";
+  var text = "";
+    if (parsedDomainValue) {
+    checkbox = `<input type="checkbox" id="input" checked/>
+                    <span></span>`;
+    text = "Do Not Sell Enabled";
+  } else {
+    checkbox = `<input type="checkbox" id="input"/>
+                    <span></span>`;
+    text = "Do Not Sell Disabled";
+  }
+  document.getElementById("switch-label").innerHTML = checkbox;
+  document.getElementById("dns-text").innerHTML = text;
 
-    // 1st party domain domainlist toggle listener
-    document.getElementById("switch-label").addEventListener("click", async () => {
-      await storage.set(stores.settings, extensionMode.domainlisted, 'MODE')
-      const parsedDomainValue = await storage.get(stores.domainlist, parsedDomain);
-      console.log(`parsedDomainValue1 = ${parsedDomainValue}`);
-      var t = "";
-        if (parsedDomainValue) {
-          t = "Do Not Sell Disabled";
-          await storage.set(stores.domainlist, false, parsedDomain);
-          console.log(`setting disabled: getter - ${ storage.get(stores.domainlist, parsedDomain)}`); //should show false
-        } else {
-          t = "Do Not Sell Enabled";
-          await storage.set(stores.domainlist, true, parsedDomain);
-          console.log(`setting enabled: getter -  ${ storage.get(stores.domainlist, parsedDomain)}`);
-        }
-        document.getElementById("dns-text").innerHTML = t;
-    })
+  // 1st party domain domainlist toggle listener
+  document.getElementById("switch-label").addEventListener("click", async () => {
+    await storage.set(stores.settings, extensionMode.domainlisted, 'MODE')
+    const parsedDomainValue = await storage.get(stores.domainlist, parsedDomain);
+    let elemString = "";
+    if (parsedDomainValue) {
+      elemString = "Do Not Sell Disabled";
+      await storage.set(stores.domainlist, false, parsedDomain);
+    } else {
+      elemString = "Do Not Sell Enabled";
+      await storage.set(stores.domainlist, true, parsedDomain);
+    }
+    document.getElementById("dns-text").innerHTML = elemString;
+  })
 
   /**
    * Generates `X domains receiving signals` section in popup
    */
-  // chrome.storage.local.get(["DOMAINS"], (result) => {
-    // const domainlist = await getAllFromStorage(stores.domainlist)
-    // // var count = Object.keys(result.DOMAINS).filter((key) => {
-    //   var count = Object.keys(domainlist).filter((key) => {
-    //   return domainlist[key] == true;
-    // }).length
-    // document.getElementById("block-count").innerHTML = `
-    //     <p id = "domain-count" class="blue-heading" style="font-size:25px; 
-    //     font-weight: bold">${count}</p> domains receiving signals
-    // `;
-  // })
+  const domainlistValues = await storage.getAll(stores.domainlist)
+  let count = Object.keys(domainlistValues).filter((key) => {
+    return domainlistValues[key] == true;
+  }).length
+  document.getElementById("block-count").innerHTML = `
+    <p id = "domain-count" class="blue-heading" style="font-size:25px; 
+    font-weight: bold">${count}</p> domains receiving signals
+  `;
 
   /**
    * Generates third party domain list droptdown toggle functionality
@@ -241,22 +209,44 @@ document.addEventListener("DOMContentLoaded", async (event) => {
     }
   });
 
-    //Compliance analysis mode UI. WIP!
+  //Compliance analysis mode UI. WIP!
 
-    var btn = document.getElementById('complianceAnalysisButton');
-    btn.addEventListener('click', function() {
-      alert("Compliance checked! Check console...");
-      chrome.runtime.sendMessage({
-        msg: "COMPLIANCECHECK",
-        data: "https://www.dailymail.co.uk",
-        return: true,
-      }, (response) => {
-        console.log("done...")
-      }
-      );
-    });
+  let btn = document.getElementById('complianceAnalysisButton');
+  btn.addEventListener('click', function() {
+    alert("Compliance checked! Check console...");
+    chrome.runtime.sendMessage({
+      msg: "COMPLIANCECHECK",
+      data: "https://www.dailymail.co.uk",
+      return: true,
+    }, (response) => {
+      console.log("done...")
+    }
+    );
+  });
 
 })
+
+/**
+ * Builds the listener to enable toggling 3rd party domains on/off in domainlist
+ * @param {String} requestDomain - the domain related to the element which
+ * the listener should be attached
+ */
+function addThirdPartyDomainToggleListener(requestDomain) {
+  document.getElementById(`input-${requestDomain}`).addEventListener("click", async () => {
+    console.log("input-requestDomain button triggered.")
+    await storage.set(stores.settings, extensionMode.domainlisted, 'MODE')
+    const requestDomainValue = await storage.get(stores.domainlist, requestDomain)
+    let elemString = "";
+    if (requestDomainValue) {
+      elemString = "Do Not Sell Disabled"
+      await storage.set(stores.domainlist, false, requestDomain)
+    } else {
+      elemString = "Do Not Sell Enabled"
+      await storage.set(stores.domainlist, true, requestDomain);
+    }
+    document.getElementById(`dns-text-${requestDomain}`).innerHTML = elemString;
+  })
+};
 
 /**
  * Builds the requested domains HTML of the popup window
@@ -264,96 +254,68 @@ document.addEventListener("DOMContentLoaded", async (event) => {
  * (requests = tabs[activeTabID].requestDomainS; passed from background page)
  */
 async function buildDomains(requests) {
-  //console.log("requests: ", requests)
   let items = "";
-  // chrome.storage.local.get(["DOMAINS"], function (result) {
-    const domainlistKeys = await storage.getAllKeys(stores.domainlist)
-    const domainlistValues = await storage.getAll(stores.domainlist)
-    // console.log("The domainlistKeys on buildDomains() is: domainlistKeys = ", domainlistKeys)
-    // console.log("The domainlistValues on buildDomains() is: domainlistValues = ", domainlistValues)
-    // console.log("requests = ", requests)
-    for (let requestDomain in requests) {
-      // console.log("testing")
-      let checkbox = ""
-      let text = ""
-      // Find correct index
-      let index = domainlistKeys.indexOf(requestDomain)
-      // console.log("index = ", index)
-      // 
-      if (index > -1 && domainlistValues[index] === true) {
-        checkbox = `<input type="checkbox" id="input-${requestDomain}" checked/>`
-        text = "Do Not Sell Enabled"
-      } else {
-        // console.log("setting our domainlist value to unchecked")
-        checkbox = `<input type="checkbox" id="input-${requestDomain}"/>`
-        text = "Do Not Sell Disabled"
-      }
+  const domainlistKeys = await storage.getAllKeys(stores.domainlist)
+  const domainlistValues = await storage.getAll(stores.domainlist)
 
-      items +=
-        `
-    <li>
+  // Sets the 3rd party domain elements
+  for (let requestDomain in requests) {
+    let checkbox = ""
+    let text = ""
+    // Find correct index
+    let index = domainlistKeys.indexOf(requestDomain)
+    if (index > -1 && domainlistValues[index] === true) {
+      checkbox = `<input type="checkbox" id="input-${requestDomain}" checked/>`
+      text = "Do Not Sell Enabled"
+    } else {
+      checkbox = `<input type="checkbox" id="input-${requestDomain}"/>`
+      text = "Do Not Sell Disabled"
+    }
+
+    items +=
+      `
+  <li>
+    <div
+      class="blue-heading uk-flex-inline uk-width-1-1 uk-flex-center uk-text-center uk-text-bold uk-text-truncate"
+      style="font-size: medium"
+      id="domain"
+    >
+      ${requestDomain}
+    </div>
+    <div uk-grid  style="margin-top: 4%; ">
       <div
-        class="blue-heading uk-flex-inline uk-width-1-1 uk-flex-center uk-text-center uk-text-bold uk-text-truncate"
-        style="font-size: medium"
-        id="domain"
+        id="dns-text-${requestDomain}"
+        class="uk-width-expand uk-margin-auto-vertical"
+        style="font-size: small;"
       >
-        ${requestDomain}
+        ${text}
       </div>
-      <div uk-grid  style="margin-top: 4%; ">
-        <div
-          id="dns-text-${requestDomain}"
-          class="uk-width-expand uk-margin-auto-vertical"
-          style="font-size: small;"
-        >
-          ${text}
-        </div>
-        <div>
-          <div uk-grid>
-            <div class="uk-width-auto">
-              <label class="switch switch-smaller" id="switch-label-${requestDomain}">
-                <!-- Populate switch preference here -->
-                <!-- <input type="checkbox" id="input"/> -->
-                ${checkbox}
-                <span class="tooltip-1"></span>
-              </label>
-            </div>
+      <div>
+        <div uk-grid>
+          <div class="uk-width-auto">
+            <label class="switch switch-smaller" id="switch-label-${requestDomain}">
+              <!-- Populate switch preference here -->
+              <!-- <input type="checkbox" id="input"/> -->
+              ${checkbox}
+              <span class="tooltip-1"></span>
+            </label>
           </div>
         </div>
       </div>
-      <!-- Response info -->
-      <div uk-grid uk-grid-row-collapse style="margin-top:0px;">
+    </div>
+    <!-- Response info -->
+    <div uk-grid uk-grid-row-collapse style="margin-top:0px;">
+    </div>
+  </li>
+  `;
+  }
+  document.getElementById("third-party-domains-list").innerHTML = items;
 
-      </div>
-    </li>
-    `;
-    }
-    document.getElementById("third-party-domains-list").innerHTML = items;
+  // Sets the 3rd party domain toggle listeners
+  for (let requestDomain in requests) {
+    addThirdPartyDomainToggleListener(requestDomain)
+  }
 
-    for (let requestDomain in requests) {
-      document.getElementById(`input-${requestDomain}`).addEventListener("click", async () => {
-        console.log("input-requestDomain button triggered.")
-        await storage.set(stores.settings, extensionMode.domainlisted, 'MODE')
-        // chrome.storage.local.set({ ENABLED: true, DOMAINLIST_ENABLED: true });
-        // chrome.storage.local.get(["DOMAINS"], function (result) {
-          const requestDomainValue = await storage.get(stores.domainlist, requestDomain)
-          let t = ""
-          // if (result.DOMAINS[requestDomain]) {
-            if (requestDomainValue) {
-            t = "Do Not Sell Disabled"
-            // removeFromDomainlist(requestDomain);
-            // console.log("setting requestDomain = ", requestDomain, "to value = ", false)
-            await storage.set(stores.domainlist, false, requestDomain)
-          } else {
-            t = "Do Not Sell Enabled"
-            // console.log("setting requestDomain = ", requestDomain, "to value = ", true)
-            await storage.set(stores.domainlist, true, requestDomain);
-          }
-          // console.log(t)
-          document.getElementById(`dns-text-${requestDomain}`).innerHTML = t;
-        // })
-      })
-    }
-  // })
 }
 
 /**
@@ -470,10 +432,6 @@ chrome.runtime.onMessage.addListener(function (request, _, __) {
     //console.log(`Received WELLKNOWNREQUEST response: ${JSON.stringify(request.data)}`)
     buildWellKnown(request.data);
   }
-  // if (request.msg === "WELLKNOWNRESPONSE") {
-    //console.log(`Received WELLKNOWNREQUEST response: ${JSON.stringify(request.data)}`)
-    // buildWellKnown(request.data);
-  // }
 });
 
 
@@ -496,11 +454,13 @@ function popUpWalkthrough() {
 /**
  * Various options page listeners
  */
- document.getElementById("more").addEventListener("click", () => {
+document.getElementById("more").addEventListener("click", () => {
   chrome.runtime.openOptionsPage();
 });
 
-// Opens domainlist in settings page
+/**
+ * Opens domainlist in settings page
+ */
 document.getElementById("domain-list").addEventListener("click", () => {
   chrome.storage.local.set({ DOMAINLIST_PRESSED: true }, ()=>{
     chrome.runtime.openOptionsPage();
