@@ -18,12 +18,6 @@ import { defaultSettings } from "../data/defaultSettings.js"
 import "./cookiesOnInstall.js"
 
 
-// Initializers
-var tabs = {}; /// Store all active tab id's, domain, requests, and response
-var wellknown = {} /// Store information about `well-known/gpc` files per tabs
-var signalPerTab = {} /// Store information on a signal being sent for updateUI
-var activeTabID = 0;
-var sendSignal = false;
 // We could alt. use this in place of "building" for chrome/ff, just save it to settings in storage
 var userAgent = window.navigator.userAgent.indexOf("Firefox") > -1 ? "moz" : "chrome"
 

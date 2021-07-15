@@ -11,22 +11,21 @@ events.js implmements our per-site functionality for the background listeners
 */
 
 
-import { headers } from "../data/headers.js"
-import { extensionMode, stores, storage } from "./storage.js"
 import { enable, disable } from "./background.js"
+import { extensionMode, stores, storage } from "./storage.js"
+import { headers } from "../data/headers.js"
+import { initIAB } from "./cookiesIAB.js"
 import psl from "psl"
 
-import { initIAB } from "./cookiesIAB.js"
+// Initializers (cached values)
+var sendSignal = true // caches if the signal can be sent to the curr domain
+var tabs = {}         // caches all tab infomration
+var wellknown = {}    // caches wellknown info for popup
+var signalPerTab = {} // Store information on a signal being sent for updateUI
+var activeTabID = 0;  // caches active tab id
 
 
-var sendSignal = true // cached
-var tabs = {}         // cached for info
-
-var wellknown = {}
-var signalPerTab = {} /// Store information on a signal being sent for updateUI
-
-var activeTabID = 0;  // for info
-
+/******************************************************************************/
 
 
 /*
@@ -41,11 +40,16 @@ var activeTabID = 0;  // for info
  * @param {object} details - retrieved info passed into callback
  * @returns {array} details.requestHeaders from addHeaders 
  */
-const onBeforeSendHeaders = (details) => {
-  updateDomainsAndSignal(details)
-  initIAB()
-  if (sendSignal) return addHeaders(details)
-  else return details
+const onBeforeSendHeaders = async (details) => {
+  await updateDomainsAndSignal(details)
+
+  if (sendSignal) {
+    signalPerTab[details.tabId] = true
+    initIAB()
+    return addHeaders(details)
+  } else {
+    return details
+  }
 }
 
 /**
@@ -72,11 +76,17 @@ const onBeforeNavigate = (details) => {
  * Adds DOM property
  * @param {object} details - retrieved info passed into callback
  */
-const onCommitted = (details) => {
-  addDomSignal(details)
+const onCommitted = async (details) => {
+  await updateDomainsAndSignal(details)
+
+  if (sendSignal) {
+    addDomSignal(details)
+  }
 }
 
+
 /******************************************************************************/
+
 
 /**
  * Attaches headers from `headers.js` to details.requestHeaders
@@ -269,6 +279,33 @@ chrome.runtime.onMessage.addListener(async function (request, sender, sendRespon
     //   //   );
     //   // }
     // }
+  } 
+  if (request.msg === "TAB") {
+    // console.log("TAB MESSAGE HAS BEEN RECEIVED")
+    var url = new URL(sender.origin);
+    var parsed = psl.parse(url.hostname);
+    var domain = parsed.domain;
+    var tabID = sender.tab.id;
+    if (tabs[tabID] === undefined) {
+      tabs[tabID] = {
+        DOMAIN: domain,
+        REQUEST_DOMAINS: {},
+        TIMESTAMP: request.data,
+      };
+    } else if (tabs[tabID].DOMAIN !== domain) {
+      tabs[tabID].DOMAIN = domain;
+      let urls = tabs[tabID]["REQUEST_DOMAINS"];
+      // console.log("urls are:", urls)
+      for (var key in urls) {
+        if (urls[key]["TIMESTAMP"] >= request.data) {
+          tabs[tabID]["REQUEST_DOMAINS"][key] = urls[key];
+        } else {
+          delete tabs[tabID]["REQUEST_DOMAINS"][key];
+        }
+      }
+
+      tabs[tabID]["TIMESTAMP"] = request.data;
+    }
   }
 })
 

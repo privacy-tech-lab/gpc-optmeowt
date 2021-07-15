@@ -13,7 +13,7 @@ our main functionality
 
 
 import {
-  onBeforeSendHeaders, 
+	onBeforeSendHeaders, 
 	onHeadersReceived, 
 	onBeforeNavigate,
 	onCommitted
