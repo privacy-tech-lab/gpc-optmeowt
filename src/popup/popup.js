@@ -131,7 +131,7 @@ document.addEventListener("DOMContentLoaded", async (event) => {
    * Sets domain list switch to correct position and adds listener
    */
   const parsedDomainValue = await storage.get(stores.domainlist, parsedDomain)
-  console.log(`parsedDomainValue = ${parsedDomainValue} \n parsedDomain = ${parsedDomain}`)
+  // console.log(`parsedDomainValue = ${parsedDomainValue} \n parsedDomain = ${parsedDomain}`)
   // Sets popup view
   var checkbox = "";
   var text = "";
@@ -219,7 +219,7 @@ document.addEventListener("DOMContentLoaded", async (event) => {
       data: "https://www.dailymail.co.uk",
       return: true,
     }, (response) => {
-      console.log("done...")
+      // console.log("done...")
     }
     );
   });
@@ -233,7 +233,7 @@ document.addEventListener("DOMContentLoaded", async (event) => {
  */
 function addThirdPartyDomainToggleListener(requestDomain) {
   document.getElementById(`input-${requestDomain}`).addEventListener("click", async () => {
-    console.log("input-requestDomain button triggered.")
+    // console.log("input-requestDomain button triggered.")
     await storage.set(stores.settings, extensionMode.domainlisted, 'MODE')
     const requestDomainValue = await storage.get(stores.domainlist, requestDomain)
     let elemString = "";
@@ -405,7 +405,7 @@ chrome.runtime.sendMessage({
   msg: "POPUP",
   data: null,
 }, function (response) {
-  console.log(response)
+  // console.log(response)
 });
 
 /**
