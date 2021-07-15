@@ -18,6 +18,8 @@ util.js contains global helper functions to help render the options page
  * @returns {string|none} - Returns the stringified HTML template or
  *                          prints an error
  */
+import Mustache from "mustache";
+
 export async function fetchTemplate(path) {
     try {
         let response = await fetch(path)

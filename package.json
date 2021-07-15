@@ -1,10 +1,21 @@
 {
   "name": "optmeowt-browser-extension",
-  "version": "1.1.4",
+  "version": "2.0.0",
   "description": "A privacy extension that allows users to exercise rights under GPC",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "prestart": "rimraf dev",
+    "start": "concurrently -k npm:dev  npm:dev:extension",
+    "dev": "webpack --mode=development",
+    "dev:extension": "wait-on ./dev/manifest.json && cd dev && web-ext run --watch-file background.bundle.js --start-url about:debugging#/runtime/this-firefox",
+    "prebuild": "rimraf dist",
+    "build": "webpack --mode=production",
+    "build:dev": "webpack --watch --mode=development",
+    "build:prod": "webpack --mode=production",
+    "build:chrome": "webpack --mode=development --env chrome",
+    "build:firefox": "webpack --watch --mode=development --env firefox",
+    "build:prod:chrome": "webpack --mode=production --env chrome",
+    "build:prod:firefox": "webpack --mode=production --env firefox"
   },
   "repository": {
     "type": "git",
@@ -21,13 +32,30 @@
     "animate.css": "^4.1.1",
     "dark-mode-switch": "^1.0.0",
     "file-saver": "^2.0.4",
+    "idb": "^6.1.2",
     "mustache": "^4.2.0",
     "psl": "^1.8.0",
     "tippy.js": "^6.3.1",
     "uikit": "3.6.9"
   },
   "devDependencies": {
-    "grunt": "^1.3.0",
-    "grunt-contrib-copy": "^1.0.0"
+    "@babel/core": "^7.14.6",
+    "@babel/preset-env": "^7.14.5",
+    "@webpack-cli/generators": "^2.2.0",
+    "babel-loader": "^8.2.2",
+    "clean-webpack-plugin": "^4.0.0-alpha.0",
+    "copy-webpack-plugin": "^9.0.0",
+    "css-loader": "^5.2.6",
+    "file-loader": "^6.2.0",
+    "html-webpack-plugin": "^5.3.1",
+    "prettier": "^2.3.1",
+    "string-replace-loader": "^3.0.2",
+    "style-loader": "^2.0.0",
+    "wait-on": "^5.3.0",
+    "web-ext": "^6.2.0",
+    "webpack": "^5.39.0",
+    "webpack-cli": "^4.7.2",
+    "webpack-dev-server": "^3.11.2",
+    "workbox-webpack-plugin": "^6.1.5"
   }
 }

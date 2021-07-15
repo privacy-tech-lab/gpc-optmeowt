@@ -11,13 +11,14 @@ settings-view.js loads settings-view.html when clicked on the options page
 */
 
 import { renderParse, fetchParse } from "../../components/util.js";
-import {
-  handleDownload,
-  startUpload,
-  handleUpload,
-} from "../../../domainlist.js";
-import { darkSwitchFunction } from "../../../libs/dark-mode-switch-1.0.0/dark-mode-switch.js";
-import "../../../libs-js/FileSaver.js";
+// import {
+  // handleDownload,
+  // startUpload,
+ //  handleUpload,
+// } from "../../../background/domainlist.js";
+//import { darkSwitchFunction } from "../../../../node_modules/dark-mode-switch/dark-mode-switch.js";
+// import "../../../libs-js/FileSaver.js";
+import "../../../../node_modules/file-saver/src/FileSaver"
 
 /**
  * @typedef headings
@@ -51,20 +52,20 @@ function eventListeners() {
       chrome.runtime.sendMessage({ ENABLED: true, DOMAINLIST_ENABLED: true });
       chrome.storage.local.set({ ENABLED: true, DOMAINLIST_ENABLED: true });
     });
-  document
+  /*document
     .getElementById("download-button")
-    .addEventListener("click", handleDownload);
+    .addEventListener("click", handleDownload);*/
   document.getElementById("upload-button").addEventListener("click", () => {
     const verify = confirm(
       `This option will override your current domain preferences.\n Do you wish to continue?`
     );
     if (verify) {
-      startUpload();
+      //startUpload();
     }
   });
-  document
+  /*document
     .getElementById("upload-domainlist")
-    .addEventListener("change", handleUpload, false);
+    .addEventListener("change", handleUpload, false);*/
 }
 
 /*Gives user a walkthrough of install page on first install */
@@ -161,7 +162,7 @@ export async function settingsView(scaffoldTemplate) {
   document.getElementById("scaffold-component-body").innerHTML =
     content.innerHTML;
 
-  darkSwitchFunction();
+  //darkSwitchFunction();
 
   chrome.storage.local.get(["ENABLED", "DOMAINLIST_ENABLED"], function (
     result

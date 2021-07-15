@@ -13,7 +13,7 @@ domainlist-view.js loads domainlist-view.html when clicked on the options page
 
 
 import { renderParse, fetchParse } from '../../components/util.js'
-import { buildToggle, toggleListener, permRemoveFromDomainlist } from "../../../domainlist.js";
+// import { buildToggle, toggleListener, permRemoveFromDomainlist } from "../../../background/domainlist.js";
 
 /**
  * @typedef headings

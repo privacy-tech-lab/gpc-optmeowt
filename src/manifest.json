@@ -1,6 +1,6 @@
 {
   "name": "OptMeowt",
-  "version": "1.1.4",
+  "version": "2.0.0",
   "description": "OptMeowt allows Web users to make use of their rights to opt out from the sale and sharing of personal data",
   "permissions": [
     "webRequest",
@@ -17,24 +17,25 @@
   },
   "browser_action": {
     "default_title": "OptMeowt",
-    "default_popup": "popup/popup.html"
+    "default_popup": "popup.html"
   },
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["contentScript.js"],
+      "js": ["contentScript.bundle.js"],
       "run_at": "document_start"
     }
   ],
   "options_ui": {
-    "page": "options/options.html",
+    "page": "options.html",
     "open_in_tab": true
   },
   "background": {
-    "page": "background.html"
+    "scripts": ["background.bundle.js"]
   },
   "manifest_version": 2,
   "web_accessible_resources": [
     "json/*.json"
-  ]
+  ],
+  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'"
 }
