@@ -36,7 +36,7 @@ https://developer.chrome.com/extensions/content_scripts
 	const wellknownData = await response.json();
 
 	chrome.runtime.sendMessage({
-		msg: "WELLKNOWNCS",
+		msg: "WELLKNOWN_CONTENT_SCRIPT_DATA",
 		data: wellknownData,
 	});
 })();

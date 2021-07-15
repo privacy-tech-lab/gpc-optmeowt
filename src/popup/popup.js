@@ -399,38 +399,24 @@ async function buildWellKnown(requests) {
 }
 
 /**
- * Sends "INIT" message to background page to start badge counter
+ * Sends "POPUP" message to background page to retrieve necessary info
  */
 chrome.runtime.sendMessage({
-  msg: "INIT",
+  msg: "POPUP",
   data: null,
+}, function (response) {
+  console.log(response)
 });
-
-/**
- * Requests Well Known info from Background page
- */
-chrome.runtime.sendMessage({
-    msg: "WELLKNOWNREQUEST",
-    data: null,
-    return: true,
-  }, (response) => {
-    //console.log(`Received WELLKNOWNREQUEST response: ${JSON.stringify(response.data)}`)
-    // buildWellKnown(response.data);
-  }
-);
 
 /**
  * Listens for messages from background page that call functions to populate
  * the popup badge counter and build the popup domain list HTML, respectively
  */
 chrome.runtime.onMessage.addListener(function (request, _, __) {
-  if (request.msg === "REQUESTS") {
-    console.log("request.data", request)
-    buildDomains(request.data);
-  }
-  if (request.msg === "WELLKNOWNRESPONSE") {
-    //console.log(`Received WELLKNOWNREQUEST response: ${JSON.stringify(request.data)}`)
-    buildWellKnown(request.data);
+  if (request.msg === "POPUP_DATA") {
+    let { requests, wellknown } = request.data;
+    buildDomains(requests);
+    buildWellKnown(wellknown);
   }
 });
 

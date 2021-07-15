@@ -15,6 +15,11 @@ import { enableListeners, disableListeners } from "./listeners-$BROWSER.js"
 import { extensionMode, stores, storage } from "./storage.js"
 import { defaultSettings } from "../data/defaultSettings.js"
 
+/** 
+ * Implicityly executes the functionality to place DO-NOT-SELL cookies on 
+ * install via imports
+ * This works because cookiesOnInstall.js is effectively an IIFE
+ */
 import "./cookiesOnInstall.js"
 
 
@@ -50,10 +55,8 @@ export function disable() {
  * (2) Sets correct extension on/off mode
  */
 async function init() {
-  // Note: this may be done after enable()/disable() are called, b/c it is async and microtasked
   for (const setting in defaultSettings) {
     await storage.set(stores.settings, defaultSettings[setting], setting)
-    // console.log("init(1):: Set ", setting, " to storage ?")
   }
   
   const mode = defaultSettings.MODE

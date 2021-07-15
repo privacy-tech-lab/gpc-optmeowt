@@ -21,7 +21,7 @@ import psl from "psl"
 var sendSignal = true // caches if the signal can be sent to the curr domain
 var tabs = {}         // caches all tab infomration
 var wellknown = {}    // caches wellknown info for popup
-var signalPerTab = {} // Store information on a signal being sent for updateUI
+var signalPerTab = {} // Store information on a signal being sent for updatePopupIcon
 var activeTabID = 0;  // caches active tab id
 
 
@@ -46,6 +46,7 @@ const onBeforeSendHeaders = async (details) => {
   if (sendSignal) {
     signalPerTab[details.tabId] = true
     initIAB()
+    updatePopupIcon(details);
     return addHeaders(details)
   } else {
     return details
@@ -58,7 +59,7 @@ const onBeforeSendHeaders = async (details) => {
 const onHeadersReceived = (details) => {
   logData(details);
   // incrementBadge(details);
-  dataToPopup()
+  // dataToPopup()
 }
 
 /**
@@ -138,7 +139,7 @@ async function updateDomainsAndSignal(details) {
   }
 }
 
-function updateUI(details) {
+function updatePopupIcon(details) {
   // console.log(`TAB ID FOR UPDATEUI ${details.tabId}`)
   if (wellknown[details.tabId] === undefined) {
     wellknown[details.tabId] = null
@@ -157,10 +158,8 @@ function updateUI(details) {
 }
   
 function logData(details) {
-  console.log("logging data...")
   var url = new URL(details.url);
   var parsed = psl.parse(url.hostname);
-  // console.log("Details.responseHeaders: ", details.responseHeaders);
   
   if (tabs[details.tabId] === undefined) {
     tabs[details.tabId] = { DOMAIN: null, REQUEST_DOMAINS: {}, TIMESTAMP: 0 };
@@ -189,8 +188,8 @@ function logData(details) {
       };
     }
   }
-  console.log("tabs[details.tabId] currently is; ", tabs[details.tabId])
-  console.log("details.tabId currently is; ", details.tabId)
+  // console.log("tabs[details.tabId] currently is; ", tabs[details.tabId])
+  // console.log("details.tabId currently is; ", details.tabId)
 }
 
 
@@ -206,17 +205,26 @@ function handleSendMessageError() {
 
 // Info back to popup
 function dataToPopup() {
-  let requests = {};
-  console.log("tabs[activeTabID]", tabs[activeTabID])
-  console.log("activeTabID: ", activeTabID)
+  let requestsData = {};
+
   if (tabs[activeTabID] !== undefined) {
-    requests = tabs[activeTabID].REQUEST_DOMAINS;
+    requestsData = tabs[activeTabID].REQUEST_DOMAINS;
   }
-  
-  chrome.runtime.sendMessage({
-    msg: "REQUESTS",
-    data: requests,
-  }, handleSendMessageError);
+
+  chrome.tabs.query({active: true, currentWindow: true}, function(tabs){
+    let tabID = tabs[0]["id"]
+    let wellknownData = wellknown[tabID]
+
+    let popupData = {
+      requests: requestsData,
+      wellknown: wellknownData
+    }
+
+    chrome.runtime.sendMessage({
+      msg: "POPUP_DATA",
+      data: popupData
+    }, handleSendMessageError);
+  });
 }
 
 
@@ -228,57 +236,40 @@ chrome.runtime.onMessage.addListener(async function (request, sender, sendRespon
       enable();
       await storage.set(stores.settings, extensionMode.enabled, 'MODE')
       // sendResponse("DONE");
-      console.log("enabled")
     } else {
       disable();
       await storage.set(stores.settings, extensionMode.disabled, 'MODE')
       // sendResponse("DONE");
-      console.log("disabled")
     }
   }
-  if (request.msg == "INIT") {
+  if (request.msg == "POPUP") {
     dataToPopup()
   }
-  if (request.msg === "WELLKNOWNREQUEST") {
-    chrome.tabs.query({active: true, currentWindow: true}, function(tabs){
-      // console.log("Received wellknown request")
-      // console.log("Received wellknown tabs callback: ", tabs[0]["id"])
-      tabID = tabs[0]["id"]
-      // console.log(`tabID for wellknownrequest: ${tabID}`)
-      let wellKnownData = wellknown[tabID]
-      // console.log("wellKnownData: ", wellKnownData)
-
-      chrome.runtime.sendMessage({
-        msg: "WELLKNOWNRESPONSE",
-        data: wellKnownData,
-      });
-    });
-   }
-   if (request.msg === "WELLKNOWNCS") {
+  if (request.msg === "WELLKNOWN_CONTENT_SCRIPT_DATA") {
     // console.log(`.well-known from ContentScr: ${JSON.stringify(request.data)}`);
     var tabID = sender.tab.id;
     wellknown[tabID] = request.data
-    // console.log(`wellknown: ${JSON.stringify(wellknown)}`)
-    // console.log(`wellknown[tabid]: ${JSON.stringify(wellknown[tabID])}`)
-    // console.log("TAB ID: ", tabID)
-    // if (wellknown[tabID]["gpc"] === true){
-    //   // console.log(`.well-known from ContentScr "gpc" === true`)
-    //   // wellknown[tabID] = true
-    //   // console.log("signalPerTab 1: ", signalPerTab);
-    //   setTimeout(()=>{}, 10000);
-    //   // console.log("signalPerTab 2: ", signalPerTab);
-    //   // if (signalPerTab[tabID] === true) {
-    //   //   chrome.browserAction.setIcon(
-    //   //     {
-    //   //       tabId: tabID,
-    //   //       path: "assets/face-icons/optmeow-face-circle-green-128.png",
-    //   //     },
-    //   //     function () {
-    //   //       // console.log("Updated OptMeowt icon to SOLID GREEN.", );
-    //   //     }
-    //   //   );
-    //   // }
-    // }
+    console.log(`wellknown: ${JSON.stringify(wellknown)}`)
+    console.log(`wellknown[tabid]: ${JSON.stringify(wellknown[tabID])}`)
+    console.log("TAB ID: ", tabID)
+    if (wellknown[tabID]["gpc"] === true){
+      // console.log(`.well-known from ContentScr "gpc" === true`)
+      // wellknown[tabID] = true
+      // console.log("signalPerTab 1: ", signalPerTab);
+      setTimeout(()=>{}, 10000);
+      // console.log("signalPerTab 2: ", signalPerTab);
+      if (signalPerTab[tabID] === true) {
+        chrome.browserAction.setIcon(
+          {
+            tabId: tabID,
+            path: "assets/face-icons/optmeow-face-circle-green-128.png",
+          },
+          function () {
+            // console.log("Updated OptMeowt icon to SOLID GREEN.", );
+          }
+        );
+      }
+    }
   } 
   if (request.msg === "TAB") {
     // console.log("TAB MESSAGE HAS BEEN RECEIVED")
@@ -314,9 +305,8 @@ chrome.runtime.onMessage.addListener(async function (request, sender, sendRespon
  * Listener for tab switch that updates curr tab badge counter
  */
  chrome.tabs.onActivated.addListener(function (info) {
-  console.log("info.tabId", info.tabId)
   activeTabID = info.tabId
-  dataToPopup()
+  // dataToPopup()
 })
 
 /**
