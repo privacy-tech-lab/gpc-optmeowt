@@ -11,6 +11,12 @@ settings-view.js loads settings-view.html when clicked on the options page
 */
 
 import { renderParse, fetchParse } from "../../components/util.js";
+import { stores, storage } from "../../../background/storage.js";
+
+// Used in tutorial
+import UIkit from "../../../../node_modules/uikit/dist/js/uikit";
+import tippy from "../../../../node_modules/tippy.js/dist/tippy-bundle.umd";
+
 // import {
   // handleDownload,
   // startUpload,
@@ -19,6 +25,7 @@ import { renderParse, fetchParse } from "../../components/util.js";
 //import { darkSwitchFunction } from "../../../../node_modules/dark-mode-switch/dark-mode-switch.js";
 // import "../../../libs-js/FileSaver.js";
 import "../../../../node_modules/file-saver/src/FileSaver"
+
 
 /**
  * @typedef headings
@@ -68,7 +75,11 @@ function eventListeners() {
     .addEventListener("change", handleUpload, false);*/
 }
 
-/*Gives user a walkthrough of install page on first install */
+/******************************************************************************/
+
+/*
+ * Gives user a walkthrough of install page on first install 
+ */
 function walkthrough() {
   let modal = UIkit.modal("#welcome-modal");
   modal.show();
@@ -147,6 +158,8 @@ function walkthrough() {
   }
 }
 
+/******************************************************************************/
+
 /**
  * Renders the `Settings` view in the options page
  * @param {string} scaffoldTemplate - stringified HTML template
@@ -181,12 +194,13 @@ export async function settingsView(scaffoldTemplate) {
     }
   });
 
-  chrome.storage.local.get(["FIRSTINSTALL"], (result) => {
-    if (result.FIRSTINSTALL) {
-      walkthrough();
-    }
-    chrome.storage.local.set({ FIRSTINSTALL: false }, () => {});
-  });
-
   eventListeners();
+
+  // Tutorial walkthrough 
+  const tutorialShown = await storage.get(stores.settings, 'TUTORIAL_SHOWN');
+  // console.log("Tutorial shown: ", tutorialShown)
+  if (!tutorialShown) {
+    walkthrough();
+  }
+  storage.set(stores.settings, true, 'TUTORIAL_SHOWN')
 }

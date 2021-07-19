@@ -21,5 +21,6 @@ import { extensionMode } from "../background/storage.js"
 export const defaultSettings = {
 	'MODE': extensionMode.enabled,
 	'TUTORIAL_SHOWN': false,
+	'TUTORIAL_SHOWN_IN_POPUP': false,
 	'BROWSER': '$BROWSER'
 }

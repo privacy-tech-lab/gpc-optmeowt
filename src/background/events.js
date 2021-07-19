@@ -318,6 +318,13 @@ chrome.runtime.onMessage.addListener(async function (request, sender, sendRespon
   }
 })
 
+/**
+ * Opens the options page
+ */
+chrome.runtime.onInstalled.addListener(function (object) {
+  chrome.runtime.openOptionsPage((result) => {});
+});
+
 
 /******************************************************************************/
 

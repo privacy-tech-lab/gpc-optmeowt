@@ -26,7 +26,7 @@ import "../../node_modules/uikit/dist/js/uikit-icons"
 
 // HTML TO JS IMPORTS - BOTTOM OF `popup.html`
 import "../../node_modules/@popperjs/core/dist/umd/popper"
-import "../../node_modules/tippy.js/dist/tippy-bundle.umd"
+import tippy from "../../node_modules/tippy.js/dist/tippy-bundle.umd";
 
 // MISC. IMPORTS THRUOUT FILE
 // import "../../node_modules/dark-mode-switch/dark-mode-switch"
@@ -56,12 +56,17 @@ document.addEventListener("DOMContentLoaded", async (event) => {
             document.getElementById("domain").style.display = "none";
           } else {
             document.getElementById("domain").innerHTML = parsedDomain;
-            // chrome.storage.local.get(["FIRSTINSTALL_POPUP"], (result) => {
-            //   if (result.FIRSTINSTALL_POPUP) {
-            //     popUpWalkthrough();
-            //   }
-            //   chrome.storage.local.set({ FIRSTINSTALL_POPUP: false }, () => {});
-            // });
+
+            // Initializes the tutorial if it needs to be loaded
+            (async function () { 
+              const tutorialShownInPopup = await storage.get(stores.settings, 'TUTORIAL_SHOWN_IN_POPUP');
+              console.log("Tutorial shown: ", tutorialShownInPopup)
+              if (!tutorialShownInPopup) {
+                popUpWalkthrough();
+              }
+              storage.set(stores.settings, true, 'TUTORIAL_SHOWN_IN_POPUP')
+            })();
+
           }
           resolve()
         } catch (e) {
