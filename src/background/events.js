@@ -15,6 +15,7 @@ import { enable, disable } from "./background.js"
 import { extensionMode, stores, storage } from "./storage.js"
 import { headers } from "../data/headers.js"
 import { initIAB } from "./cookiesIAB.js"
+import { initCookiesPerDomain } from "./cookiesOnInstall.js"
 import psl from "psl"
 
 // Initializers (cached values)
@@ -249,9 +250,9 @@ chrome.runtime.onMessage.addListener(async function (request, sender, sendRespon
     // console.log(`.well-known from ContentScr: ${JSON.stringify(request.data)}`);
     var tabID = sender.tab.id;
     wellknown[tabID] = request.data
-    console.log(`wellknown: ${JSON.stringify(wellknown)}`)
-    console.log(`wellknown[tabid]: ${JSON.stringify(wellknown[tabID])}`)
-    console.log("TAB ID: ", tabID)
+    // console.log(`wellknown: ${JSON.stringify(wellknown)}`)
+    // console.log(`wellknown[tabid]: ${JSON.stringify(wellknown[tabID])}`)
+    // console.log("TAB ID: ", tabID)
     if (wellknown[tabID]["gpc"] === true){
       // console.log(`.well-known from ContentScr "gpc" === true`)
       // wellknown[tabID] = true
@@ -297,6 +298,14 @@ chrome.runtime.onMessage.addListener(async function (request, sender, sendRespon
 
       tabs[tabID]["TIMESTAMP"] = request.data;
     }
+  }
+  if (request.msg === "SET_OPTOUT_COOKEIS") {
+    // This is initialized when cookies are to be reset to a page after
+    // do not sell is turned back on (e.g., when its turned on from the popup).
+
+    // This is specifically for when cookies are removed when a user turns off
+    // do not sell for a particular site, and chooses to re-enable it
+    initCookiesPerDomain(request.data)
   }
 })
 

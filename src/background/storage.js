@@ -9,10 +9,15 @@ privacy-tech-lab, https://privacytechlab.org/
 storage.js
 ================================================================================
 storage.js handles OptMeowt's reads/writes of data to some local location
+If the domainlist is being handled, then cookies are added/removed here too
 */
 
 
 import { openDB } from "idb"
+import { storageCookies } from "./storageCookies.js"
+
+
+/******************************************************************************/
 
 
 // We could use strings instead of hard coding the following objects, however using an
@@ -32,7 +37,9 @@ const stores = Object.freeze({
     domainlist: 'DOMAINLIST'
 });
 
-////////////////////////////////////////////////////////////////////////////////
+
+/******************************************************************************/
+
 
 const dbPromise = openDB("extensionDB", 1, {
     upgrade: (db) => {
@@ -53,13 +60,32 @@ const storage = {
     },
     async set(store, value, key) {
         return new Promise(async (resolve, reject) => {
+            // placing or deleting opt out cookies for a given domain key
+            // We know that `key` will be a domain, i.e. a string
+            if (store === stores.domainlist) {
+                if (value === true) {
+                    storageCookies.addCookiesForGivenDomain(key)
+                }
+                if (value === false) {
+                    storageCookies.deleteCookiesForGivenDomain(key)
+                }
+            }
+
             (await dbPromise).put(store, value, key).then(resolve())
         })
     },
     async delete(store, key) {
+        // deleting opt out cookies for a given domain key
+        // We know that `key` will be a domain, i.e. a string
+        if (store === stores.domainlist) {
+            storageCookies.deleteCookiesForGivenDomain(key)
+        }
+
         return (await dbPromise).delete(store, key)
     }
 }
+
+/******************************************************************************/
 
 
 export {
