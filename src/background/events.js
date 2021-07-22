@@ -49,9 +49,10 @@ const onBeforeSendHeaders = async (details) => {
     initIAB()
     updatePopupIcon(details);
     return addHeaders(details)
-  } else {
-    return details
-  }
+  } 
+  // else {
+  //   return details
+  // }
 }
 
 /**
@@ -70,7 +71,16 @@ const onBeforeNavigate = (details) => {
   // Resets certain cached info
   if (details.frameId === 0) {
     wellknown[details.tabId] = null
+    console.log("signalPerTab:", signalPerTab)
     signalPerTab[details.tabId] = false
+
+    // tabs[activeTabID].REQUEST_DOMAINS;
+
+    console.log("1) tabs[activeTabID].REQUEST_DOMAINS: ", tabs[activeTabID].REQUEST_DOMAINS);
+    console.log(`1.5) details.tabId: ${details.tabId} vs. activeTabID: ${activeTabID}`);
+    tabs[activeTabID].REQUEST_DOMAINS = {};
+    console.log("2) tabs[activeTabID].REQUEST_DOMAINS: ", tabs[activeTabID].REQUEST_DOMAINS);
+
   }
 }
   
@@ -80,6 +90,11 @@ const onBeforeNavigate = (details) => {
  */
 const onCommitted = async (details) => {
   await updateDomainsAndSignal(details)
+
+  // console.log("1) tabs[activeTabID]: ", tabs[activeTabID]);
+  // console.log(`1.5) details.tabId: ${details.tabId} vs. activeTabID: ${activeTabID}`);
+  // tabs[activeTabID].REQUEST_DOMAINS = {};
+  // console.log("2) tabs[activeTabID]: ", tabs[activeTabID]);
 
   if (sendSignal) {
     addDomSignal(details)
@@ -123,17 +138,18 @@ function addDomSignal(details) {
 async function updateDomainsAndSignal(details) {
   // Parse url to get domain for domainlist
   let url = new URL(details.url);
-  let parsed_url = psl.parse(url.hostname);
-  let parsed_domain = parsed_url.domain;
+  let parsedUrl = psl.parse(url.hostname);
+  let parsedDomain = parsedUrl.domain;
 
-  let parsed_domain_val = await storage.get(stores.domainlist, parsed_domain)
-  if (parsed_domain_val === undefined) {
+  let parsedDomainVal = await storage.get(stores.domainlist, parsedDomain)
+  if (parsedDomainVal === undefined) {
     // Add current domain to domainlist in storage
-    await storage.set(stores.domainlist, true, parsed_domain)
+    await storage.set(stores.domainlist, true, parsedDomain)
   }
 
   // Check to see if we should send signal
-  if (parsed_domain_val === undefined || parsed_domain_val === true) {
+  // It can be undefined b/c we never reretrieve parsedDomainVal
+  if (parsedDomainVal === undefined || parsedDomainVal === true) {
     sendSignal = true 
   } else {
     sendSignal = false
@@ -161,7 +177,10 @@ function updatePopupIcon(details) {
 function logData(details) {
   var url = new URL(details.url);
   var parsed = psl.parse(url.hostname);
+
+  console.log("current tabId: ", details.tabId)
   
+
   if (tabs[details.tabId] === undefined) {
     tabs[details.tabId] = { DOMAIN: null, REQUEST_DOMAINS: {}, TIMESTAMP: 0 };
     tabs[details.tabId].REQUEST_DOMAINS[parsed.domain] = {
@@ -210,6 +229,8 @@ function dataToPopup() {
 
   if (tabs[activeTabID] !== undefined) {
     requestsData = tabs[activeTabID].REQUEST_DOMAINS;
+    console.log("dataToPopup: tabs[activeTabID].REQUEST_DOMAINS = ", requestsData)
+    console.log("activeTabID: ", activeTabID)
   }
 
   chrome.tabs.query({active: true, currentWindow: true}, function(tabs){
