@@ -1,6 +1,20 @@
 <p align="center">
+  <img alt="GitHub release (latest by date)" src="https://img.shields.io/github/v/release/privacy-tech-lab/optmeowt-browser-extension">
+  <img alt="GitHub Release Date" src="https://img.shields.io/github/release-date/privacy-tech-lab/optmeowt-browser-extension">
+  <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/privacy-tech-lab/optmeowt-browser-extension">
+  <img alt="GitHub issues" src="https://img.shields.io/github/issues-raw/privacy-tech-lab/optmeowt-browser-extension">
+  <img alt="GitHub closed issues" src="https://img.shields.io/github/issues-closed-raw/privacy-tech-lab/optmeowt-browser-extension">
+  <img alt="GitHub" src="https://img.shields.io/github/license/privacy-tech-lab/optmeowt-browser-extension">
+  <img alt="GitHub watchers" src="https://img.shields.io/github/watchers/privacy-tech-lab/optmeowt-browser-extension?style=social">
+  <img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/privacy-tech-lab/optmeowt-browser-extension?style=social">
+  <img alt="GitHub forks" src="https://img.shields.io/github/forks/privacy-tech-lab/optmeowt-browser-extension?style=social">
+</p>
+  
+<br>
+
+<p align="center">
   <img src="https://github.com/privacy-tech-lab/optmeowt-browser-extension/blob/issue-19/src/assets/cat-w-text/optmeow-logo-circle.png" width="150px" height="150px" alt="OptMeowt logo">
-<p>
+</p>
 
 # OptMeowt 🐾
 
