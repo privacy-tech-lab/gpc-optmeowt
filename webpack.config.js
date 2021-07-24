@@ -1,3 +1,11 @@
+/*
+OptMeowt is licensed under the MIT License
+Copyright (c) 2021 Kuba Alicki, Stanley Markman, Oliver Wang, Sebastian Zimmeck
+Previous contributors: Kiryl Beliauski, Daniel Knopf, Abdallah Salia
+privacy-tech-lab, https://privacytechlab.org/
+*/
+
+
 const CopyPlugin = require("copy-webpack-plugin")
 const TerserPlugin = require("terser-webpack-plugin")
 const HtmlWebpackPlugin = require("html-webpack-plugin")
