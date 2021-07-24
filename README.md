@@ -94,19 +94,23 @@ We do not collect any data from you. Third parties will also not receive your da
 - `src/popup`: UI elements and scripts for the popup inside the extensions bar.
 - `ui-mockup`: Contains PDF and XD files demonstrating the preliminary mockup and analysis of OptMeowt.
 
-## Third Party Libraries
+## Third Party Libraries and Resources
 
-OptMeowt uses the following third party libraries. We thank the developers.
+OptMeowt uses the following third party libraries and resources. We thank the developers.
 
+- [Babel](https://babeljs.io/)
 - [animate.css](https://github.com/animate-css/animate.css)
 - [Dark Mode Switch](https://github.com/coliff/dark-mode-switch)
 - [FileSaver.js](https://github.com/eligrey/FileSaver.js)
 - [mustache.js](https://github.com/janl/mustache.js)
+- [Node.js](https://nodejs.org/en/)
+- [npm](https://www.npmjs.com/)
 - [popper.js](https://github.com/popperjs/popper-core)
 - [psl (Public Suffix List)](https://github.com/lupomontero/psl)
 - [Switch Animation by Aaron Iker](https://codepen.io/aaroniker/pen/oaQdQZ)
 - [tippy.js](https://github.com/atomiks/tippyjs)
 - [uikit](https://github.com/uikit/uikit)
+- [webpack](https://webpack.js.org/)
 
 ## Developer Guide
 
