@@ -13,7 +13,7 @@
 <br>
 
 <p align="center">
-  <img src="https://github.com/privacy-tech-lab/optmeowt-browser-extension/blob/issue-19/src/assets/cat-w-text/optmeow-logo-circle.png" width="150px" height="150px" alt="OptMeowt logo">
+  <a href="https://www.privacytechlab.org/optmeowt/"><img src="https://github.com/privacy-tech-lab/optmeowt-browser-extension/blob/issue-19/src/assets/cat-w-text/optmeow-logo-circle.png" width="150px" height="150px" alt="OptMeowt logo"></a>
 </p>
 
 # OptMeowt 🐾
@@ -124,5 +124,5 @@ If you have questions about OptMeowt's functionality or have found a bug, please
 Learn more on our [site](https://privacytechlab.org/optmeowt).
 
 <p align="center">
-  <img src="https://github.com/privacy-tech-lab/optmeowt-browser-extension/blob/main/plt_logo.png" width="200px" height="200px" alt="privacy-tech-lab logo">
+  <a href="https://www.privacytechlab.org/"><img src="https://github.com/privacy-tech-lab/optmeowt-browser-extension/blob/main/plt_logo.png" width="200px" height="200px" alt="privacy-tech-lab logo"></a>
 <p>
