@@ -40,23 +40,47 @@ In detail, OptMeowt uses five methods to opt you out:
 **Customizing which Sites Receive Do Not Sell Signals**
 For every website you visit OptMeowt will automatically add its domain to the `domain list` meaning that the domain will receive a Do Not Sell signal. However, you can exclude domains that should not receive a Do Not Sell signal. This functionality is available on OptMeowt's settings page that you can access from OptMeowt's popup window.
 
-## Installing and Running OptMeowt from Source on Chromium-based Browsers
+## Installing OptMeowt from Source
 
-1. Clone this repo or download a zipped copy and unzip it.
-2. Follow [these steps](https://www.npmjs.com/get-npm) to install npm.
-3. Install the Grunt command line tool and run in your terminal\
-   `npm install -g grunt-cli`
-4. Then, run:\
-   `cd optmeowt-browser-extension`\
-   `npm i grunt`
-5. In your browser, navigate to the extensions page at `chrome://extensions/`.
+1. Clone this repo locally, or download a zipped copy and unzip it.
+2. Follow [these steps on the npm Docs](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) to install npm.
+3. Navigate to the folder where you saved OptMeowt on your local machine from within the Terminal. Replace `...` in the command below with the location of your cloned OptMeowt folder. If you are in its parent folder, `...` may be empty. \
+  `cd .../optmeowt-browser-extension/`
+3. Now install all of OptMeowt's dependencies by running the following command:\
+   `npm install`
+4. Then, build the project by running the following command:\
+   `npm run build`\
+   This builds the project for both Chrome and Firefox in the following directories respectively:\
+  `.../optmeowt-browser-extension/dist/chrome/` and `.../optmeowt-browser-extension/dist/firefox/`
+
+To load the extension in Chrome:
+
+5. In Chrome, navigate to the extensions page at `chrome://extensions/`.
 6. Enable `Developer mode` with the slider on the top right corner of the extension page.
 7. Click the `Load unpacked` button in the top left of the page.
-8. Navigate to where you unzipped the OptMeowt folder and open up the `src` folder.\
-   **Note:** You do not need to click on the `manifest.json` file in Chrome, though other browsers may require this.
+8. Navigate to where you built OptMeowt and select the `dist/chrome` subfolder (the folder should contain a copy of `manifest.json`). I.e.,\
+  `.../optmeowt-browser-extension/dist/chrome/`
 9. Click to finalize the install.
 
+To load the extension in Firefox:
+
+6. In Firefox, navigate to the addons page with developer privileges at `about:debugging#/runtime/this-firefox`.
+7. Under `Temporary extensions`, click `Load Temporary Add-on..`.
+8. Navigate to where you built OptMeowt and select the manifest file from the `dist/firefox` folder. I.e.,\
+  `.../optmeowt-browser-extension/dist/firefox/manifest.json/`
+9. Click to finalize and install OptMeowt.
+
 Please note that OptMeowt is in active development and new features are frequently added, some of which may cause errors. You can always get the stable release version on the [Chrome Web Store](https://chrome.google.com/webstore/detail/optmeowt/hdbnkdbhglahihjdbodmfefogcjbpgbo) and on [Firefox Add-Ons](https://addons.mozilla.org/en-US/firefox/addon/optmeowt/).
+
+## Installing OptMeowt for Developers
+
+Follow the directions above, replacing the command in step 4 with `npm run start` in order to run the npm script (located in `package.json`) which will call Webpack in development mode (Webpack settings in `webpack.config.js`). This will also initiate Webpack servers for both the Firefox and Chrome versions which will listen for changes as you work and rebuild when necessary. 
+
+Notice that Webpack will build the development versions of OptMeowt into the `dev` subfolder instead of `dist`, with subfolders `dev/firefox` and `dev/chrome` accordingly. 
+
+Optional: 
+
+We also like to use [Debugger for Firefox](https://marketplace.visualstudio.com/items?itemName=firefox-devtools.vscode-firefox-debug) from within VSCode when in development to help automate loading the built extension package. The default behavior is `F5` to launch and load the extension in browser. There is a similar extension for Chrome, [Debugger for Chrome](https://marketplace.visualstudio.com/items?itemName=msjsdiag.debugger-for-chrome). Make sure to follow the online documentation on writing the correct `.vscode/launch.json` file, or other necessary settings files, in order to properly load OptMeowt with the debugger. 
 
 ## OptMeowt's Permission Use
 
@@ -115,8 +139,6 @@ OptMeowt uses the following third party libraries and resources. We thank the de
 ## Developer Guide
 
 - When contributing, it is important to note that we manage all package dependencies with npm. Thus, it is recommended to use `npm i` to install packages.
-- In the event that you install a new dependency, you need to update Gruntfile.js file with a new task of the form:\
-  `task: { expand: true, cwd: "./node_modules/..../", src: "*", dest: "./src/libs-js" }` depending on whether you need the js files or the css files of the newly installed library.
 - When viewing your browser's console on a site you are sending GPC signals to, a 404 error regarding the site's GPC status file (`/.well-known/gpc.json`) may be shown. Note that this is perfectly normal, and will occur frequently (1) on sites that do not support GPC and (2) may even occur on sites that do respect GPC simply if the website does not host such a `/.well-known/gpc.json` file.
   
 ## FAQ \ Known quirks \ Reporting bugs
