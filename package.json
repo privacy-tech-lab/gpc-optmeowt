@@ -5,17 +5,13 @@
   "main": "index.js",
   "scripts": {
     "prestart": "rimraf dev",
-    "start": "concurrently -k npm:dev  npm:dev:extension",
-    "dev": "webpack --mode=development",
-    "dev:extension": "wait-on ./dev/manifest.json && cd dev && web-ext run --watch-file background.bundle.js --start-url about:debugging#/runtime/this-firefox",
+    "start": "concurrently -k npm:start:firefox  npm:start:chrome",
+    "start:firefox": "webpack --watch --mode development --env firefox",
+    "start:chrome": "webpack --watch --mode development --env chrome",
     "prebuild": "rimraf dist",
-    "build": "webpack --mode=production",
-    "build:dev": "webpack --watch --mode=development",
-    "build:prod": "webpack --mode=production",
-    "build:chrome": "webpack --mode=development --env chrome",
-    "build:firefox": "webpack --watch --mode=development --env firefox",
-    "build:prod:chrome": "webpack --mode=production --env chrome",
-    "build:prod:firefox": "webpack --mode=production --env firefox"
+    "build": "concurrently -k npm:build:firefox  npm:build:chrome",
+    "build:firefox": "webpack --mode production --env firefox",
+    "build:chrome": "webpack --mode production --env chrome"
   },
   "repository": {
     "type": "git",

@@ -1,8 +1,10 @@
 /*
 OptMeowt is licensed under the MIT License
-Copyright (c) 2020 Kuba Alicki, Daniel Knopf, Abdallah Salia, Sebastian Zimmeck
+Copyright (c) 2021 Kuba Alicki, Stanley Markman, Oliver Wang, Sebastian Zimmeck
+Previous contributors: Kiryl Beliauski, Daniel Knopf, Abdallah Salia
 privacy-tech-lab, https://privacytechlab.org/
 */
+
 
 /*
 events.js
@@ -15,6 +17,7 @@ import { enable, disable } from "./background.js"
 import { extensionMode, stores, storage } from "./storage.js"
 import { headers } from "../data/headers.js"
 import { initIAB } from "./cookiesIAB.js"
+import { initCookiesPerDomain } from "./cookiesOnInstall.js"
 import psl from "psl"
 
 // Initializers (cached values)
@@ -48,9 +51,10 @@ const onBeforeSendHeaders = async (details) => {
     initIAB()
     updatePopupIcon(details);
     return addHeaders(details)
-  } else {
-    return details
-  }
+  } 
+  // else {
+  //   return details
+  // }
 }
 
 /**
@@ -69,7 +73,16 @@ const onBeforeNavigate = (details) => {
   // Resets certain cached info
   if (details.frameId === 0) {
     wellknown[details.tabId] = null
+    console.log("signalPerTab:", signalPerTab)
     signalPerTab[details.tabId] = false
+
+    // tabs[activeTabID].REQUEST_DOMAINS;
+
+    console.log("1) tabs[activeTabID].REQUEST_DOMAINS: ", tabs[activeTabID].REQUEST_DOMAINS);
+    console.log(`1.5) details.tabId: ${details.tabId} vs. activeTabID: ${activeTabID}`);
+    tabs[activeTabID].REQUEST_DOMAINS = {};
+    console.log("2) tabs[activeTabID].REQUEST_DOMAINS: ", tabs[activeTabID].REQUEST_DOMAINS);
+
   }
 }
   
@@ -79,6 +92,11 @@ const onBeforeNavigate = (details) => {
  */
 const onCommitted = async (details) => {
   await updateDomainsAndSignal(details)
+
+  // console.log("1) tabs[activeTabID]: ", tabs[activeTabID]);
+  // console.log(`1.5) details.tabId: ${details.tabId} vs. activeTabID: ${activeTabID}`);
+  // tabs[activeTabID].REQUEST_DOMAINS = {};
+  // console.log("2) tabs[activeTabID]: ", tabs[activeTabID]);
 
   if (sendSignal) {
     addDomSignal(details)
@@ -122,17 +140,18 @@ function addDomSignal(details) {
 async function updateDomainsAndSignal(details) {
   // Parse url to get domain for domainlist
   let url = new URL(details.url);
-  let parsed_url = psl.parse(url.hostname);
-  let parsed_domain = parsed_url.domain;
+  let parsedUrl = psl.parse(url.hostname);
+  let parsedDomain = parsedUrl.domain;
 
-  let parsed_domain_val = await storage.get(stores.domainlist, parsed_domain)
-  if (parsed_domain_val === undefined) {
+  let parsedDomainVal = await storage.get(stores.domainlist, parsedDomain)
+  if (parsedDomainVal === undefined) {
     // Add current domain to domainlist in storage
-    await storage.set(stores.domainlist, true, parsed_domain)
+    await storage.set(stores.domainlist, true, parsedDomain)
   }
 
   // Check to see if we should send signal
-  if (parsed_domain_val === undefined || parsed_domain_val === true) {
+  // It can be undefined b/c we never reretrieve parsedDomainVal
+  if (parsedDomainVal === undefined || parsedDomainVal === true) {
     sendSignal = true 
   } else {
     sendSignal = false
@@ -160,7 +179,10 @@ function updatePopupIcon(details) {
 function logData(details) {
   var url = new URL(details.url);
   var parsed = psl.parse(url.hostname);
+
+  console.log("current tabId: ", details.tabId)
   
+
   if (tabs[details.tabId] === undefined) {
     tabs[details.tabId] = { DOMAIN: null, REQUEST_DOMAINS: {}, TIMESTAMP: 0 };
     tabs[details.tabId].REQUEST_DOMAINS[parsed.domain] = {
@@ -209,6 +231,8 @@ function dataToPopup() {
 
   if (tabs[activeTabID] !== undefined) {
     requestsData = tabs[activeTabID].REQUEST_DOMAINS;
+    console.log("dataToPopup: tabs[activeTabID].REQUEST_DOMAINS = ", requestsData)
+    console.log("activeTabID: ", activeTabID)
   }
 
   chrome.tabs.query({active: true, currentWindow: true}, function(tabs){
@@ -249,9 +273,9 @@ chrome.runtime.onMessage.addListener(async function (request, sender, sendRespon
     // console.log(`.well-known from ContentScr: ${JSON.stringify(request.data)}`);
     var tabID = sender.tab.id;
     wellknown[tabID] = request.data
-    console.log(`wellknown: ${JSON.stringify(wellknown)}`)
-    console.log(`wellknown[tabid]: ${JSON.stringify(wellknown[tabID])}`)
-    console.log("TAB ID: ", tabID)
+    // console.log(`wellknown: ${JSON.stringify(wellknown)}`)
+    // console.log(`wellknown[tabid]: ${JSON.stringify(wellknown[tabID])}`)
+    // console.log("TAB ID: ", tabID)
     if (wellknown[tabID]["gpc"] === true){
       // console.log(`.well-known from ContentScr "gpc" === true`)
       // wellknown[tabID] = true
@@ -298,6 +322,14 @@ chrome.runtime.onMessage.addListener(async function (request, sender, sendRespon
       tabs[tabID]["TIMESTAMP"] = request.data;
     }
   }
+  if (request.msg === "SET_OPTOUT_COOKEIS") {
+    // This is initialized when cookies are to be reset to a page after
+    // do not sell is turned back on (e.g., when its turned on from the popup).
+
+    // This is specifically for when cookies are removed when a user turns off
+    // do not sell for a particular site, and chooses to re-enable it
+    initCookiesPerDomain(request.data)
+  }
 })
 
 
@@ -317,6 +349,13 @@ chrome.runtime.onMessage.addListener(async function (request, sender, sendRespon
     activeTabID = tab.id
   }
 })
+
+/**
+ * Opens the options page
+ */
+chrome.runtime.onInstalled.addListener(function (object) {
+  chrome.runtime.openOptionsPage((result) => {});
+});
 
 
 /******************************************************************************/

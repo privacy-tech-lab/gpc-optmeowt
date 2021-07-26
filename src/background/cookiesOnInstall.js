@@ -1,6 +1,7 @@
 /*
 OptMeowt is licensed under the MIT License
-Copyright (c) 2020 Kuba Alicki, Daniel Knopf, Abdallah Salia, Sebastian Zimmeck
+Copyright (c) 2021 Kuba Alicki, Stanley Markman, Oliver Wang, Sebastian Zimmeck
+Previous contributors: Kiryl Beliauski, Daniel Knopf, Abdallah Salia
 privacy-tech-lab, https://privacytechlab.org/
 */
 
@@ -17,10 +18,15 @@ import { cookiesDAA } from "../data/cookiesDAA.js"
 import { cookiesUserCustom } from "../data/cookiesUserCustom.js"
 
 
-(() => {
+function initCookiesOnInstall() {
   setAllCookies(cookiesDAA)
   setAllCookies(cookiesUserCustom)
-})();
+}
+
+function initCookiesPerDomain(domainFilter) {
+  setFilteredCookies(cookiesDAA, domainFilter)
+  setFilteredCookies(cookiesUserCustom, domainFilter)
+}
 
 /**
  * Sets a cookie at the given domain for each cookie in the passed in
@@ -70,4 +76,67 @@ function setAllCookies(cookies) {
     // Sets cookie
     chrome.cookies.set(newCookie, (result) => {})
   }
+}
+
+/**
+ * Sets a cookie at the given domain for each item in the passed in
+ * cookies object. Currently updates cookie url info based on domain.
+ * @param {Object} cookies - Collection of info regarding each 3rd
+ *                           party cookie to be set
+ * Each item in `cookies` must contain a 'name', 'value', and 'domain'
+ */
+ function setFilteredCookies(cookies, domainFilter) {
+  // Updates time once
+  let date = new Date()
+  let now = date.getTime()
+  let cookie_time = now/1000 + 31557600
+  let path = '/'
+
+  for (let item in cookies) {
+    for (let domain in domainFilter) {
+      // Notice that this `if` will trigger only for sites mentioned in our 
+      // cookies, i.e. primarily only adtech websites since all our cookies
+      // are adtech opt outs
+      if (domainFilter[domain] == cookies[item].domain) {
+        // Updates cookie url based on domain, checks for domain/subdomain spec
+        let cookieUrl = cookies[item].domain
+        let allDomains = false
+
+        if (cookieUrl.substr(0,1) === '.') {
+          cookieUrl = cookieUrl.substr(1)
+          allDomains = true
+        }
+        cookieUrl = `https://${cookieUrl}/`
+
+        if (cookies[item].path !== null) {
+          path = cookies[item].path
+        } else {
+          path = '/'
+        }
+
+        // Sets cookie parameters
+        let newCookie = {
+          url: cookieUrl,
+          name: cookies[item].name,
+          value: cookies[item].value,
+          expirationDate: cookie_time,
+          path: path
+        }
+
+        if (allDomains) {
+          newCookie["domain"] = cookies[item].domain
+        }
+
+        // Sets cookie
+        chrome.cookies.set(newCookie, (result) => {} )
+      }
+    }
+  }
+}
+
+export {
+  initCookiesOnInstall,
+  initCookiesPerDomain,
+  setAllCookies,
+  setFilteredCookies
 }

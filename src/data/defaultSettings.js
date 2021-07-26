@@ -1,8 +1,10 @@
 /*
 OptMeowt is licensed under the MIT License
-Copyright (c) 2020 Kuba Alicki, Daniel Knopf, Abdallah Salia, Sebastian Zimmeck
+Copyright (c) 2021 Kuba Alicki, Stanley Markman, Oliver Wang, Sebastian Zimmeck
+Previous contributors: Kiryl Beliauski, Daniel Knopf, Abdallah Salia
 privacy-tech-lab, https://privacytechlab.org/
 */
+
 
 /*
 settings.js
@@ -21,5 +23,6 @@ import { extensionMode } from "../background/storage.js"
 export const defaultSettings = {
 	'MODE': extensionMode.enabled,
 	'TUTORIAL_SHOWN': false,
+	'TUTORIAL_SHOWN_IN_POPUP': false,
 	'BROWSER': '$BROWSER'
 }

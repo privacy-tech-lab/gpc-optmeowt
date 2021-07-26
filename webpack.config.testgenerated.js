@@ -1,3 +1,11 @@
+/*
+OptMeowt is licensed under the MIT License
+Copyright (c) 2021 Kuba Alicki, Stanley Markman, Oliver Wang, Sebastian Zimmeck
+Previous contributors: Kiryl Beliauski, Daniel Knopf, Abdallah Salia
+privacy-tech-lab, https://privacytechlab.org/
+*/
+
+
 // Generated using webpack-cli https://github.com/webpack/webpack-cli
 
 const path = require("path");

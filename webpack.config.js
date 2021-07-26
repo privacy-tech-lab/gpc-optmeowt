@@ -1,3 +1,11 @@
+/*
+OptMeowt is licensed under the MIT License
+Copyright (c) 2021 Kuba Alicki, Stanley Markman, Oliver Wang, Sebastian Zimmeck
+Previous contributors: Kiryl Beliauski, Daniel Knopf, Abdallah Salia
+privacy-tech-lab, https://privacytechlab.org/
+*/
+
+
 const CopyPlugin = require("copy-webpack-plugin")
 const TerserPlugin = require("terser-webpack-plugin")
 const HtmlWebpackPlugin = require("html-webpack-plugin")
@@ -10,8 +18,10 @@ const path = require("path")
 
 module.exports = (env, argv) => {
 	const browser = env.chrome ? "chrome" : "firefox"	// default to firefox build
-	const mode = argv.mode 								// sets production or development
-	const isProduction = process.env.NODE_ENV == "production"	// sets bool depending on build
+	const isProduction = argv.mode == "production"	// sets bool depending on build
+
+	console.log("browser = ", browser);
+	console.log("isProduction = ", isProduction);
 
 	return {
 		name: "background",
@@ -24,7 +34,7 @@ module.exports = (env, argv) => {
 		},
 		output: {
 			filename: "[name].bundle.js",
-			path: path.resolve(__dirname, isProduction ? "dist" : "dev"),
+			path: path.resolve(__dirname, `${isProduction ? "dist" : "dev"}/${browser}` ),
 			// publicPath: "/",
 		},
 		devtool: isProduction ? "source-map" : "eval-source-map",
