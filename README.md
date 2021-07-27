@@ -27,7 +27,7 @@ OptMeowt ("Opt Me Out") is a browser extension for opting you out from web track
 
 ## How does OptMeowt work?
 
-OptMeowt sends Do Not Sell signals to all sites you visit when browsing the web. Such signals must be respected for California consumers per the California Consumer Privacy Act (CCPA), [Regs Section 999.315(d)](https://oag.ca.gov/sites/all/files/agweb/pdfs/privacy/oal-sub-final-text-of-regs.pdf). Some companies also respect such signals when they are sent from outside of California. OptMeowt also places opt out cookies.
+OptMeowt sends Do Not Sell signals to all sites you visit when browsing the web. Such signals must be respected for California consumers per the California Consumer Privacy Act (CCPA), [Regs Section 999.315(d)](https://oag.ca.gov/sites/all/files/agweb/pdfs/privacy/oal-sub-final-text-of-regs.pdf) but many companies also respect them when they are sent from outside of California. OptMeowt also places opt out cookies.
 
 In detail, OptMeowt uses five methods to opt you out:
 
@@ -46,23 +46,23 @@ For every website you visit OptMeowt will automatically add its domain to the `d
 2. Follow [these steps on the npm Docs](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) to install npm.
 3. Navigate to the folder where you saved OptMeowt on your local machine from within the Terminal. Replace `...` in the command below with the location of your cloned OptMeowt folder. If you are in its parent folder, `...` may be empty. \
   `cd .../optmeowt-browser-extension/`
-3. Now install all of OptMeowt's dependencies by running the following command:\
+4. Now install all of OptMeowt's dependencies by running the following command:\
    `npm install`
-4. Then, build the project by running the following command:\
+5. Then, build the project by running the following command:\
    `npm run build`\
    This builds the project for both Chrome and Firefox in the following directories respectively:\
   `.../optmeowt-browser-extension/dist/chrome/` and `.../optmeowt-browser-extension/dist/firefox/`
 
-To load the extension in Chrome:
+### Chrome
 
-5. In Chrome, navigate to the extensions page at `chrome://extensions/`.
-6. Enable `Developer mode` with the slider on the top right corner of the extension page.
-7. Click the `Load unpacked` button in the top left of the page.
-8. Navigate to where you built OptMeowt and select the `dist/chrome` subfolder (the folder should contain a copy of `manifest.json`). I.e.,\
+6. In Chrome, navigate to the extensions page at `chrome://extensions/`.
+7. Enable `Developer mode` with the slider on the top right corner of the extension page.
+8. Click the `Load unpacked` button in the top left of the page.
+9. Navigate to where you built OptMeowt and select the `dist/chrome` subfolder (the folder should contain a copy of `manifest.json`). I.e.,\
   `.../optmeowt-browser-extension/dist/chrome/`
-9. Click to finalize the install.
+10. Click to finalize the install.
 
-To load the extension in Firefox:
+### Firefox
 
 6. In Firefox, navigate to the addons page with developer privileges at `about:debugging#/runtime/this-firefox`.
 7. Under `Temporary extensions`, click `Load Temporary Add-on..`.
@@ -74,13 +74,13 @@ Please note that OptMeowt is in active development and new features are frequent
 
 ## Installing OptMeowt for Developers
 
-Follow the directions above, replacing the command in step 4 with `npm run start` in order to run the npm script (located in `package.json`) which will call Webpack in development mode (Webpack settings in `webpack.config.js`). This will also initiate Webpack servers for both the Firefox and Chrome versions which will listen for changes as you work and rebuild when necessary. 
+Follow the directions above, replacing the command in step 4 with `npm run start` in order to run the npm script (located in `package.json`) which will call Webpack in development mode (Webpack settings in `webpack.config.js`). This will also initiate Webpack servers for both the Firefox and Chrome versions which will listen for changes as you work and rebuild when necessary.
 
-Notice that Webpack will build the development versions of OptMeowt into the `dev` subfolder instead of `dist`, with subfolders `dev/firefox` and `dev/chrome` accordingly. 
+Notice that Webpack will build the development versions of OptMeowt into the `dev` subfolder instead of `dist`, with subfolders `dev/firefox` and `dev/chrome` accordingly.
 
-Optional: 
+Optional:
 
-We also like to use [Debugger for Firefox](https://marketplace.visualstudio.com/items?itemName=firefox-devtools.vscode-firefox-debug) from within VSCode when in development to help automate loading the built extension package. The default behavior is `F5` to launch and load the extension in browser. There is a similar extension for Chrome, [Debugger for Chrome](https://marketplace.visualstudio.com/items?itemName=msjsdiag.debugger-for-chrome). Make sure to follow the online documentation on writing the correct `.vscode/launch.json` file, or other necessary settings files, in order to properly load OptMeowt with the debugger. 
+We also like to use [Debugger for Firefox](https://marketplace.visualstudio.com/items?itemName=firefox-devtools.vscode-firefox-debug) from within VSCode when in development to help automate loading the built extension package. The default behavior is `F5` to launch and load the extension in browser. There is a similar extension for Chrome, [Debugger for Chrome](https://marketplace.visualstudio.com/items?itemName=msjsdiag.debugger-for-chrome). Make sure to follow the online documentation on writing the correct `.vscode/launch.json` file, or other necessary settings files, in order to properly load OptMeowt with the debugger.
 
 ## OptMeowt's Permission Use
 
@@ -147,7 +147,7 @@ If you have questions about OptMeowt's functionality or have found a bug, please
 
 ## More Information 🐈
 
-Learn more on our [site](https://privacytechlab.org/optmeowt).
+Learn more [here](https://privacytechlab.org/optmeowt).
 
 <p align="center">
   <a href="https://www.privacytechlab.org/"><img src="https://github.com/privacy-tech-lab/optmeowt-browser-extension/blob/main/plt_logo.png" width="200px" height="200px" alt="privacy-tech-lab logo"></a>
