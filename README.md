@@ -120,7 +120,7 @@ We do not collect any data from you. Third parties will also not receive your da
 
 ## Third Party Libraries
 
-OptMeowt is dependent on various [third party libraries](https://github.com/privacy-tech-lab/optmeowt-browser-extension/blob/main/package.json#L26). We thank the developers.
+OptMeowt is dependent on various [third party libraries](https://github.com/privacy-tech-lab/optmeowt-browser-extension/blob/main/package.json). We thank the developers.
 
 ## Developer Guide
 
