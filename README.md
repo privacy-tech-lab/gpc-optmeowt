@@ -78,13 +78,13 @@ Follow the directions above, replacing the command in step 4 with `npm run start
 
 Notice that Webpack will build the development versions of OptMeowt into the `dev` subfolder instead of `dist`, with subfolders `dev/firefox` and `dev/chrome` accordingly.
 
-Optional:
+### Optional
 
 We also like to use [Debugger for Firefox](https://marketplace.visualstudio.com/items?itemName=firefox-devtools.vscode-firefox-debug) from within VSCode when in development to help automate loading the built extension package. The default behavior is `F5` to launch and load the extension in browser. There is a similar extension for Chrome, [Debugger for Chrome](https://marketplace.visualstudio.com/items?itemName=msjsdiag.debugger-for-chrome). Make sure to follow the online documentation on writing the correct `.vscode/launch.json` file, or other necessary settings files, in order to properly load OptMeowt with the debugger.
 
 ## OptMeowt's Permission Use
 
-We do not collect any data from you. Third parties will also not receive your data. The permissions OptMeowt is using are required for opting you out. OptMeowt uses the following permissions:
+We do not collect any data from you. Third parties will also not receive your data. The permissions OptMeowt is using are required for opting you out. To that end, OptMeowt uses the following permissions:
 
 ```json
 "permissions": [
@@ -118,32 +118,15 @@ We do not collect any data from you. Third parties will also not receive your da
 - `src/popup`: UI elements and scripts for the popup inside the extensions bar.
 - `ui-mockup`: Contains PDF and XD files demonstrating the preliminary mockup and analysis of OptMeowt.
 
-## Third Party Libraries and Resources
+## Third Party Libraries
 
-OptMeowt uses the following third party libraries and resources. We thank the developers.
-
-- [Babel](https://babeljs.io/)
-- [animate.css](https://github.com/animate-css/animate.css)
-- [Dark Mode Switch](https://github.com/coliff/dark-mode-switch)
-- [FileSaver.js](https://github.com/eligrey/FileSaver.js)
-- [mustache.js](https://github.com/janl/mustache.js)
-- [Node.js](https://nodejs.org/en/)
-- [npm](https://www.npmjs.com/)
-- [popper.js](https://github.com/popperjs/popper-core)
-- [psl (Public Suffix List)](https://github.com/lupomontero/psl)
-- [Switch Animation by Aaron Iker](https://codepen.io/aaroniker/pen/oaQdQZ)
-- [tippy.js](https://github.com/atomiks/tippyjs)
-- [uikit](https://github.com/uikit/uikit)
-- [webpack](https://webpack.js.org/)
+OptMeowt is dependent on various [third party libraries](https://github.com/privacy-tech-lab/optmeowt-browser-extension/blob/main/package.json#L26). We thank the developers.
 
 ## Developer Guide
 
 - When contributing, it is important to note that we manage all package dependencies with npm. Thus, it is recommended to use `npm i` to install packages.
 - When viewing your browser's console on a site you are sending GPC signals to, a 404 error regarding the site's GPC status file (`/.well-known/gpc.json`) may be shown. Note that this is perfectly normal, and will occur frequently (1) on sites that do not support GPC and (2) may even occur on sites that do respect GPC simply if the website does not host such a `/.well-known/gpc.json` file.
-  
-## FAQ \ Known quirks \ Reporting bugs
-
-If you have questions about OptMeowt's functionality or have found a bug, please check out our [FAQ \ Known quirks](https://github.com/privacy-tech-lab/optmeowt-browser-extension/wiki/FAQ-%5C-Known-quirks) page on the [Wiki](https://github.com/privacy-tech-lab/optmeowt-browser-extension/wiki) first to see if we have already addressed the issue. If you cannot find what you are looking for, please feel free to open an issue and we will address it as soon as we can!
+- If you have questions about OptMeowt's functionality or have found a bug, please check out our [FAQ \ Known quirks](https://github.com/privacy-tech-lab/optmeowt-browser-extension/wiki/FAQ-%5C-Known-quirks) page on the [Wiki](https://github.com/privacy-tech-lab/optmeowt-browser-extension/wiki) first to see if we have already addressed the issue. If you cannot find what you are looking for, please feel free to open an issue and we will address it as soon as we can!
 
 ## More Information 🐈
 
