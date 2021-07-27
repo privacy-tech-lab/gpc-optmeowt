@@ -98,7 +98,7 @@ export async function handleDownload() {
                           {type: "text/plain;charset=utf-8"});
     saveAs(blob, "OptMeowt_backup.json");
 
-    console.log("Downloaded!")
+    // console.log("Downloaded!")
 }
 
 /**

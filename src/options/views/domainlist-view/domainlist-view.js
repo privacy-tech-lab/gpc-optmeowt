@@ -84,12 +84,12 @@ export async function toggleListener(elementId, domain) {
  function deleteButtonListener (domain) {
   document.getElementById(`delete ${domain}`).addEventListener("click",
     (async () => {
-      let delete_prompt = `Are you sure you would like to permanently delete this domain from the Domain List?`
-      let success_prompt = `Successfully deleted ${domain} from the Domain List.
+      let deletePrompt = `Are you sure you would like to permanently delete this domain from the Domain List?`
+      let successPrompt = `Successfully deleted ${domain} from the Domain List.
 NOTE: It will be automatically added back to the list when the domain is requested again.`
-      if (confirm(delete_prompt)) {
+      if (confirm(deletePrompt)) {
         await storage.delete(stores.domainlist, domain)
-        alert(success_prompt)
+        alert(successPrompt)
         document.getElementById(`li ${domain}`).remove();
       }
   }))

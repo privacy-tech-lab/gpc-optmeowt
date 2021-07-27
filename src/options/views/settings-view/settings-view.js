@@ -13,22 +13,20 @@ settings-view.js loads settings-view.html when clicked on the options page
 */
 
 import { renderParse, fetchParse } from "../../components/util.js";
-
- import {
-   handleDownload,
-   startUpload,
-   handleUpload,
- } from "../../../background/storage.js";
-
-import { stores, storage } from "../../../background/storage.js";
+import {
+  handleDownload,
+  startUpload,
+  handleUpload,
+  stores,
+  storage
+} from "../../../background/storage.js";
 
 // Used in tutorial
 import UIkit from "../../../../node_modules/uikit/dist/js/uikit";
 import tippy from "../../../../node_modules/tippy.js/dist/tippy-bundle.umd";
 
-//import { darkSwitchFunction } from "../../../../node_modules/dark-mode-switch/dark-mode-switch.js";
-// import "../../../libs-js/FileSaver.js";
 import "../../../../node_modules/file-saver/src/FileSaver"
+//import { darkSwitchFunction } from "../../../../node_modules/dark-mode-switch/dark-mode-switch.js";
 
 
 /**
@@ -123,7 +121,9 @@ function walkthrough() {
       placement: "right",
       offset: [0, 60],
       onHide() {
-        trigger3();
+        // trigger3();
+        // This is to skip the dark mode tutorial option
+        trigger4();
       },
     });
     let tooltip = document.getElementsByClassName("tutorial-tooltip2")[0]
@@ -202,7 +202,7 @@ export async function settingsView(scaffoldTemplate) {
 
   // Tutorial walkthrough 
   const tutorialShown = await storage.get(stores.settings, 'TUTORIAL_SHOWN');
-  // console.log("Tutorial shown: ", tutorialShown)
+
   if (!tutorialShown) {
     walkthrough();
   }

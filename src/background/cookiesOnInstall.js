@@ -89,7 +89,7 @@ function setAllCookies(cookies) {
   // Updates time once
   let date = new Date()
   let now = date.getTime()
-  let cookie_time = now/1000 + 31557600
+  let cookieTime = now/1000 + 31557600
   let path = '/'
 
   for (let item in cookies) {
@@ -119,7 +119,7 @@ function setAllCookies(cookies) {
           url: cookieUrl,
           name: cookies[item].name,
           value: cookies[item].value,
-          expirationDate: cookie_time,
+          expirationDate: cookieTime,
           path: path
         }
 

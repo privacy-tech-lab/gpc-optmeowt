@@ -216,20 +216,21 @@ document.addEventListener("DOMContentLoaded", async (event) => {
     }
   });
 
-  //Compliance analysis mode UI. WIP!
+  // Compliance analysis mode UI. WIP!
+  // Commented out for 2.0.0 release
 
-  let btn = document.getElementById('complianceAnalysisButton');
-  btn.addEventListener('click', function() {
-    alert("Compliance checked! Check console...");
-    chrome.runtime.sendMessage({
-      msg: "COMPLIANCECHECK",
-      data: "https://www.dailymail.co.uk",
-      return: true,
-    }, (response) => {
-      // console.log("done...")
-    }
-    );
-  });
+  // let btn = document.getElementById('complianceAnalysisButton');
+  // btn.addEventListener('click', function() {
+  //   alert("Compliance checked! Check console...");
+  //   chrome.runtime.sendMessage({
+  //     msg: "COMPLIANCECHECK",
+  //     data: "https://www.dailymail.co.uk",
+  //     return: true,
+  //   }, (response) => {
+  //     // console.log("done...")
+  //   }
+  //   );
+  // });
 
 })
 

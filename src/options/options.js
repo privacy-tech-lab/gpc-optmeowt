@@ -24,12 +24,9 @@ import "./styles.css"
 // HTML TO JS IMPORTS - TOP OF `popup.html`
 import "../../node_modules/uikit/dist/js/uikit"
 import "../../node_modules/uikit/dist/js/uikit-icons"
-// import "../libs-js/mustache.js"
+import "../../node_modules/mustache/mustache"
 import "../../node_modules/@popperjs/core/dist/umd/popper"
 import "../../node_modules/tippy.js/dist/tippy-bundle.umd"
-import "./options.js"
-
-import "../../node_modules/mustache/mustache"
 
 
 /**

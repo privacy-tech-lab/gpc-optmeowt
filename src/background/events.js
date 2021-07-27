@@ -73,16 +73,8 @@ const onBeforeNavigate = (details) => {
   // Resets certain cached info
   if (details.frameId === 0) {
     wellknown[details.tabId] = null
-    console.log("signalPerTab:", signalPerTab)
     signalPerTab[details.tabId] = false
-
-    // tabs[activeTabID].REQUEST_DOMAINS;
-
-    console.log("1) tabs[activeTabID].REQUEST_DOMAINS: ", tabs[activeTabID].REQUEST_DOMAINS);
-    console.log(`1.5) details.tabId: ${details.tabId} vs. activeTabID: ${activeTabID}`);
     tabs[activeTabID].REQUEST_DOMAINS = {};
-    console.log("2) tabs[activeTabID].REQUEST_DOMAINS: ", tabs[activeTabID].REQUEST_DOMAINS);
-
   }
 }
   
@@ -92,11 +84,6 @@ const onBeforeNavigate = (details) => {
  */
 const onCommitted = async (details) => {
   await updateDomainsAndSignal(details)
-
-  // console.log("1) tabs[activeTabID]: ", tabs[activeTabID]);
-  // console.log(`1.5) details.tabId: ${details.tabId} vs. activeTabID: ${activeTabID}`);
-  // tabs[activeTabID].REQUEST_DOMAINS = {};
-  // console.log("2) tabs[activeTabID]: ", tabs[activeTabID]);
 
   if (sendSignal) {
     addDomSignal(details)
@@ -114,7 +101,7 @@ const onCommitted = async (details) => {
  */
 function addHeaders(details) {
   // if (sendSignal) {
-    for (var signal in headers) {
+    for (let signal in headers) {
       let s = headers[signal]
       details.requestHeaders.push({ name: s.name, value: s.value })
     }
@@ -177,8 +164,8 @@ function updatePopupIcon(details) {
 }
   
 function logData(details) {
-  var url = new URL(details.url);
-  var parsed = psl.parse(url.hostname);
+  let url = new URL(details.url);
+  let parsed = psl.parse(url.hostname);
 
   console.log("current tabId: ", details.tabId)
   
@@ -270,37 +257,27 @@ chrome.runtime.onMessage.addListener(async function (request, sender, sendRespon
     dataToPopup()
   }
   if (request.msg === "WELLKNOWN_CONTENT_SCRIPT_DATA") {
-    // console.log(`.well-known from ContentScr: ${JSON.stringify(request.data)}`);
-    var tabID = sender.tab.id;
+    let tabID = sender.tab.id;
     wellknown[tabID] = request.data
-    // console.log(`wellknown: ${JSON.stringify(wellknown)}`)
-    // console.log(`wellknown[tabid]: ${JSON.stringify(wellknown[tabID])}`)
-    // console.log("TAB ID: ", tabID)
     if (wellknown[tabID]["gpc"] === true){
-      // console.log(`.well-known from ContentScr "gpc" === true`)
-      // wellknown[tabID] = true
-      // console.log("signalPerTab 1: ", signalPerTab);
       setTimeout(()=>{}, 10000);
-      // console.log("signalPerTab 2: ", signalPerTab);
       if (signalPerTab[tabID] === true) {
         chrome.browserAction.setIcon(
           {
             tabId: tabID,
             path: "assets/face-icons/optmeow-face-circle-green-128.png",
           },
-          function () {
-            // console.log("Updated OptMeowt icon to SOLID GREEN.", );
-          }
+          function () { /*console.log("Updated icon to SOLID GREEN.");*/ }
         );
       }
     }
   } 
   if (request.msg === "TAB") {
     // console.log("TAB MESSAGE HAS BEEN RECEIVED")
-    var url = new URL(sender.origin);
-    var parsed = psl.parse(url.hostname);
-    var domain = parsed.domain;
-    var tabID = sender.tab.id;
+    let url = new URL(sender.origin);
+    let parsed = psl.parse(url.hostname);
+    let domain = parsed.domain;
+    let tabID = sender.tab.id;
     if (tabs[tabID] === undefined) {
       tabs[tabID] = {
         DOMAIN: domain,
@@ -311,7 +288,7 @@ chrome.runtime.onMessage.addListener(async function (request, sender, sendRespon
       tabs[tabID].DOMAIN = domain;
       let urls = tabs[tabID]["REQUEST_DOMAINS"];
       // console.log("urls are:", urls)
-      for (var key in urls) {
+      for (let key in urls) {
         if (urls[key]["TIMESTAMP"] >= request.data) {
           tabs[tabID]["REQUEST_DOMAINS"][key] = urls[key];
         } else {

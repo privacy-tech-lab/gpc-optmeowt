@@ -14,10 +14,9 @@ modification process
 
 
 /*
-  // ! Handle the case when the site recognizes you are outside of CA
-  // ! Handle the case of trying to add cookies on a chrome:// page  or browser://
+  ! Handle the case when the site recognizes you are outside of CA
+  ! Handle the case of trying to add cookies on a chrome:// page  or browser://
   is the boolean for checking multipel cookies correct?
-  check #checkthis
 
 
                     ----- To-Do -----
@@ -127,14 +126,14 @@ function checkExistsAndHandleIAB(url) {
  * @param {string} url - url to be set to new cookie
  */
 function updateIAB(cookie, value, url) {
-  let new_cookie = {}
+  let newCookie = {}
 
   if (cookie === null) {
-    new_cookie = makeCookieIAB(defaultName, defaultValue, url)
+    newCookie = makeCookieIAB(defaultName, defaultValue, url)
   } else {
-    new_cookie = pruneCookieIAB(cookie, value, url)
+    newCookie = pruneCookieIAB(cookie, value, url)
   }
-  chrome.cookies.set( new_cookie )
+  chrome.cookies.set( newCookie )
 }
 
 /**
@@ -149,7 +148,6 @@ function parseIAB(signal) {
   }
   if (signal === '1---') {
     return '1---'
-    // #checkthis
   } else {
     signal = signal.substr(0,2) + 'Y' + signal.substr(3, 1)
     return signal
@@ -218,7 +216,7 @@ function deleteCookie(url, name) {
  * @returns {bool} - Represents if signal is a valid signal
  */
 function isValidSignalIAB(signal) {
-  var valid_chars = ['y', 'n', 'Y', 'N', '-']
+  var validChars = ['y', 'n', 'Y', 'N', '-']
   if (signal.length != 4) {
     return false
   }
@@ -228,13 +226,13 @@ function isValidSignalIAB(signal) {
   if (signal === "1---") {
     return true
   }
-  if (!valid_chars.includes(signal.charAt(1))) {
+  if (!validChars.includes(signal.charAt(1))) {
     return false
   }
-  if (!valid_chars.includes(signal.charAt(2))) {
+  if (!validChars.includes(signal.charAt(2))) {
     return false
   }
-  if (!valid_chars.includes(signal.charAt(3))) {
+  if (!validChars.includes(signal.charAt(3))) {
     return false
   }
   return true
@@ -264,9 +262,7 @@ function storeURLforDev(url) {
  * Initializes the "IAB" object in the local storage
  * for debugging purposes
  */
-chrome.storage.local.get(["IAB"], function (
-  result
-) {
+chrome.storage.local.get(["IAB"], function (result) {
   if (result.IAB == undefined) {
     chrome.storage.local.set({ IAB: {} });
   }
