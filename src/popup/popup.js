@@ -33,6 +33,9 @@ import tippy from "../../node_modules/tippy.js/dist/tippy-bundle.umd";
 // import "../../node_modules/dark-mode-switch/dark-mode-switch"
 
 
+/******************************************************************************/
+// Inflates main content
+
 /**
  * Initializes the popup window after DOM content is loaded
  * @param {Object} event - contains information about the event
@@ -40,47 +43,38 @@ import tippy from "../../node_modules/tippy.js/dist/tippy-bundle.umd";
 document.addEventListener("DOMContentLoaded", async (event) => {
   var parsedDomain = "";
 
-  /**
-   * Queries, parses, and sets active tab domain to popup
-   */
+  // Init: Queries, parses, and sets the visible active tab 1st party domain 
+  // NOTE: This MUST happen first. The rest can be rendered separately.
   await (async () => {
     return new Promise((resolve, reject) => {
       chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-        var tab = tabs[0];
+        let tab = tabs[0];
         try {
-          var url = new URL(tab.url);
-          var parsed = psl.parse(url.hostname);
+          let url = new URL(tab.url);
+          let parsed = psl.parse(url.hostname);
           parsedDomain = parsed.domain;
 
-          if (parsedDomain === null) {
-            document.getElementById("dns-body").style.display = "none";
-            document.getElementById("domain").style.display = "none";
-          } else {
+          if (parsedDomain) {
             document.getElementById("domain").innerHTML = parsedDomain;
 
             // Initializes the tutorial if it needs to be loaded
-            (async function () { 
-              const tutorialShownInPopup = await storage.get(stores.settings, 'TUTORIAL_SHOWN_IN_POPUP');
-              // console.log("Tutorial shown: ", tutorialShownInPopup)
-              if (!tutorialShownInPopup) {
-                popUpWalkthrough();
-              }
-              storage.set(stores.settings, true, 'TUTORIAL_SHOWN_IN_POPUP')
-            })();
+            initPopUpWalkthrough();
 
+          } else {
+            document.getElementById("dns-body").style.display = "none";
+            document.getElementById("domain").style.display = "none";
           }
-          resolve()
-        } catch (e) {
+          resolve();
+        } catch(e) {
+          console.error(e);
           document.getElementById("domain").innerHTML = location.href;
-          reject()
+          reject();
         }
       });
     })
   })();
 
-  /**
-   * Sets enable/disable button to correct mode
-   */
+  // Init: ENABLE/DISABLE button to the correct mode
   const mode = await storage.get(stores.settings, "MODE");
   if (mode === undefined) {
     document.getElementById("img").src = "../assets/play-circle-outline.svg";
@@ -105,11 +99,9 @@ document.addEventListener("DOMContentLoaded", async (event) => {
     document.getElementById("message").style.opacity = "1";
   }
 
-  /**
-   * Listener for enable/disable extension switch
-   */
+  // Listener: ENABLE/DISABLE button
   document.getElementById("enable-disable").addEventListener("click", async () => {
-    const mode = await storage.get(stores.settings, 'MODE')
+    const mode = await storage.get(stores.settings, 'MODE');
     if (mode === extensionMode.enabled || mode === extensionMode.domainlisted) {
       document.getElementById("message").style.display = "";
       document.getElementById("img").src =
@@ -119,7 +111,6 @@ document.addEventListener("DOMContentLoaded", async (event) => {
         .setAttribute("uk-tooltip", "Enable");
       document.getElementById("content").style.opacity = "0.1";
       document.getElementById("message").style.opacity = "1";
-      // console.log("SENDING ENABLE/DISABLE MESSAGE");
       chrome.runtime.sendMessage({ msg: "CHANGE_MODE", data: extensionMode.disabled })
     } else {
       document.getElementById("img").src =
@@ -130,34 +121,38 @@ document.addEventListener("DOMContentLoaded", async (event) => {
       document.getElementById("content").style.opacity = "1";
       document.getElementById("message").style.opacity = "0";
       document.getElementById("message").style.display = "none";
-      // console.log("SENDING ENABLE/DISABLE MESSAGE");
       chrome.runtime.sendMessage({ msg: "CHANGE_MODE", data: extensionMode.enabled })
     }
   });
 
-  /**
-   * Sets domain list switch to correct position and adds listener
-   */
-  const parsedDomainValue = await storage.get(stores.domainlist, parsedDomain)
-  // console.log(`parsedDomainValue = ${parsedDomainValue} \n parsedDomain = ${parsedDomain}`)
-  // Sets popup view
-  var checkbox = "";
-  var text = "";
-    if (parsedDomainValue) {
-    checkbox = `<input type="checkbox" id="input" checked/>
-                    <span></span>`;
-    text = "Do Not Sell Enabled";
+  // Init: 1st party domain "Do Not Sell Enabled/Disabled" text + toggle
+  let checkbox = "";
+  let text = "";
+  if (parsedDomain) {
+    try {
+      const parsedDomainValue = await storage.get(stores.domainlist, parsedDomain);
+      if (parsedDomainValue) {
+        checkbox = `<input type="checkbox" id="input" checked/><span></span>`;
+        text = "Do Not Sell Enabled";
+      } else {
+        checkbox = `<input type="checkbox" id="input"/><span></span>`;
+        text = "Do Not Sell Disabled";
+      }
+      document.getElementById("switch-label").innerHTML = checkbox;
+      document.getElementById("dns-text").innerHTML = text;
+    } catch(e) {
+      console.error(e);
+      document.getElementById("switch-label").innerHTML = checkbox;
+      document.getElementById("dns-text").innerHTML = text;
+    }
   } else {
-    checkbox = `<input type="checkbox" id="input"/>
-                    <span></span>`;
-    text = "Do Not Sell Disabled";
+    document.getElementById("switch-label").innerHTML = checkbox;
+    document.getElementById("dns-text").innerHTML = text;
   }
-  document.getElementById("switch-label").innerHTML = checkbox;
-  document.getElementById("dns-text").innerHTML = text;
-
-  // 1st party domain domainlist toggle listener
+  
+  // Listener: 1st party domain "Do Not Sell Enabled/Disabled" text + toggle
   document.getElementById("switch-label").addEventListener("click", async () => {
-    await storage.set(stores.settings, extensionMode.domainlisted, 'MODE')
+    await storage.set(stores.settings, extensionMode.domainlisted, 'MODE');
     const parsedDomainValue = await storage.get(stores.domainlist, parsedDomain);
     let elemString = "";
     if (parsedDomainValue) {
@@ -170,10 +165,8 @@ document.addEventListener("DOMContentLoaded", async (event) => {
     document.getElementById("dns-text").innerHTML = elemString;
   })
 
-  /**
-   * Generates `X domains receiving signals` section in popup
-   */
-  const domainlistValues = await storage.getAll(stores.domainlist)
+  // Init: Sets "X domains receiving signals" information section
+  const domainlistValues = await storage.getAll(stores.domainlist);
   let count = Object.keys(domainlistValues).filter((key) => {
     return domainlistValues[key] == true;
   }).length
@@ -182,9 +175,7 @@ document.addEventListener("DOMContentLoaded", async (event) => {
     font-weight: bold">${count}</p> domains receiving signals
   `;
 
-  /**
-   * Generates third party domain list droptdown toggle functionality
-   */
+  // Listener: Generates 3rd party domain list droptdown toggle functionality
   document.getElementById("third-party-domains").addEventListener("click", () => {
     // var icon = document.getElementById("dropdown")
     if (document.getElementById("third-party-domains-list").style.display === "none") {
@@ -200,9 +191,7 @@ document.addEventListener("DOMContentLoaded", async (event) => {
     }
   });
 
-  /**
-   * Generates well-known json dropdown list toggle functionality
-   */
+  // Listener: Generates wellknown json dropdown list toggle functionality
   document.getElementById("well-known-response").addEventListener("click", () => {
     if (document.getElementById("well-known-response-list").style.display === "none") {
       document.getElementById("dropdown-2").src = "../assets/chevron-up.svg"
@@ -235,6 +224,10 @@ document.addEventListener("DOMContentLoaded", async (event) => {
 
 })
 
+
+/******************************************************************************/
+// Generates dropdown information
+
 /**
  * Builds the listener to enable toggling 3rd party domains on/off in domainlist
  * @param {String} requestDomain - the domain related to the element which
@@ -242,7 +235,6 @@ document.addEventListener("DOMContentLoaded", async (event) => {
  */
 function addThirdPartyDomainToggleListener(requestDomain) {
   document.getElementById(`input-${requestDomain}`).addEventListener("click", async () => {
-    // console.log("input-requestDomain button triggered.")
     await storage.set(stores.settings, extensionMode.domainlisted, 'MODE')
     const requestDomainValue = await storage.get(stores.domainlist, requestDomain)
     let elemString = "";
@@ -407,6 +399,10 @@ async function buildWellKnown(requests) {
   // document.getElementById("website-response-tab").innerHTML = tabDetails;
 }
 
+
+/******************************************************************************/
+// Message passing
+
 /**
  * Sends "POPUP" message to background page to retrieve necessary info
  */
@@ -430,6 +426,19 @@ chrome.runtime.onMessage.addListener(function (request, _, __) {
 });
 
 
+/******************************************************************************/
+// Tutorial walkthrough
+
+// Init: Check to see if we should do tutorial
+async function initPopUpWalkthrough() { 
+  const tutorialShownInPopup = await storage.get(stores.settings, 'TUTORIAL_SHOWN_IN_POPUP');
+  // console.log("Tutorial shown: ", tutorialShownInPopup)
+  if (!tutorialShownInPopup) {
+    popUpWalkthrough();
+  }
+  storage.set(stores.settings, true, 'TUTORIAL_SHOWN_IN_POPUP');
+}
+
 // Walkthrough function
 function popUpWalkthrough() {
   tippy(".tooltip-1", {
@@ -446,16 +455,16 @@ function popUpWalkthrough() {
   tooltip.show();
 }
 
-/**
- * Various options page listeners
- */
+
+/******************************************************************************/
+// Misc. initializers & listeners
+
+// Listener: Opens options page
 document.getElementById("more").addEventListener("click", () => {
   chrome.runtime.openOptionsPage();
 });
 
-/**
- * Opens domainlist in settings page
- */
+// Listener: Opens domainlist in options page
 document.getElementById("domain-list").addEventListener("click", async () => {
   await storage.set(stores.settings, true, "DOMAINLIST_PRESSED");
   chrome.runtime.openOptionsPage();
