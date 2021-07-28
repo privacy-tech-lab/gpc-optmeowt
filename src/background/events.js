@@ -130,18 +130,27 @@ async function updateDomainsAndSignal(details) {
   let parsedUrl = psl.parse(url.hostname);
   let parsedDomain = parsedUrl.domain;
 
-  let parsedDomainVal = await storage.get(stores.domainlist, parsedDomain)
+  // Update domains by adding current domain to domainlist in storage.
+  let parsedDomainVal = await storage.get(stores.domainlist, parsedDomain);
   if (parsedDomainVal === undefined) {
-    // Add current domain to domainlist in storage
-    await storage.set(stores.domainlist, true, parsedDomain)
+    await storage.set(stores.domainlist, true, parsedDomain);
   }
 
-  // Check to see if we should send signal
-  // It can be undefined b/c we never reretrieve parsedDomainVal
-  if (parsedDomainVal === undefined || parsedDomainVal === true) {
-    sendSignal = true 
+  // Check to see if we should send signal.
+  // NOTE: It can be undefined b/c we never reretrieve parsedDomainVal
+  // (1) Check which MODE OptMeowt is in,
+  // (2) if domainlisted, check if in domainlist
+  const mode = await storage.get(stores.settings, "MODE");
+  if (mode === extensionMode.domainlisted) {
+    if (parsedDomainVal === undefined || parsedDomainVal === true) {
+      sendSignal = true;
+    } else {
+      sendSignal = false;
+    }
+  } else if (mode === extensionMode.enabled) {
+    sendSignal = true;
   } else {
-    sendSignal = false
+    sendSignal = false;
   }
 }
 
@@ -241,18 +250,36 @@ function dataToPopup() {
 
 // Listeners for info from popup or settings page
 chrome.runtime.onMessage.addListener(async function (request, sender, sendResponse) {
-  console.log("recieved message")
-  if (request.ENABLED != null) {
-    if (request.ENABLED) {
-      enable();
-      await storage.set(stores.settings, extensionMode.enabled, 'MODE')
-      // sendResponse("DONE");
-    } else {
-      disable();
-      await storage.set(stores.settings, extensionMode.disabled, 'MODE')
-      // sendResponse("DONE");
+  console.log(`Recieved message @ background page.`);
+  if (request.msg === "CHANGE_MODE") {
+    switch (request.data) {
+      case extensionMode.enabled:
+        enable();
+        await storage.set(stores.settings, extensionMode.enabled, "MODE");
+        break;
+      case extensionMode.domainlisted:
+        enable();
+        await storage.set(stores.settings, extensionMode.domainlisted, "MODE");
+        break;
+      case extensionMode.disabled:
+        disable();
+        await storage.set(stores.settings, extensionMode.disabled, "MODE");
+        break;
+      default:
+        console.error(`CHANGE_MODE failed, mode not recognized.`);
     }
   }
+  // if (request.ENABLED != null) {
+  //   if (request.ENABLED) {
+  //     enable();
+  //     await storage.set(stores.settings, extensionMode.enabled, 'MODE')
+  //     // sendResponse("DONE");
+  //   } else {
+  //     disable();
+  //     await storage.set(stores.settings, extensionMode.disabled, 'MODE')
+  //     // sendResponse("DONE");
+  //   }
+  // }
   if (request.msg == "POPUP") {
     dataToPopup()
   }

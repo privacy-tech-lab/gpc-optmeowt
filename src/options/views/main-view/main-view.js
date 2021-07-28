@@ -27,6 +27,7 @@ import {
 import { settingsView } from "../settings-view/settings-view.js";
 import { domainlistView } from "../domainlist-view/domainlist-view.js";
 import { aboutView } from "../about-view/about-view.js";
+import { storage, stores } from "../../../background/storage.js";
 
 /**
  * Opens the `Settings` page
@@ -99,16 +100,15 @@ export async function mainView() {
     "main-view"
   ).innerHTML;
 
-  chrome.storage.local.get(["DOMAINLIST_PRESSED"], (result)=> {
-    if (!result.DOMAINLIST_PRESSED) {
-      settingsView(bodyTemplate); // First page
-      document.querySelector('#main-view-settings').classList.add('active')
-    } else {
-      domainlistView(bodyTemplate); // First page
-      chrome.storage.local.set({ DOMAINLIST_PRESSED: false });
-      document.querySelector('#main-view-domainlist').classList.add('active')
-    }
-
+  let domainlistPressed = await storage.get(stores.settings, "DOMAINLIST_PRESSED");
+  if (!domainlistPressed) {
+    settingsView(bodyTemplate); // First page
+    document.querySelector('#main-view-settings').classList.add('active');
+  } else {
+    domainlistView(bodyTemplate); // First page
+    await storage.set(stores.settings, false, "DOMAINLIST_PRESSED");
+    document.querySelector('#main-view-domainlist').classList.add('active');
+  }
 
   document
     .getElementById("main-view-settings")
@@ -119,5 +119,4 @@ export async function mainView() {
   document
     .getElementById("main-view-about")
     .addEventListener("click", () => displayAbout(bodyTemplate));
-  })
 }

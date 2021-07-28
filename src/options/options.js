@@ -13,7 +13,7 @@ options.js starts the process of rendering the main options page
 */
 
 
-import { mainView }from './views/main-view/main-view.js'
+import { mainView } from './views/main-view/main-view.js'
 
 
 // CSS TO JS IMPORTS

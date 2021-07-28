@@ -18,7 +18,8 @@ import {
   startUpload,
   handleUpload,
   stores,
-  storage
+  storage,
+  extensionMode
 } from "../../../background/storage.js";
 
 // Used in tutorial
@@ -46,20 +47,17 @@ function eventListeners() {
   document
     .getElementById("settings-view-radio0")
     .addEventListener("click", () => {
-      chrome.runtime.sendMessage({ ENABLED: true, DOMAINLIST_ENABLED: false });
-      chrome.storage.local.set({ ENABLED: true, DOMAINLIST_ENABLED: false });
+      chrome.runtime.sendMessage({ msg: "CHANGE_MODE", data: extensionMode.enabled });
     });
   document
     .getElementById("settings-view-radio1")
     .addEventListener("click", () => {
-      chrome.runtime.sendMessage({ ENABLED: false, DOMAINLIST_ENABLED: false });
-      chrome.storage.local.set({ ENABLED: false, DOMAINLIST_ENABLED: false });
+      chrome.runtime.sendMessage({ msg: "CHANGE_MODE", data: extensionMode.disabled });
     });
   document
     .getElementById("settings-view-radio2")
     .addEventListener("click", () => {
-      chrome.runtime.sendMessage({ ENABLED: true, DOMAINLIST_ENABLED: true });
-      chrome.storage.local.set({ ENABLED: true, DOMAINLIST_ENABLED: true });
+      chrome.runtime.sendMessage({ msg: "CHANGE_MODE", data: extensionMode.domainlisted });
     });
   document
     .getElementById("download-button")
@@ -181,28 +179,29 @@ export async function settingsView(scaffoldTemplate) {
 
   //darkSwitchFunction();
 
-  chrome.storage.local.get(["ENABLED", "DOMAINLIST_ENABLED"], function (
-    result
-  ) {
-    console.log(result.ENABLED);
-    if (result.ENABLED == undefined) {
-      chrome.storage.local.set({ ENABLED: true });
+  // Render correct extension mode radio button
+  const mode = await storage.get(stores.settings, "MODE");
+  // console.log(`mode = ${mode}`);
+  switch (mode) {
+    case extensionMode.enabled:
       document.getElementById("settings-view-radio0").checked = true;
-    } else if (result.ENABLED) {
-      document.getElementById("settings-view-radio0").checked = true;
-    } else {
-      document.getElementById("settings-view-radio1").checked = true;
-    }
-    if (result.DOMAINLIST_ENABLED) {
+      break;
+    case extensionMode.domainlisted:
       document.getElementById("settings-view-radio2").checked = true;
-    }
-  });
+      break;
+    case extensionMode.disabled:
+      document.getElementById("settings-view-radio1").checked = true;
+      break;
+    default:
+      console.log(`FAILED: Couldn't load mode for radio buttons. Changing mode to ENABLED.`);
+      chrome.runtime.sendMessage({ msg: "CHANGE_MODE", data: extensionMode.enabled });
+      document.getElementById("settings-view-radio0").checked = true;
+  }
 
   eventListeners();
 
   // Tutorial walkthrough 
   const tutorialShown = await storage.get(stores.settings, 'TUTORIAL_SHOWN');
-
   if (!tutorialShown) {
     walkthrough();
   }

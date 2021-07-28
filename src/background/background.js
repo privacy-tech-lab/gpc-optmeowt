@@ -53,16 +53,16 @@ export function disable() {
  */
 async function init() {
   for (const setting in defaultSettings) {
-    await storage.set(stores.settings, defaultSettings[setting], setting)
+    await storage.set(stores.settings, defaultSettings[setting], setting);
   }
 
   initCookiesOnInstall()
   
-  const mode = defaultSettings.MODE
+  const mode = defaultSettings.MODE;
   if (mode === extensionMode.enabled || mode === extensionMode.domainlisted) {
-    enable()
+    enable();
   } else {
-    disable()
+    disable();
   }
 }
 

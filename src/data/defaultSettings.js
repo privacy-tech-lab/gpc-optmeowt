@@ -21,8 +21,9 @@ import { extensionMode } from "../background/storage.js"
 // there is less incentive to do so since it complicates the code and 
 // it will be easier to catch a mistake here than mistyping and `enable` string
 export const defaultSettings = {
+	'BROWSER': '$BROWSER',
+	'DOMAINLIST_PRESSED': false,
 	'MODE': extensionMode.enabled,
 	'TUTORIAL_SHOWN': false,
 	'TUTORIAL_SHOWN_IN_POPUP': false,
-	'BROWSER': '$BROWSER'
 }

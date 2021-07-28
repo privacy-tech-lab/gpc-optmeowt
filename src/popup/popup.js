@@ -82,7 +82,7 @@ document.addEventListener("DOMContentLoaded", async (event) => {
   /**
    * Sets enable/disable button to correct mode
    */
-  const mode = await storage.get(stores.settings, 'MODE')
+  const mode = await storage.get(stores.settings, "MODE");
   if (mode === undefined) {
     document.getElementById("img").src = "../assets/play-circle-outline.svg";
     document
@@ -120,7 +120,8 @@ document.addEventListener("DOMContentLoaded", async (event) => {
         .setAttribute("uk-tooltip", "Enable");
       document.getElementById("content").style.opacity = "0.1";
       document.getElementById("message").style.opacity = "1";
-      chrome.runtime.sendMessage({ "ENABLED": false });
+      // console.log("SENDING ENABLE/DISABLE MESSAGE");
+      chrome.runtime.sendMessage({ msg: "CHANGE_MODE", data: extensionMode.disabled })
     } else {
       document.getElementById("img").src =
         "../assets/pause-circle-outline.svg";
@@ -130,7 +131,8 @@ document.addEventListener("DOMContentLoaded", async (event) => {
       document.getElementById("content").style.opacity = "1";
       document.getElementById("message").style.opacity = "0";
       document.getElementById("message").style.display = "none";
-      chrome.runtime.sendMessage({ "ENABLED": true });
+      // console.log("SENDING ENABLE/DISABLE MESSAGE");
+      chrome.runtime.sendMessage({ msg: "CHANGE_MODE", data: extensionMode.enabled })
     }
   });
 
@@ -455,8 +457,7 @@ document.getElementById("more").addEventListener("click", () => {
 /**
  * Opens domainlist in settings page
  */
-document.getElementById("domain-list").addEventListener("click", () => {
-  chrome.storage.local.set({ DOMAINLIST_PRESSED: true }, ()=>{
-    chrome.runtime.openOptionsPage();
-  });
+document.getElementById("domain-list").addEventListener("click", async () => {
+  await storage.set(stores.settings, true, "DOMAINLIST_PRESSED");
+  chrome.runtime.openOptionsPage();
 });

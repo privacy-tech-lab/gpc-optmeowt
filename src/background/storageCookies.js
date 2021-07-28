@@ -31,7 +31,7 @@ export const storageCookies = {
 			msg: "SET_OPTOUT_COOKEIS",
 			data: domainFilter
 		});
-	  },
+	},
 
 	async deleteCookiesForGivenDomain(domainKey) {
 		let cookieArr = []
@@ -62,6 +62,6 @@ export const storageCookies = {
 				})
 			}
 		});
-	  }
+	}
 
 }
