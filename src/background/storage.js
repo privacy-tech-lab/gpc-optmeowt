@@ -97,7 +97,7 @@ const storage = {
 /******************************************************************************/
 
 async function handleDownload() {
-    console.log("Downloading ...");
+    // console.log("Downloading ...");
     var DOMAIN_NAMES = await storage.getAllKeys(stores.domainlist)
     var DOMAIN_SETTINGS = await storage.getAll(stores.domainlist)
 
@@ -120,7 +120,7 @@ async function startUpload() {
  * Imports and updates the domainlist in local storage with an imported backup
  */
 async function handleUpload() {
-    console.log("Starting upload ...");
+    // console.log("Starting upload ...");
     await storage.clear(stores.domainlist)
     const file = this.files[0];
     const fr = new FileReader();
@@ -140,7 +140,7 @@ async function handleUpload() {
             } 
         } 
 
-        console.log("Finished upload!")
+        // console.log("Finished upload!")
     };
     fr.readAsText(file);
 }

@@ -12,9 +12,8 @@ popup.js
 popup.js supplements and renders complex elements on popup.html
 */
 
-import { extensionMode, stores, storage } from "../background/storage.js";
 
-// ! Make sure to fix runtime.sendMessage (ENABLED : TRUE) so that the extension fixes itself
+import { extensionMode, stores, storage } from "../background/storage.js";
 
 // CSS TO JS IMPORTS
 import "../../node_modules/uikit/dist/css/uikit.min.css"
@@ -62,7 +61,7 @@ document.addEventListener("DOMContentLoaded", async (event) => {
             // Initializes the tutorial if it needs to be loaded
             (async function () { 
               const tutorialShownInPopup = await storage.get(stores.settings, 'TUTORIAL_SHOWN_IN_POPUP');
-              console.log("Tutorial shown: ", tutorialShownInPopup)
+              // console.log("Tutorial shown: ", tutorialShownInPopup)
               if (!tutorialShownInPopup) {
                 popUpWalkthrough();
               }

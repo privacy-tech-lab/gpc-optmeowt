@@ -9,7 +9,8 @@ privacy-tech-lab, https://privacytechlab.org/
 /*
 events.js
 ================================================================================
-events.js implmements our per-site functionality for the background listeners
+events.js (1) Implements our per-site functionality for the background listeners
+          (2) Handles cached values & message passing to popup & options page
 */
 
 
@@ -21,11 +22,11 @@ import { initCookiesPerDomain } from "./cookiesOnInstall.js"
 import psl from "psl"
 
 // Initializers (cached values)
-var sendSignal = true // caches if the signal can be sent to the curr domain
-var tabs = {}         // caches all tab infomration
-var wellknown = {}    // caches wellknown info for popup
-var signalPerTab = {} // Store information on a signal being sent for updatePopupIcon
-var activeTabID = 0;  // caches active tab id
+var sendSignal = true;  // caches if the signal can be sent to the curr domain
+var tabs = {};          // caches all tab infomration
+var wellknown = {};     // caches wellknown info for popup
+var signalPerTab = {};  // Store info on a signal being sent for updatePopupIcon
+var activeTabID = 0;    // caches active tab id
 
 
 /******************************************************************************/
@@ -44,13 +45,13 @@ var activeTabID = 0;  // caches active tab id
  * @returns {array} details.requestHeaders from addHeaders 
  */
 const onBeforeSendHeaders = async (details) => {
-  await updateDomainsAndSignal(details)
+  await updateDomainsAndSignal(details);
 
   if (sendSignal) {
     signalPerTab[details.tabId] = true
-    initIAB()
+    initIAB();
     updatePopupIcon(details);
-    return addHeaders(details)
+    return addHeaders(details);
   } 
   // else {
   //   return details
@@ -62,7 +63,6 @@ const onBeforeSendHeaders = async (details) => {
  */
 const onHeadersReceived = (details) => {
   logData(details);
-  // incrementBadge(details);
   // dataToPopup()
 }
 
@@ -72,8 +72,8 @@ const onHeadersReceived = (details) => {
 const onBeforeNavigate = (details) => {
   // Resets certain cached info
   if (details.frameId === 0) {
-    wellknown[details.tabId] = null
-    signalPerTab[details.tabId] = false
+    wellknown[details.tabId] = null;
+    signalPerTab[details.tabId] = false;
     tabs[activeTabID].REQUEST_DOMAINS = {};
   }
 }
@@ -92,6 +92,7 @@ const onCommitted = async (details) => {
 
 
 /******************************************************************************/
+// Listener helper functions - main functionality
 
 
 /**
@@ -100,15 +101,11 @@ const onCommitted = async (details) => {
  * @returns {array} details.requestHeaders
  */
 function addHeaders(details) {
-  // if (sendSignal) {
-    for (let signal in headers) {
-      let s = headers[signal]
-      details.requestHeaders.push({ name: s.name, value: s.value })
-    }
-    return { requestHeaders: details.requestHeaders }
-  // } else {
-  //   return { requestHeaders: details.requestHeaders };
-  // }
+  for (let signal in headers) {
+    let s = headers[signal]
+    details.requestHeaders.push({ name: s.name, value: s.value })
+  }
+  return { requestHeaders: details.requestHeaders }
 }
 
 /**
@@ -165,9 +162,7 @@ function updatePopupIcon(details) {
         tabId: details.tabId,
         path: "assets/face-icons/optmeow-face-circle-green-ring-128.png",
       },
-      function () {
-        // console.log("Updated OptMeowt icon to GREEN RING");
-      }
+      function () { /*console.log("Updated OptMeowt icon to GREEN RING");*/ }
     );
   }
 }
@@ -175,9 +170,7 @@ function updatePopupIcon(details) {
 function logData(details) {
   let url = new URL(details.url);
   let parsed = psl.parse(url.hostname);
-
-  console.log("current tabId: ", details.tabId)
-  
+  // console.log("current tabId: ", details.tabId)
 
   if (tabs[details.tabId] === undefined) {
     tabs[details.tabId] = { DOMAIN: null, REQUEST_DOMAINS: {}, TIMESTAMP: 0 };
@@ -212,6 +205,7 @@ function logData(details) {
 
 
 /******************************************************************************/
+// Popup functions
 
 
 function handleSendMessageError() {
@@ -227,8 +221,8 @@ function dataToPopup() {
 
   if (tabs[activeTabID] !== undefined) {
     requestsData = tabs[activeTabID].REQUEST_DOMAINS;
-    console.log("dataToPopup: tabs[activeTabID].REQUEST_DOMAINS = ", requestsData)
-    console.log("activeTabID: ", activeTabID)
+    // console.log("dataToPopup: tabs[activeTabID].REQUEST_DOMAINS = ", requestsData)
+    // console.log("activeTabID: ", activeTabID)
   }
 
   chrome.tabs.query({active: true, currentWindow: true}, function(tabs){
@@ -248,9 +242,17 @@ function dataToPopup() {
 }
 
 
-// Listeners for info from popup or settings page
+/******************************************************************************/
+// Message passing
+
+
+/**
+ * Listeners for information from --POPUP-- or --OPTIONS-- page
+ * This is the main "hub" for message passing between the extension components
+ * https://developer.chrome.com/docs/extensions/mv3/messaging/
+ */
 chrome.runtime.onMessage.addListener(async function (request, sender, sendResponse) {
-  console.log(`Recieved message @ background page.`);
+  // console.log(`Recieved message @ background page.`);
   if (request.msg === "CHANGE_MODE") {
     switch (request.data) {
       case extensionMode.enabled:
@@ -269,21 +271,10 @@ chrome.runtime.onMessage.addListener(async function (request, sender, sendRespon
         console.error(`CHANGE_MODE failed, mode not recognized.`);
     }
   }
-  // if (request.ENABLED != null) {
-  //   if (request.ENABLED) {
-  //     enable();
-  //     await storage.set(stores.settings, extensionMode.enabled, 'MODE')
-  //     // sendResponse("DONE");
-  //   } else {
-  //     disable();
-  //     await storage.set(stores.settings, extensionMode.disabled, 'MODE')
-  //     // sendResponse("DONE");
-  //   }
-  // }
-  if (request.msg == "POPUP") {
+  if (request.msg === "POPUP") {
     dataToPopup()
   }
-  if (request.msg === "WELLKNOWN_CONTENT_SCRIPT_DATA") {
+  if (request.msg === "CONTENT_SCRIPT_WELLKNOWN") {
     let tabID = sender.tab.id;
     wellknown[tabID] = request.data
     if (wellknown[tabID]["gpc"] === true){
@@ -299,8 +290,8 @@ chrome.runtime.onMessage.addListener(async function (request, sender, sendRespon
       }
     }
   } 
-  if (request.msg === "TAB") {
-    // console.log("TAB MESSAGE HAS BEEN RECEIVED")
+  if (request.msg === "CONTENT_SCRIPT_TAB") {
+    // console.log("CONTENT_SCRIPT_TAB MESSAGE HAS BEEN RECEIVED")
     let url = new URL(sender.origin);
     let parsed = psl.parse(url.hostname);
     let domain = parsed.domain;
@@ -337,33 +328,31 @@ chrome.runtime.onMessage.addListener(async function (request, sender, sendRespon
 })
 
 
-/**
- * Listener for tab switch that updates curr tab badge counter
- */
- chrome.tabs.onActivated.addListener(function (info) {
-  activeTabID = info.tabId
+/******************************************************************************/
+// Run-once-on-install functions
+
+
+// Listener for tab switch that updates current tab variable
+chrome.tabs.onActivated.addListener(function (info) {
+  activeTabID = info.tabId;
   // dataToPopup()
 })
 
-/**
- * Runs on startup to query current tab
- */
- chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+
+// Runs on startup to initialize current tab variable
+chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
   if (tabs.id !== undefined) {
-    activeTabID = tab.id
+    activeTabID = tab.id;
   }
 })
 
-/**
- * Opens the options page
- */
+// Opens the options page on extension install
 chrome.runtime.onInstalled.addListener(function (object) {
   chrome.runtime.openOptionsPage((result) => {});
 });
 
 
 /******************************************************************************/
-
 
 
 export { 

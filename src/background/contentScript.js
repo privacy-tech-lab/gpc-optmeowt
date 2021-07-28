@@ -28,7 +28,7 @@ https://developer.chrome.com/extensions/content_scripts
 
 	/* (1) Gets Frame:0 Tab content */
 	chrome.runtime.sendMessage({
-		msg: "TAB",
+		msg: "CONTENT_SCRIPT_TAB",
 		data: Date.now(),
 	});
 
@@ -37,7 +37,7 @@ https://developer.chrome.com/extensions/content_scripts
 	const wellknownData = await response.json();
 
 	chrome.runtime.sendMessage({
-		msg: "WELLKNOWN_CONTENT_SCRIPT_DATA",
+		msg: "CONTENT_SCRIPT_WELLKNOWN",
 		data: wellknownData,
 	});
 })();

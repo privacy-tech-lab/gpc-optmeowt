@@ -34,7 +34,7 @@ import { storage, stores } from "../../../background/storage.js";
  * @param {string} bodyTemplate - stringified HTML template
  */
 async function displaySettings(bodyTemplate) {
-  console.log("displaySettings");
+  // console.log("displaySettings");
   settingsView(bodyTemplate);
     //Animations were broken for some reason, replaced with above line- maybe add back later? -stanley
 
@@ -54,7 +54,7 @@ async function displaySettings(bodyTemplate) {
  * @param {string} bodyTemplate - stringified HTML template
  */
 function displayDomainlist(bodyTemplate) {
-  console.log("displayDomainList");
+  // console.log("displayDomainList");
   domainlistView(bodyTemplate);
   //Animations were broken for some reason, replaced with above line- maybe add back later? -stanley
   /*
@@ -73,7 +73,7 @@ function displayDomainlist(bodyTemplate) {
  * @param {string} bodyTemplate - stringified HTML template
  */
 function displayAbout(bodyTemplate) {
-  console.log("displayAboutPage");
+  // console.log("displayAboutPage");
 
   aboutView(bodyTemplate);
   //Animations were broken for some reason, replaced with above line- maybe add back later? -stanley
