@@ -119,4 +119,10 @@ export async function mainView() {
   document
     .getElementById("main-view-about")
     .addEventListener("click", () => displayAbout(bodyTemplate));
+
+  // const options = {
+  //   saveInCookies: false, // default: true,
+  //   autoMatchOsTheme: true // default: true
+  // }
+  const darkmode =  new Darkmode();
 }

@@ -12,11 +12,7 @@ styles.css
 styles.css is the main css page for OptMeowt's options page
 */
 
-/*
-Dark Mode Switch
-Based on https://github.com/coliff/dark-mode-switch
-*/
-/* @import "../libs/dark-mode-switch-1.0.0/dark-mode.css"; */
+ @import "./dark-mode.css";
 
 /********************************************************/
 

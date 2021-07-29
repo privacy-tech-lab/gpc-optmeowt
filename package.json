@@ -27,6 +27,7 @@
     "@popperjs/core": "^2.9.2",
     "animate.css": "^4.1.1",
     "dark-mode-switch": "^1.0.0",
+    "darkmode-js": "^1.5.7",
     "file-saver": "^2.0.4",
     "idb": "^6.1.2",
     "mustache": "^4.2.0",

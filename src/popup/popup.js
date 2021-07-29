@@ -30,6 +30,7 @@ import "../../node_modules/@popperjs/core/dist/umd/popper"
 import tippy from "../../node_modules/tippy.js/dist/tippy-bundle.umd";
 
 // MISC. IMPORTS THRUOUT FILE
+import Darkmode from 'darkmode-js';
 // import "../../node_modules/dark-mode-switch/dark-mode-switch"
 
 
@@ -41,9 +42,39 @@ import tippy from "../../node_modules/tippy.js/dist/tippy-bundle.umd";
  * @param {Object} event - contains information about the event
  */
 document.addEventListener("DOMContentLoaded", async (event) => {
+
+  // const options = {
+  //   saveInCookies: false, // default: true,
+  //   autoMatchOsTheme: true // default: true
+  // }
+  const darkmode =  new Darkmode();
+
+  //Init: initialized darkmode button
+  let darkmodeText = "";
+  if (darkmode.isActivated()){
+    darkmodeText = `<input
+      type="checkbox"
+      class="custom-control-input"
+      id="darkSwitch" checked
+    />`;
+  } else {
+    darkmodeText = `<input
+      type="checkbox"
+      class="custom-control-input"
+      id="darkSwitch"
+    />`;
+  }
+  document.getElementById("darkSwitch").outerHTML = darkmodeText;
+
+  // Listener: Dark mode listener
+  document.getElementById("darkSwitch").addEventListener("click", () => {
+    darkmode.toggle();
+  });
+
+  //Note: this must be initialized first
   var parsedDomain = "";
 
-  // Init: Queries, parses, and sets the visible active tab 1st party domain 
+  // Init: Queries, parses, and sets the visible active tab 1st party domain
   // NOTE: This MUST happen first. The rest can be rendered separately.
   await (async () => {
     return new Promise((resolve, reject) => {
@@ -149,7 +180,7 @@ document.addEventListener("DOMContentLoaded", async (event) => {
     document.getElementById("switch-label").innerHTML = checkbox;
     document.getElementById("dns-text").innerHTML = text;
   }
-  
+
   // Listener: 1st party domain "Do Not Sell Enabled/Disabled" text + toggle
   document.getElementById("switch-label").addEventListener("click", async () => {
     await storage.set(stores.settings, extensionMode.domainlisted, 'MODE');
@@ -171,7 +202,7 @@ document.addEventListener("DOMContentLoaded", async (event) => {
     return domainlistValues[key] == true;
   }).length
   document.getElementById("block-count").innerHTML = `
-    <p id = "domain-count" class="blue-heading" style="font-size:25px; 
+    <p id = "domain-count" class="blue-heading" style="font-size:25px;
     font-weight: bold">${count}</p> domains receiving signals
   `;
 
@@ -221,6 +252,7 @@ document.addEventListener("DOMContentLoaded", async (event) => {
   //   }
   //   );
   // });
+
 
 })
 
@@ -330,9 +362,9 @@ async function buildWellKnown(requests) {
 
   let explainer;
   // let tabDetails;
-  
+
   /*
-  This iterates over the cases of possible combinations of 
+  This iterates over the cases of possible combinations of
   having found a GPC policy, and whether or not a site respects
   the signal or not, setting both the `explainer` and `tabDetails`
   for GPC v1
@@ -430,7 +462,7 @@ chrome.runtime.onMessage.addListener(function (request, _, __) {
 // Tutorial walkthrough
 
 // Init: Check to see if we should do tutorial
-async function initPopUpWalkthrough() { 
+async function initPopUpWalkthrough() {
   const tutorialShownInPopup = await storage.get(stores.settings, 'TUTORIAL_SHOWN_IN_POPUP');
   // console.log("Tutorial shown: ", tutorialShownInPopup)
   if (!tutorialShownInPopup) {
