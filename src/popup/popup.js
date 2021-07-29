@@ -152,15 +152,18 @@ document.addEventListener("DOMContentLoaded", async (event) => {
   
   // Listener: 1st party domain "Do Not Sell Enabled/Disabled" text + toggle
   document.getElementById("switch-label").addEventListener("click", async () => {
-    await storage.set(stores.settings, extensionMode.domainlisted, 'MODE');
+    // await storage.set(stores.settings, extensionMode.domainlisted, 'MODE');
+    chrome.runtime.sendMessage({ msg: "CHANGE_MODE", data: extensionMode.domainlisted })
     const parsedDomainValue = await storage.get(stores.domainlist, parsedDomain);
     let elemString = "";
     if (parsedDomainValue) {
       elemString = "Do Not Sell Disabled";
-      await storage.set(stores.domainlist, false, parsedDomain);
+      // await storage.set(stores.domainlist, false, parsedDomain);
+      setToDomainlist(parsedDomain, false);
     } else {
       elemString = "Do Not Sell Enabled";
-      await storage.set(stores.domainlist, true, parsedDomain);
+      // await storage.set(stores.domainlist, true, parsedDomain);
+      setToDomainlist(parsedDomain, true);
     }
     document.getElementById("dns-text").innerHTML = elemString;
   })
@@ -235,15 +238,20 @@ document.addEventListener("DOMContentLoaded", async (event) => {
  */
 function addThirdPartyDomainToggleListener(requestDomain) {
   document.getElementById(`input-${requestDomain}`).addEventListener("click", async () => {
-    await storage.set(stores.settings, extensionMode.domainlisted, 'MODE')
+    // await storage.set(stores.settings, extensionMode.domainlisted, 'MODE')
+    chrome.runtime.sendMessage({ msg: "CHANGE_MODE", data: extensionMode.domainlisted })
     const requestDomainValue = await storage.get(stores.domainlist, requestDomain)
     let elemString = "";
     if (requestDomainValue) {
       elemString = "Do Not Sell Disabled"
-      await storage.set(stores.domainlist, false, requestDomain)
+      // await storage.set(stores.domainlist, false, requestDomain)
+      setToDomainlist(requestDomain, false);
+      // chrome.runtime.sendMessage({ msg: "ADD_TO_DOMAINLIST", data: { "DOMAIN": requestDomain, "KEY": false } })
     } else {
       elemString = "Do Not Sell Enabled"
-      await storage.set(stores.domainlist, true, requestDomain);
+      // await storage.set(stores.domainlist, true, requestDomain);
+      // chrome.runtime.sendMessage({ msg: "ADD_TO_DOMAINLIST", data: { "DOMAIN": requestDomain, "KEY": true } })
+      setToDomainlist(requestDomain, true);
     }
     document.getElementById(`dns-text-${requestDomain}`).innerHTML = elemString;
   })
@@ -403,15 +411,27 @@ async function buildWellKnown(requests) {
 /******************************************************************************/
 // Message passing
 
+function setToDomainlist(d, k) {
+  chrome.runtime.sendMessage({
+    msg: "SET_TO_DOMAINLIST",
+    data: { domain: d, key: k }
+  }, (response) => { /*console.log(response)*/ })
+}
+
+// function setMode(mode) {
+//   chrome.runtime.sendMessage({
+//     msg: "CHANGE_MODE",
+//     data: { "DOMAIN": domain, "KEY": key }
+//   }, (response) => { /*console.log(response)*/ })
+// }
+
 /**
  * Sends "POPUP" message to background page to retrieve necessary info
  */
 chrome.runtime.sendMessage({
   msg: "POPUP",
   data: null,
-}, function (response) {
-  // console.log(response)
-});
+}, (response) =>  { /*console.log(response)*/ });
 
 /**
  * Listens for messages from background page that call functions to populate

@@ -16,18 +16,20 @@ events.js (1) Implements our per-site functionality for the background listeners
 
 import { enable, disable } from "./background.js"
 import { extensionMode, stores, storage } from "./storage.js"
+import { defaultSettings } from "../data/defaultSettings.js"
 import { headers } from "../data/headers.js"
 import { initIAB } from "./cookiesIAB.js"
 import { initCookiesPerDomain } from "./cookiesOnInstall.js"
 import psl from "psl"
 
 // Initializers (cached values)
-var sendSignal = true;  // caches if the signal can be sent to the curr domain
-var tabs = {};          // caches all tab infomration
-var wellknown = {};     // caches wellknown info for popup
-var signalPerTab = {};  // Store info on a signal being sent for updatePopupIcon
-var activeTabID = 0;    // caches active tab id
-
+var domainlist = {};    // Caches & mirrors domainlist in storage
+var mode = defaultSettings["MODE"]; // Caches the extension mode
+var tabs = {};          // Caches all tab infomration, i.e. requests, etc. 
+var wellknown = {};     // Caches wellknown info to be sent to popup
+var signalPerTab = {};  // Caches if a signal is sent to render the popup icon
+var activeTabID = 0;    // Caches current active tab id
+var sendSignal = true;  // Caches if the signal can be sent to the curr domain
 
 /******************************************************************************/
 
@@ -45,14 +47,15 @@ var activeTabID = 0;    // caches active tab id
  * @returns {array} details.requestHeaders from addHeaders 
  */
 const onBeforeSendHeaders = async (details) => {
-  await updateDomainsAndSignal(details);
+  // await updateDomainsAndSignal(details);
+  updateDomainlistAndSignal(details);
 
   if (sendSignal) {
     signalPerTab[details.tabId] = true
     initIAB();
     updatePopupIcon(details);
     return addHeaders(details);
-  } 
+  }
   // else {
   //   return details
   // }
@@ -83,7 +86,8 @@ const onBeforeNavigate = (details) => {
  * @param {object} details - retrieved info passed into callback
  */
 const onCommitted = async (details) => {
-  await updateDomainsAndSignal(details)
+  // await updateDomainsAndSignal(details)
+  updateDomainlistAndSignal(details);
 
   if (sendSignal) {
     addDomSignal(details)
@@ -121,25 +125,57 @@ function addDomSignal(details) {
   });
 }
 
-async function updateDomainsAndSignal(details) {
+// async function updateDomainsAndSignal(details) {
+//   // Parse url to get domain for domainlist
+//   let url = new URL(details.url);
+//   let parsedUrl = psl.parse(url.hostname);
+//   let parsedDomain = parsedUrl.domain;
+
+//   // Update domains by adding current domain to domainlist in storage.
+//   let parsedDomainVal = await storage.get(stores.domainlist, parsedDomain);
+//   if (parsedDomainVal === undefined) {
+//     await storage.set(stores.domainlist, true, parsedDomain);
+//   }
+
+//   // Check to see if we should send signal.
+//   // NOTE: It can be undefined b/c we never reretrieve parsedDomainVal
+//   // (1) Check which MODE OptMeowt is in,
+//   // (2) if domainlisted, check if in domainlist
+//   const mode = await storage.get(stores.settings, "MODE");
+//   if (mode === extensionMode.domainlisted) {
+//     if (parsedDomainVal === undefined || parsedDomainVal === true) {
+//       sendSignal = true;
+//     } else {
+//       sendSignal = false;
+//     }
+//   } else if (mode === extensionMode.enabled) {
+//     sendSignal = true;
+//   } else {
+//     sendSignal = false;
+//   }
+// }
+
+function updateDomainlistAndSignal(details) {
   // Parse url to get domain for domainlist
   let url = new URL(details.url);
   let parsedUrl = psl.parse(url.hostname);
   let parsedDomain = parsedUrl.domain;
 
   // Update domains by adding current domain to domainlist in storage.
-  let parsedDomainVal = await storage.get(stores.domainlist, parsedDomain);
+  let parsedDomainVal = domainlist[parsedDomain];
   if (parsedDomainVal === undefined) {
-    await storage.set(stores.domainlist, true, parsedDomain);
+    storage.set(stores.domainlist, true, parsedDomain); // Sets to storage async
+    domainlist[parsedDomain] = true;                    // Sets to cache
+    parsedDomainVal = true;
   }
 
   // Check to see if we should send signal.
   // NOTE: It can be undefined b/c we never reretrieve parsedDomainVal
   // (1) Check which MODE OptMeowt is in,
   // (2) if domainlisted, check if in domainlist
-  const mode = await storage.get(stores.settings, "MODE");
+  // const mode = await storage.get(stores.settings, "MODE");
   if (mode === extensionMode.domainlisted) {
-    if (parsedDomainVal === undefined || parsedDomainVal === true) {
+    if (parsedDomainVal === true) {
       sendSignal = true;
     } else {
       sendSignal = false;
@@ -203,6 +239,25 @@ function logData(details) {
   // console.log("details.tabId currently is; ", details.tabId)
 }
 
+async function pullToDomainlistCache() {
+  let domain;
+  let domainlistKeys = await storage.getAllKeys(stores.domainlist);
+  let domainlistValues = await storage.getAll(stores.domainlist);
+  // console.log(`domainlistKeys = ${domainlistKeys} \n domainlistValues = ${domainlistValues}`);
+  for (let key in domainlistKeys) {
+    domain = domainlistKeys[key];
+    domainlist[domain] = domainlistValues[key];
+  }
+  // console.log(`domainlist updated = `, domainlist);
+}
+
+function pushDomainlistCache() {
+}
+
+async function setCachedMode() {
+  mode = await storage.get(stores.settings, "MODE");
+}
+
 
 /******************************************************************************/
 // Popup functions
@@ -254,22 +309,34 @@ function dataToPopup() {
 chrome.runtime.onMessage.addListener(async function (request, sender, sendResponse) {
   // console.log(`Recieved message @ background page.`);
   if (request.msg === "CHANGE_MODE") {
+    // (1) enable/disable extension; (2) set cached mode; (3) set to storage;
     switch (request.data) {
       case extensionMode.enabled:
         enable();
+        mode = extensionMode.enabled;
         await storage.set(stores.settings, extensionMode.enabled, "MODE");
         break;
       case extensionMode.domainlisted:
         enable();
+        mode = extensionMode.domainlisted;
         await storage.set(stores.settings, extensionMode.domainlisted, "MODE");
         break;
       case extensionMode.disabled:
         disable();
+        mode = extensionMode.disabled;
         await storage.set(stores.settings, extensionMode.disabled, "MODE");
         break;
       default:
         console.error(`CHANGE_MODE failed, mode not recognized.`);
     }
+  }
+  if (request.msg === "SET_TO_DOMAINLIST") {
+    let { domain, key } = request.data;
+    domainlist[domain] = key;                     // Sets to cache
+    storage.set(stores.domainlist, key, domain);  // Sets to long term storage
+  }
+  if (request.msg === "REMOVE_FROM_DOMAINLIST") {
+    storage.delete(stores.domainlist, request.data);
   }
   if (request.msg === "POPUP") {
     dataToPopup()
@@ -277,7 +344,7 @@ chrome.runtime.onMessage.addListener(async function (request, sender, sendRespon
   if (request.msg === "CONTENT_SCRIPT_WELLKNOWN") {
     let tabID = sender.tab.id;
     wellknown[tabID] = request.data
-    if (wellknown[tabID]["gpc"] === true){
+    if (wellknown[tabID]["gpc"] === true) {
       setTimeout(()=>{}, 10000);
       if (signalPerTab[tabID] === true) {
         chrome.browserAction.setIcon(
@@ -325,26 +392,27 @@ chrome.runtime.onMessage.addListener(async function (request, sender, sendRespon
     // do not sell for a particular site, and chooses to re-enable it
     initCookiesPerDomain(request.data)
   }
-})
+});
 
 
 /******************************************************************************/
 // Run-once-on-install functions
 
+// Runs on startup to initialize the domainlist cache
+pullToDomainlistCache();
 
-// Listener for tab switch that updates current tab variable
+// Runs on startup to initialize the cached current tab variable
+chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+  if (tabs.id) {
+    activeTabID = tab.id;
+  }
+});
+
+// Listener for tab switch that updates the cached current tab variable
 chrome.tabs.onActivated.addListener(function (info) {
   activeTabID = info.tabId;
   // dataToPopup()
-})
-
-
-// Runs on startup to initialize current tab variable
-chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-  if (tabs.id !== undefined) {
-    activeTabID = tab.id;
-  }
-})
+});
 
 // Opens the options page on extension install
 chrome.runtime.onInstalled.addListener(function (object) {

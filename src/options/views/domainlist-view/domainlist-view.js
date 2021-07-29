@@ -52,9 +52,11 @@ export async function toggleListener(elementId, domain) {
   document.getElementById(elementId).addEventListener("click", async () => {
     const domainValue = await storage.get(stores.domainlist, domain)
     if (domainValue) {
-      await storage.set(stores.domainlist, false, domain)
+      // await storage.set(stores.domainlist, false, domain)
+      chrome.runtime.sendMessage({ msg: "SET_TO_DOMAINLIST", data: { domain: domain, key: false } });
     } else {
-      await storage.set(stores.domainlist, true, domain)
+      // await storage.set(stores.domainlist, true, domain)
+      chrome.runtime.sendMessage({ msg: "SET_TO_DOMAINLIST", data: { domain: domain, key: true } });
     }
   })
 }
@@ -88,7 +90,8 @@ export async function toggleListener(elementId, domain) {
       let successPrompt = `Successfully deleted ${domain} from the Domain List.
 NOTE: It will be automatically added back to the list when the domain is requested again.`
       if (confirm(deletePrompt)) {
-        await storage.delete(stores.domainlist, domain)
+        // await storage.delete(stores.domainlist, domain)
+        chrome.runtime.sendMessage({ msg: "REMOVE_FROM_DOMAINLIST", data: domain });
         alert(successPrompt)
         document.getElementById(`li ${domain}`).remove();
       }
