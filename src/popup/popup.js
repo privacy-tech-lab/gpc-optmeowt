@@ -43,14 +43,12 @@ import Darkmode from 'darkmode-js';
  */
 document.addEventListener("DOMContentLoaded", async (event) => {
 
-  // const options = {
-  //   saveInCookies: false, // default: true,
-  //   autoMatchOsTheme: true // default: true
-  // }
+  // DARK MODE
   const darkmode =  new Darkmode();
 
   //Init: initialized darkmode button
   let darkmodeText = "";
+  let darkSwitch = document.getElementById("darkSwitch");
   if (darkmode.isActivated()){
     darkmodeText = `<input
       type="checkbox"
@@ -64,16 +62,16 @@ document.addEventListener("DOMContentLoaded", async (event) => {
       id="darkSwitch"
     />`;
   }
-  document.getElementById("darkSwitch").outerHTML = darkmodeText;
+  darkSwitch.outerHTML = darkmodeText;
 
-  // Listener: Dark mode listener
+  // Listener: Dark mode listener for `main-view.js`
   document.getElementById("darkSwitch").addEventListener("click", () => {
-    //Message: Sends a message that main_view.js is listening for
     chrome.runtime.sendMessage({
       msg: "DARKSWITCH_PRESSED",
     });
     darkmode.toggle();
   });
+
 
   //Note: this must be initialized first
   var parsedDomain = "";

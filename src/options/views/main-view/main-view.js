@@ -120,10 +120,8 @@ export async function mainView() {
     .getElementById("main-view-about")
     .addEventListener("click", () => displayAbout(bodyTemplate));
 
-  // const options = {
-  //   saveInCookies: false, // default: true,
-  //   autoMatchOsTheme: true // default: true
-  // }
+  // DARK MODE
+
   const darkmode =  new Darkmode();
 
   //Listener: Listens for a message sent by popup.js

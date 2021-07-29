@@ -177,8 +177,6 @@ export async function settingsView(scaffoldTemplate) {
   document.getElementById("scaffold-component-body").innerHTML =
     content.innerHTML;
 
-  //darkSwitchFunction();
-
   // Render correct extension mode radio button
   const mode = await storage.get(stores.settings, "MODE");
   // console.log(`mode = ${mode}`);
@@ -206,28 +204,4 @@ export async function settingsView(scaffoldTemplate) {
     walkthrough();
   }
   storage.set(stores.settings, true, 'TUTORIAL_SHOWN')
-
-  //const darkmode =  new Darkmode();
-
-  //Init: initialized darkmode button
-  let darkmodeText = "";
-  if (darkmode.isActivated()){
-    darkmodeText = `<input
-      type="checkbox"
-      class="custom-control-input"
-      id="darkSwitch" checked
-    />`;
-  } else {
-    darkmodeText = `<input
-      type="checkbox"
-      class="custom-control-input"
-      id="darkSwitch"
-    />`;
-  }
-  document.getElementById("darkSwitch").outerHTML = darkmodeText;
-
-  // Listener: Dark mode listener
-  document.getElementById("darkSwitch").addEventListener("click", () => {
-    darkmode.toggle();
-  });
 }
