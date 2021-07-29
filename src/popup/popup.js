@@ -68,6 +68,10 @@ document.addEventListener("DOMContentLoaded", async (event) => {
 
   // Listener: Dark mode listener
   document.getElementById("darkSwitch").addEventListener("click", () => {
+    //Message: Sends a message that main_view.js is listening for
+    chrome.runtime.sendMessage({
+      msg: "DARKSWITCH_PRESSED",
+    });
     darkmode.toggle();
   });
 
