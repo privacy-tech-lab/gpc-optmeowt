@@ -46,7 +46,7 @@ var sendSignal = true;  // Caches if the signal can be sent to the curr domain
  * @param {object} details - retrieved info passed into callback
  * @returns {array} details.requestHeaders from addHeaders 
  */
-const onBeforeSendHeaders = async (details) => {
+const onBeforeSendHeaders = (details) => {
   // await updateDomainsAndSignal(details);
   updateDomainlistAndSignal(details);
 
