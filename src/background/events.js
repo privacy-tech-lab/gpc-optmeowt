@@ -336,7 +336,9 @@ chrome.runtime.onMessage.addListener(async function (request, sender, sendRespon
     storage.set(stores.domainlist, key, domain);  // Sets to long term storage
   }
   if (request.msg === "REMOVE_FROM_DOMAINLIST") {
-    storage.delete(stores.domainlist, request.data);
+    let domain = request.data;
+    storage.delete(stores.domainlist, domain);
+    delete domainlist[domain];
   }
   if (request.msg === "POPUP") {
     dataToPopup()
