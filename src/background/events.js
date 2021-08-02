@@ -259,6 +259,40 @@ async function setCachedMode() {
 }
 
 
+async function syncDomainlists() {
+  console.log("INITIALIZING THE SYNCDOMAINLISTS ON PORT CLOSED");
+  // (1) Reconstruct a domainlist indexedDB object from storage
+  // (2) Iterate through local domainlist
+  // --- If item in cache NOT in domainlistKeys/domainlistDB, add to storage 
+  //     via storage.set()
+  // (3) Iterate through all domain keys in indexedDB domainlist
+  // --- If key NOT in cached domainlist, add to cached domainlist
+
+  let domainlistKeys = await storage.getAllKeys(stores.domainlist);
+  let domainlistValues = await storage.getAll(stores.domainlist);
+  let domainlistDB = {};
+  let domain;
+  for (let key in domainlistKeys) {
+    domain = domainlistKeys[key];
+    domainlistDB[domain] = domainlistValues[key];
+  }
+  // console.log("domainlist: ", domainlist);
+  // console.log("domainlistDB: ", domainlistDB);
+
+  for (let domainKey in domainlist) {
+    if (!domainlistDB[domainKey]) {
+      await storage.set(stores.domainlist, domainlist[domainKey], domainKey);
+    }
+  }
+
+  for (let domainKey in domainlistDB) {
+    if (!domainlist[domainKey]) {
+      domainlist[domainKey] = domainlistDB[domainKey];
+    }
+  }
+}
+
+
 /******************************************************************************/
 // Popup functions
 
@@ -299,6 +333,25 @@ function dataToPopup() {
 
 /******************************************************************************/
 // Message passing
+
+/**
+ * This longtime connection is made specifically between the popup and the 
+ * background page at the moment. 
+ * The reason for this is I want to run our domainlist sync function when the 
+ * popup itself is closed. The onDisconnect will help make this happen.
+ * We need a port for this to work. Hence the function below. 
+ */
+chrome.runtime.onConnect.addListener(function(port) {
+  console.log("PORT CONNECTED");
+  if (port.name === "POPUP"
+  //  || port.name === "OPTIONS_PAGE"
+   ) {
+    port.onDisconnect.addListener(function() {
+      console.log("POPT DISCONNECTED");
+      syncDomainlists();
+    })
+  }
+})
 
 
 /**

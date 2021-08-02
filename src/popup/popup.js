@@ -411,6 +411,12 @@ async function buildWellKnown(requests) {
 /******************************************************************************/
 // Message passing
 
+// Initializng a longterm port with the background for the onDisconnect event
+let backgroundPort = chrome.runtime.connect({ name: "POPUP" });
+// console.log("SENT CONNECTION");
+
+// Initializes the process to add to domainlist, via the background script
+// This is to ensure all processes happen correctly
 function setToDomainlist(d, k) {
   chrome.runtime.sendMessage({
     msg: "SET_TO_DOMAINLIST",
