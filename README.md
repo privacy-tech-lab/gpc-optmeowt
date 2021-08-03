@@ -1,19 +1,19 @@
 <p align="center">
-  <img alt="GitHub release (latest by date)" src="https://img.shields.io/github/v/release/privacy-tech-lab/optmeowt-browser-extension">
-  <img alt="GitHub Release Date" src="https://img.shields.io/github/release-date/privacy-tech-lab/optmeowt-browser-extension">
-  <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/privacy-tech-lab/optmeowt-browser-extension">
-  <img alt="GitHub issues" src="https://img.shields.io/github/issues-raw/privacy-tech-lab/optmeowt-browser-extension">
-  <img alt="GitHub closed issues" src="https://img.shields.io/github/issues-closed-raw/privacy-tech-lab/optmeowt-browser-extension">
-  <img alt="GitHub" src="https://img.shields.io/github/license/privacy-tech-lab/optmeowt-browser-extension">
-  <img alt="GitHub watchers" src="https://img.shields.io/github/watchers/privacy-tech-lab/optmeowt-browser-extension?style=social">
-  <img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/privacy-tech-lab/optmeowt-browser-extension?style=social">
-  <img alt="GitHub forks" src="https://img.shields.io/github/forks/privacy-tech-lab/optmeowt-browser-extension?style=social">
+  <img alt="GitHub release (latest by date)" src="https://img.shields.io/github/v/release/privacy-tech-lab/optmeowt">
+  <img alt="GitHub Release Date" src="https://img.shields.io/github/release-date/privacy-tech-lab/optmeowt">
+  <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/privacy-tech-lab/optmeowt">
+  <img alt="GitHub issues" src="https://img.shields.io/github/issues-raw/privacy-tech-lab/optmeowt">
+  <img alt="GitHub closed issues" src="https://img.shields.io/github/issues-closed-raw/privacy-tech-lab/optmeowt">
+  <img alt="GitHub" src="https://img.shields.io/github/license/privacy-tech-lab/optmeowt">
+  <img alt="GitHub watchers" src="https://img.shields.io/github/watchers/privacy-tech-lab/optmeowt?style=social">
+  <img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/privacy-tech-lab/optmeowt?style=social">
+  <img alt="GitHub forks" src="https://img.shields.io/github/forks/privacy-tech-lab/optmeowt?style=social">
 </p>
   
 <br>
 
 <p align="center">
-  <a href="https://www.privacytechlab.org/optmeowt/"><img src="https://github.com/privacy-tech-lab/optmeowt-browser-extension/blob/issue-19/src/assets/cat-w-text/optmeow-logo-circle.png" width="150px" height="150px" alt="OptMeowt logo"></a>
+  <a href="https://www.privacytechlab.org/optmeowt/"><img src="https://github.com/privacy-tech-lab/optmeowt/blob/issue-19/src/assets/cat-w-text/optmeow-logo-circle.png" width="150px" height="150px" alt="OptMeowt logo"></a>
 </p>
 
 # OptMeowt 🐾
@@ -21,8 +21,8 @@
 OptMeowt ("Opt Me Out") is a browser extension for opting you out from web tracking. OptMeowt works by sending Do Not Sell signals to visited websites per the [Global Privacy Control spec](https://globalprivacycontrol.github.io/gpc-spec/) and placing opt out cookies.
 
 <p align="center">
-  <a href="https://addons.mozilla.org/en-US/firefox/addon/optmeowt/"><img src="https://github.com/privacy-tech-lab/optmeowt-browser-extension/blob/main/firefox-add-ons-badge.png" width="172px" alt="Firefox Add Ons badge"></a>
-  <a href="https://chrome.google.com/webstore/detail/optmeowt/hdbnkdbhglahihjdbodmfefogcjbpgbo"><img src="https://github.com/privacy-tech-lab/optmeowt-browser-extension/blob/main/chrome-web-store-badge.png" width="200px" alt="Chrome Web Store badge"></a>
+  <a href="https://addons.mozilla.org/en-US/firefox/addon/optmeowt/"><img src="https://github.com/privacy-tech-lab/optmeowt/blob/main/firefox-add-ons-badge.png" width="172px" alt="Firefox Add Ons badge"></a>
+  <a href="https://chrome.google.com/webstore/detail/optmeowt/hdbnkdbhglahihjdbodmfefogcjbpgbo"><img src="https://github.com/privacy-tech-lab/optmeowt/blob/main/chrome-web-store-badge.png" width="200px" alt="Chrome Web Store badge"></a>
 <p>
 
 ## How does OptMeowt work?
@@ -45,13 +45,13 @@ For every website you visit OptMeowt will automatically add its domain to the `d
 1. Clone this repo locally, or download a zipped copy and unzip it.
 2. Follow [these steps on the npm Docs](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) to install npm.
 3. Navigate to the folder where you saved OptMeowt on your local machine from within the Terminal. Replace `...` in the command below with the location of your cloned OptMeowt folder. If you are in its parent folder, `...` may be empty. \
-  `cd .../optmeowt-browser-extension/`
+  `cd .../optmeowt/`
 4. Now install all of OptMeowt's dependencies by running the following command:\
    `npm install`
 5. Then, build the project by running the following command:\
    `npm run build`\
    This builds the project for both Chrome and Firefox in the following directories respectively:\
-  `.../optmeowt-browser-extension/dist/chrome/` and `.../optmeowt-browser-extension/dist/firefox/`
+  `.../optmeowt/dist/chrome/` and `.../optmeowt/dist/firefox/`
 
 ### Chrome
 
@@ -59,7 +59,7 @@ For every website you visit OptMeowt will automatically add its domain to the `d
 7. Enable `Developer mode` with the slider on the top right corner of the extension page.
 8. Click the `Load unpacked` button in the top left of the page.
 9. Navigate to where you built OptMeowt and select the `dist/chrome` subfolder (the folder should contain a copy of `manifest.json`). I.e.,\
-  `.../optmeowt-browser-extension/dist/chrome/`
+  `.../optmeowt/dist/chrome/`
 10. Click to finalize the install.
 
 ### Firefox
@@ -67,7 +67,7 @@ For every website you visit OptMeowt will automatically add its domain to the `d
 6. In Firefox, navigate to the addons page with developer privileges at `about:debugging#/runtime/this-firefox`.
 7. Under `Temporary extensions`, click `Load Temporary Add-on..`.
 8. Navigate to where you built OptMeowt and select the manifest file from the `dist/firefox` folder. I.e.,\
-  `.../optmeowt-browser-extension/dist/firefox/manifest.json/`
+  `.../optmeowt/dist/firefox/manifest.json/`
 9. Click to finalize and install OptMeowt.
 
 Please note that OptMeowt is in active development and new features are frequently added, some of which may cause errors. You can always get the stable release version on the [Chrome Web Store](https://chrome.google.com/webstore/detail/optmeowt/hdbnkdbhglahihjdbodmfefogcjbpgbo) and on [Firefox Add-Ons](https://addons.mozilla.org/en-US/firefox/addon/optmeowt/).
@@ -120,18 +120,18 @@ We do not collect any data from you. Third parties will also not receive your da
 
 ## Third Party Libraries
 
-OptMeowt is dependent on various [third party libraries](https://github.com/privacy-tech-lab/optmeowt-browser-extension/blob/main/package.json). We thank the developers.
+OptMeowt is dependent on various [third party libraries](https://github.com/privacy-tech-lab/optmeowt/blob/main/package.json). We thank the developers.
 
 ## Developer Guide
 
 - When contributing, it is important to note that we manage all package dependencies with npm. Thus, it is recommended to use `npm i` to install packages.
 - When viewing your browser's console on a site you are sending GPC signals to, a 404 error regarding the site's GPC status file (`/.well-known/gpc.json`) may be shown. Note that this is perfectly normal, and will occur frequently (1) on sites that do not support GPC and (2) may even occur on sites that do respect GPC simply if the website does not host such a `/.well-known/gpc.json` file.
-- If you have questions about OptMeowt's functionality or have found a bug, please check out our [FAQ \ Known quirks](https://github.com/privacy-tech-lab/optmeowt-browser-extension/wiki/FAQ-%5C-Known-quirks) page on the [Wiki](https://github.com/privacy-tech-lab/optmeowt-browser-extension/wiki) first to see if we have already addressed the issue. If you cannot find what you are looking for, please feel free to open an issue and we will address it as soon as we can!
+- If you have questions about OptMeowt's functionality or have found a bug, please check out our [FAQ \ Known quirks](https://github.com/privacy-tech-lab/optmeowt-browser-extension/wiki/FAQ-%5C-Known-quirks) page on the [Wiki](https://github.com/privacy-tech-lab/optmeowt/wiki) first to see if we have already addressed the issue. If you cannot find what you are looking for, please feel free to open an issue and we will address it as soon as we can!
 
 ## More Information 🐈
 
 Learn more [here](https://privacytechlab.org/optmeowt).
 
 <p align="center">
-  <a href="https://www.privacytechlab.org/"><img src="https://github.com/privacy-tech-lab/optmeowt-browser-extension/blob/main/plt_logo.png" width="200px" height="200px" alt="privacy-tech-lab logo"></a>
+  <a href="https://www.privacytechlab.org/"><img src="https://github.com/privacy-tech-lab/optmeowt/blob/main/plt_logo.png" width="200px" height="200px" alt="privacy-tech-lab logo"></a>
 <p>
