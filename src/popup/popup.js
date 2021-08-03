@@ -30,8 +30,6 @@ import "../../node_modules/@popperjs/core/dist/umd/popper"
 import tippy from "../../node_modules/tippy.js/dist/tippy-bundle.umd";
 
 // MISC. IMPORTS THRUOUT FILE
-import Darkmode from 'darkmode-js';
-// import "../../node_modules/dark-mode-switch/dark-mode-switch"
 
 
 /******************************************************************************/
@@ -44,17 +42,17 @@ import Darkmode from 'darkmode-js';
 document.addEventListener("DOMContentLoaded", async (event) => {
 
   // DARK MODE
-  const darkmode =  new Darkmode();
 
   //Init: initialized darkmode button
   let darkmodeText = "";
   let darkSwitch = document.getElementById("darkSwitch");
-  if (darkmode.isActivated()){
+  if (window.localStorage.getItem('darkmode')){
     darkmodeText = `<input
       type="checkbox"
       class="custom-control-input"
       id="darkSwitch" checked
     />`;
+    document.body.classList.toggle('darkmode--activated');
   } else {
     darkmodeText = `<input
       type="checkbox"
@@ -69,7 +67,12 @@ document.addEventListener("DOMContentLoaded", async (event) => {
     chrome.runtime.sendMessage({
       msg: "DARKSWITCH_PRESSED",
     });
-    darkmode.toggle();
+    if (window.localStorage.getItem('darkmode')){
+      window.localStorage.setItem('darkmode', false);
+    } else {
+      window.localStorage.setItem('darkmode', true);
+    }
+    document.body.classList.toggle('darkmode--activated');
   });
 
 

@@ -122,12 +122,11 @@ export async function mainView() {
 
   // DARK MODE
 
-  const darkmode =  new Darkmode();
 
   //Listener: Listens for a message sent by popup.js
   chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     if (request.msg === "DARKSWITCH_PRESSED") {
-      darkmode.toggle();
+      document.body.classList.toggle('darkmode--activated');
     }
   })
 }
