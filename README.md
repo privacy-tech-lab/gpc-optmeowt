@@ -48,7 +48,7 @@ For every website you visit OptMeowt will automatically add its domain to the `d
   **Note:** Replace `...` in the command below with the location of your cloned OptMeowt folder. If you are in its parent folder, `...` may be empty and you won't have to type anything. \
   `cd .../gpc-optmeowt/`
 4. Now install all of OptMeowt's dependencies by running the following command:\
-   `npm install`
+   `npm ci`
 5. Then, build the project by running the following command:\
    `npm run build`\
    This builds the project for both Chrome and Firefox in the following directories respectively:\
@@ -75,7 +75,9 @@ Please note that OptMeowt is in active development and new features are frequent
 
 ## Installing OptMeowt for Developers
 
-Follow the directions above, replacing the command in step 4 with `npm run start` in order to run the npm script (located in `package.json`) which will call Webpack in development mode (Webpack settings in `webpack.config.js`). This will also initiate Webpack servers for both the Firefox and Chrome versions which will listen for changes as you work and rebuild when necessary.
+Follow the directions above, replacing the command in step 4 above with `npm run start` in order to run the npm script (located in `package.json`) which will call Webpack in development mode (Webpack settings in `webpack.config.js`). This will also initiate Webpack servers for both the Firefox and Chrome versions which will listen for changes as you work and rebuild when necessary.
+
+In addition, instead of running `npm ci` in step 4 above, run `npm install`. Especially, if you include new dependencies, `npm install` will include those in the `package-lock.json`, which is generated from the `package.json`.
 
 Notice that Webpack will build the development versions of OptMeowt into the `dev` subfolder instead of `dist`, with subfolders `dev/firefox` and `dev/chrome` accordingly.
 
