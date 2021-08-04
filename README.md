@@ -44,7 +44,7 @@ For every website you visit OptMeowt will automatically add its domain to the `d
 
 1. Clone this repo locally, or download a zipped copy and unzip it.
 2. Follow [these steps on the npm Docs](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) to install npm.
-3. Navigate to the folder where you saved OptMeowt on your local machine from within the Terminal. Replace `...` in the command below with the location of your cloned OptMeowt folder. If you are in its parent folder, `...` may be empty. \
+3. Navigate to the folder where you saved OptMeowt on your local machine from within the Terminal. (Note: Replace `...` in the command below with the location of your cloned OptMeowt folder. If you are in its parent folder, `...` may be empty.) \
   `cd .../gpc-optmeowt/`
 4. Now install all of OptMeowt's dependencies by running the following command:\
    `npm install`
