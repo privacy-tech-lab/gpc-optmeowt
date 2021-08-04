@@ -27,7 +27,7 @@ import UIkit from "../../../../node_modules/uikit/dist/js/uikit";
 import tippy from "../../../../node_modules/tippy.js/dist/tippy-bundle.umd";
 
 import "../../../../node_modules/file-saver/src/FileSaver"
-//import { darkSwitchFunction } from "../../../../node_modules/dark-mode-switch/dark-mode-switch.js";
+import Darkmode from 'darkmode-js';
 
 
 /**
@@ -78,7 +78,7 @@ function eventListeners() {
 /******************************************************************************/
 
 /*
- * Gives user a walkthrough of install page on first install 
+ * Gives user a walkthrough of install page on first install
  */
 function walkthrough() {
   let modal = UIkit.modal("#welcome-modal");
@@ -177,8 +177,6 @@ export async function settingsView(scaffoldTemplate) {
   document.getElementById("scaffold-component-body").innerHTML =
     content.innerHTML;
 
-  //darkSwitchFunction();
-
   // Render correct extension mode radio button
   const mode = await storage.get(stores.settings, "MODE");
   // console.log(`mode = ${mode}`);
@@ -200,7 +198,7 @@ export async function settingsView(scaffoldTemplate) {
 
   eventListeners();
 
-  // Tutorial walkthrough 
+  // Tutorial walkthrough
   const tutorialShown = await storage.get(stores.settings, 'TUTORIAL_SHOWN');
   if (!tutorialShown) {
     walkthrough();

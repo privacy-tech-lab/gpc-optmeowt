@@ -1,0 +1,181 @@
+.darkmode--activated {
+  background-color: #252522 !important;
+  color: #eee !important;
+}
+
+.darkmode--activated .bg-light {
+  background-color: #333 !important;
+}
+
+.darkmode--activated .bg-white {
+  background-color: #111 !important;
+}
+
+.darkmode--activated .bg-black {
+  background-color: #eee !important;
+}
+
+.darkmode--activated .text-color-darker {
+  color: #dddddd !important;
+}
+
+.darkmode--activated .text-color {
+  color: #adadad !important;
+}
+
+.darkmode--activated .question {
+  color: #dddddd !important;
+}
+
+.darkmode--activated .answer {
+  color: #adadad !important;
+}
+
+.darkmode--activated .divide {
+  color: #ffff00 !important;
+}
+
+.darkmode--activated .uk-list-divide {
+  color: #ffff00 !important;
+}
+
+.darkmode--activated .blue-heading {
+  color: #93CAF2 !important;
+}
+
+.darkmode--activated a {
+  text-decoration: underline;
+  color: #FFF !important;
+}
+
+.darkmode--activated .uk-modal-body,
+.darkmode--activated .uk-modal-footer,
+.darkmode--activated .uk-modal-header {
+  background-color: #252522 !important;
+}
+
+/********************************************************/
+
+/*
+Radio buttons style settings page
+*/
+.darkmode--activated input[type="radio"] {
+  width: 35px;
+  height: 35px;
+  transition: all ease 0.5s;
+}
+
+.darkmode--activated input[type="radio"]:checked {
+  transition: all ease 0.25s;
+  background-image: var(--accent-color);
+  box-shadow: 0 6px 12px #222221;
+}
+
+.darkmode--activated input[type="radio"]:hover:not(:checked) {
+  transition: all ease 0.25s;
+  box-shadow: 0 6px 12px #222221;
+  background-color: #CBCBCB;
+  /* border-color: transparent; */
+}
+
+/*
+Settings page
+*/
+.darkmode--activated .navbar-item.active {
+  color: #3D87E9;
+}
+
+/*
+'settings-view' domainlist import & export button style
+*/
+.darkmode--activated .importexport-button {
+  background-color: #252522 !important;
+  border-color: #CBCBCB !important;
+  color: #CBCBCB !important;
+  box-shadow: 0 8px 16px -1px #111111 !important;
+}
+.darkmode--activated .importexport-button:hover {
+  background-color: #d4d4d4 !important;
+  border-color: #d4d4d4 !important;
+  color: #4e4e4d !important;
+  box-shadow: 0 6px 12px #303030 !important;
+}
+
+.darkmode--activated .domainlist-navbar {
+  background-color: #252522 !important;
+  color: #CBCBCB !important;
+}
+
+.darkmode--activated .sticky {
+  box-shadow: 0 8px 8px -10px #111111 !important;
+}
+
+/********************************************************/
+
+
+/*
+Buttons and Switches
+*/
+
+.darkmode--activated .search {
+  background-color: #333 !important;
+  border-color: #333 !important;
+  color: #CBCBCB;
+}
+
+.darkmode--activated .button {
+  background-color: rgb(70, 70, 70) !important;
+  border: 1px solid rgb(70, 70, 70) !important;
+  transition: all 0.3s ease;
+  color: #eee !important;
+}
+
+.darkmode--activated .button:hover {
+  background-color: rgb(143, 17, 17) !important;
+  border: 1px solid  rgb(143, 17, 17) !important;
+  transition: all 0.3s ease;
+  color: #eee !important;
+}
+
+.darkmode--activated .switch input:checked + span {
+  background: #37be70 !important;
+  box-shadow: 0 0px 0px 0px rgba(72, 234, 139, 0.2) !important;
+}
+
+.darkmode--activated .switch input + span {
+  box-shadow: 0 0px 0px 0px rgba(72, 234, 139, 0.2) !important;
+}
+
+.darkmode--activated .domain-list:hover {
+  background-color: #5f5f5d !important;
+  color: white !important;
+}
+
+.darkmode--activated .dropdown-tab:hover {
+  background-color: #3f3f3c !important;
+  color: #eee !important;
+}
+
+.darkmode--activated .dropdown-tab-click {
+  background-color: #3f3f3c !important;
+  color: #eee !important;
+}
+
+.darkmode--activated .wellknown-bg {
+  background-color: #3f3f3c !important;
+  border-color: #3f3f3c !important;
+  color: #eeeeee;
+}
+
+/* .darkmode--activated .dark-checkbox {
+  background-color: #333 !important;
+  border: 1px solid #333 !important;
+  color: #eee !important;
+} */
+
+/* input[type="radio"]:checked, .darkmode--activated {
+  box-shadow: 0 6px 12px #000 !important;
+}
+input[type='radio']:hover:not(:checked), .darkmode--activated {
+  box-shadow: 0 6px 12px #000 !important;
+} */

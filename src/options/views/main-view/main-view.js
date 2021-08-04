@@ -28,6 +28,7 @@ import { settingsView } from "../settings-view/settings-view.js";
 import { domainlistView } from "../domainlist-view/domainlist-view.js";
 import { aboutView } from "../about-view/about-view.js";
 import { storage, stores } from "../../../background/storage.js";
+import Darkmode from "../../../theme/darkmode";
 
 /**
  * Opens the `Settings` page
@@ -119,4 +120,14 @@ export async function mainView() {
   document
     .getElementById("main-view-about")
     .addEventListener("click", () => displayAbout(bodyTemplate));
+
+  // DARK MODE
+  const darkmode = new Darkmode();
+
+  //Listener: Listens for a message sent by popup.js
+  chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+    if (request.msg === "DARKSWITCH_PRESSED") {
+      darkmode.toggle();
+    }
+  });
 }
