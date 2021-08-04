@@ -30,6 +30,7 @@ import "../../node_modules/@popperjs/core/dist/umd/popper"
 import tippy from "../../node_modules/tippy.js/dist/tippy-bundle.umd";
 
 // MISC. IMPORTS THRUOUT FILE
+import Darkmode from "../theme/darkmode";
 
 
 /******************************************************************************/
@@ -42,37 +43,33 @@ import tippy from "../../node_modules/tippy.js/dist/tippy-bundle.umd";
 document.addEventListener("DOMContentLoaded", async (event) => {
 
   // DARK MODE
+  const darkmode = new Darkmode();
 
-  //Init: initialized darkmode button
-  let darkmodeText = "";
+  //Init: initialize darkmode button
   let darkSwitch = document.getElementById("darkSwitch");
-  if (window.localStorage.getItem('darkmode')){
+  let darkmodeText = "";
+  if (darkmode.isActivated()) {
     darkmodeText = `<input
       type="checkbox"
       class="custom-control-input"
-      id="darkSwitch" checked
-    />`;
-    document.body.classList.toggle('darkmode--activated');
+      id="darkSwitch" 
+      checked
+      />`;
   } else {
     darkmodeText = `<input
       type="checkbox"
       class="custom-control-input"
       id="darkSwitch"
-    />`;
+      />`;
   }
   darkSwitch.outerHTML = darkmodeText;
 
   // Listener: Dark mode listener for `main-view.js`
   document.getElementById("darkSwitch").addEventListener("click", () => {
     chrome.runtime.sendMessage({
-      msg: "DARKSWITCH_PRESSED",
+  	  msg: "DARKSWITCH_PRESSED",
     });
-    if (window.localStorage.getItem('darkmode')){
-      window.localStorage.setItem('darkmode', false);
-    } else {
-      window.localStorage.setItem('darkmode', true);
-    }
-    document.body.classList.toggle('darkmode--activated');
+    darkmode.toggle();
   });
 
 
