@@ -15,14 +15,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/privacy-tech-lab/optmeowt.git"
+    "url": "git+https://github.com/privacy-tech-lab/gpc-optmeowt.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/privacy-tech-lab/optmeowt/issues"
+    "url": "https://github.com/privacy-tech-lab/gpc-optmeowt/issues"
   },
-  "homepage": "https://github.com/privacy-tech-lab/optmeowt#readme",
+  "homepage": "https://github.com/privacy-tech-lab/gpc-optmeowt#readme",
   "dependencies": {
     "@popperjs/core": "^2.9.2",
     "animate.css": "^4.1.1",
