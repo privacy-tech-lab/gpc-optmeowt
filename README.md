@@ -117,6 +117,7 @@ We do not collect any data from you. Third parties will also not receive your da
 - `src/data`: Definitions of headers, cookies, and privacy flags.
 - `src/options`: UI elements and scripts for the supplemental options page.
 - `src/popup`: UI elements and scripts for the popup inside the extensions bar.
+- `src/theme`: Dark and light mode themes.
 - `ui-mockup`: Contains PDF and XD files demonstrating the preliminary mockup and analysis of OptMeowt.
 
 ## Third Party Libraries
