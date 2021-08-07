@@ -32,12 +32,34 @@ https://developer.chrome.com/extensions/content_scripts
 		data: Date.now(),
 	});
 
-	/* (2) Fetches .well-known GPC file */
+	/* (2) Searches for DNS link */
+	window.onload = function(){
+
+		var dns = ["Do not sell","do not sell", "Do Not Sell"];
+		var elements = document.getElementsByTagName("*");
+		for (let i = 0; i<elements.length; i++){
+			element = elements[i];
+			var text = element.innerText;
+			for (let a=0; a<dns.length; a++){
+				if (text.includes(dns[a])){
+					chrome.runtime.sendMessage({
+						msg: "DNS_LINK_FOUND",
+					});
+				console.log("found it");
+				}
+			}
+		}
+	}
+
+
+	/* (3) Fetches .well-known GPC file */
 	const response = await fetch(`${url.origin}/.well-known/gpc.json`);
 	const wellknownData = await response.json();
+
 
 	chrome.runtime.sendMessage({
 		msg: "CONTENT_SCRIPT_WELLKNOWN",
 		data: wellknownData,
 	});
+
 })();

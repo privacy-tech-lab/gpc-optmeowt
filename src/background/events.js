@@ -201,6 +201,7 @@ function updatePopupIcon(details) {
       function () { /*console.log("Updated OptMeowt icon to GREEN RING");*/ }
     );
   }
+  
 }
   
 function logData(details) {
@@ -411,7 +412,21 @@ chrome.runtime.onMessage.addListener(async function (request, sender, sendRespon
         );
       }
     }
-  } 
+  }
+  if (request.msg === "DNS_LINK_FOUND"){
+    let tabID = sender.tab.id;
+      setTimeout(()=>{}, 10000);
+      if (signalPerTab[tabID] === true) {
+        chrome.browserAction.setIcon(
+          {
+            tabId: tabID,
+            path: "assets/face-icons/optmeow-face-circle-red-128.png",
+          },
+          function () { /*console.log("Updated icon to RED.");*/ }
+        );
+      
+    }
+  }
   if (request.msg === "CONTENT_SCRIPT_TAB") {
     // console.log("CONTENT_SCRIPT_TAB MESSAGE HAS BEEN RECEIVED")
     let url = new URL(sender.origin);
