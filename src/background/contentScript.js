@@ -35,15 +35,17 @@ https://developer.chrome.com/extensions/content_scripts
 	/* (2) Searches for DNS link */
 	window.onload = function(){
 
-		var dns = ["Do not sell","do not sell", "Do Not Sell"];
+		var phrasing = ["Do not sell","do not sell", "Do Not Sell"];
+		//expand phrasing with alternative ways to say DNS
 		var elements = document.getElementsByTagName("*");
 		for (let i = 0; i<elements.length; i++){
 			element = elements[i];
 			var text = element.innerText;
-			for (let a=0; a<dns.length; a++){
-				if (text.includes(dns[a])){
+			for (let a=0; a<phrasing.length; a++){
+				if (text.includes(phrasing[a])){
 					chrome.runtime.sendMessage({
 						msg: "DNS_LINK_FOUND",
+						//nothing is listening for this message right now
 					});
 				console.log("found it");
 				}
