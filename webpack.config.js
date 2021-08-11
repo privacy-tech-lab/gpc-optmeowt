@@ -89,7 +89,9 @@ module.exports = (env, argv) => {
 				patterns: [{ context: path.resolve(__dirname, "src"), from: "assets", to: "assets" }],
 			}),
 			new CopyPlugin({
-				patterns: [{ context: path.resolve(__dirname, "src"), from: "manifest.json" }],
+				patterns: [{ context: path.resolve(__dirname, "src"), 
+				from: (isProduction ? "manifest-dist.json" : "manifest-dev.json"), 
+				to: "manifest.json"}],
 			}),
 			new CopyPlugin({
 				patterns: [{ context: path.resolve(__dirname, "src/background"), from: "dom.js" }],
