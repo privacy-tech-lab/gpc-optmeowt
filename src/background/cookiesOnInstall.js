@@ -10,12 +10,11 @@ privacy-tech-lab, https://privacytechlab.org/
 cookiesOnInstall.js
 ================================================================================
 cookiesOnInstall.js fetches all files mentioned in cookieJSONS, retrieves
-their respective cookies (custom & 3rd party), and places them.
+their respective cookies (3rd party), and places them.
 */
 
 
 import { cookiesDAA } from "../data/cookiesDAA.js"
-import { cookiesUserCustom } from "../data/cookiesUserCustom.js"
 
 
 function initCookiesOnInstall() {
