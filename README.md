@@ -27,59 +27,48 @@ OptMeowt ("Opt Me Out") is a browser extension for opting you out from web track
 
 ## How does OptMeowt work?
 
-OptMeowt sends Do Not Sell signals to all sites you visit when browsing the web. Such signals must be respected for California consumers per the California Consumer Privacy Act (CCPA), [Regs Section 999.315(d)](https://oag.ca.gov/sites/all/files/agweb/pdfs/privacy/oal-sub-final-text-of-regs.pdf) but many companies also respect them when they are sent from outside of California. OptMeowt also places opt out cookies.
+OptMeowt sends Do Not Sell signals to websites when you browse the web. Such signals must be respected for California consumers per the California Consumer Privacy Act (CCPA), [Regs Section 999.315(d)](https://oag.ca.gov/sites/all/files/agweb/pdfs/privacy/oal-sub-final-text-of-regs.pdf). Some companies also respect them when they are sent from outside of California. OptMeowt also places opt out cookies.
 
 In detail, OptMeowt uses five methods to opt you out:
 
 1. The [GPC header and JS property](https://globalprivacycontrol.github.io/gpc-spec/).
 2. The [DNT header](https://www.w3.org/TR/tracking-dnt/).
-3. The [IAB CCPA Compliance Framework for Publishers & Technology Companies](https://iabtechlab.com/standards/ccpa/), implemented in a first party cookie.
+3. First party cookies of ad networks participating in the [IAB CCPA Compliance Framework for Publishers & Technology Companies](https://iabtechlab.com/standards/ccpa/).
 4. Third party cookies of ad networks participating in the [DAA's CCPA Opt Out Tool for the Web](https://digitaladvertisingalliance.org/integrate-webchoices-ccpa).
-5. Custom headers and cookies used by individual websites maintained and updated in OptMeowt's Do Not Sell list.
 
-**Customizing which Sites Receive Do Not Sell Signals**
-For every website you visit OptMeowt will automatically add its domain to the `domain list` meaning that the domain will receive a Do Not Sell signal. However, you can exclude domains that should not receive a Do Not Sell signal. This functionality is available on OptMeowt's settings page that you can access from OptMeowt's popup window.
+**Customizing which sites receive Do Not Sell signals:** For every site you visit OptMeowt will automatically add its domain to the `domain list`. Each newly added domain will receive Do Not Sell signals by default. However, you can exclude domains that should not receive Do Not Sell signals. This functionality is available on OptMeowt's settings page, which you can access from OptMeowt's popup window.
 
 ## Installing OptMeowt from Source
 
-1. Clone this repo locally, or download a zipped copy and unzip it.
-2. Follow [these steps on the npm Docs](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) to install npm.
-3. Navigate to the folder where you saved OptMeowt on your local machine from within the Terminal. \
-  **Note:** Replace `...` in the command below with the location of your cloned OptMeowt folder. If you are in its parent folder, `...` may be empty and you won't have to type anything. \
-  `cd .../gpc-optmeowt/`
-4. Now install all of OptMeowt's dependencies by running the following command:\
-   `npm ci`
-5. Then, build the project by running the following command:\
-   `npm run build`\
-   This builds the project for both Chrome and Firefox in the following directories respectively:\
-  `.../gpc-optmeowt/dist/chrome/` and `.../gpc-optmeowt/dist/firefox/`
+1. Clone this repo locally or download a zipped copy and unzip it.
+2. Install [npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm).
+3. From within your local `/gpc-optmeowt/` directory install OptMeowt's dependencies with `npm ci`.
+4. Build the project by running `npm run build`, which will create a built for both Chrome and Firefox in `.../gpc-optmeowt/dist/chrome/` and `.../gpc-optmeowt/dist/firefox/`, respectively. `npm run build` will also create packaged versions of OptMeowt in `.../gpc-optmeowt/packages` for distribution on the Chrome Web Store and on Firefox Add-Ons.
 
 ### Chrome
 
-6. In Chrome, navigate to the extensions page at `chrome://extensions/`.
-7. Enable `Developer mode` with the slider on the top right corner of the extension page.
-8. Click the `Load unpacked` button in the top left of the page.
-9. Navigate to where you built OptMeowt and select the `dist/chrome` subfolder (the folder should contain a copy of `manifest.json`). I.e.,\
-  `.../gpc-optmeowt/dist/chrome/`
-10. Click to finalize the install.
+5. In Chrome, navigate to the extensions page at `chrome://extensions/`.
+6. Enable `Developer mode` with the slider on the top right corner of the extension page.
+7. Click the `Load unpacked` button in the top left of the page.
+8. Select the directory where you built OptMeowt, by default `/gpc-optmeowt/dist/chrome/` (the directory that contains the `manifest.json``).
 
 ### Firefox
 
-6. In Firefox, navigate to the addons page with developer privileges at `about:debugging#/runtime/this-firefox`.
-7. Under `Temporary extensions`, click `Load Temporary Add-on..`.
-8. Navigate to where you built OptMeowt and select the manifest file from the `dist/firefox` folder. I.e.,\
-  `.../gpc-optmeowt/dist/firefox/manifest.json/`
-9. Click to finalize and install OptMeowt.
+5. In Firefox, navigate to the addons page with developer privileges at `about:debugging#/runtime/this-firefox`.
+6. Under `Temporary extensions`, click `Load Temporary Add-on..`.
+7. Select the manifest from the directory where you built OptMeowt, by default `/gpc-optmeowt/dist/firefox/manifest.json/`.
 
-Please note that OptMeowt is in active development and new features are frequently added, some of which may cause errors. You can always get the stable release version on the [Chrome Web Store](https://chrome.google.com/webstore/detail/optmeowt/hdbnkdbhglahihjdbodmfefogcjbpgbo) and on [Firefox Add-Ons](https://addons.mozilla.org/en-US/firefox/addon/optmeowt/).
+**Note:** OptMeowt is in active development and new features are frequently added, some of which may cause errors. You can always get the stable release version on the [Chrome Web Store](https://chrome.google.com/webstore/detail/optmeowt/hdbnkdbhglahihjdbodmfefogcjbpgbo) and on [Firefox Add-Ons](https://addons.mozilla.org/en-US/firefox/addon/optmeowt/).
 
 ## Installing OptMeowt for Developers
 
-Follow the directions above, replacing the command in step 4 above with `npm run start` in order to run the npm script (located in `package.json`) which will call Webpack in development mode (Webpack settings in `webpack.config.js`). This will also initiate Webpack servers for both the Firefox and Chrome versions which will listen for changes as you work and rebuild when necessary.
+To build the development versions of OptMeowt follow the directions above but replace `npm run build` with `npm run start`. This command will run the npm script (referenced in `package.json`) that will call Webpack in development mode (Webpack settings in `webpack.config.js`). `npm run start` will also initiate Webpack servers for both the Firefox and Chrome versions, which will listen for changes as you work and rebuild as necessary.
 
-In addition, instead of running `npm ci` in step 4 above, run `npm install`. Especially, if you include new dependencies, `npm install` will include those in the `package-lock.json`, which is generated from the `package.json`.
+**Note:** Webpack will build the development versions of OptMeowt into the `dev` subdirectory instead of the `dist` subdirectory. The subdirectories for Chrome and Firefox are `dev/chrome` and `dev/firefox`, respectively.
 
-Notice that Webpack will build the development versions of OptMeowt into the `dev` subfolder instead of `dist`, with subfolders `dev/firefox` and `dev/chrome` accordingly.
+Also, when you build for development, the development manifest (in `src/manifest-dev.json`) will be used instead of the distribution manifest (in `src/manifest-dist.json`). The development manifest contains an unsafe eval that we use for our source maps during development. The distribution manifest does not contain this eval. Webpack will select the correct manifest depending on whether you build for development or distribution.
+
+To include new dependencies you can run `npm install` instead of `npm ci`. `npm install` will include new dependencies in the `package-lock.json`, which is generated from the `package.json`.
 
 ### Optional
 
@@ -87,7 +76,7 @@ We also like to use [Debugger for Firefox](https://marketplace.visualstudio.com/
 
 ## OptMeowt's Permission Use
 
-We do not collect any data from you. Third parties will also not receive your data. The permissions OptMeowt is using are required for opting you out. To that end, OptMeowt uses the following permissions:
+**Note:** We do not collect any data from you. Third parties will also not receive your data. The permissions OptMeowt is using are required for opting you out. To that end, OptMeowt uses the following permissions:
 
 ```json
 "permissions": [
@@ -124,13 +113,13 @@ We do not collect any data from you. Third parties will also not receive your da
 
 ## Third Party Libraries
 
-OptMeowt is dependent on various [third party libraries](https://github.com/privacy-tech-lab/gpc-optmeowt/blob/main/package.json). We thank the developers.
+OptMeowt uses various [third party libraries](https://github.com/privacy-tech-lab/gpc-optmeowt/blob/main/package.json). We thank the developers.
 
 ## Developer Guide
 
-- When contributing, it is important to note that we manage all package dependencies with npm. Thus, it is recommended to use `npm i` to install packages.
-- When viewing your browser's console on a site you are sending GPC signals to, a 404 error regarding the site's GPC status file (`/.well-known/gpc.json`) may be shown. Note that this is perfectly normal, and will occur frequently (1) on sites that do not support GPC and (2) may even occur on sites that do respect GPC simply if the website does not host such a `/.well-known/gpc.json` file.
-- If you have questions about OptMeowt's functionality or have found a bug, please check out our [FAQ \ Known quirks](https://github.com/privacy-tech-lab/gpc-optmeowt/wiki/FAQ-%5C-Known-quirks) page on the [Wiki](https://github.com/privacy-tech-lab/gpc-optmeowt/wiki) first to see if we have already addressed the issue. If you cannot find what you are looking for, please feel free to open an issue and we will address it as soon as we can!
+- If you want to contribute, note that we manage all library dependencies with npm. Thus, it is recommended to use `npm i` to install libraries.
+- When viewing your browser's console on a site, a 404 error regarding the domain's GPC status file (`/.well-known/gpc.json`) may be shown. Note that this is normal and will occur (1) on domains that do not support GPC and (2) on domains that support GPC but do not host a `/.well-known/gpc.json` file.
+- If you have questions about OptMeowt's functionality or have found a bug, please check out our [FAQ \ Known quirks](https://github.com/privacy-tech-lab/gpc-optmeowt/wiki/FAQ-%5C-Known-quirks) page on the [Wiki](https://github.com/privacy-tech-lab/gpc-optmeowt/wiki) first. If you cannot find what you are looking for, feel free to open an issue, and we will address it.
 
 ## More Information 🐈
 
