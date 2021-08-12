@@ -19,12 +19,10 @@ import { cookiesDAA } from "../data/cookiesDAA.js"
 
 function initCookiesOnInstall() {
   setAllCookies(cookiesDAA)
-  setAllCookies(cookiesUserCustom)
 }
 
 function initCookiesPerDomain(domainFilter) {
   setFilteredCookies(cookiesDAA, domainFilter)
-  setFilteredCookies(cookiesUserCustom, domainFilter)
 }
 
 /**
