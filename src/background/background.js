@@ -20,7 +20,7 @@ import { initCookiesOnInstall } from "./cookiesOnInstall.js"
 
 
 // We could alt. use this in place of "building" for chrome/ff, just save it to settings in storage
-var userAgent = window.navigator.userAgent.indexOf("Firefox") > -1 ? "moz" : "chrome"
+var userAgent = window.navigator.userAgent.indexOf("Firefox") > -1 ? "moz" : "chrome";
 
 
 /**
@@ -47,17 +47,32 @@ export function disable() {
 /**
  * Initializes the extension
  * Place all initialization necessary, as high level as can be, here:
- * (1) Sets settings defaults
+ * (1) Sets settings defaults (if not done so)
  * (2) Places cookies to be placed on install
  * (3) Sets correct extension on/off mode
  */
 async function init() {
-  for (const setting in defaultSettings) {
-    await storage.set(stores.settings, defaultSettings[setting], setting);
+  // Pulls settings store from IDB and saves locally in settingsDB
+  const settingsValues = await storage.getAll(stores.settings);
+  const settingsKeys = await storage.getAllKeys(stores.settings);
+  let settingsDB = {};
+  let setting;
+  for (let key in settingsKeys) {
+    setting = settingsKeys[key];
+    settingsDB[setting] = settingsValues[key];
   }
 
-  initCookiesOnInstall()
-  
+  // Check if settings are set; if not, place according to defaultSettings.js
+  for (let setting in defaultSettings) {
+    if (!settingsDB[setting]) {
+      await storage.set(stores.settings, defaultSettings[setting], setting);
+    }
+  }
+
+  // Place on-install Do Not Sell cookies
+  initCookiesOnInstall();
+
+  // Initialize extension mode
   const mode = defaultSettings.MODE;
   if (mode === extensionMode.enabled || mode === extensionMode.domainlisted) {
     enable();
@@ -67,4 +82,4 @@ async function init() {
 }
 
 // Initialize call
-init()
+init();
