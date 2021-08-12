@@ -1,6 +1,6 @@
 {
   "name": "optmeowt",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "A privacy extension that allows users to exercise rights under GPC",
   "main": "index.js",
   "scripts": {
@@ -8,7 +8,6 @@
     "start": "concurrently -k npm:start:firefox  npm:start:chrome",
     "start:firefox": "webpack --watch --mode development --env firefox",
     "start:chrome": "webpack --watch --mode development --env chrome",
-
     "prebuild": "rimraf dist && mkdir dist && mkdir dist/packages",
     "build": "npm run build:firefox && npm run build:chrome",
     "build:firefox": "webpack --mode production --env firefox",
