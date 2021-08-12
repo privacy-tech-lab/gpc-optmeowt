@@ -1,3 +1,79 @@
+# Architecture Overview
+
+**NOTE: This file is unfinished! It is missing large pieces of infomration regarding OptMeowt**
+
+```
+src
+├── assets							# Static images & files
+├── background						# Manages the background script processes
+│   ├── background.js
+│   ├── contentScript.js
+│   ├── cookiesIAB.js
+│   ├── cookiesOnInstall.js
+│   ├── dom.js
+│   ├── events.js
+│   ├── listeners-chrome.js
+│   ├── listeners-firefox.js
+│   ├── storage.js
+│   └── storageCookies.js
+├── data							# Stores constant data (DNS signals, settings, etc.)
+│   ├── cookiesDAA.js
+│   ├── defaultSettings.js
+│   ├── headers.js
+│   └── privacyFlags.js
+├── manifest-dev.json
+├── manifest-dist.json
+├── options							# Options page frontend
+│   ├── components
+│   │   ├── scaffold-component.html
+│   │   └── util.js
+│   ├── dark-mode.css
+│   ├── options.html
+│   ├── options.js
+│   ├── styles.css
+│   └── views
+│       ├── about-view
+│       │   ├── about-view.html
+│       │   └── about-view.js
+│       ├── domainlist-view
+│       │   ├── domainlist-view.html
+│       │   └── domainlist-view.js
+│       ├── main-view
+│       │   ├── main-view.html
+│       │   └── main-view.js
+│       └── settings-view
+│           ├── settings-view.html
+│           └── settings-view.js
+├── popup							# Popup page frontend
+│   ├── popup.html
+│   ├── popup.js
+│   └── styles.css
+└── theme							# Contains darkmode
+    └── darkmode.js
+```
+
+
+The following folders have detailed descriptions further in the document. 
+
+[src/background]()\
+[src/data]()\
+[src/options]()\
+[src/popup]()\
+
+The extension architecture (background scripts vs. popup vs. options page and their ineraction) as well as the build process (webpack and entry points) are described here. 
+
+
+**High-level picture**
+
+
+
+<!-- /////////////////////////////////////////////////////////////////////// -->
+<!-- /////////////////////////////////////////////////////////////////////// -->
+<!-- /////////////////////////////////////////////////////////////////////// -->
+<!-- /////////////////////////////////////////////////////////////////////// -->
+<!-- /////////////////////////////////////////////////////////////////////// -->
+
+
 # `src/background` Roadmap
 
 1) `background.html`
@@ -99,3 +175,10 @@ NOTE: `details` is a javascript object, usually following the format of returned
 
 1) `setToStorage(data)`: *data* is information to be stored wrapped in an *object*
 2) `getFromStorage(key)`: *key* is a *string*
+
+
+<!-- /////////////////////////////////////////////////////////////////////// -->
+<!-- /////////////////////////////////////////////////////////////////////// -->
+<!-- /////////////////////////////////////////////////////////////////////// -->
+<!-- /////////////////////////////////////////////////////////////////////// -->
+<!-- /////////////////////////////////////////////////////////////////////// -->
