@@ -100,6 +100,10 @@ We also like to use [Debugger for Firefox](https://marketplace.visualstudio.com/
 - `cookies`: Allows OptMeowt to place opt out cookies in your browser
 - `tabs`: Allows OptMeowt to keep track of HTTP headers per tab to show you the opt out status of the current site in a popup
 
+## OptMeowt's Architecture
+
+Detailed information on OptMeowt's architecture is available in a [separate readme](https://github.com/privacy-tech-lab/gpc-optmeowt/blob/main/README_ARCHITECTURE.md).
+
 ## Directories in this Repo
 
 - `src/`: Main contents of the OptMeowt browser extension.

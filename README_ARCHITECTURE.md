@@ -1,6 +1,6 @@
 # Architecture Overview
 
-**NOTE: This file is unfinished! It is missing large pieces of infomration regarding OptMeowt**
+**NOTE: This file is unfinished! It is missing large pieces of information regarding OptMeowt**
 
 ```
 src
@@ -60,19 +60,15 @@ The following folders have detailed descriptions further in the document.
 [src/options]()\
 [src/popup]()\
 
-The extension architecture (background scripts vs. popup vs. options page and their ineraction) as well as the build process (webpack and entry points) are described here. 
-
+The extension architecture (background scripts vs. popup vs. options page and their interaction) as well as the build process (Webpack and entry points) are described here.
 
 **High-level picture**
 
-
-
 <!-- /////////////////////////////////////////////////////////////////////// -->
 <!-- /////////////////////////////////////////////////////////////////////// -->
 <!-- /////////////////////////////////////////////////////////////////////// -->
 <!-- /////////////////////////////////////////////////////////////////////// -->
 <!-- /////////////////////////////////////////////////////////////////////// -->
-
 
 # `src/background` Roadmap
 
@@ -128,7 +124,7 @@ NOTE: this can potentially be converted into a content script.
 
 ## `domainlist.js`
 
-Generally to be used with `async` / `await` syntax (i.e. `await initDomainlist()`), all functions return data via promises (though not all contain important info). The idea is to allow simple domainlist calls everywhere in the extension
+Generally to be used with `async` / `await` syntax (i.e. `await initDomainlist()`), all functions return data via promises (though not all contain important info). The idea is to allow simple domain list calls everywhere in the extension
 
 **imports** `storage.js`
 
@@ -175,7 +171,6 @@ NOTE: `details` is a javascript object, usually following the format of returned
 
 1) `setToStorage(data)`: *data* is information to be stored wrapped in an *object*
 2) `getFromStorage(key)`: *key* is a *string*
-
 
 <!-- /////////////////////////////////////////////////////////////////////// -->
 <!-- /////////////////////////////////////////////////////////////////////// -->
