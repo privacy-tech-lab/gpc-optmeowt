@@ -36,21 +36,21 @@ https://developer.chrome.com/extensions/content_scripts
 	window.onload = function(){
 		
 		var tagtypes = ["a","button","footer"]; //tag types to search for
-		var phrasing = ["Do Not Sell My Personal Information","Do Not Sell My Info", "Do Not Sell My Information", "Do not sell my info"];
+		var phrasing = /Do.Not.Sell.My|Don't.Sell.My/gmi
+
 		for (let x=0; x<tagtypes.length;x++){
-			//expand phrasing with alternative ways to say DNS
 			var elements = document.getElementsByTagName(tagtypes[x]);
 			for (let i = 0; i<elements.length; i++){
 				var element = elements[i];
 				var text = element.innerHTML;
-				for (let a=0; a<phrasing.length; a++){
-					if (text === phrasing[a]){
-						chrome.runtime.sendMessage({
-							msg: "DNS_LINK_FOUND",
-							//nothing is listening for this message right now
-						});
-					console.log("found it as "+ element.tagName + " tag\nsearched for "+tagtypes[x]+"\nlen: "+ elements.length);
-					}
+				if (phrasing.test(text)){
+					chrome.runtime.sendMessage({
+						msg: "DNS_LINK_FOUND",
+						//nothing is listening for this message right now
+					});
+					//alert("found it as "+ element.tagName + " tag\nsearched for "+tagtypes[x]+"\nlen: "+ elements.length);
+					//console.log("found it as "+ element.tagName + " tag\nsearched for "+tagtypes[x]+"\nlen: "+ elements.length);
+					break;
 				}
 			}
 		}
