@@ -7,15 +7,14 @@ privacy-tech-lab, https://privacytechlab.org/
 
 
 /*
-settings.js
+defaultSettings.js
 ================================================================================
-settings.js exports the default global extension settings
-NOTE: 
+defaultSettings.js exports the default global extension settings
 */
 
 
-import { extensionMode } from "../background/storage.js"
-
+// import { extensionMode } from "../background/storage.js"
+import { modes } from "./modes"
 
 // We could also make the keys here the values of an enumerated object, but
 // there is less incentive to do so since it complicates the code and 
@@ -23,7 +22,8 @@ import { extensionMode } from "../background/storage.js"
 export const defaultSettings = {
 	'BROWSER': '$BROWSER',
 	'DOMAINLIST_PRESSED': false,
-	'MODE': extensionMode.enabled,
+	'FUNCTIONALITY': modes.functionality.analysis,
+	'READINESS': modes.readiness.enabled,
 	'TUTORIAL_SHOWN': false,
 	'TUTORIAL_SHOWN_IN_POPUP': false,
 }

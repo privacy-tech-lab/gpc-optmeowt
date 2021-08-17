@@ -25,11 +25,11 @@ import { storageCookies } from "./storageCookies.js"
 // We could use strings instead of hard coding the following objects, however using an
 // enumerated object prevents mistyping a string as a parameter, hopefully
 // saving us some potential grief
-const extensionMode = Object.freeze({
-	enabled: 'ENABLED',
-	domainlisted: 'DOMAINLISTED',
-	disabled: 'DISABLED'
-});
+// const extensionMode = Object.freeze({
+// 	enabled: 'ENABLED',
+// 	domainlisted: 'DOMAINLISTED',
+// 	disabled: 'DISABLED'
+// });
 
 // In general, these functions should be use with async / await for 
 // syntactic sweetness & synchronous data handling 

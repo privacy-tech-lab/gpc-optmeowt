@@ -15,9 +15,9 @@ events.js (1) Implements our per-site functionality for the background listeners
 
 
 import { enable, disable } from "./background.js"
-import { extensionMode, stores, storage } from "./storage.js"
-import { defaultSettings } from "../data/defaultSettings.js"
-import { headers } from "../data/headers.js"
+import { extensionMode, stores, storage } from "./../storage.js"
+import { defaultSettings } from "../../data/defaultSettings.js"
+import { headers } from "../../data/headers.js"
 import { initIAB } from "./cookiesIAB.js"
 import { initCookiesPerDomain } from "./cookiesOnInstall.js"
 import psl from "psl"

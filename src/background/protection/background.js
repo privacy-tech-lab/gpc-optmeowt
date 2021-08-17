@@ -15,7 +15,7 @@ main opt-out functionality
 
 import { enableListeners, disableListeners } from "./listeners-$BROWSER.js"
 import { extensionMode, stores, storage } from "./storage.js"
-import { defaultSettings } from "../data/defaultSettings.js"
+import { defaultSettings } from "../../data/defaultSettings.js"
 import { initCookiesOnInstall } from "./cookiesOnInstall.js"
 
 
