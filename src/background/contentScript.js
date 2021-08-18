@@ -44,12 +44,8 @@ https://developer.chrome.com/extensions/content_scripts
 				var element = elements[i];
 				var text = element.innerHTML;
 				if (phrasing.test(text)){
-					chrome.runtime.sendMessage({
-						msg: "DNS_LINK_FOUND",
-						//nothing is listening for this message right now
-					});
-					//alert("found it as "+ element.tagName + " tag\nsearched for "+tagtypes[x]+"\nlen: "+ elements.length);
-					//console.log("found it as "+ element.tagName + " tag\nsearched for "+tagtypes[x]+"\nlen: "+ elements.length);
+					console.log("Found it");
+
 					break;
 				}
 			}
