@@ -206,6 +206,7 @@ function updatePopupIcon(details) {
       function () { /*console.log("Updated OptMeowt icon to GREEN RING");*/ }
     );
   }
+  
 }
   
 function logData(details) {
@@ -416,7 +417,8 @@ chrome.runtime.onMessage.addListener(async function (request, sender, sendRespon
         );
       }
     }
-  } 
+  }
+
   if (request.msg === "CONTENT_SCRIPT_TAB") {
     // console.log("CONTENT_SCRIPT_TAB MESSAGE HAS BEEN RECEIVED")
     let url = new URL(sender.origin);
