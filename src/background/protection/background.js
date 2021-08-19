@@ -38,14 +38,14 @@ var userAgent = window.navigator.userAgent.indexOf("Firefox") > -1 ? "moz" : "ch
  * 
  * HIERARCHY:   manifest.json --> background.js --> listeners-$BROWSER.js --> events.js
  */
-function enable() {
+export function enable() {
   enableListeners();
 }
 
 /**
  * Disables extension functionality
  */
-function disable() {
+export function disable() {
   disableListeners();
 }
 
@@ -54,32 +54,21 @@ function preinit() {};
 /**
  * Initializes the extension
  * Place all initialization necessary, as high level as can be, here:
- * (1) Sets settings defaults (if not done so)
- * (2) Places cookies to be placed on install
+ * (1) Sets settings defaults (if not done so), by comparing to whatever
+ *     is already placed in the settings store via `storage.js`
+ * (2) Places Do Not Sell cookies to be placed on install
  * (3) Sets correct extension on/off mode
  */
 async function init() {
-  // Pulls settings store from IDB and saves locally in settingsDB
-  const settingsValues = await storage.getAll(stores.settings);
-  const settingsKeys = await storage.getAllKeys(stores.settings);
-  let settingsDB = {};
-  let setting;
-  for (let key in settingsKeys) {
-    setting = settingsKeys[key];
-    settingsDB[setting] = settingsValues[key];
-  }
-
-  // Check if settings are set; if not, place according to defaultSettings.js
+  let settingsDB = storage.getStore(stores.settings);
   for (let setting in defaultSettings) {
     if (!settingsDB[setting]) {
       await storage.set(stores.settings, defaultSettings[setting], setting);
     }
   }
 
-  // Place on-install Do Not Sell cookies
   initCookiesOnInstall();
 
-  // Initialize extension mode
   const mode = defaultSettings.MODE;
   if (mode === modes.readiness.enabled || mode === modes.readiness.domainlisted) {
     enable();
@@ -90,11 +79,11 @@ async function init() {
 
 function postinit() {};
 
-function halt() {};
+function halt() { disableListeners(); };
 
 export const background = {
   preinit,
   init,
   postinit,
-  halt
+  halt,
 }

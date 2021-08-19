@@ -14,13 +14,15 @@ analysis functionality
 */
 
 
-function preinit() {};
+function preinit() { return; };
 
-function init() {};
+function init() {
+	
+};
 
-function postinit() {};
+function postinit() { return; };
 
-function halt() {};
+function halt() { return; };
 
 
 export const background = {

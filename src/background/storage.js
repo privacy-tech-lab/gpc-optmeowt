@@ -61,6 +61,18 @@ const storage = {
     async getAllKeys(store) {
         return (await dbPromise).getAllKeys(store)
     },
+    // returns an object containing the given store
+    async getStore(store) {
+        const storeValues = await storage.getAll(store);
+        const storeKeys = await storage.getAllKeys(store);
+        let storeCopy = {};
+        let key;
+        for (let index in storeKeys) {
+            key = storeKeys[index];
+            storeCopy[key] = storeValues[index];
+        }
+        return storeCopy;
+    },
     async set(store, value, key) {
         return new Promise(async (resolve, reject) => {
             // placing or deleting opt out cookies for a given domain key

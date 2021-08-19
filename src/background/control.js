@@ -38,6 +38,10 @@ const readiness = modes.readiness;
 
 // Mode listeners
 
+// (1) Handle extension activeness is changed by calling all halt
+// 	 - Make sure that I switch extensionmode and separate it from mode.domainlist
+// (2) Handle extension functionality with listeners and message passing
+
 
 // Mode init
 
@@ -47,11 +51,13 @@ if (defaultReadiness !== readiness.disabled) {
 			analysis.preinit();
 			analysis.init();
 			analysis.postinit();
+			console.log(`Initializing Analysis mode. `);
 			break;
 		case functionality.protection:
 			protection.preinit();
 			protection.init();
 			protection.postinit();
+			console.log(`Initializing Protection mode. `);
 			break;
 		default:
 			console.error("Loading extension functionality mode failed.");
