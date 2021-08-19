@@ -14,7 +14,7 @@ control.js controls the flow of the extension
 
 
 import { background as analysis } from "./analysis/background";
-// import { background as protection } from "./protection/background";
+import { background as protection } from "./protection/background";
 
 // import {
 // 	preinit as preinitAnalysis,
@@ -48,11 +48,11 @@ if (defaultReadiness !== readiness.disabled) {
 			analysis.init();
 			analysis.postinit();
 			break;
-		// case functionality.protection:
-		// 	protection.preinit();
-		// 	protection.init();
-		// 	protection.postinit();
-			// break;
+		case functionality.protection:
+			protection.preinit();
+			protection.init();
+			protection.postinit();
+			break;
 		default:
 			console.error("Loading extension functionality mode failed.");
 	}

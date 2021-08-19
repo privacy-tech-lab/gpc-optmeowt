@@ -13,7 +13,12 @@ popup.js supplements and renders complex elements on popup.html
 */
 
 
-import { extensionMode, stores, storage } from "../background/storage.js";
+import { 
+  // extensionMode, 
+  stores, 
+  storage 
+} from "../background/storage.js";
+import { modes } from "../data/modes.js";
 
 // CSS TO JS IMPORTS
 import "../../node_modules/uikit/dist/css/uikit.min.css"
@@ -114,7 +119,7 @@ document.addEventListener("DOMContentLoaded", async (event) => {
     document
       .getElementById("enable-disable")
       .setAttribute("uk-tooltip", "Enable");
-  } else if (mode === extensionMode.enabled || mode === extensionMode.domainlisted) {
+  } else if (mode === modes.readiness.enabled || mode === modes.readiness.domainlisted) {
     document.getElementById("img").src = "../assets/pause-circle-outline.svg";
     document
       .getElementById("enable-disable")
@@ -135,7 +140,7 @@ document.addEventListener("DOMContentLoaded", async (event) => {
   // Listener: ENABLE/DISABLE button
   document.getElementById("enable-disable").addEventListener("click", async () => {
     const mode = await storage.get(stores.settings, 'MODE');
-    if (mode === extensionMode.enabled || mode === extensionMode.domainlisted) {
+    if (mode === modes.readiness.enabled || mode === modes.readiness.domainlisted) {
       document.getElementById("message").style.display = "";
       document.getElementById("img").src =
         "../assets/play-circle-outline.svg";
@@ -144,7 +149,7 @@ document.addEventListener("DOMContentLoaded", async (event) => {
         .setAttribute("uk-tooltip", "Enable");
       document.getElementById("content").style.opacity = "0.1";
       document.getElementById("message").style.opacity = "1";
-      chrome.runtime.sendMessage({ msg: "CHANGE_MODE", data: extensionMode.disabled })
+      chrome.runtime.sendMessage({ msg: "CHANGE_MODE", data: modes.readiness.disabled })
     } else {
       document.getElementById("img").src =
         "../assets/pause-circle-outline.svg";
@@ -154,7 +159,7 @@ document.addEventListener("DOMContentLoaded", async (event) => {
       document.getElementById("content").style.opacity = "1";
       document.getElementById("message").style.opacity = "0";
       document.getElementById("message").style.display = "none";
-      chrome.runtime.sendMessage({ msg: "CHANGE_MODE", data: extensionMode.enabled })
+      chrome.runtime.sendMessage({ msg: "CHANGE_MODE", data: modes.readiness.enabled })
     }
   });
 
@@ -186,7 +191,7 @@ document.addEventListener("DOMContentLoaded", async (event) => {
   // Listener: 1st party domain "Do Not Sell Enabled/Disabled" text + toggle
   document.getElementById("switch-label").addEventListener("click", async () => {
     // await storage.set(stores.settings, extensionMode.domainlisted, 'MODE');
-    chrome.runtime.sendMessage({ msg: "CHANGE_MODE", data: extensionMode.domainlisted })
+    chrome.runtime.sendMessage({ msg: "CHANGE_MODE", data: modes.readiness.domainlisted })
     const parsedDomainValue = await storage.get(stores.domainlist, parsedDomain);
     let elemString = "";
     if (parsedDomainValue) {
@@ -273,7 +278,7 @@ document.addEventListener("DOMContentLoaded", async (event) => {
 function addThirdPartyDomainToggleListener(requestDomain) {
   document.getElementById(`input-${requestDomain}`).addEventListener("click", async () => {
     // await storage.set(stores.settings, extensionMode.domainlisted, 'MODE')
-    chrome.runtime.sendMessage({ msg: "CHANGE_MODE", data: extensionMode.domainlisted })
+    chrome.runtime.sendMessage({ msg: "CHANGE_MODE", data: modes.readiness.domainlisted })
     const requestDomainValue = await storage.get(stores.domainlist, requestDomain)
     let elemString = "";
     if (requestDomainValue) {

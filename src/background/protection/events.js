@@ -15,7 +15,12 @@ events.js (1) Implements our per-site functionality for the background listeners
 
 
 import { enable, disable } from "./background.js"
-import { extensionMode, stores, storage } from "./../storage.js"
+import { 
+  // extensionMode, 
+  stores, 
+  storage 
+} from "./../storage.js"
+import { modes } from "../../data/modes.js"
 import { defaultSettings } from "../../data/defaultSettings.js"
 import { headers } from "../../data/headers.js"
 import { initIAB } from "./cookiesIAB.js"
@@ -174,13 +179,13 @@ function updateDomainlistAndSignal(details) {
   // (1) Check which MODE OptMeowt is in,
   // (2) if domainlisted, check if in domainlist
   // const mode = await storage.get(stores.settings, "MODE");
-  if (mode === extensionMode.domainlisted) {
+  if (mode === modes.readiness.domainlisted) {
     if (parsedDomainVal === true) {
       sendSignal = true;
     } else {
       sendSignal = false;
     }
-  } else if (mode === extensionMode.enabled) {
+  } else if (mode === modes.readiness.enabled) {
     sendSignal = true;
   } else {
     sendSignal = false;
@@ -364,20 +369,20 @@ chrome.runtime.onMessage.addListener(async function (request, sender, sendRespon
   if (request.msg === "CHANGE_MODE") {
     // (1) enable/disable extension; (2) set cached mode; (3) set to storage;
     switch (request.data) {
-      case extensionMode.enabled:
+      case modes.readiness.enabled:
         enable();
-        mode = extensionMode.enabled;
-        await storage.set(stores.settings, extensionMode.enabled, "MODE");
+        mode = modes.readiness.enabled;
+        await storage.set(stores.settings, modes.readiness.enabled, "MODE");
         break;
-      case extensionMode.domainlisted:
+      case modes.readiness.domainlisted:
         enable();
-        mode = extensionMode.domainlisted;
-        await storage.set(stores.settings, extensionMode.domainlisted, "MODE");
+        mode = modes.readiness.domainlisted;
+        await storage.set(stores.settings, modes.readiness.domainlisted, "MODE");
         break;
-      case extensionMode.disabled:
+      case modes.readiness.disabled:
         disable();
-        mode = extensionMode.disabled;
-        await storage.set(stores.settings, extensionMode.disabled, "MODE");
+        mode = modes.readiness.disabled;
+        await storage.set(stores.settings, modes.readiness.disabled, "MODE");
         break;
       default:
         console.error(`CHANGE_MODE failed, mode not recognized.`);

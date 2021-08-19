@@ -154,7 +154,7 @@ export {
     handleDownload,
     startUpload,
     handleUpload,
-    extensionMode,
+    // extensionMode,
     stores,
     storage
 }

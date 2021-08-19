@@ -14,7 +14,12 @@ main opt-out functionality
 */
 
 import { enableListeners, disableListeners } from "./listeners-$BROWSER.js"
-import { extensionMode, stores, storage } from "./storage.js"
+import { 
+  // extensionMode, 
+  stores, 
+  storage 
+} from "../storage.js"
+import { modes } from "../../data/modes.js";
 import { defaultSettings } from "../../data/defaultSettings.js"
 import { initCookiesOnInstall } from "./cookiesOnInstall.js"
 
@@ -33,16 +38,18 @@ var userAgent = window.navigator.userAgent.indexOf("Firefox") > -1 ? "moz" : "ch
  * 
  * HIERARCHY:   manifest.json --> background.js --> listeners-$BROWSER.js --> events.js
  */
-export function enable() {
-  enableListeners()
+function enable() {
+  enableListeners();
 }
 
 /**
  * Disables extension functionality
  */
-export function disable() {
-  disableListeners()
+function disable() {
+  disableListeners();
 }
+
+function preinit() {};
 
 /**
  * Initializes the extension
@@ -74,12 +81,20 @@ async function init() {
 
   // Initialize extension mode
   const mode = defaultSettings.MODE;
-  if (mode === extensionMode.enabled || mode === extensionMode.domainlisted) {
+  if (mode === modes.readiness.enabled || mode === modes.readiness.domainlisted) {
     enable();
   } else {
     disable();
   }
 }
 
-// Initialize call
-init();
+function postinit() {};
+
+function halt() {};
+
+export const background = {
+  preinit,
+  init,
+  postinit,
+  halt
+}

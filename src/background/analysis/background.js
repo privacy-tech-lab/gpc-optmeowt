@@ -14,16 +14,18 @@ analysis functionality
 */
 
 
+function preinit() {};
+
+function init() {};
+
+function postinit() {};
+
+function halt() {};
+
+
 export const background = {
-	preinit() {
-
-	},
-
-	init() {
-
-	},
-
-	postinit() {
-
-	}
+	preinit,
+	init,
+	postinit,
+	halt
 }

@@ -19,8 +19,9 @@ import {
   handleUpload,
   stores,
   storage,
-  extensionMode
+  // extensionMode
 } from "../../../background/storage.js";
+import { modes } from "../../../data/modes.js";
 
 // Used in tutorial
 import UIkit from "../../../../node_modules/uikit/dist/js/uikit";
@@ -47,17 +48,17 @@ function eventListeners() {
   document
     .getElementById("settings-view-radio0")
     .addEventListener("click", () => {
-      chrome.runtime.sendMessage({ msg: "CHANGE_MODE", data: extensionMode.enabled });
+      chrome.runtime.sendMessage({ msg: "CHANGE_MODE", data: modes.readiness.enabled });
     });
   document
     .getElementById("settings-view-radio1")
     .addEventListener("click", () => {
-      chrome.runtime.sendMessage({ msg: "CHANGE_MODE", data: extensionMode.disabled });
+      chrome.runtime.sendMessage({ msg: "CHANGE_MODE", data: modes.readiness.disabled });
     });
   document
     .getElementById("settings-view-radio2")
     .addEventListener("click", () => {
-      chrome.runtime.sendMessage({ msg: "CHANGE_MODE", data: extensionMode.domainlisted });
+      chrome.runtime.sendMessage({ msg: "CHANGE_MODE", data: modes.readiness.domainlisted });
     });
   document
     .getElementById("download-button")
@@ -181,18 +182,18 @@ export async function settingsView(scaffoldTemplate) {
   const mode = await storage.get(stores.settings, "MODE");
   // console.log(`mode = ${mode}`);
   switch (mode) {
-    case extensionMode.enabled:
+    case modes.readiness.enabled:
       document.getElementById("settings-view-radio0").checked = true;
       break;
-    case extensionMode.domainlisted:
+    case modes.readiness.domainlisted:
       document.getElementById("settings-view-radio2").checked = true;
       break;
-    case extensionMode.disabled:
+    case modes.readiness.disabled:
       document.getElementById("settings-view-radio1").checked = true;
       break;
     default:
       console.log(`FAILED: Couldn't load mode for radio buttons. Changing mode to ENABLED.`);
-      chrome.runtime.sendMessage({ msg: "CHANGE_MODE", data: extensionMode.enabled });
+      chrome.runtime.sendMessage({ msg: "CHANGE_MODE", data: modes.readiness.enabled });
       document.getElementById("settings-view-radio0").checked = true;
   }
 
