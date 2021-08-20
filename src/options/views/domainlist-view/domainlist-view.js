@@ -61,10 +61,47 @@ export async function toggleListener(elementId, domain) {
   })
 }
 
+export async function dropListener(domain) {
+  document.getElementById("div " + domain).addEventListener("click", () => {
+    // var icon = document.getElementById("dropdown")
+    if (document.getElementById(domain + " analysis").style.display === "none") {
+      document.getElementById("dropdown " + domain).src = "../assets/chevron-up.svg"
+      document.getElementById(domain + " analysis").style.display = ""
+      document.getElementById("div " + domain).classList.add("dropdown-tab-click")
+      document.getElementById("divider " + domain).style.display = ""
+    } else {
+      document.getElementById("dropdown " + domain).src = "../assets/chevron-down.svg"
+      document.getElementById(domain + " analysis").style.display = "none"
+      document.getElementById("div " + domain).classList.remove("dropdown-tab-click")
+      document.getElementById("divider " + domain).style.display = "none"
+    }
+  });
+}
+
 /**
  * Creates the specific Domain List toggles as well as the perm delete
  * buttons for each domain
  */
+ async function createDropListeners(){
+  let verdict;
+  const domainlistKeys = await storage.getAllKeys(stores.domainlist)
+  const domainlistValues = await storage.getAll(stores.domainlist)
+  let domain;
+  let domainValue;
+  for (let index in domainlistKeys) {
+    let x = Math.round(Math.random());
+    if(x){
+      verdict = true;
+    }else{
+      verdict = false;
+    }
+    domain = domainlistKeys[index];
+    //console.log(domain);
+    dropListener(domain)
+    compliant(verdict, domain)
+  }
+}
+
  async function createToggleListeners() {
   const domainlistKeys = await storage.getAllKeys(stores.domainlist)
   const domainlistValues = await storage.getAll(stores.domainlist)
@@ -78,6 +115,55 @@ export async function toggleListener(elementId, domain) {
     deleteButtonListener(domain)
   }
 }
+
+
+/**
+ * Create the compliance label
+ * @param {string} domain
+ */
+ function compliant (verdict ,domain) {
+   if(verdict == true){
+  document.getElementById(`${domain} compliance`).outerHTML =
+  `<div
+  id = "${domain} compliance"
+  class="uk-badge button"
+  style="
+    margin-right: 5px;
+    margin-left: 5px;
+    margin-top: auto;
+    margin-bottom: auto;
+    padding-right: 5px;
+    padding-left: 5px;
+    background-color: white;
+    border: 1px solid rgb(0,244,133);
+    color: rgb(0,244,133);
+  "
+>
+  Compliant
+</div>`
+   } else {
+      document.getElementById(`${domain} compliance`).outerHTML = 
+      `          <div
+      id = "${domain} compliance"
+      class="uk-badge button"
+      style="
+        margin-right: 5px;
+        margin-left: 5px;
+        margin-top: auto;
+        margin-bottom: auto;
+        padding-right: 5px;
+        padding-left: 5px;
+        background-color: white;
+        border: 1px solid #f44336;
+        color: #f44336;
+      "
+    >
+      Not Compliant
+    </div>`
+   }
+
+}
+
 
 /**
  * Delete buttons for each domain
@@ -106,12 +192,12 @@ NOTE: It will be automatically added back to the list when the domain is request
  * @property {string} headings.subtitle - Subtitle of the given page
  */
 const headings = {
-    title: 'Domain List',
-    subtitle: "Toggle which domains you would like to receive Do Not Sell signals"
+    title: 'Analyzed Domains',
+    subtitle: "A breakdown of the CCPA compliance of sites you have visited"
 }
 
 /**
- * Filterd lists code heavily inspired by
+ * Filtered lists code heavily inspired by
  * `https://www.w3schools.com/howto/howto_js_filter_lists.asp`
  *
  * Enables live filtering of domains via the search bar
@@ -140,7 +226,7 @@ const headings = {
 async function eventListeners() {
     document.getElementById('searchbar').addEventListener('keyup', filterList )
     // document.getElementById('plus-button').addEventListener('keyup', plusButton )
-    await createToggleListeners();
+    await createDropListeners();
 
     window.onscroll = function() { stickyNavbar() };
     var nb = document.getElementById("domainlist-navbar");
@@ -179,21 +265,33 @@ async function buildList() {
     items +=
           `
     <li id="li ${domain}">
-      <div uk-grid class="uk-grid-small uk-width-1-1" style="font-size: medium;">
+      <div id = "div ${domain}" uk-grid class="uk-grid-small uk-width-1-1" style="font-size: medium;">
         <div>
-          <label class="switch">
-          `
-          +
-            buildToggle(domain, domainValue)
-            //<input type="checkbox" id="select" class="check text-color dark-checkbox" />
-          +
-          `
+          <div
+          class="uk-container"
+          style="margin: auto; padding: 0; padding-left: 30px;"
+          uk-tooltip="Dropdown"
+        >
+          <img
+            id="dropdown ${domain}"
+            src="./assets/chevron-down.svg"
+            height="15"
+            width="15"
+            alt="dropdown"
+            uk-svg
+          />
+        </div>
             <span></span>
           </label>
         </div>
         <div class="domain uk-width-expand">
           ${domain}
+          <hr class="divide" id="divider ${domain}" style="margin:0px; display: none">
+          <ol id="${domain} analysis" class="uk-list" style="display:none">
+            <li> INFORMATION HERE </li>
+          </ol>
         </div>
+
         <div style="
           margin-right: 5px;
           margin-left: 5px;
@@ -210,26 +308,23 @@ async function buildList() {
           `
             <span></span>
           </label>
+          <div
+          id = "${domain} compliance"
+          class="uk-badge button"
+          style="
+            margin-right: 5px;
+            margin-left: 5px;
+            margin-top: auto;
+            margin-bottom: auto;
+            padding-right: 5px;
+            padding-left: 5px;
+            background-color: white;
+            border: 1px solid #f44336;
+            color: #f44336;
+          "
+        >
+          Compliant
         </div>
-          <button
-            id="delete ${domain}"
-            class="uk-badge button"
-            type="button"
-            style="
-              margin-right: 5px;
-              margin-left: 5px;
-              margin-top: auto;
-              margin-bottom: auto;
-              padding-right: 5px;
-              padding-left: 5px;
-              background-color: white;
-              border: 1px solid #e06d62;
-              color: #e06d62;
-            "
-          >
-            Delete
-          </button>
-      </div>
     </li>
           `
   }
@@ -248,5 +343,6 @@ export async function domainlistView(scaffoldTemplate) {
     document.getElementById('scaffold-component-body').innerHTML = content.innerHTML
 
     await buildList();
+
     eventListeners();
 }
