@@ -18,61 +18,28 @@ import { renderParse, fetchParse } from '../../components/util.js'
 
 
 /******************************************************************************/
-/***************************** Toggle Functions *******************************/
+/***************************** Dropdown Functions *******************************/
 /******************************************************************************/
 
-/**
- * Generates the HTML that will build the domainlist switch for a given
- * domain in the domainlist
- * @param {string} domain - Any given domain
- * @param {bool} bool - Represents whether it is domainlisted or not
- * @return {string} - The stringified checkbox HTML compontent
- */
- export function buildToggle(domain, bool) {
-  let toggle;
-  if (bool) {
-    // checkbox = `<input type="checkbox" id="select ${domain}"
-    //           class="check text-color dark-checkbox" checked />`;
-    toggle = `<input type="checkbox" id="${domain}" checked />`;
-  } else {
-    // checkbox = `<input type="checkbox" id="select ${domain}"
-    //           class="check text-color dark-checkbox"/>`;
-    toggle = `<input type="checkbox" id="${domain}" />`;
-  }
-  return toggle
-}
 
-/**
- * Creates an event listener that toggles a given domain's stored value in
- * the domainlist if a user clicks on the object with the given element ID
- * @param {string} elementId - HTML element to be linked to the listener
+/*
  * @param {string} domain - domain to be changed in domainlist
  */
-export async function toggleListener(elementId, domain) {
-  document.getElementById(elementId).addEventListener("click", async () => {
-    const domainValue = await storage.get(stores.domainlist, domain)
-    if (domainValue) {
-      // await storage.set(stores.domainlist, false, domain)
-      chrome.runtime.sendMessage({ msg: "SET_TO_DOMAINLIST", data: { domain: domain, key: false } });
-    } else {
-      // await storage.set(stores.domainlist, true, domain)
-      chrome.runtime.sendMessage({ msg: "SET_TO_DOMAINLIST", data: { domain: domain, key: true } });
-    }
-  })
-}
 
 export async function dropListener(domain) {
-  document.getElementById("div " + domain).addEventListener("click", () => {
+  document.getElementById("li " + domain).addEventListener("click", () => {
     // var icon = document.getElementById("dropdown")
     if (document.getElementById(domain + " analysis").style.display === "none") {
+      document.getElementById(domain + " compliance").style.marginTop = "auto"
       document.getElementById("dropdown " + domain).src = "../assets/chevron-up.svg"
       document.getElementById(domain + " analysis").style.display = ""
-      document.getElementById("div " + domain).classList.add("dropdown-tab-click")
+      //document.getElementById("li " + domain).classList.add("dropdown-tab-click")
       document.getElementById("divider " + domain).style.display = ""
     } else {
+      document.getElementById(domain + " compliance").style.marginTop = "auto"
       document.getElementById("dropdown " + domain).src = "../assets/chevron-down.svg"
       document.getElementById(domain + " analysis").style.display = "none"
-      document.getElementById("div " + domain).classList.remove("dropdown-tab-click")
+      //document.getElementById("li " + domain).classList.remove("dropdown-tab-click")
       document.getElementById("divider " + domain).style.display = "none"
     }
   });
@@ -102,64 +69,21 @@ export async function dropListener(domain) {
   }
 }
 
- async function createToggleListeners() {
-  const domainlistKeys = await storage.getAllKeys(stores.domainlist)
-  const domainlistValues = await storage.getAll(stores.domainlist)
-  let domain;
-  let domainValue;
-  for (let index in domainlistKeys) {
-    domain = domainlistKeys[index];
-    domainValue = domainlistValues[index];
-    // MAKE SURE THE ID MATCHES EXACTLY
-    toggleListener(domain, domain)
-    deleteButtonListener(domain)
-  }
-}
-
 
 /**
  * Create the compliance label
  * @param {string} domain
  */
  function compliant (verdict ,domain) {
+   let identifier = document.getElementById(`${domain} compliance`);
    if(verdict == true){
-  document.getElementById(`${domain} compliance`).outerHTML =
-  `<div
-  id = "${domain} compliance"
-  class="uk-badge button"
-  style="
-    margin-right: 5px;
-    margin-left: 5px;
-    margin-top: auto;
-    margin-bottom: auto;
-    padding-right: 5px;
-    padding-left: 5px;
-    background-color: white;
-    border: 1px solid rgb(0,244,133);
-    color: rgb(0,244,133);
-  "
->
-  Compliant
-</div>`
+    identifier.style.border = "1px solid #00f485";
+    identifier.style.color = "#00f485";
+    identifier.innerText = "Compliant";
    } else {
-      document.getElementById(`${domain} compliance`).outerHTML = 
-      `          <div
-      id = "${domain} compliance"
-      class="uk-badge button"
-      style="
-        margin-right: 5px;
-        margin-left: 5px;
-        margin-top: auto;
-        margin-bottom: auto;
-        padding-right: 5px;
-        padding-left: 5px;
-        background-color: white;
-        border: 1px solid #f44336;
-        color: #f44336;
-      "
-    >
-      Not Compliant
-    </div>`
+    identifier.style.border = "1px solid #f44336";
+    identifier.style.color = "#f44336";
+    identifier.innerText = "Not Compliant";
    }
 
 }
@@ -254,6 +178,16 @@ async function eventListeners() {
  * options, to be displayed
  */
 async function buildList() {
+  let happycat = "../../../../assets/cat-w-text/optmeow-happy-circle.png";
+  let sadcat = "../../../../assets/cat-w-text/optmeow-sad-circle.png"
+  let specs = `style= "
+    margin-right: 5px;
+    margin-left: 5px;
+    margin-top: auto;
+    margin-bottom: auto;
+    padding-right: 5px;
+    padding-left: 5px;"
+    `
   let items = ""
   let domain;
   let domainValue; 
@@ -268,7 +202,7 @@ async function buildList() {
       <div id = "div ${domain}" uk-grid class="uk-grid-small uk-width-1-1" style="font-size: medium;">
         <div>
           <div
-          class="uk-container"
+          class="uk-container-analysis"
           style="margin: auto; padding: 0; padding-left: 30px;"
           uk-tooltip="Dropdown"
         >
@@ -287,9 +221,40 @@ async function buildList() {
         <div class="domain uk-width-expand">
           ${domain}
           <hr class="divide" id="divider ${domain}" style="margin:0px; display: none">
-          <ol id="${domain} analysis" class="uk-list" style="display:none">
-            <li> INFORMATION HERE </li>
-          </ol>
+          <ul id="${domain} analysis" class="uk-list" style="display:none">
+            <li>
+            <div uk-grid class="uk-grid-small uk-width-1-1" style="font-size: large;">
+            <div class="domain uk-width-expand">
+             DNS Link 
+             </div>
+             <img src = ${happycat} width = "50px" height = "50px" ${specs}>
+             </div>
+             </li>
+            <li>
+            <div uk-grid class="uk-grid-small uk-width-1-1" style="font-size: large;">
+            <div class="domain uk-width-expand">
+             US Privacy String 
+             </div>
+             <img src = ${happycat} width = "50px" height = "50px" ${specs}>
+             </div>
+             </li>
+            <li>
+            <div uk-grid class="uk-grid-small uk-width-1-1" style="font-size: large;">
+            <div class="domain uk-width-expand">
+             Signal Sent 
+             </div>
+             <img src = ${happycat} width = "50px" height = "50px" ${specs}>
+             </div>
+             </li>
+            <li>
+            <div uk-grid class="uk-grid-small uk-width-1-1" style="font-size: large;">
+            <div class="domain uk-width-expand">
+             US Privacy String Updated 
+             </div>
+             <img src = ${sadcat} width = "50px" height = "50px" ${specs}>
+             </div> 
+             </li>
+          </ul>
         </div>
 
         <div style="
@@ -301,16 +266,14 @@ async function buildList() {
         >
           <label class="switch" >
           `
-          // +
-          // buildToggle(domain, result.DOMAINS[domain])
-          // // `<input type="checkbox" id="toggle-domainlist" />`
+
           +
           `
             <span></span>
           </label>
           <div
           id = "${domain} compliance"
-          class="uk-badge button"
+          class="uk-badge"
           style="
             margin-right: 5px;
             margin-left: 5px;
@@ -319,11 +282,11 @@ async function buildList() {
             padding-right: 5px;
             padding-left: 5px;
             background-color: white;
-            border: 1px solid #f44336;
-            color: #f44336;
+            border: 1px solid #ffff00;
+            color: #ffff00;
           "
         >
-          Compliant
+          Loading...
         </div>
     </li>
           `
