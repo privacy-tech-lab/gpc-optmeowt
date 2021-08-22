@@ -178,8 +178,8 @@ async function eventListeners() {
  * options, to be displayed
  */
 async function buildList() {
-  let happycat = "../../../../assets/cat-w-text/optmeow-happy-circle.png";
-  let sadcat = "../../../../assets/cat-w-text/optmeow-sad-circle.png"
+  let pos = "../../../../assets/cat-w-text/check1.png";
+  let neg = "../../../../assets/cat-w-text/cross1.png"
   let specs = `style= "
     margin-right: 5px;
     margin-left: 5px;
@@ -227,7 +227,7 @@ async function buildList() {
             <div class="domain uk-width-expand">
              DNS Link 
              </div>
-             <img src = ${happycat} width = "50px" height = "50px" ${specs}>
+             <img src = ${pos} width = "40px" height = "40px" ${specs}>
              </div>
              </li>
             <li>
@@ -235,7 +235,7 @@ async function buildList() {
             <div class="domain uk-width-expand">
              US Privacy String 
              </div>
-             <img src = ${happycat} width = "50px" height = "50px" ${specs}>
+             <img src = ${pos} width = "40px" height = "40px" ${specs}>
              </div>
              </li>
             <li>
@@ -243,7 +243,7 @@ async function buildList() {
             <div class="domain uk-width-expand">
              Signal Sent 
              </div>
-             <img src = ${happycat} width = "50px" height = "50px" ${specs}>
+             <img src = ${pos} width = "40px" height = "40px" ${specs}>
              </div>
              </li>
             <li>
@@ -251,7 +251,7 @@ async function buildList() {
             <div class="domain uk-width-expand">
              US Privacy String Updated 
              </div>
-             <img src = ${sadcat} width = "50px" height = "50px" ${specs}>
+             <img src = ${neg} width = "40px" height = "40px" ${specs}>
              </div> 
              </li>
           </ul>
