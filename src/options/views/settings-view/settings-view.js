@@ -48,17 +48,20 @@ function eventListeners() {
   document
     .getElementById("settings-view-radio0")
     .addEventListener("click", () => {
-      chrome.runtime.sendMessage({ msg: "CHANGE_MODE", data: modes.readiness.enabled });
+      chrome.runtime.sendMessage({ msg: "CHANGE_MODE", data: { isEnabled: true } });
+      chrome.runtime.sendMessage({ msg: "CHANGE_IS_DOMAINLISTED", data: { isDomainlisted: false } });
     });
   document
     .getElementById("settings-view-radio1")
     .addEventListener("click", () => {
-      chrome.runtime.sendMessage({ msg: "CHANGE_MODE", data: modes.readiness.disabled });
+      chrome.runtime.sendMessage({ msg: "CHANGE_MODE", data: { isEnabled: false } });
+      chrome.runtime.sendMessage({ msg: "CHANGE_IS_DOMAINLISTED", data: { isDomainlisted: false } });
     });
   document
     .getElementById("settings-view-radio2")
     .addEventListener("click", () => {
-      chrome.runtime.sendMessage({ msg: "CHANGE_MODE", data: modes.readiness.domainlisted });
+      chrome.runtime.sendMessage({ msg: "CHANGE_MODE", data: { isEnabled: true } });
+      chrome.runtime.sendMessage({ msg: "CHANGE_IS_DOMAINLISTED", data: { isDomainlisted: true } });
     });
   document
     .getElementById("download-button")
@@ -179,22 +182,17 @@ export async function settingsView(scaffoldTemplate) {
     content.innerHTML;
 
   // Render correct extension mode radio button
-  const mode = await storage.get(stores.settings, "MODE");
+  // const mode = await storage.get(stores.settings, "MODE");
+  const isEnabled = await storage.get(stores.settings, "IS_ENABLED");
+  const isDomainlisted = await storage.get(stores.settings, "IS_DOMAINLISTED");
   // console.log(`mode = ${mode}`);
-  switch (mode) {
-    case modes.readiness.enabled:
-      document.getElementById("settings-view-radio0").checked = true;
-      break;
-    case modes.readiness.domainlisted:
-      document.getElementById("settings-view-radio2").checked = true;
-      break;
-    case modes.readiness.disabled:
-      document.getElementById("settings-view-radio1").checked = true;
-      break;
-    default:
-      console.log(`FAILED: Couldn't load mode for radio buttons. Changing mode to ENABLED.`);
-      chrome.runtime.sendMessage({ msg: "CHANGE_MODE", data: modes.readiness.enabled });
-      document.getElementById("settings-view-radio0").checked = true;
+
+  if (isEnabled) {
+    (isDomainlisted)
+      ? document.getElementById("settings-view-radio2").checked = true
+      : document.getElementById("settings-view-radio0").checked = true;
+  } else {
+    document.getElementById("settings-view-radio1").checked = true;
   }
 
   eventListeners();

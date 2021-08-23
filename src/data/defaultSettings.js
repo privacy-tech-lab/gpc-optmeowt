@@ -22,8 +22,9 @@ import { modes } from "./modes"
 export const defaultSettings = {
 	'BROWSER': '$BROWSER',
 	'DOMAINLIST_PRESSED': false,
-	'FUNCTIONALITY': modes.functionality.protection,
-	'READINESS': modes.readiness.enabled,
+	'IS_DOMAINLISTED': false,
+	'IS_ENABLED': true,
+	'MODE': modes.protection,
 	'TUTORIAL_SHOWN': false,
 	'TUTORIAL_SHOWN_IN_POPUP': false,
 }

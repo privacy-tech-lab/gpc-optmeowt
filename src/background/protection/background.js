@@ -13,6 +13,13 @@ background.js is the main background script handling OptMeowt's
 main opt-out functionality
 */
 
+
+
+
+// delete all modes.readiness
+// 
+
+
 import { enableListeners, disableListeners } from "./listeners-$BROWSER.js"
 import { 
   // extensionMode, 
@@ -28,6 +35,9 @@ import { initCookiesOnInstall } from "./cookiesOnInstall.js"
 var userAgent = window.navigator.userAgent.indexOf("Firefox") > -1 ? "moz" : "chrome";
 
 
+/******************************************************************************/
+
+
 /**
  * Enables extension functionality and sets site listeners
  * Information regarding the functionality and timing of webRequest and webNavigation 
@@ -38,16 +48,20 @@ var userAgent = window.navigator.userAgent.indexOf("Firefox") > -1 ? "moz" : "ch
  * 
  * HIERARCHY:   manifest.json --> background.js --> listeners-$BROWSER.js --> events.js
  */
-export function enable() {
+function enable() {
   enableListeners();
 }
 
 /**
  * Disables extension functionality
  */
-export function disable() {
+function disable() {
   disableListeners();
 }
+
+
+/******************************************************************************/
+
 
 function preinit() {};
 
@@ -60,26 +74,32 @@ function preinit() {};
  * (3) Sets correct extension on/off mode
  */
 async function init() {
-  let settingsDB = storage.getStore(stores.settings);
-  for (let setting in defaultSettings) {
-    if (!settingsDB[setting]) {
-      await storage.set(stores.settings, defaultSettings[setting], setting);
-    }
-  }
+  // let settingsDB = storage.getStore(stores.settings);
+  // for (let setting in defaultSettings) {
+  //   if (!settingsDB[setting]) {
+  //     await storage.set(stores.settings, defaultSettings[setting], setting);
+  //   }
+  // }
 
   initCookiesOnInstall();
 
-  const mode = defaultSettings.MODE;
-  if (mode === modes.readiness.enabled || mode === modes.readiness.domainlisted) {
-    enable();
-  } else {
-    disable();
-  }
+  // const mode = defaultSettings.MODE;
+  // // const mode = 
+  // if (mode === modes.readiness.enabled || mode === modes.readiness.domainlisted) {
+    // enable();
+  // } else {
+  //   disable();
+  // }
+  enableListeners();
 }
 
 function postinit() {};
 
 function halt() { disableListeners(); };
+
+
+/******************************************************************************/
+
 
 export const background = {
   preinit,

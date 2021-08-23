@@ -39,7 +39,7 @@ const FILTER = { urls: ["<all_urls>"] }
  * 
  * The functions called on event occurance are located in `events.js`
  */
-function enableListeners() {   
+function enableListeners() {
 
 	// (4) global Firefox listeners
 	chrome.webRequest.onBeforeSendHeaders.addListener(

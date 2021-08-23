@@ -29,15 +29,8 @@ NOTE:
 // })
 
 export const modes = Object.freeze({
-	functionality: {			// or, `functionality`, `operation` ?
-		analysis: 'ANALYSIS',
-		protection: 'PROTECTION'
-	},
-	readiness: {			// or, `availability`, `activeness`, `ability`, `readiness` ?
-		enabled: 'ENABLED',
-		domainlisted: 'DOMAINLISTED',
-		disabled: 'DISABLED'
-	}
+	analysis: 'ANALYSIS',
+	protection: 'PROTECTION'
 })
 
 
