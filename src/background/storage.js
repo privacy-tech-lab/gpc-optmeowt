@@ -25,11 +25,11 @@ import { storageCookies } from "./storageCookies.js"
 // We could use strings instead of hard coding the following objects, however using an
 // enumerated object prevents mistyping a string as a parameter, hopefully
 // saving us some potential grief
-const extensionMode = Object.freeze({
-	enabled: 'ENABLED',
-	domainlisted: 'DOMAINLISTED',
-	disabled: 'DISABLED'
-});
+// const extensionMode = Object.freeze({
+// 	enabled: 'ENABLED',
+// 	domainlisted: 'DOMAINLISTED',
+// 	disabled: 'DISABLED'
+// });
 
 // In general, these functions should be use with async / await for 
 // syntactic sweetness & synchronous data handling 
@@ -60,6 +60,18 @@ const storage = {
     },
     async getAllKeys(store) {
         return (await dbPromise).getAllKeys(store)
+    },
+    // returns an object containing the given store
+    async getStore(store) {
+        const storeValues = await storage.getAll(store);
+        const storeKeys = await storage.getAllKeys(store);
+        let storeCopy = {};
+        let key;
+        for (let index in storeKeys) {
+            key = storeKeys[index];
+            storeCopy[key] = storeValues[index];
+        }
+        return storeCopy;
     },
     async set(store, value, key) {
         return new Promise(async (resolve, reject) => {
@@ -154,7 +166,7 @@ export {
     handleDownload,
     startUpload,
     handleUpload,
-    extensionMode,
+    // extensionMode,
     stores,
     storage
 }

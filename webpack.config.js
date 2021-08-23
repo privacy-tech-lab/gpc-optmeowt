@@ -27,10 +27,10 @@ module.exports = (env, argv) => {
 		name: "background",
 		// This is useful, plus we need it b/c otherwise we get an "unsafe eval" problem
 		entry: {
-			background: "./src/background/background.js",
+			background: "./src/background/control.js",
 			popup: "./src/popup/popup.js",
 			options: "./src/options/options.js",
-			contentScript: "./src/background/contentScript.js"
+			contentScript: "./src/content-scripts/contentScript.js"
 		},
 		output: {
 			filename: "[name].bundle.js",
@@ -94,7 +94,7 @@ module.exports = (env, argv) => {
 				to: "manifest.json"}],
 			}),
 			new CopyPlugin({
-				patterns: [{ context: path.resolve(__dirname, "src/background"), from: "dom.js" }],
+				patterns: [{ context: path.resolve(__dirname, "src/background/protection"), from: "dom.js" }],
 			}),
 			new CopyPlugin({
 				patterns: [{ context: path.resolve(__dirname, "src/options"), from: "views", to: "views" }],

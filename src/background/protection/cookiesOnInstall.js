@@ -14,7 +14,7 @@ their respective cookies (3rd party), and places them.
 */
 
 
-import { cookiesDAA } from "../data/cookiesDAA.js"
+import { cookiesDAA } from "../../data/cookiesDAA.js"
 
 
 function initCookiesOnInstall() {

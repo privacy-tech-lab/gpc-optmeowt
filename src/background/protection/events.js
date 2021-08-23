@@ -14,22 +14,29 @@ events.js (1) Implements our per-site functionality for the background listeners
 */
 
 
-import { enable, disable } from "./background.js"
-import { extensionMode, stores, storage } from "./storage.js"
-import { defaultSettings } from "../data/defaultSettings.js"
-import { headers } from "../data/headers.js"
-import { initIAB } from "./cookiesIAB.js"
-import { initCookiesPerDomain } from "./cookiesOnInstall.js"
-import psl from "psl"
+// import { enable, disable } from "./background.js"
+import {
+  // extensionMode, 
+  stores, 
+  storage 
+} from "./../storage.js";
+import { modes } from "../../data/modes.js";
+import { defaultSettings } from "../../data/defaultSettings.js";
+import { headers } from "../../data/headers.js";
+import { initIAB } from "./cookiesIAB.js";
+import { initCookiesPerDomain } from "./cookiesOnInstall.js";
+import psl from "psl";
 
 // Initializers (cached values)
 var domainlist = {};    // Caches & mirrors domainlist in storage
 var mode = defaultSettings["MODE"]; // Caches the extension mode
+var isDomainlisted = defaultSettings["IS_DOMAINLISTED"];
 var tabs = {};          // Caches all tab infomration, i.e. requests, etc. 
 var wellknown = {};     // Caches wellknown info to be sent to popup
 var signalPerTab = {};  // Caches if a signal is sent to render the popup icon
 var activeTabID = 0;    // Caches current active tab id
 var sendSignal = true;  // Caches if the signal can be sent to the curr domain
+
 
 /******************************************************************************/
 
@@ -51,7 +58,7 @@ const onBeforeSendHeaders = (details) => {
   updateDomainlistAndSignal(details);
 
   if (sendSignal) {
-    signalPerTab[details.tabId] = true
+    signalPerTab[details.tabId] = true;
     initIAB();
     updatePopupIcon(details);
     return addHeaders(details);
@@ -125,43 +132,18 @@ function addDomSignal(details) {
   });
 }
 
-// async function updateDomainsAndSignal(details) {
-//   // Parse url to get domain for domainlist
-//   let url = new URL(details.url);
-//   let parsedUrl = psl.parse(url.hostname);
-//   let parsedDomain = parsedUrl.domain;
-
-//   // Update domains by adding current domain to domainlist in storage.
-//   let parsedDomainVal = await storage.get(stores.domainlist, parsedDomain);
-//   if (parsedDomainVal === undefined) {
-//     await storage.set(stores.domainlist, true, parsedDomain);
-//   }
-
-//   // Check to see if we should send signal.
-//   // NOTE: It can be undefined b/c we never reretrieve parsedDomainVal
-//   // (1) Check which MODE OptMeowt is in,
-//   // (2) if domainlisted, check if in domainlist
-//   const mode = await storage.get(stores.settings, "MODE");
-//   if (mode === extensionMode.domainlisted) {
-//     if (parsedDomainVal === undefined || parsedDomainVal === true) {
-//       sendSignal = true;
-//     } else {
-//       sendSignal = false;
-//     }
-//   } else if (mode === extensionMode.enabled) {
-//     sendSignal = true;
-//   } else {
-//     sendSignal = false;
-//   }
-// }
-
+/**
+ * Checks whether a particular domain should receive a DNS signal
+ * (1) Parse url to get domain for domainlist
+ * (2) Update domains by adding current domain to domainlist in storage.
+ * (3) Check to see if we should send signal.
+ * @param {Object} details - callback object according to Chrome API
+ */
 function updateDomainlistAndSignal(details) {
-  // Parse url to get domain for domainlist
   let url = new URL(details.url);
   let parsedUrl = psl.parse(url.hostname);
   let parsedDomain = parsedUrl.domain;
 
-  // Update domains by adding current domain to domainlist in storage.
   let parsedDomainVal = domainlist[parsedDomain];
   if (parsedDomainVal === undefined) {
     storage.set(stores.domainlist, true, parsedDomain); // Sets to storage async
@@ -169,22 +151,9 @@ function updateDomainlistAndSignal(details) {
     parsedDomainVal = true;
   }
 
-  // Check to see if we should send signal.
-  // NOTE: It can be undefined b/c we never reretrieve parsedDomainVal
-  // (1) Check which MODE OptMeowt is in,
-  // (2) if domainlisted, check if in domainlist
-  // const mode = await storage.get(stores.settings, "MODE");
-  if (mode === extensionMode.domainlisted) {
-    if (parsedDomainVal === true) {
-      sendSignal = true;
-    } else {
-      sendSignal = false;
-    }
-  } else if (mode === extensionMode.enabled) {
-    sendSignal = true;
-  } else {
-    sendSignal = false;
-  }
+  (isDomainlisted) 
+    ? ((parsedDomainVal === true) ? sendSignal = true : sendSignal = false)
+    : sendSignal = true;
 }
 
 function updatePopupIcon(details) {
@@ -362,27 +331,9 @@ chrome.runtime.onConnect.addListener(function(port) {
  */
 chrome.runtime.onMessage.addListener(async function (request, sender, sendResponse) {
   // console.log(`Recieved message @ background page.`);
-  if (request.msg === "CHANGE_MODE") {
-    // (1) enable/disable extension; (2) set cached mode; (3) set to storage;
-    switch (request.data) {
-      case extensionMode.enabled:
-        enable();
-        mode = extensionMode.enabled;
-        await storage.set(stores.settings, extensionMode.enabled, "MODE");
-        break;
-      case extensionMode.domainlisted:
-        enable();
-        mode = extensionMode.domainlisted;
-        await storage.set(stores.settings, extensionMode.domainlisted, "MODE");
-        break;
-      case extensionMode.disabled:
-        disable();
-        mode = extensionMode.disabled;
-        await storage.set(stores.settings, extensionMode.disabled, "MODE");
-        break;
-      default:
-        console.error(`CHANGE_MODE failed, mode not recognized.`);
-    }
+  if (request.msg === "CHANGE_IS_DOMAINLISTED") {
+    isDomainlisted = request.data.isDomainlisted;
+    storage.set(stores.settings, isDomainlisted, "IS_DOMAINLISTED");
   }
   if (request.msg === "SET_TO_DOMAINLIST") {
     let { domain, key } = request.data;
