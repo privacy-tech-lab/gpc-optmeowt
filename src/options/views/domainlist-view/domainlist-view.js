@@ -7,9 +7,9 @@ privacy-tech-lab, https://privacytechlab.org/
 
 
 /*
-domainlist-view.js
+analysis-view.js
 ================================================================================
-domainlist-view.js loads domainlist-view.html when clicked on the options page
+analysis-view.js loads analysis-view.html when clicked on the options page
 */
 
 
@@ -28,25 +28,20 @@ import { renderParse, fetchParse } from '../../components/util.js'
 
 export async function dropListener(domain) {
   document.getElementById("li " + domain).addEventListener("click", () => {
-    // var icon = document.getElementById("dropdown")
     if (document.getElementById(domain + " analysis").style.display === "none") {
-      document.getElementById(domain + " compliance").style.marginTop = "auto"
       document.getElementById("dropdown " + domain).src = "../assets/chevron-up.svg"
       document.getElementById(domain + " analysis").style.display = ""
-      //document.getElementById("li " + domain).classList.add("dropdown-tab-click")
       document.getElementById("divider " + domain).style.display = ""
     } else {
-      document.getElementById(domain + " compliance").style.marginTop = "auto"
       document.getElementById("dropdown " + domain).src = "../assets/chevron-down.svg"
       document.getElementById(domain + " analysis").style.display = "none"
-      //document.getElementById("li " + domain).classList.remove("dropdown-tab-click")
       document.getElementById("divider " + domain).style.display = "none"
     }
   });
 }
 
 /**
- * Creates the specific Domain List toggles as well as the perm delete
+ * Creates the specific Dropdown toggles as well as the perm delete
  * buttons for each domain
  */
  async function createDropListeners(){
@@ -60,10 +55,11 @@ export async function dropListener(domain) {
     if(x){
       verdict = true;
     }else{
-      verdict = false;
-    }
+      verdict = false;          //**************************************************************************
+    }                           //This is in place of actual logic to decide the 'verdict' (compliant or no)
+                                //**************************************************************************
     domain = domainlistKeys[index];
-    //console.log(domain);
+
     dropListener(domain)
     compliant(verdict, domain)
   }
@@ -77,15 +73,16 @@ export async function dropListener(domain) {
  function compliant (verdict ,domain) {
    let identifier = document.getElementById(`${domain} compliance`);
    if(verdict == true){
+    identifier.classList.add("compliant");
     identifier.style.border = "1px solid #00f485";
     identifier.style.color = "#00f485";
     identifier.innerText = "Compliant";
    } else {
+    identifier.classList.add("notCompliant");
     identifier.style.border = "1px solid #f44336";
     identifier.style.color = "#f44336";
     identifier.innerText = "Not Compliant";
    }
-
 }
 
 
@@ -174,7 +171,7 @@ async function eventListeners() {
 }
 
 /**
- * Builds the list of domains in the domainlist, and their respective
+ * Builds the list of domains in the analysis, and their respective
  * options, to be displayed
  */
 async function buildList() {
@@ -196,6 +193,11 @@ async function buildList() {
   for (let index in domainlistKeys) {
     domain = domainlistKeys[index]
     domainValue = domainlistValues[index]
+
+    /***************************************************************/
+    /*********Insert Logic to decide check marks or crosses*********/
+    /***************************************************************/
+
     items +=
           `
     <li id="li ${domain}">
@@ -223,15 +225,15 @@ async function buildList() {
           <hr class="divide" id="divider ${domain}" style="margin:0px; display: none">
           <ul id="${domain} analysis" class="uk-list" style="display:none">
             <li>
-            <div uk-grid class="uk-grid-small uk-width-1-1" style="font-size: large;">
+            <div uk-grid class="uk-grid-small uk-width-1-1" style="font-size: medium;">
             <div class="domain uk-width-expand">
-             DNS Link 
+             Do Not Sell Link 
              </div>
              <img src = ${pos} width = "40px" height = "40px" ${specs}>
              </div>
              </li>
             <li>
-            <div uk-grid class="uk-grid-small uk-width-1-1" style="font-size: large;">
+            <div uk-grid class="uk-grid-small uk-width-1-1" style="font-size: medium;">
             <div class="domain uk-width-expand">
              US Privacy String 
              </div>
@@ -239,7 +241,7 @@ async function buildList() {
              </div>
              </li>
             <li>
-            <div uk-grid class="uk-grid-small uk-width-1-1" style="font-size: large;">
+            <div uk-grid class="uk-grid-small uk-width-1-1" style="font-size: medium;">
             <div class="domain uk-width-expand">
              Signal Sent 
              </div>
@@ -247,7 +249,7 @@ async function buildList() {
              </div>
              </li>
             <li>
-            <div uk-grid class="uk-grid-small uk-width-1-1" style="font-size: large;">
+            <div uk-grid class="uk-grid-small uk-width-1-1" style="font-size: medium;">
             <div class="domain uk-width-expand">
              US Privacy String Updated 
              </div>

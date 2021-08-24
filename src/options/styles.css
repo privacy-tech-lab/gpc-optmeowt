@@ -152,7 +152,7 @@ input[type="radio"]:hover:not(:checked) {
   transform: scale(1.25);
   /* transform-style: inherit; */
   /* z-index: -10; */
-}
+} 
 
 
 /********************************************************/
