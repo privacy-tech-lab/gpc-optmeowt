@@ -36,7 +36,7 @@ https://developer.chrome.com/extensions/content_scripts
 	window.onload = function(){
 		
 		var tagtypes = ["a","button","footer"]; //tag types to search for
-		var phrasing = /Do.Not.Sell.My|Don't.Sell.My/gmi
+		var phrasing = /\w*Do.Not.Sell|\w*Don't.Sell/gmi
 
 		for (let x=0; x<tagtypes.length;x++){
 			var elements = document.getElementsByTagName(tagtypes[x]);
