@@ -130,13 +130,11 @@ Buttons and Switches
   color: #eee !important;
 }
 
-.darkmode--activated .uk-badge {
-  background-color: rgb(46, 104, 170) !important;
-  border: 1px solid rgb(46, 104, 170) !important;
-  transition: all 0.3s ease;
-  color: #eee !important;
-}
+ .darkmode--activated .uk-badge {
+  background-color: rgb(37, 37, 34) !important;
 
+}
+/*
 .darkmode--activated .uk-badge .compliant {
   background-color: rgb(37, 37, 34) !important;
   border: 1px solid rgb(0,224,200) !important;
@@ -148,7 +146,7 @@ Buttons and Switches
   border: 1px solid rgb(221,91,117) !important;
   transition: all 0.3s ease;
   color: rgb(221,91,117) !important;
-}
+} */
 
 .darkmode--activated .button:hover {
   background-color: rgb(143, 17, 17) !important;

@@ -74,13 +74,13 @@ export async function dropListener(domain) {
    let identifier = document.getElementById(`${domain} compliance`);
    if(verdict == true){
     identifier.classList.add("compliant");
-    identifier.style.border = "1px solid #00f485";
-    identifier.style.color = "#00f485";
+    identifier.style.border = "1px solid rgb(0,100,170)";
+    identifier.style.color = "rgb(0,100,170)";
     identifier.innerText = "Compliant";
    } else {
     identifier.classList.add("notCompliant");
-    identifier.style.border = "1px solid #f44336";
-    identifier.style.color = "#f44336";
+    identifier.style.border = "1px solid rgb(255,121,0)";
+    identifier.style.color = "rgb(255,121,0)";
     identifier.innerText = "Not Compliant";
    }
 }
