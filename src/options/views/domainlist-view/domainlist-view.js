@@ -18,7 +18,7 @@ import { renderParse, fetchParse } from '../../components/util.js'
 
 
 /******************************************************************************/
-/***************************** Dropdown Functions *******************************/
+/***************************** Dropdown Functions *****************************/
 /******************************************************************************/
 
 
@@ -74,13 +74,13 @@ export async function dropListener(domain) {
    let identifier = document.getElementById(`${domain} compliance`);
    if(verdict == true){
     identifier.classList.add("compliant");
-    identifier.style.border = "1px solid rgb(0,100,170)";
-    identifier.style.color = "rgb(0,100,170)";
+    identifier.style.border = "1px solid rgb(64,107,202)"; //0 100 170
+    identifier.style.color = "rgb(64,107,202)";
     identifier.innerText = "Compliant";
    } else {
     identifier.classList.add("notCompliant");
-    identifier.style.border = "1px solid rgb(255,121,0)";
-    identifier.style.color = "rgb(255,121,0)";
+    identifier.style.border = "1px solid rgb(222,107,20)"; //255 121 0
+    identifier.style.color = "rgb(222,107,20)";
     identifier.innerText = "Not Compliant";
    }
 }
@@ -175,8 +175,8 @@ async function eventListeners() {
  * options, to be displayed
  */
 async function buildList() {
-  let pos = "../../../../assets/cat-w-text/check1.png";
-  let neg = "../../../../assets/cat-w-text/cross1.png"
+  let pos = "../../../../assets/cat-w-text/check2.png";
+  let neg = "../../../../assets/cat-w-text/cross2.png"
   let specs = `style= "
     margin-right: 5px;
     margin-left: 5px;
