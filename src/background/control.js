@@ -14,8 +14,10 @@ to manage the state & functionality mode of the extension
 */
 
 
-import { background as analysis } from "./analysis/background";
-import { background as protection } from "./protection/background";
+import { init, halt } from "./protection/protection.js";
+
+// import { background as analysis } from "./analysis/background";
+// import { background as protection } from "./protection/background";
 
 import { modes } from "../data/modes.js";
 import { defaultSettings } from "../data/defaultSettings.js";
@@ -23,20 +25,29 @@ import { stores, storage } from "./storage.js";
 
 var mode = defaultSettings.MODE;
 var isEnabled = defaultSettings.IS_ENABLED;
+var isDomainlisted = defaultSettings.IS_DOMAINLISTED;
 
 
 function enable() {
   switch (mode) {
-		case modes.analysis:
-			analysis.preinit();
-			analysis.init();
-			analysis.postinit();
-			console.log(`Initializing Analysis mode. `);
-			break;
-		case modes.protection:
-			protection.preinit();
-			protection.init();
-			protection.postinit();
+		// case modes.analysis:
+		// 	analysis.preinit();
+		// 	analysis.init();
+		// 	analysis.postinit();
+		// 	console.log(`Initializing Analysis mode. `);
+			// break;
+		// case modes.protection:
+		// 	protection.preinit();
+		// 	protection.init();
+		// 	protection.postinit();
+		// 	console.log(`Initializing Protection mode. `);
+		// 	break;
+    case modes.analysis:
+      break;
+    case modes.protection:
+			// preinit();
+			init();
+			// postinit();
 			console.log(`Initializing Protection mode. `);
 			break;
 		default:
@@ -45,8 +56,9 @@ function enable() {
 }
 
 function disable() {
-  analysis.halt();
-  protection.halt();
+  // analysis.halt();
+  // protection.halt();
+  halt();
 }
 
 
@@ -88,23 +100,19 @@ function disable() {
  chrome.runtime.onMessage.addListener(async function (request, sender, sendResponse) {
 	// console.log(`Recieved message @ background page.`);
   if (request.msg === "CHANGE_MODE") {
-    isEnabled = request.data.isEnabled;
-    mode = request.data.mode;
+    isEnabled = request.data.isEnabled;           // can be undefined
+    // mode = request.data.mode;
+    // console.log("CHANGE_MODE: mode = ", mode);
 
     if (isEnabled) {
       await storage.set(stores.settings, true, "IS_ENABLED");
       enable();
-      // switch (mode) {
-      //   case modes.analysis:
-      //     break;
-      //   case modes.protection:
-      //     break;
-      //   default:
-      //     protection.init();
-      // }
     } else {
       await storage.set(stores.settings, false, "IS_ENABLED");
       disable();
     }
+  }
+  if (request.msg === "CHANGE_IS_DOMAINLISTED") {
+    isDomainlisted = request.data.isDomainlisted; // can be undefined
   }
 });

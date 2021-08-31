@@ -124,7 +124,7 @@ document.addEventListener("DOMContentLoaded", async (event) => {
       .getElementById("enable-disable")
       .setAttribute("uk-tooltip", "Enable");
   // } else if (mode === modes.readiness.enabled || mode === modes.readiness.domainlisted) {
-  } else if (isEnabled || isDomainlisted) {
+  } else if (isEnabled) {
     document.getElementById("img").src = "../assets/pause-circle-outline.svg";
     document
       .getElementById("enable-disable")
@@ -148,7 +148,7 @@ document.addEventListener("DOMContentLoaded", async (event) => {
     const isEnabled = await storage.get(stores.settings, "IS_ENABLED");
     const isDomainlisted = await storage.get(stores.settings, "IS_DOMAINLISTED");
     // if (mode === modes.readiness.enabled || mode === modes.readiness.domainlisted) {
-    if (isEnabled || isDomainlisted) {
+    if (isEnabled) {
       document.getElementById("message").style.display = "";
       document.getElementById("img").src =
         "../assets/play-circle-outline.svg";
