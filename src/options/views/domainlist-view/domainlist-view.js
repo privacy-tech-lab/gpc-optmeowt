@@ -7,9 +7,9 @@ privacy-tech-lab, https://privacytechlab.org/
 
 
 /*
-analysis-view.js
+domainlist-view.js
 ================================================================================
-analysis-view.js loads analysis-view.html when clicked on the options page
+domainlist-view.js loads domainlist-view.html when clicked on the options page
 */
 
 
@@ -18,73 +18,66 @@ import { renderParse, fetchParse } from '../../components/util.js'
 
 
 /******************************************************************************/
-/***************************** Dropdown Functions *****************************/
+/***************************** Toggle Functions *******************************/
 /******************************************************************************/
 
-
-/*
- * @param {string} domain - domain to be changed in domainlist
+/**
+ * Generates the HTML that will build the domainlist switch for a given
+ * domain in the domainlist
+ * @param {string} domain - Any given domain
+ * @param {bool} bool - Represents whether it is domainlisted or not
+ * @return {string} - The stringified checkbox HTML compontent
  */
-
-export async function dropListener(domain) {
-  document.getElementById("li " + domain).addEventListener("click", () => {
-    if (document.getElementById(domain + " analysis").style.display === "none") {
-      document.getElementById("dropdown " + domain).src = "../assets/chevron-up.svg"
-      document.getElementById(domain + " analysis").style.display = ""
-      document.getElementById("divider " + domain).style.display = ""
-    } else {
-      document.getElementById("dropdown " + domain).src = "../assets/chevron-down.svg"
-      document.getElementById(domain + " analysis").style.display = "none"
-      document.getElementById("divider " + domain).style.display = "none"
-    }
-  });
+ export function buildToggle(domain, bool) {
+  let toggle;
+  if (bool) {
+    // checkbox = `<input type="checkbox" id="select ${domain}"
+    //           class="check text-color dark-checkbox" checked />`;
+    toggle = `<input type="checkbox" id="${domain}" checked />`;
+  } else {
+    // checkbox = `<input type="checkbox" id="select ${domain}"
+    //           class="check text-color dark-checkbox"/>`;
+    toggle = `<input type="checkbox" id="${domain}" />`;
+  }
+  return toggle
 }
 
 /**
- * Creates the specific Dropdown toggles as well as the perm delete
+ * Creates an event listener that toggles a given domain's stored value in
+ * the domainlist if a user clicks on the object with the given element ID
+ * @param {string} elementId - HTML element to be linked to the listener
+ * @param {string} domain - domain to be changed in domainlist
+ */
+export async function toggleListener(elementId, domain) {
+  document.getElementById(elementId).addEventListener("click", async () => {
+    const domainValue = await storage.get(stores.domainlist, domain)
+    if (domainValue) {
+      // await storage.set(stores.domainlist, false, domain)
+      chrome.runtime.sendMessage({ msg: "SET_TO_DOMAINLIST", data: { domain: domain, key: false } });
+    } else {
+      // await storage.set(stores.domainlist, true, domain)
+      chrome.runtime.sendMessage({ msg: "SET_TO_DOMAINLIST", data: { domain: domain, key: true } });
+    }
+  })
+}
+
+/**
+ * Creates the specific Domain List toggles as well as the perm delete
  * buttons for each domain
  */
- async function createDropListeners(){
-  let verdict;
+ async function createToggleListeners() {
   const domainlistKeys = await storage.getAllKeys(stores.domainlist)
   const domainlistValues = await storage.getAll(stores.domainlist)
   let domain;
   let domainValue;
   for (let index in domainlistKeys) {
-    let x = Math.round(Math.random());
-    if(x){
-      verdict = true;
-    }else{
-      verdict = false;          //**************************************************************************
-    }                           //This is in place of actual logic to decide the 'verdict' (compliant or no)
-                                //**************************************************************************
     domain = domainlistKeys[index];
-
-    dropListener(domain)
-    compliant(verdict, domain)
+    domainValue = domainlistValues[index];
+    // MAKE SURE THE ID MATCHES EXACTLY
+    toggleListener(domain, domain)
+    deleteButtonListener(domain)
   }
 }
-
-
-/**
- * Create the compliance label
- * @param {string} domain
- */
- function compliant (verdict ,domain) {
-   let identifier = document.getElementById(`${domain} compliance`);
-   if(verdict == true){
-    identifier.classList.add("compliant");
-    identifier.style.border = "1px solid rgb(64,107,202)"; //0 100 170
-    identifier.style.color = "rgb(64,107,202)";
-    identifier.innerText = "Compliant";
-   } else {
-    identifier.classList.add("notCompliant");
-    identifier.style.border = "1px solid rgb(222,107,20)"; //255 121 0
-    identifier.style.color = "rgb(222,107,20)";
-    identifier.innerText = "Not Compliant";
-   }
-}
-
 
 /**
  * Delete buttons for each domain
@@ -113,12 +106,12 @@ NOTE: It will be automatically added back to the list when the domain is request
  * @property {string} headings.subtitle - Subtitle of the given page
  */
 const headings = {
-    title: 'Analyzed Domains',
-    subtitle: "A breakdown of the CCPA compliance of sites you have visited"
+    title: 'Domain List',
+    subtitle: "Toggle which domains you would like to receive Do Not Sell signals"
 }
 
 /**
- * Filtered lists code heavily inspired by
+ * Filterd lists code heavily inspired by
  * `https://www.w3schools.com/howto/howto_js_filter_lists.asp`
  *
  * Enables live filtering of domains via the search bar
@@ -147,7 +140,7 @@ const headings = {
 async function eventListeners() {
     document.getElementById('searchbar').addEventListener('keyup', filterList )
     // document.getElementById('plus-button').addEventListener('keyup', plusButton )
-    await createDropListeners();
+    await createToggleListeners();
 
     window.onscroll = function() { stickyNavbar() };
     var nb = document.getElementById("domainlist-navbar");
@@ -171,20 +164,10 @@ async function eventListeners() {
 }
 
 /**
- * Builds the list of domains in the analysis, and their respective
+ * Builds the list of domains in the domainlist, and their respective
  * options, to be displayed
  */
 async function buildList() {
-  let pos = "../../../../assets/cat-w-text/check2.png";
-  let neg = "../../../../assets/cat-w-text/cross2.png"
-  let specs = `style= "
-    margin-right: 5px;
-    margin-left: 5px;
-    margin-top: auto;
-    margin-bottom: auto;
-    padding-right: 5px;
-    padding-left: 5px;"
-    `
   let items = ""
   let domain;
   let domainValue; 
@@ -193,72 +176,24 @@ async function buildList() {
   for (let index in domainlistKeys) {
     domain = domainlistKeys[index]
     domainValue = domainlistValues[index]
-
-    /***************************************************************/
-    /*********Insert Logic to decide check marks or crosses*********/
-    /***************************************************************/
-
     items +=
           `
     <li id="li ${domain}">
-      <div id = "div ${domain}" uk-grid class="uk-grid-small uk-width-1-1" style="font-size: medium;">
+      <div uk-grid class="uk-grid-small uk-width-1-1" style="font-size: medium;">
         <div>
-          <div
-          class="uk-container-analysis"
-          style="margin: auto; padding: 0; padding-left: 30px;"
-          uk-tooltip="Dropdown"
-        >
-          <img
-            id="dropdown ${domain}"
-            src="./assets/chevron-down.svg"
-            height="15"
-            width="15"
-            alt="dropdown"
-            uk-svg
-          />
-        </div>
+          <label class="switch">
+          `
+          +
+            buildToggle(domain, domainValue)
+            //<input type="checkbox" id="select" class="check text-color dark-checkbox" />
+          +
+          `
             <span></span>
           </label>
         </div>
         <div class="domain uk-width-expand">
           ${domain}
-          <hr class="divide" id="divider ${domain}" style="margin:0px; display: none">
-          <ul id="${domain} analysis" class="uk-list" style="display:none">
-            <li>
-            <div uk-grid class="uk-grid-small uk-width-1-1" style="font-size: medium;">
-            <div class="domain uk-width-expand">
-             Do Not Sell Link 
-             </div>
-             <img src = ${pos} width = "40px" height = "40px" ${specs}>
-             </div>
-             </li>
-            <li>
-            <div uk-grid class="uk-grid-small uk-width-1-1" style="font-size: medium;">
-            <div class="domain uk-width-expand">
-             US Privacy String 
-             </div>
-             <img src = ${pos} width = "40px" height = "40px" ${specs}>
-             </div>
-             </li>
-            <li>
-            <div uk-grid class="uk-grid-small uk-width-1-1" style="font-size: medium;">
-            <div class="domain uk-width-expand">
-             Signal Sent 
-             </div>
-             <img src = ${pos} width = "40px" height = "40px" ${specs}>
-             </div>
-             </li>
-            <li>
-            <div uk-grid class="uk-grid-small uk-width-1-1" style="font-size: medium;">
-            <div class="domain uk-width-expand">
-             US Privacy String Updated 
-             </div>
-             <img src = ${neg} width = "40px" height = "40px" ${specs}>
-             </div> 
-             </li>
-          </ul>
         </div>
-
         <div style="
           margin-right: 5px;
           margin-left: 5px;
@@ -268,28 +203,33 @@ async function buildList() {
         >
           <label class="switch" >
           `
-
+          // +
+          // buildToggle(domain, result.DOMAINS[domain])
+          // // `<input type="checkbox" id="toggle-domainlist" />`
           +
           `
             <span></span>
           </label>
-          <div
-          id = "${domain} compliance"
-          class="uk-badge"
-          style="
-            margin-right: 5px;
-            margin-left: 5px;
-            margin-top: auto;
-            margin-bottom: auto;
-            padding-right: 5px;
-            padding-left: 5px;
-            background-color: white;
-            border: 1px solid #ffff00;
-            color: #ffff00;
-          "
-        >
-          Loading...
         </div>
+          <button
+            id="delete ${domain}"
+            class="uk-badge button"
+            type="button"
+            style="
+              margin-right: 5px;
+              margin-left: 5px;
+              margin-top: auto;
+              margin-bottom: auto;
+              padding-right: 5px;
+              padding-left: 5px;
+              background-color: white;
+              border: 1px solid #e06d62;
+              color: #e06d62;
+            "
+          >
+            Delete
+          </button>
+      </div>
     </li>
           `
   }
@@ -308,6 +248,5 @@ export async function domainlistView(scaffoldTemplate) {
     document.getElementById('scaffold-component-body').innerHTML = content.innerHTML
 
     await buildList();
-
     eventListeners();
 }
