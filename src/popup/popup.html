@@ -91,6 +91,15 @@ popup.html is the html scaffolding for OptMeowt's popup page
 
     <!-- Content -->
     <div class="uk-inline uk-width-expand">
+      <!-- Code to make the analysis mode label below-->
+      <!-- <div 
+      class = ".uk-width-auto"
+      style="font-weight: bold;
+        font-size: large;
+        text-align: center;">
+        Analysis Mode
+        <img src = "../../../assets/cat-w-text/analysis.png" width = "35px" height = "35px">
+      </div> -->
       <div id="content">
         <!-- Domain List UI elements here -->
         <!-- <div
@@ -117,12 +126,12 @@ popup.html is the html scaffolding for OptMeowt's popup page
               class="uk-width-expand uk-margin-auto-vertical"
               style="font-weight: bold; font-size: medium"
             >
-              Do Not Sell Enabled!
+
             </div>
             <div>
               <div uk-grid>
                 <div class="uk-width-auto">
-                  <label class="switch tooltip-1" id="switch-label">
+                  <label id="compliance">
                     <!-- Populate switch preference here -->
                     <!-- <input type="checkbox" id="input"/>
                     <span></span> -->
@@ -263,16 +272,16 @@ popup.html is the html scaffolding for OptMeowt's popup page
         <hr class="divide" style="margin:0px; ">
 
         <!-- Section to show number of domains blocked so far.-->
-        <div uk-grid class="uk-width-expand uk-text-center" style=" font-size: medium; padding: 10px; margin-left:0px;">
+        <!-- <div uk-grid class="uk-width-expand uk-text-center" style=" font-size: medium; padding: 10px; margin-left:0px;">
           <div id="block-count"  class="uk-text-center">
             0 blocked so far
           </div>
-        </div>
+        </div> -->
 
         <hr class="divide" style="margin:0px; ">
 
         <!-- 3rd Party Domains expandable -->
-        <div uk-grid id="third-party-domains" class="dropdown-tab" style="padding:15px; margin-right:-30px;">
+        <div uk-grid id="analysis-breakdown" class="dropdown-tab" style="padding:15px; margin-right:-30px;">
           <div
             class="uk-container"
             style="margin: auto; padding: 0; padding-left: 30px;"
@@ -288,48 +297,27 @@ popup.html is the html scaffolding for OptMeowt's popup page
             />
           </div>
           <div class="uk-width-expand uk-text-left" style="font-weight: bold; font-size: medium; margin-right:20px;">
-            3rd Party Domains
+            Analysis Breakdown
           </div>
         </div>
         <hr class="divide" id="divider-1" style="margin:0px; display: none">
 
-        <ul id="third-party-domains-list" class="uk-list" style="display:none">
+        <ul id="analysis-breakdown-list" class="uk-list" style="display:none">
           <!-- Inflate third party domains here -->
         </ul>
 
         <hr class="divide" style="margin:0px;">
 
         <!-- 3rd Party Domains expandable -->
-        <div uk-grid id="well-known-response" class="dropdown-tab" style="padding:15px; margin-right:-30px;">
-          <div
-            class="uk-container"
-            style="margin: auto; padding: 0; padding-left: 30px;"
-            uk-tooltip="Dropdown"
-          >
-            <img
-              id="dropdown-2"
-              src="./assets/chevron-down.svg"
-              height="15"
-              width="15"
-              alt="dropdown"
-              uk-svg
-            />
-          </div>
-          <div id="website-response-tab" class="uk-width-expand uk-text-left" style="font-weight: bold; font-size: medium; margin-right:20px;">
-            Website Response
-          </div>
-        </div>
-        <hr class="divide" id="divider-2" style="margin:0px; display: none">
 
-        <ul id="well-known-response-list" class="uk-list" style="display:none">
-          <!-- Inflate well-known info here -->
-        </ul>
+        
+        <hr class="divide" id="divider-2" style="margin:0px; display: none">
 
         <!-- Domain List link -->
         <hr class="divide" style="margin:0px;">
         <div uk-grid id="domain-list" class="domain-list" style="padding:15px; margin-right:-30px;">
           <div class="uk-width-expand uk-text-center" style="font-weight: bold; font-size: medium; margin-right:20px;">
-            Domain List
+            Analyzed Site List
           </div>
         </div>
         <hr class="divide" style="margin:0px;" >

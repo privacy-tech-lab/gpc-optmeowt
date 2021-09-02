@@ -126,9 +126,9 @@ export async function mainView() {
     settingsView(bodyTemplate); // First page
     document.querySelector('#main-view-settings').classList.add('active');
   } else {
-    domainlistView(bodyTemplate); // First page
+    analysisView(bodyTemplate); // First page
     await storage.set(stores.settings, false, "DOMAINLIST_PRESSED");
-    document.querySelector('#main-view-domainlist').classList.add('active');
+    document.querySelector('#main-view-analysis').classList.add('active');
   }
 
   document
