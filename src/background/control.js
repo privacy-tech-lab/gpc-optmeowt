@@ -14,7 +14,8 @@ to manage the state & functionality mode of the extension
 */
 
 
-import { init, halt } from "./protection/protection.js";
+import { init as initProtection, halt as haltProtection, halt } from "./protection/protection.js";
+import { init as initAnalysis, halt as haltAnalysis } from "./analysis/analysis.js";
 
 // import { background as analysis } from "./analysis/background";
 // import { background as protection } from "./protection/background";
@@ -30,24 +31,12 @@ var isDomainlisted = defaultSettings.IS_DOMAINLISTED;
 
 function enable() {
   switch (mode) {
-		// case modes.analysis:
-		// 	analysis.preinit();
-		// 	analysis.init();
-		// 	analysis.postinit();
-		// 	console.log(`Initializing Analysis mode. `);
-			// break;
-		// case modes.protection:
-		// 	protection.preinit();
-		// 	protection.init();
-		// 	protection.postinit();
-		// 	console.log(`Initializing Protection mode. `);
-		// 	break;
     case modes.analysis:
+      initAnalysis();
+      console.log(`Initializing Analysis mode. `);
       break;
     case modes.protection:
-			// preinit();
-			init();
-			// postinit();
+			initProtection();
 			console.log(`Initializing Protection mode. `);
 			break;
 		default:
@@ -58,7 +47,8 @@ function enable() {
 function disable() {
   // analysis.halt();
   // protection.halt();
-  halt();
+  haltAnalysis();
+  haltProtection();
 }
 
 
