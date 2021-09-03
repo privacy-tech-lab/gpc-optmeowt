@@ -178,6 +178,7 @@ document.addEventListener("DOMContentLoaded", async (event) => {
           background-color: white;
           border: 1px solid rgb(64,107,202);
           color: rgb(64,107,202);
+          font-size: 12px;
         "
       >
         Compliant
@@ -197,6 +198,7 @@ document.addEventListener("DOMContentLoaded", async (event) => {
           background-color: white;
           border: 1px solid rgb(222,107,20);
           color: rgb(222,107,20);
+          font-size: 12px;
         "
       >
         Not Compliant
@@ -288,8 +290,8 @@ document.addEventListener("DOMContentLoaded", async (event) => {
  * (requests = tabs[activeTabID].requestDomainS; passed from background page)
  */
 async function buildAnalysis(requests) {
-  let pos = "../../../assets/cat-w-text/check2.png";
-  let neg = "../../../assets/cat-w-text/cross2.png"
+  let pos = "../../../assets/cat-w-text/check1.png";
+  let neg = "../../../assets/cat-w-text/cross1.png"
   let specs = `style= "
     margin-right: 5px;
     margin-left: 5px;
@@ -324,7 +326,7 @@ async function buildAnalysis(requests) {
     <li>
     <div uk-grid class="uk-grid-small uk-width-1-1" style="font-size: medium;">
     <div class="domain uk-width-expand">
-     Signal Sent 
+     GPC Signal Sent
      </div>
      <img src = ${pos} width = "40px" height = "40px" ${specs}>
      </div>

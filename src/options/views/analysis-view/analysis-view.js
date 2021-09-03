@@ -171,8 +171,8 @@ async function eventListeners() {
  * options, to be displayed
  */
 async function buildList() {
-  let pos = "../../../../assets/cat-w-text/check2.png";
-  let neg = "../../../../assets/cat-w-text/cross2.png"
+  let pos = "../../../../assets/cat-w-text/check1.png";
+  let neg = "../../../../assets/cat-w-text/cross1.png"
   let specs = `style= "
     margin-right: 5px;
     margin-left: 5px;
