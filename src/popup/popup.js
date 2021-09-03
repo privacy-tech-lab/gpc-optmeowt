@@ -69,6 +69,17 @@ document.addEventListener("DOMContentLoaded", async (event) => {
     chrome.runtime.sendMessage({
   	  msg: "DARKSWITCH_PRESSED",
     });
+    console.log("switch pressed");
+    console.log(darkmode.isActivated());
+    if (darkmode.isActivated()){
+      document.getElementById("optMode").style.color = "rgb(89,98,127)";
+      document.getElementById("optMode").style.border = "1px solid rgb(89,98,127)";
+      document.getElementById("modeImg").src = "../../../assets/cat-w-text/analysis.png"
+    } else {
+      document.getElementById("optMode").style.color = "rgb(238,238,238)"
+      document.getElementById("optMode").style.border = "1px solid rgb(238,238,238)"
+      document.getElementById("modeImg").src = "../../../assets/cat-w-text/analysis1.png"
+    }
     darkmode.toggle();
   });
 
@@ -161,6 +172,15 @@ document.addEventListener("DOMContentLoaded", async (event) => {
   // Init: 1st party domain "Do Not Sell Enabled/Disabled" text + toggle
   let checkbox = "";
   let text = "";
+  if (!darkmode.isActivated()){
+    document.getElementById("optMode").style.color = "rgb(89,98,127)";
+    document.getElementById("optMode").style.border = "1px solid rgb(89,98,127)";
+    document.getElementById("modeImg").src = "../../../assets/cat-w-text/analysis.png"
+  } else {
+    document.getElementById("optMode").style.color = "rgb(238,238,238)"
+    document.getElementById("optMode").style.border = "1px solid rgb(238,238,238)"
+    document.getElementById("modeImg").src = "../../../assets/cat-w-text/analysis1.png"
+  }
   if (parsedDomain) {
     try {
       const parsedDomainValue = await storage.get(stores.domainlist, parsedDomain);

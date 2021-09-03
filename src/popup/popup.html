@@ -92,16 +92,31 @@ popup.html is the html scaffolding for OptMeowt's popup page
     <!-- Content -->
     <div class="uk-inline uk-width-expand">
       <!-- Code to make the analysis mode label below-->
-      <button class="uk-button uk-button-default">
         <div 
         class = ".uk-width-auto"
         style="font-weight: bold;
           font-size: large;
           text-align: center;">
+          <div
+          id = "optMode"
+          class="uk-badge switch"
+          style="
+            margin-right: auto;
+            margin-left: auto;
+            margin-top: auto;
+            margin-bottom: auto;
+            padding-right: auto;
+            padding-left: auto;
+            background-color: white;
+            border: 1px solid rgb(89,98,127);
+            color: rgb(89,98,127);
+            font-size: 20px;
+          "
+        >
           Analysis Mode
-          <img src = "../../../assets/cat-w-text/analysis.png" width = "25px" height = "25px">
+          <img id = "modeImg" src = "../../../assets/cat-w-text/analysis.png" width = "20px" height = "20px">
+          </div>
         </div>
-      </button>
       <hr class="divide" style="margin: 8px; ">
       <div id="content">
         <!-- Domain List UI elements here -->
