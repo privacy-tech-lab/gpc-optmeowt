@@ -47,18 +47,16 @@ export async function dropListener(domain) {
   let domain;
   let domainValue;
   for (let index in domainlistKeys) {
-    let x = Math.round(Math.random());
-    if(x){
-      verdict = true;
-    }else{
-      verdict = false;          //**************************************************************************
-    }                           //This is in place of actual logic to decide the 'verdict' (compliant or no)
-                                //**************************************************************************
     domain = domainlistKeys[index];
 
     dropListener(domain)
-    compliant(verdict, domain)
+    compliant(coinflip(), domain)
   }
+}
+
+function coinflip(){
+    let x = Math.round(Math.random());
+    return x    
 }
 
 
@@ -187,7 +185,41 @@ async function buildList() {
   const domainlistKeys = await storage.getAllKeys(stores.domainlist)
   const domainlistValues = await storage.getAll(stores.domainlist)
   for (let index in domainlistKeys) {
+
     domain = domainlistKeys[index]
+    let object = {
+      name: domain,
+      dnslink: coinflip(),
+      stringfound: coinflip(),
+      gpcsent: coinflip(),
+      stringchanged: coinflip()
+    };
+
+    let dnslink;
+    let stringfound;
+    let gpcsent;
+    let stringchanged;
+
+    if (object.dnslink){
+      dnslink = pos;
+    } else {
+      dnslink = neg;
+    }
+    if (object.stringfound){
+      stringfound = pos;
+    } else {
+      stringfound = neg;
+    }
+    if (object.gpcsent){
+      gpcsent = pos;
+    } else {
+      gpcsent = neg;
+    }
+    if (object.stringchanged){
+      stringchanged = pos;
+    } else {
+      stringchanged = neg;
+    }
     domainValue = domainlistValues[index]
 
     /***************************************************************/
@@ -225,7 +257,7 @@ async function buildList() {
             <div class="domain uk-width-expand">
              Do Not Sell Link 
              </div>
-             <img src = ${pos} width = "40px" height = "40px" ${specs}>
+             <img src = ${dnslink} width = "40px" height = "40px" ${specs}>
              </div>
              </li>
             <li>
@@ -233,7 +265,7 @@ async function buildList() {
             <div class="domain uk-width-expand">
              US Privacy String 
              </div>
-             <img src = ${pos} width = "40px" height = "40px" ${specs}>
+             <img src = ${stringfound} width = "40px" height = "40px" ${specs}>
              </div>
              </li>
             <li>
@@ -241,7 +273,7 @@ async function buildList() {
             <div class="domain uk-width-expand">
              Signal Sent 
              </div>
-             <img src = ${pos} width = "40px" height = "40px" ${specs}>
+             <img src = ${gpcsent} width = "40px" height = "40px" ${specs}>
              </div>
              </li>
             <li>
@@ -249,7 +281,7 @@ async function buildList() {
             <div class="domain uk-width-expand">
              US Privacy String Updated 
              </div>
-             <img src = ${neg} width = "40px" height = "40px" ${specs}>
+             <img src = ${stringchanged} width = "40px" height = "40px" ${specs}>
              </div> 
              </li>
           </ul>
