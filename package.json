@@ -8,7 +8,7 @@
     "start": "concurrently -k npm:start:firefox  npm:start:chrome",
     "start:firefox": "webpack --watch --mode development --env firefox",
     "start:chrome": "webpack --watch --mode development --env chrome",
-    "prebuild": "rimraf dist && mkdir dist && mkdir dist\\packages",
+    "prebuild": "rimraf dist && mkdir dist && mkdir dist/packages",
     "build": "npm run build:firefox && npm run build:chrome",
     "build:firefox": "webpack --mode production --env firefox",
     "build:chrome": "webpack --mode production --env chrome",

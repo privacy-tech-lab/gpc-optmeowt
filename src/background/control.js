@@ -87,11 +87,11 @@ function disable() {
  * This is the main "hub" for message passing between the extension components
  * https://developer.chrome.com/docs/extensions/mv3/messaging/
  */
- chrome.runtime.onMessage.addListener(async function (request, sender, sendResponse) {
+ chrome.runtime.onMessage.addListener(async function (message, sender, sendResponse) {
 	// console.log(`Recieved message @ background page.`);
-  if (request.msg === "CHANGE_MODE") {
-    isEnabled = request.data.isEnabled;           // can be undefined
-    // mode = request.data.mode;
+  if (message.msg === "CHANGE_MODE") {
+    isEnabled = message.data.isEnabled;           // can be undefined
+    // mode = message.data.mode;
     // console.log("CHANGE_MODE: mode = ", mode);
 
     if (isEnabled) {
@@ -102,7 +102,15 @@ function disable() {
       disable();
     }
   }
-  if (request.msg === "CHANGE_IS_DOMAINLISTED") {
-    isDomainlisted = request.data.isDomainlisted; // can be undefined
+  if (message.msg === "CHANGE_IS_DOMAINLISTED") {
+    isDomainlisted = message.data.isDomainlisted; // can be undefined
   }
 });
+
+chrome.runtime.onConnect.addListener(function(port) {
+  port.onMessage.addListener(function (message) {
+    if (message.msg === "REQUEST_MODE") {
+      port.postMessage({ msg: "RESPONSE_MODE", data: mode })
+    }
+  })
+})

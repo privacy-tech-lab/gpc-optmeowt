@@ -329,28 +329,28 @@ chrome.runtime.onConnect.addListener(function(port) {
  * This is the main "hub" for message passing between the extension components
  * https://developer.chrome.com/docs/extensions/mv3/messaging/
  */
-chrome.runtime.onMessage.addListener(async function (request, sender, sendResponse) {
+chrome.runtime.onMessage.addListener(async function (message, sender, sendResponse) {
   // console.log(`Recieved message @ background page.`);
-  if (request.msg === "CHANGE_IS_DOMAINLISTED") {
-    isDomainlisted = request.data.isDomainlisted;
+  if (message.msg === "CHANGE_IS_DOMAINLISTED") {
+    isDomainlisted = message.data.isDomainlisted;
     storage.set(stores.settings, isDomainlisted, "IS_DOMAINLISTED");
   }
-  if (request.msg === "SET_TO_DOMAINLIST") {
-    let { domain, key } = request.data;
+  if (message.msg === "SET_TO_DOMAINLIST") {
+    let { domain, key } = message.data;
     domainlist[domain] = key;                     // Sets to cache
     storage.set(stores.domainlist, key, domain);  // Sets to long term storage
   }
-  if (request.msg === "REMOVE_FROM_DOMAINLIST") {
-    let domain = request.data;
+  if (message.msg === "REMOVE_FROM_DOMAINLIST") {
+    let domain = message.data;
     storage.delete(stores.domainlist, domain);
     delete domainlist[domain];
   }
-  if (request.msg === "POPUP") {
+  if (message.msg === "POPUP") {
     dataToPopup()
   }
-  if (request.msg === "CONTENT_SCRIPT_WELLKNOWN") {
+  if (message.msg === "CONTENT_SCRIPT_WELLKNOWN") {
     let tabID = sender.tab.id;
-    wellknown[tabID] = request.data
+    wellknown[tabID] = message.data
     if (wellknown[tabID]["gpc"] === true) {
       setTimeout(()=>{}, 10000);
       if (signalPerTab[tabID] === true) {
@@ -365,7 +365,7 @@ chrome.runtime.onMessage.addListener(async function (request, sender, sendRespon
     }
   }
 
-  if (request.msg === "CONTENT_SCRIPT_TAB") {
+  if (message.msg === "CONTENT_SCRIPT_TAB") {
     // console.log("CONTENT_SCRIPT_TAB MESSAGE HAS BEEN RECEIVED")
     let url = new URL(sender.origin);
     let parsed = psl.parse(url.hostname);
@@ -375,30 +375,30 @@ chrome.runtime.onMessage.addListener(async function (request, sender, sendRespon
       tabs[tabID] = {
         DOMAIN: domain,
         REQUEST_DOMAINS: {},
-        TIMESTAMP: request.data,
+        TIMESTAMP: message.data,
       };
     } else if (tabs[tabID].DOMAIN !== domain) {
       tabs[tabID].DOMAIN = domain;
       let urls = tabs[tabID]["REQUEST_DOMAINS"];
       // console.log("urls are:", urls)
       for (let key in urls) {
-        if (urls[key]["TIMESTAMP"] >= request.data) {
+        if (urls[key]["TIMESTAMP"] >= message.data) {
           tabs[tabID]["REQUEST_DOMAINS"][key] = urls[key];
         } else {
           delete tabs[tabID]["REQUEST_DOMAINS"][key];
         }
       }
 
-      tabs[tabID]["TIMESTAMP"] = request.data;
+      tabs[tabID]["TIMESTAMP"] = message.data;
     }
   }
-  if (request.msg === "SET_OPTOUT_COOKEIS") {
+  if (message.msg === "SET_OPTOUT_COOKEIS") {
     // This is initialized when cookies are to be reset to a page after
     // do not sell is turned back on (e.g., when its turned on from the popup).
 
     // This is specifically for when cookies are removed when a user turns off
     // do not sell for a particular site, and chooses to re-enable it
-    initCookiesPerDomain(request.data)
+    initCookiesPerDomain(message.data)
   }
 });
 

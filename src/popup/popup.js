@@ -13,11 +13,7 @@ popup.js supplements and renders complex elements on popup.html
 */
 
 
-import { 
-  // extensionMode, 
-  stores, 
-  storage 
-} from "../background/storage.js";
+import { stores, storage } from "../background/storage.js";
 import { modes } from "../data/modes.js";
 
 // CSS TO JS IMPORTS
@@ -37,6 +33,8 @@ import tippy from "../../node_modules/tippy.js/dist/tippy-bundle.umd";
 // MISC. IMPORTS THRUOUT FILE
 import Darkmode from "../theme/darkmode";
 
+
+var mode = undefined;
 
 /******************************************************************************/
 // Inflates main content
@@ -468,6 +466,13 @@ async function buildWellKnown(requests) {
 
 // Initializng a longterm port with the background for the onDisconnect event
 let backgroundPort = chrome.runtime.connect({ name: "POPUP" });
+backgroundPort.postMessage({ msg: "REQUEST_MODE" });
+backgroundPort.onMessage.addListener(function(message) {
+  if (message.msg === "RESPONSE_MODE") {
+    mode = message.data;
+    loadModeButton();
+  }
+})
 // console.log("SENT CONNECTION");
 
 // Initializes the process to add to domainlist, via the background script
@@ -498,14 +503,33 @@ chrome.runtime.sendMessage({
  * Listens for messages from background page that call functions to populate
  * the popup badge counter and build the popup domain list HTML, respectively
  */
-chrome.runtime.onMessage.addListener(function (request, _, __) {
-  if (request.msg === "POPUP_DATA") {
-    let { requests, wellknown } = request.data;
+chrome.runtime.onMessage.addListener(function (message, _, __) {
+  if (message.msg === "POPUP_DATA") {
+    let { requests, wellknown } = message.data;
     buildDomains(requests);
     buildWellKnown(wellknown);
   }
 });
 
+/******************************************************************************/
+// analysis stuff
+
+function modeBadgeButtonOnClick() {
+  backgroundPort.postMessage({ msg: "RUN_ANALYSIS_FROM_BACKGROUND", data: null });
+}
+
+// This is a temporary mode button injector to make it easy to call a page refresh
+function loadModeButton() {
+  // enable analysis mode badge
+  if (mode && mode === modes.analysis) {
+    let modeBadge = document.getElementById("mode-badge");
+    let modeBadgeHTML = `<button id="mode-badge-button" class="importexport-button">Run Analysis</button>`;
+    modeBadge.innerHTML = modeBadgeHTML;
+
+    let modeBadgeButton = document.getElementById("mode-badge-button");
+    modeBadgeButton.addEventListener('click', modeBadgeButtonOnClick);
+  }
+}
 
 /******************************************************************************/
 // Tutorial walkthrough
