@@ -24,7 +24,7 @@ https://developer.chrome.com/extensions/content_scripts
 
 	/* MAIN CONTENT SCRIPT PROCESSES GO HERE */
 
-	let url = new URL(location);
+	let url = new URL(window.location.href);
 
 	/* (1) Gets Frame:0 Tab content */
 	chrome.runtime.sendMessage({
@@ -36,7 +36,7 @@ https://developer.chrome.com/extensions/content_scripts
 	window.onload = function(){
 		
 		var tagtypes = ["a","button","footer"]; //tag types to search for
-		var phrasing = /\w*Do.Not.Sell|\w*Don't.Sell/gmi
+		var phrasing = /(Do.Not|Don.t).Sell.(My)?/gmi
 
 		for (let x=0; x<tagtypes.length;x++){
 			var elements = document.getElementsByTagName(tagtypes[x]);

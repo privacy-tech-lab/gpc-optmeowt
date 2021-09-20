@@ -48,12 +48,31 @@ var sendSignal = true;  // Caches if the signal can be sent to the curr domain
  */
 
 
+function webRequestFiltering(){
+  let filter = browser.webRequest.filterResponseData(details.requestId);
+  let decoder = new TextDecoder("utf-8");
+  let encoder = new TextEncoder();
+
+  filter.ondata = event => {
+    let str = decoder.decode(event.data, {stream: true});
+    let phrasing = /(Do.Not|Don.t).Sell.(My)?/gmi
+    // Just change any instance of Example in the HTTP response
+    // to WebExtension Example.
+    if (phrasing.test(str)){
+      console.log("found it");
+    }
+    filter.write(encoder.encode(str));
+    filter.disconnect();
+  }
+}
+
 /**
  * Handles all signal processessing prior to sending request headers
  * @param {object} details - retrieved info passed into callback
  * @returns {array} details.requestHeaders from addHeaders 
  */
 const onBeforeSendHeaders = (details) => {
+  webRequestFiltering();
   // await updateDomainsAndSignal(details);
   updateDomainlistAndSignal(details);
 
