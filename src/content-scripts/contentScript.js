@@ -48,6 +48,25 @@ function injectScript(script) {
   document.documentElement.prepend(scriptElem);
 }
 
+function dnsLinkFinder() {
+  console.log("Initializing dnsLinkFinder();")
+  var tagtypes = ["a","button","footer"]; //tag types to search for
+	// var phrasing = /Do.Not.Sell.\(My\)?|Don't.Sell.\(My\)?/gmi
+	var phrasing = /(Do.Not|Don.t).Sell.(My)?/gmi
+
+	for (let x=0; x<tagtypes.length;x++){
+		var elements = document.getElementsByTagName(tagtypes[x]);
+		for (let i = 0; i<elements.length; i++){
+			var element = elements[i];
+			var text = element.innerHTML;
+			if (phrasing.test(text)){
+				console.log("Found it, here is the DNS", text);
+				break;
+			}
+		}
+	}
+}
+
 
 
 /******************************************************************************/
@@ -69,7 +88,7 @@ function injectScript(script) {
 
   console.log("MAIN CONTENT SCRIPT INIT:: ");
 
-	let url = new URL(location);
+	let url = new URL(location.href);
 
 	/* (1) Gets Frame:0 Tab content */
 	chrome.runtime.sendMessage({
@@ -78,21 +97,24 @@ function injectScript(script) {
 	});
 
 	/* (2) Searches for DNS link */
-	window.onload = function(){
-		var tagtypes = ["a","button","footer"]; //tag types to search for
-		var phrasing = /Do.Not.Sell.My|Don't.Sell.My/gmi
+	window.onload = function() {
+    // dnsLinkFinder();
+    console.log("Initializing dnsLinkFinder();")
+    var tagtypes = ["a","button","footer"]; //tag types to search for
+    // var phrasing = /Do.Not.Sell.\(My\)?|Don't.Sell.\(My\)?/gmi
+    var phrasing = /(Do.Not|Don.t).Sell.(My)?/gmi
 
-		for (let x=0; x<tagtypes.length;x++){
-			var elements = document.getElementsByTagName(tagtypes[x]);
-			for (let i = 0; i<elements.length; i++){
-				var element = elements[i];
-				var text = element.innerHTML;
-				if (phrasing.test(text)){
-					console.log("Found it");
-					break;
-				}
-			}
-		}
+    for (let x=0; x<tagtypes.length;x++){
+      var elements = document.getElementsByTagName(tagtypes[x]);
+      for (let i = 0; i<elements.length; i++){
+        var element = elements[i];
+        var text = element.innerHTML;
+        if (phrasing.test(text)){
+          console.log("Found it, here is the DNS", text);
+          break;
+        }
+      }
+	  }
     injectScript(uspapi);
 		injectScript(runAnalysisProperty);
 	}
@@ -123,7 +145,11 @@ window.addEventListener('message', function(event) {
     // && typeof chrome.app.isInstalled !== 'undefined'
   ) {
     console.log("USPAPI_RETURNed to contentScript.js!", event.data.result);
-    chrome.runtime.sendMessage({ msg: "USPAPI_TO_BACKGROUND", data: event.data.result });
+    chrome.runtime.sendMessage({ 
+      msg: "USPAPI_TO_BACKGROUND", 
+      data: event.data.result, 
+      location: this.location.href 
+    });
   }
 	if (event.data.type == "RUN_ANALYSIS") {
 		chrome.runtime.sendMessage({ msg: "RUN_ANALYSIS", data: event.data.result });	
