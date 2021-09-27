@@ -36,7 +36,8 @@ import { storageCookies } from "./storageCookies.js"
 // i.e., await storage.set(stores.settings, extensionMode.enabled, 'MODE')
 const stores = Object.freeze({
     settings: 'SETTINGS',
-    domainlist: 'DOMAINLIST'
+    domainlist: 'DOMAINLIST',
+    analysis:'ANALYSIS'
 });
 
 
@@ -48,6 +49,7 @@ const dbPromise = openDB("extensionDB", 1, {
     upgrade: (db) => {
         db.createObjectStore(stores.domainlist)
         db.createObjectStore(stores.settings)
+        db.createObjectStore(stores.analysis)
     }
 });
 

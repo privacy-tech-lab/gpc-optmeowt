@@ -1,13 +1,13 @@
 <p align="center">
-  <img alt="GitHub release (latest by date)" src="https://img.shields.io/github/v/release/privacy-tech-lab/gpc-optmeowt">
-  <img alt="GitHub Release Date" src="https://img.shields.io/github/release-date/privacy-tech-lab/gpc-optmeowt">
-  <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/privacy-tech-lab/gpc-optmeowt">
-  <img alt="GitHub issues" src="https://img.shields.io/github/issues-raw/privacy-tech-lab/gpc-optmeowt">
-  <img alt="GitHub closed issues" src="https://img.shields.io/github/issues-closed-raw/privacy-tech-lab/gpc-optmeowt">
-  <img alt="GitHub" src="https://img.shields.io/github/license/privacy-tech-lab/gpc-optmeowt">
-  <img alt="GitHub watchers" src="https://img.shields.io/github/watchers/privacy-tech-lab/gpc-optmeowt?style=social">
-  <img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/privacy-tech-lab/gpc-optmeowt?style=social">
-  <img alt="GitHub forks" src="https://img.shields.io/github/forks/privacy-tech-lab/gpc-optmeowt?style=social">
+  <a href="https://github.com/privacy-tech-lab/gpc-optmeowt/releases"><img alt="GitHub release (latest by date)" src="https://img.shields.io/github/v/release/privacy-tech-lab/gpc-optmeowt"></a>
+  <a href="https://github.com/privacy-tech-lab/gpc-optmeowt/releases"><img alt="GitHub Release Date" src="https://img.shields.io/github/release-date/privacy-tech-lab/gpc-optmeowt"></a>
+  <a href="https://github.com/privacy-tech-lab/gpc-optmeowt/commits/main"><img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/privacy-tech-lab/gpc-optmeowt"></a>
+  <a href="https://github.com/privacy-tech-lab/gpc-optmeowt/issues"><img alt="GitHub issues" src="https://img.shields.io/github/issues-raw/privacy-tech-lab/gpc-optmeowt"></a>
+  <a href="https://github.com/privacy-tech-lab/gpc-optmeowt/issues?q=is%3Aissue+is%3Aclosed"><img alt="GitHub closed issues" src="https://img.shields.io/github/issues-closed-raw/privacy-tech-lab/gpc-optmeowt"></a>
+  <a href="https://github.com/privacy-tech-lab/gpc-optmeowt/blob/main/LICENSE.md"><img alt="GitHub" src="https://img.shields.io/github/license/privacy-tech-lab/gpc-optmeowt"></a>
+  <a href="https://github.com/privacy-tech-lab/gpc-optmeowt/watchers"><img alt="GitHub watchers" src="https://img.shields.io/github/watchers/privacy-tech-lab/gpc-optmeowt?style=social"></a>
+  <a href="https://github.com/privacy-tech-lab/gpc-optmeowt/stargazers"><img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/privacy-tech-lab/gpc-optmeowt?style=social"></a>
+  <a href="https://github.com/privacy-tech-lab/gpc-optmeowt/network/members"><img alt="GitHub forks" src="https://img.shields.io/github/forks/privacy-tech-lab/gpc-optmeowt?style=social"></a>
 </p>
   
 <br>
@@ -64,11 +64,17 @@ In detail, OptMeowt uses five methods to opt you out:
 
 To build the development versions of OptMeowt follow the directions above but replace `npm run build` with `npm run start`. This command will run the npm script (referenced in `package.json`) that will call Webpack in development mode (Webpack settings in `webpack.config.js`). `npm run start` will also initiate Webpack servers for both the Firefox and Chrome versions, which will listen for changes as you work and rebuild as necessary.
 
-**Note:** Webpack will build the development versions of OptMeowt into the `dev` subdirectory instead of the `dist` subdirectory. The subdirectories for Chrome and Firefox are `dev/chrome` and `dev/firefox`, respectively.
+**Webpack and file structure notes:** 
+  
+Webpack will build the development versions of OptMeowt into the `dev` subdirectory instead of the `dist` subdirectory. The subdirectories for Chrome and Firefox are `dev/chrome` and `dev/firefox`, respectively.
 
 Also, when you build for development, the development manifest (in `src/manifest-dev.json`) will be used instead of the distribution manifest (in `src/manifest-dist.json`). The development manifest contains an unsafe eval that we use for our source maps during development. The distribution manifest does not contain this eval. Webpack will select the correct manifest depending on whether you build for development or distribution.
 
 To include new dependencies you can run `npm install` instead of `npm ci`. `npm install` will include new dependencies in the `package-lock.json`, which is generated from the `package.json`.
+  
+**For Windows users:** 
+  
+Note that we have built most of our codebase in MacOS, so path variables and similar code may cause the build to break in other OSs, in particular Windows. We recommend installing a Linux OS if you will be working with the codebase in any significant manner. 
 
 ### Optional
 

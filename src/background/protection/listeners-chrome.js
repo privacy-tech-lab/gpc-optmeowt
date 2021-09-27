@@ -14,12 +14,12 @@ our main functionality
 */
 
 
-import {
-	onBeforeSendHeaders, 
-	onHeadersReceived, 
-	onBeforeNavigate,
-	onCommitted
-} from "./events.js"
+// import {
+// 	onBeforeSendHeaders, 
+// 	onHeadersReceived, 
+// 	onBeforeNavigate,
+// 	onCommitted
+// } from "./events.js"
 
 
 // https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/webRequest/onBeforeRequest
@@ -39,7 +39,14 @@ const FILTER = { urls: ["<all_urls>"] }
  * 
  * The functions called on event occurance are located in `events.js`
  */
-function enableListeners() {   
+function enableListeners(callbacks) {  
+	
+	const {
+		onBeforeSendHeaders,
+		onHeadersReceived,
+		onBeforeNavigate,
+		onCommitted
+	} = callbacks;
 
 	// (4) global Chrome listeners
 	chrome.webRequest.onBeforeSendHeaders.addListener(
@@ -59,7 +66,14 @@ function enableListeners() {
 /**
  * Disables background listeners
  */
-function disableListeners() {
+function disableListeners(callbacks) {
+	const {
+		onBeforeSendHeaders,
+		onHeadersReceived,
+		onBeforeNavigate,
+		onCommitted
+	} = callbacks;
+	
   chrome.webRequest.onBeforeSendHeaders.removeListener(onBeforeSendHeaders)
   chrome.webRequest.onHeadersReceived.removeListener(onHeadersReceived)
   chrome.webNavigation.onBeforeNavigate.removeListener(onBeforeNavigate)
