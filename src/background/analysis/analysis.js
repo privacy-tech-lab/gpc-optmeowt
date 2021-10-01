@@ -210,6 +210,10 @@ var analysis = {
 /******************************************************************************/
 
 
+/**
+ * 
+ * @returns 
+ */
 function loadFlags() {
   var urlFlags = [];
   //Load the privacy flags from the static json file
@@ -230,6 +234,12 @@ function loadFlags() {
 // 1: details 2: did we privatize this request?
 // Firefox implementation for fingerprinting classification flags
 // https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/webRequest/onBeforeSendHeaders
+/**
+ * 
+ * @param {*} details 
+ * @param {*} privatized 
+ * @returns 
+ */
 function processTrackingRequest (details, privatized){
   var urlFlags = loadFlags();
 
@@ -252,6 +262,11 @@ function processTrackingRequest (details, privatized){
   return details
 }
 
+/**
+ * 
+ * @param {*} url 
+ * @returns 
+ */
 function parseURLForSignal(url) {
   var flagSettingsDict = [];
 
@@ -278,7 +293,7 @@ function parseURLForSignal(url) {
 
 /******************************************************************************/
 /******************************************************************************/
-/**********          # Functions & Listeners                         **********/
+/**********                       # Functions                        **********/
 /******************************************************************************/
 /******************************************************************************/
 
@@ -289,7 +304,15 @@ const MOZ_RESPONSE_SPEC = ["responseHeaders", "blocking"];
 const FILTER = { urls: ["<all_urls>"] };
 
 let newIncognitoTab = chrome.windows.create({ "url": null, "incognito": true });
-let usprivacyRegex = /us-?_?privacy/g;
+
+// /us-?_?privacy/g;
+let cookiesRegex = new RegExp([
+  /(us-?_?privacy)|/,
+  /(OptanonConsent)/
+].map(r => r.source).join(''), "gmi");
+
+console.log(cookiesRegex);
+
 
 function addHeaders(details) {
   for (let signal in headers) {
@@ -299,100 +322,36 @@ function addHeaders(details) {
   return { requestHeaders: details.requestHeaders }
 }
 
-
-var addGPCHeaders = function() {
-  sendingGPC = true;
-  chrome.webRequest.onBeforeSendHeaders.addListener(
-    // onBeforeSendHeaders,
-    // (() => {console.log("RUNNING addGPCHeaders();")}),
-    addHeaders,
-    FILTER,
-    MOZ_REQUEST_SPEC
-);}
-var removeGPCHeaders = function() {
-  sendingGPC = false;
-  chrome.webRequest.onBeforeSendHeaders.removeListener(addHeaders);
-}
-
 /**
  * Initializes the analysis with a refresh after being triggered
  */
 function runAnalysis() {
+  // console.log("Reloading site, sendingGPC =", sendingGPC);
   sendingGPC = true;
   changingSitesOnAnalysis = true;
   addGPCHeaders();
-  
-  console.log("Reloading site, sendingGPC =", sendingGPC);
   chrome.tabs.reload();
 }
+
 function disableAnalysis() {
-  console.log("DISABLING ANALYSIS, REMOVING GPC HEADERS")
+  // console.log("DISABLING ANALYSIS, REMOVING GPC HEADERS")
   sendingGPC = false;
   changingSitesOnAnalysis = false;
   removeGPCHeaders();
 }
 
-
-chrome.webNavigation.onCommitted.addListener((details) => {
-  // https://developer.chrome.com/docs/extensions/reference/history/#transition_types
-  let validTransition = isValidTransition(details.transitionType);
-  console.log("transitionType: ", details.transitionType);
-
-  // changingSitesOnAnalysis, changingSitesOnUserRequest, sendingGPC
-
-  if (validTransition) {
-
-    if (changingSitesOnAnalysis) {
-      // add SENDINGS GPC TO FILE
-      // Turn off changing sites on analysis 
-      changingSitesOnAnalysis = false;
-    } else {  // Must be on user request
-      disableAnalysis();
-      changingSitesOnUserRequest = true;
-    }
-    // if (changingSitesOnUserRequest) {
-    //   // changingSitesOnUserRequest = false;
-    //   disableAnalysis();
-    // }
-
-    // if (!sendingGPC) {
-    //   changingSitesOnUserRequest = true;
-    //   disableAnalysis();
-    // } else {
-    //   disableAnalysis();
-    // }
-
-  }
-})
-
-// var doNotSellRegex = /(Do.Not|Don.t).Sell.(My)?/gmi
-
-
-// function webRequestFiltering(details) {
-//   let filter = browser.webRequest.filterResponseData(details.requestId);
-//   let decoder = new TextDecoder("utf-8");
-//   let encoder = new TextEncoder(); 
-
-//   console.log("Here is teh origin: ", details.url)
-//   filter.ondata = event => {
-//     console.log("Here is the webRequestFiltering", event);
-//     let str = decoder.decode(event.data, {stream: true});
-//     console.log("Here is our REGEX TEST: ", doNotSellRegex.test(str))
-//     // console.log("Here is the parsed webRequestFiltering", str);
-//     filter.write(encoder.encode(str));
-//     filter.disconnect();
-//   }
-// }
-
-
-// chrome.webRequest.onBeforeSendHeaders.addListener(
-//   webRequestFiltering,
-//   FILTER,
-//   MOZ_REQUEST_SPEC
-// )
-
-
-
+/**
+ * Runs `dom.js` to attach DOM signal
+ * @param {object} details - retrieved info passed into callback
+ */
+ function addDomSignal(details) {
+  chrome.tabs.executeScript(details.tabId, {
+    file: "dom.js",
+    frameId: details.frameId, // Supposed to solve multiple injections
+                              // as opposed to allFrames: true
+    runAt: "document_start",
+  });
+}
 
 /**
  * https://developer.chrome.com/docs/extensions/reference/history/#transition_types 
@@ -401,11 +360,11 @@ chrome.webNavigation.onCommitted.addListener((details) => {
  */
  function isValidTransition(transition) {
   return (transition === "link"
-  || transition === "typed"
-  || transition === "generated"
-  || transition === "reload"
-  || transition === "keyword"
-  || transition === "keyword_generated" // Potentially unneeded
+    || transition === "typed"
+    || transition === "generated"
+    || transition === "reload"
+    || transition === "keyword"
+    || transition === "keyword_generated" // Potentially unneeded
   );
 }
 
@@ -429,6 +388,7 @@ var analysisDataSkeletonThirdParties = () => {
     "USPAPI_LOCATOR": {}
   }
 }
+
 var analysisDataSkeletonFirstParties = () => { 
   return {
     "BEFORE_GPC": {
@@ -465,12 +425,11 @@ function logData(domain, command, data) {
   // let gpcStatusKey = changingSitesOnUserRequest ? "BEFORE_GPC" : "AFTER_GPC";
 
   if (!analysis[domain]) {
-    console.log("Adding analysis[domain] = [];")
+    // console.log("Adding analysis[domain] = [];")
     analysis[domain] = [];
   }
-
   let callIndex = analysis[domain].length;
-  console.log("call index: ", callIndex)
+  // console.log("call index: ", callIndex)
 
   // FIX TEH USE CASE HERE FOR ARRAYS
 
@@ -479,8 +438,8 @@ function logData(domain, command, data) {
     changingSitesOnUserRequest = false;
   } else {
     callIndex -= 1;
-    console.log("Saving to minus one callindex", callIndex)
-    console.log("(4) analysis: ", analysis);
+    // console.log("Saving to minus one callindex", callIndex)
+    // console.log("(4) analysis: ", analysis);
   }
 
   if (!analysis[domain][callIndex][gpcStatusKey]["TIMESTAMP"]) {
@@ -494,59 +453,87 @@ function logData(domain, command, data) {
 
   // Let's assume that data does have a name property as a cookie should
   if (command === "COOKIES") {
-    console.log("Got to COMMAND === COOKIES");
-    // if (changingSitesOnUserRequest) {   // could this also be sendingGPC?
-      analysis[domain][callIndex][gpcStatusKey]["COOKIES"].push(data);
-    // } else {}
+    analysis[domain][callIndex][gpcStatusKey]["COOKIES"].push(data);
+    // console.log("Got to COMMAND === COOKIES");
 
     // Make a new enumerated section under the particular domain
     // otherwise use the last one
   }
   if (command === "USPAPI") {
-    console.log("Got to COMMAND === USPAPI");
+    // console.log("Got to COMMAND === USPAPI");
     analysis[domain][callIndex][gpcStatusKey]["USPAPI"].push(data);
   }
-  console.log("Finished logging: ", analysis);
+  console.log("Updated analysis logs: ", analysis);
 }
 
 
+
+/******************************************************************************/
+/******************************************************************************/
+/**********                       # Listeners                        **********/
+/******************************************************************************/
+/******************************************************************************/
+
+
+var addGPCHeaders = function() {
+  sendingGPC = true;
+  chrome.webRequest.onBeforeSendHeaders.addListener(
+    addHeaders,
+    FILTER,
+    MOZ_REQUEST_SPEC
+);}
+
+var removeGPCHeaders = function() {
+  sendingGPC = false;
+  chrome.webRequest.onBeforeSendHeaders.removeListener(addHeaders);
+}
 
 // Cookie listener - grabs ALL cookies as they are changed
 let listenerForUSPCookies = chrome.cookies.onChanged.addListener(
   (changeInfo) => {
     if (!changeInfo.removed) {
       let cookie = changeInfo.cookie;
-      let urlObj = psl.parse(cookie.domain);
+      let domain = cookie.domain;
+      domain = domain[0] == '.' ? domain.substring(1) : domain;
+      let urlObj = psl.parse(domain);
 
-      if (usprivacyRegex.test(cookie.name)) {
-        console.log("Init logData() from listenerForUSPCookies")
-        console.log("logData domain: ", urlObj.domain)
+      if (cookiesRegex.test(cookie.name)) {
+        // console.log("Init logData() from listenerForUSPCookies")
+        // console.log("logData domain: ", urlObj.domain)
         logData(urlObj.domain, "COOKIES", cookie);
-        // if (!analysis[domain]) analysis[domain] = {};
-        // let length = Object.keys(analysis[cookie.domain]).length;
-
-        // analysis[cookie.domain][length+1] = cookie;
       }
     }
     // console.log(analysis);
 })
 
+chrome.webNavigation.onCommitted.addListener((details) => {
+// https://developer.chrome.com/docs/extensions/reference/history/#transition_types
+  let validTransition = isValidTransition(details.transitionType);
+  console.log("transitionType: ", details.transitionType);
 
-
-// hi my name is iyanna hehehe hi my name is iyanna :) name? 
-
+  // changingSitesOnAnalysis, changingSitesOnUserRequest, sendingGPC
+  if (validTransition) {
+    if (changingSitesOnAnalysis) {
+      // add SENDING GPC TO FILE
+      // Turn off changing sites on analysis 
+      addDomSignal();
+      changingSitesOnAnalysis = false;
+    } else {  // Must be on user request
+      disableAnalysis();
+      changingSitesOnUserRequest = true;
+    }
+  }
+})
 
 // Message passing listener - for collecting USPAPI call data from window
 chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
   if (message.msg === "USPAPI_TO_BACKGROUND") {
     let url = new URL(message.location);
-    // let parsed = psl.parse(url);
-    // let domain = parsed.domain;
     let domain = parseURL(url);
-    console.log("Data from USPAPI returned to background", message.data);
-    console.log("Message object: ", message);
-    console.log("Init logData() from runtime.onMessage")
-    console.log("logData domain: ", domain)
+    // console.log("Data from USPAPI returned to background", message.data);
+    // console.log("Message object: ", message);
+    // console.log("Init logData() from runtime.onMessage")
+    // console.log("logData domain: ", domain)
     logData(domain, "USPAPI", message.data);
   }
   if (message.msg === "RUN_ANALYSIS") {
@@ -558,10 +545,6 @@ chrome.runtime.onConnect.addListener(function(port) {
   port.onMessage.addListener(function (message) {
     if (message.msg === "RUN_ANALYSIS_FROM_BACKGROUND") {
       runAnalysis();
-      // chrome.runtime.sendMessage({
-      //   msg: "RUN_ANALYSIS",
-      //   data: null,
-      // });
     }
   })
 })

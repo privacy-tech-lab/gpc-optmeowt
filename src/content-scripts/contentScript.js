@@ -27,11 +27,17 @@ https://developer.chrome.com/extensions/content_scripts
 
 
 // To be injected to call the USPAPI function in analysis mode
-const uspapi = `__uspapi('getUSPData', 1, (data) => {
-  console.log("USP Data: ", data);
-  let currURL = document.URL
-  window.postMessage({ type: "USPAPI_TO_CONTENT_SCRIPT", result: data, url: currURL });
-});`
+const uspapi = `
+  try {
+    __uspapi('getUSPData', 1, (data) => {
+      console.log("USP Data: ", data);
+      let currURL = document.URL
+      window.postMessage({ type: "USPAPI_TO_CONTENT_SCRIPT", result: data, url: currURL });
+    });
+  } catch (e) {
+    console.log(e);
+  }
+`
 
 const runAnalysisProperty = `
 if (!window.runAnalysis) {
