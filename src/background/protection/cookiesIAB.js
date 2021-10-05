@@ -1,9 +1,8 @@
 /*
-OptMeowt is licensed under the MIT License
-Copyright (c) 2021 Kuba Alicki, Stanley Markman, Oliver Wang, Sebastian Zimmeck
-Previous contributors: Kiryl Beliauski, Daniel Knopf, Abdallah Salia
-privacy-tech-lab, https://privacytechlab.org/
+Licensed per https://github.com/privacy-tech-lab/gpc-optmeowt/blob/main/LICENSE.md
+privacy-tech-lab, https://www.privacytechlab.org/
 */
+
 
 /*
 cookiesIAB.js

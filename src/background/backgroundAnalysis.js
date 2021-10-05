@@ -1,3 +1,9 @@
+/*
+Licensed per https://github.com/privacy-tech-lab/gpc-optmeowt/blob/main/LICENSE.md
+privacy-tech-lab, https://www.privacytechlab.org/
+*/
+
+
 import { debug } from "webpack"
 import { defaultSettings } from "../data/defaultSettings.js"
 import { extensionMode, stores, storage } from "./storage.js"

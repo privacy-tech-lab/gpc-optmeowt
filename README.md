@@ -25,6 +25,8 @@ OptMeowt ("Opt Me Out") is a browser extension for opting you out from web track
   <a href="https://chrome.google.com/webstore/detail/optmeowt/hdbnkdbhglahihjdbodmfefogcjbpgbo"><img src="https://github.com/privacy-tech-lab/gpc-optmeowt/blob/main/chrome-web-store-badge.png" width="200px" alt="Chrome Web Store badge"></a>
 <p>
 
+OptMeowt is developed and maintained by Kuba Alicki (@kalicki1), Oliver Wang (@OliverWang13), and Sebastian Zimmeck (@SebastianZimmeck) of the [privacy-tech-lab](https://www.privacytechlab.org/). Stanley Markman (@stanleymarkman), Kiryl Beliauski (@kbeliauski), Daniel Knopf (@dknopf), and Abdallah Salia (@asalia-1) contributed earlier.
+
 ## How does OptMeowt work?
 
 OptMeowt sends Do Not Sell signals to websites when you browse the web. Such signals must be respected for California consumers per the California Consumer Privacy Act (CCPA), [Regs Section 999.315(d)](https://oag.ca.gov/sites/all/files/agweb/pdfs/privacy/oal-sub-final-text-of-regs.pdf). Some companies also respect them when they are sent from outside of California. OptMeowt also places opt out cookies.
