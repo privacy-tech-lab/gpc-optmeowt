@@ -327,7 +327,12 @@ function webRequestFiltering(details) {
     // Just change any instance of Example in the HTTP response
     // to WebExtension Example.
     if (phrasing.test(str)){
-      // console.log("found it", str);
+      console.log("found it", str);
+      let url = new URL(details.url);
+      console.log("URL: ", url);
+      // let url = new URL(message.location);
+      let domain = parseURL(url);
+      logData(domain, "DO_NOT_SELL_LINK_WEB_REQUEST_FILTERING", str);
     }
     filter.write(encoder.encode(str));
     filter.disconnect();
@@ -415,7 +420,9 @@ var analysisDataSkeletonFirstParties = () => {
     "BEFORE_GPC": {
       "TIMESTAMP": null,
       "COOKIES": [],
+      "DO_NOT_SELL_LINK": [],
       "DO_NOT_SELL_LINK_EXISTS": null,
+      "DO_NOT_SELL_LINK_WEB_REQUEST_FILTERING": [],
       "HEADERS": {},
       "URLS": {},
       "USPAPI": [],
@@ -425,7 +432,9 @@ var analysisDataSkeletonFirstParties = () => {
     "AFTER_GPC": {
       "TIMESTAMP": null,
       "COOKIES": [],
+      "DO_NOT_SELL_LINK": [],
       "DO_NOT_SELL_LINK_EXISTS": null,
+      "DO_NOT_SELL_LINK_WEB_REQUEST_FILTERING": [],
       "HEADERS": {},
       "URLS": {},
       "USPAPI": [],
@@ -483,6 +492,16 @@ function logData(domain, command, data) {
   if (command === "USPAPI") {
     // console.log("Got to COMMAND === USPAPI");
     analysis[domain][callIndex][gpcStatusKey]["USPAPI"].push(data);
+  }
+  if (command === "DO_NOT_SELL_LINK") {
+    // console.log("Got to COMMAND === USPAPI");
+    analysis[domain][callIndex][gpcStatusKey]["DO_NOT_SELL_LINK"].push(data);
+    analysis[domain][callIndex][gpcStatusKey]["DO_NOT_SELL_LINK_EXISTS"] = true;
+  }
+  if (command === "DO_NOT_SELL_LINK_WEB_REQUEST_FILTERING") {
+    // console.log("Got to COMMAND === USPAPI");
+    analysis[domain][callIndex][gpcStatusKey]["DO_NOT_SELL_LINK_WEB_REQUEST_FILTERING"].push(data);
+    analysis[domain][callIndex][gpcStatusKey]["DO_NOT_SELL_LINK_EXISTS"] = true;
   }
   console.log("Updated analysis logs: ", analysis);
 }
@@ -557,6 +576,11 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     // console.log("Init logData() from runtime.onMessage")
     // console.log("logData domain: ", domain)
     logData(domain, "USPAPI", message.data);
+  }
+  if (message.msg === "DNS_FINDER_TO_BACKGROUND") {
+    let url = new URL(message.location);
+    let domain = parseURL(url);
+    logData(domain, "DO_NOT_SELL_LINK", message.data)
   }
   if (message.msg === "RUN_ANALYSIS") {
     runAnalysis();

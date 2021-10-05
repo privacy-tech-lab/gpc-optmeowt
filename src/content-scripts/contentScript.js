@@ -64,9 +64,9 @@ function dnsLinkFinder() {
 		var elements = document.getElementsByTagName(tagtypes[x]);
 		for (let i = 0; i<elements.length; i++){
 			var element = elements[i];
-			var text = element.innerHTML;
-			if (phrasing.test(text)){
-				console.log("Found it, here is the DNS", text);
+			var dnsText = element.innerHTML;
+			if (phrasing.test(dnsText)){
+				console.log("Found it, here is the DNS", dnsText);
 				break;
 			}
 		}
@@ -114,9 +114,14 @@ function dnsLinkFinder() {
       var elements = document.getElementsByTagName(tagtypes[x]);
       for (let i = 0; i<elements.length; i++){
         var element = elements[i];
-        var text = element.innerHTML;
-        if (phrasing.test(text)){
-          console.log("Found it, here is the DNS", text);
+        var dnsText = element.innerHTML;
+        if (phrasing.test(dnsText)){
+          console.log("Found it, here is the DNS", dnsText);
+          chrome.runtime.sendMessage({ 
+            msg: "DNS_FINDER_TO_BACKGROUND", 
+            data: dnsText, 
+            location: this.location.href 
+          });
           break;
         }
       }
