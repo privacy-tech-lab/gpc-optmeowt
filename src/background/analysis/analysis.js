@@ -314,7 +314,28 @@ let cookiesRegex = new RegExp([
 console.log(cookiesRegex);
 
 
+function webRequestFiltering(details) {
+  console.log("webRequestFiltering called");
+  let filter = browser.webRequest.filterResponseData(details.requestId);
+  let decoder = new TextDecoder("utf-8");
+  let encoder = new TextEncoder();
+  
+  filter.ondata = event => {
+    let str = decoder.decode(event.data, { stream: true });
+    // console.log(str);   // This tentatively prints the stream (?)
+    let phrasing = /(Do.Not|Don.t).Sell.(My)?/gmi
+    // Just change any instance of Example in the HTTP response
+    // to WebExtension Example.
+    if (phrasing.test(str)){
+      // console.log("found it", str);
+    }
+    filter.write(encoder.encode(str));
+    filter.disconnect();
+  }
+}
+
 function addHeaders(details) {
+  webRequestFiltering(details);
   for (let signal in headers) {
     let s = headers[signal]
     details.requestHeaders.push({ name: s.name, value: s.value })
@@ -481,7 +502,8 @@ var addGPCHeaders = function() {
     addHeaders,
     FILTER,
     MOZ_REQUEST_SPEC
-);}
+  );
+}
 
 var removeGPCHeaders = function() {
   sendingGPC = false;
