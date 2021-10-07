@@ -40,9 +40,9 @@ const uspapi = `
 const runAnalysisProperty = `
 if (!window.runAnalysis) {
     window.runAnalysis = function() {
-		console.log("POSTED RUN_ANALYSIS");
-		window.postMessage({ type: "RUN_ANALYSIS", result: null });
-        return 333
+		  console.log("POSTED RUN_ANALYSIS");
+		  window.postMessage({ type: "RUN_ANALYSIS", result: null });
+      return
     };
 };`
 
@@ -92,7 +92,7 @@ function dnsLinkFinder() {
 
   console.log("MAIN CONTENT SCRIPT INIT:: ");
 
-	let url = new URL(location.href);
+  let url = location; // location object
 
 	/* (1) Gets Frame:0 Tab content */
 	chrome.runtime.sendMessage({
@@ -118,7 +118,7 @@ function dnsLinkFinder() {
           chrome.runtime.sendMessage({ 
             msg: "DNS_FINDER_TO_BACKGROUND", 
             data: dnsText, 
-            location: this.location.href 
+            location: this.location.href
           });
           break;
         }
