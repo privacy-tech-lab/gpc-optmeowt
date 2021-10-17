@@ -52,6 +52,7 @@ import { popperOffsets } from "@popperjs/core";
 
 
 var analysis = {};
+var analysis_userend = {};
 var urlFlags;
 // var hasReloaded = false;
 
@@ -313,31 +314,6 @@ let cookiesRegex = new RegExp([
 console.log(cookiesRegex);
 
 
-function webRequestFiltering(details) {
-  console.log("webRequestFiltering called");
-  let filter = browser.webRequest.filterResponseData(details.requestId);
-  let decoder = new TextDecoder("utf-8");
-  let encoder = new TextEncoder();
-  
-  filter.ondata = event => {
-    let str = decoder.decode(event.data, { stream: true });
-    // console.log(str);   // This tentatively prints the stream (?)
-    let phrasing = /(Do.Not|Don.t).Sell.(My)?/gmi
-    // Just change any instance of Example in the HTTP response
-    // to WebExtension Example.
-    if (phrasing.test(str)){
-      console.log("found it", str);
-      let url = new URL(details.url);
-      console.log("URL: ", url);
-      // let url = new URL(message.location);
-      let domain = parseURL(url);
-      logData(domain, "DO_NOT_SELL_LINK_WEB_REQUEST_FILTERING", str);
-    }
-    filter.write(encoder.encode(str));
-    filter.disconnect();
-  }
-}
-
 function addHeaders(details) {
   webRequestFiltering(details);
   for (let signal in headers) {
@@ -402,6 +378,59 @@ function disableAnalysis() {
   return (psl.parse(urlObj.hostname)).domain;
 }
 
+function webRequestFiltering(details) {
+  console.log("webRequestFiltering called");
+  let filter = browser.webRequest.filterResponseData(details.requestId);
+  let decoder = new TextDecoder("utf-8");
+  let encoder = new TextEncoder();
+  
+  let data = [];
+  filter.ondata = event => {
+    data.push(event.data);
+  }
+
+  let phrasing = /(Do.?Not|Don.?t).?Sell.?(My)?/gmi
+
+  filter.onstop = event => {
+    let str = "";
+    for (let buffer of data) {
+      str += decoder.decode(buffer, {stream: true});
+    }
+    str += decoder.decode();
+
+    // Just change any instance of WebExtension Example in the HTTP response
+    // to WebExtension WebExtension Example.
+    if (phrasing.test(str)) {
+      console.log("found it in webRequestFiltering", str);
+      let url = new URL(details.url);
+      console.log("found it URL in webRequestFiltering: ", url);
+      // let url = new URL(message.location);
+      let domain = parseURL(url);
+      console.log("domain inside webRequestFiltering: ", domain)
+      logData(domain, "DO_NOT_SELL_LINK_WEB_REQUEST_FILTERING", str);
+    }
+    filter.write(encoder.encode(str));
+    filter.close();
+  }
+
+    // filter.write(encoder.encode(str));
+    // filter.disconnect();
+  // }
+}
+
+// Tentative idea:
+// Make every item in here only one thing so you can easily
+// convert to a spreadsheet for saving as a .csv file
+var analysisUserendSkeleton = () => {
+  return {
+    "TIMESTAMP": null,
+    "DO_NOT_SELL_LINK_EXISTS": null,
+    "SENT_GPC": null,
+    "USPAPI": [],
+    "USPAPI_CORRECT": null
+  }
+}
+
 
 var analysisDataSkeletonThirdParties = () => {
   return {
@@ -453,31 +482,47 @@ function logData(domain, command, data) {
   let gpcStatusKey = sendingGPC ? "AFTER_GPC" : "BEFORE_GPC";
   // let gpcStatusKey = changingSitesOnUserRequest ? "BEFORE_GPC" : "AFTER_GPC";
 
+  console.log("domain from logData: ", domain);
+
   if (!analysis[domain]) {
-    // console.log("Adding analysis[domain] = [];")
+    console.log(`Adding analysis[${domain}] = [];`)
     analysis[domain] = [];
+    analysis_userend[domain] = [];
   }
   let callIndex = analysis[domain].length;
-  // console.log("call index: ", callIndex)
+
+  console.log("analysis after adding domain: ", analysis)
+  // // Check to see if you are running analysis, but no logs inside BEFORE_GPC
+  // if (analysis[domain][callIndex]["BEFORE_GPC"]) {  // if initialized
+  //   if (!analysis[domain][callIndex]["BEFORE_GPC"]["TIMESTAMP"]) {}
+  // }
+  console.log("call index: ", callIndex)
 
   // FIX TEH USE CASE HERE FOR ARRAYS
 
   if (changingSitesOnUserRequest) {
+    console.log("RAN FIRST PART")
     analysis[domain][callIndex] = analysisDataSkeletonFirstParties();
+    analysis_userend[domain] = analysisUserendSkeleton();
     changingSitesOnUserRequest = false;
   } else {
+    console.log("RAN SECOND PART")
     callIndex -= 1;
     // console.log("Saving to minus one callindex", callIndex)
     // console.log("(4) analysis: ", analysis);
   }
 
+  console.log("analysis after maybe addign callindex: ", analysis)
+
   if (!analysis[domain][callIndex][gpcStatusKey]["TIMESTAMP"]) {
     let ms = Date.now();
     analysis[domain][callIndex][gpcStatusKey]["TIMESTAMP"] = ms; 
+    analysis_userend[domain]["TIMESTAMP"] = ms;
   }
 
   if (sendingGPC) {
     analysis[domain][callIndex]["SENT_GPC"] = true;
+    analysis_userend[domain]["SENT_GPC"] = true;
   }
 
   // Let's assume that data does have a name property as a cookie should
@@ -491,18 +536,24 @@ function logData(domain, command, data) {
   if (command === "USPAPI") {
     // console.log("Got to COMMAND === USPAPI");
     analysis[domain][callIndex][gpcStatusKey]["USPAPI"].push(data);
+    
+    analysis_user[domain]["USPAPI"].push(data);
+    // if (data. )
   }
   if (command === "DO_NOT_SELL_LINK") {
     // console.log("Got to COMMAND === USPAPI");
     analysis[domain][callIndex][gpcStatusKey]["DO_NOT_SELL_LINK"].push(data);
     analysis[domain][callIndex][gpcStatusKey]["DO_NOT_SELL_LINK_EXISTS"] = true;
+    analysis_userend[domain]["DO_NOT_SELL_LINK_EXISTS"] = true;
   }
   if (command === "DO_NOT_SELL_LINK_WEB_REQUEST_FILTERING") {
     // console.log("Got to COMMAND === USPAPI");
     analysis[domain][callIndex][gpcStatusKey]["DO_NOT_SELL_LINK_WEB_REQUEST_FILTERING"].push(data);
     analysis[domain][callIndex][gpcStatusKey]["DO_NOT_SELL_LINK_EXISTS"] = true;
+    analysis_userend[domain]["DO_NOT_SELL_LINK_EXISTS"] = true;
   }
   console.log("Updated analysis logs: ", analysis);
+  console.log("Updated analysis_userend logs: ", analysis_userend);
 }
 
 
@@ -584,6 +635,12 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
   if (message.msg === "RUN_ANALYSIS") {
     runAnalysis();
   }
+  if (message.msg === "POPUP") {
+    chrome.runtime.sendMessage({
+      msg: "POPUP_DATA",
+      data: { analysis, analysis_userend }
+    }); 
+  }
 });
 
 chrome.runtime.onConnect.addListener(function(port) {
@@ -593,6 +650,8 @@ chrome.runtime.onConnect.addListener(function(port) {
     }
   })
 })
+
+
 
 
 /******************************************************************************/

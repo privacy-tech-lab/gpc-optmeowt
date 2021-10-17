@@ -42,7 +42,7 @@ if (!window.runAnalysis) {
     window.runAnalysis = function() {
 		  console.log("POSTED RUN_ANALYSIS");
 		  window.postMessage({ type: "RUN_ANALYSIS", result: null });
-      return
+      return;
     };
 };`
 
@@ -90,15 +90,16 @@ function dnsLinkFinder() {
 
 	/* MAIN CONTENT SCRIPT PROCESSES GO HERE */
 
-  console.log("MAIN CONTENT SCRIPT INIT:: ");
+	console.log("MAIN CONTENT SCRIPT INIT:: ");
 
-  let url = location; // location object
+	let url = new URL(location); // location object
 
 	/* (1) Gets Frame:0 Tab content */
-	chrome.runtime.sendMessage({
-		msg: "CONTENT_SCRIPT_TAB",
-		data: Date.now(),
-	});
+	// leave this commented out while debugging ANALYSIS MODE
+	// chrome.runtime.sendMessage({
+	// 	msg: "CONTENT_SCRIPT_TAB",
+	// 	data: Date.now(),
+	// });
 
 	/* (2) Searches for DNS link */
 	window.onload = function() {

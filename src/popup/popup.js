@@ -469,6 +469,7 @@ backgroundPort.onMessage.addListener(function(message) {
   if (message.msg === "RESPONSE_MODE") {
     mode = message.data;
     loadModeButton();
+    loadCSVDownload();
   }
 })
 // console.log("SENT CONNECTION");
@@ -507,6 +508,10 @@ chrome.runtime.onMessage.addListener(function (message, _, __) {
     buildDomains(requests);
     buildWellKnown(wellknown);
   }
+  if (message.msg === "POPUP_DATA") {
+    var analysis = message.data.analysis;
+    var analysis_userend = message.data.analysis_userend;
+  }
 });
 
 /******************************************************************************/
@@ -528,6 +533,44 @@ function loadModeButton() {
     modeBadgeButton.addEventListener('click', modeBadgeButtonOnClick);
   }
 }
+
+
+
+function loadCSVDownload() {
+  // enable analysis mode badge
+  if (mode && mode === modes.analysis) {
+
+    let download = document.getElementById("test-csv");
+    let downloadHTML = `<button id="csv-download-button" class="importexport-button">Download</button>`; 
+    download.innerHTML = downloadHTML;
+
+    let downloadButton = document.getElementById("csv-download-button");
+    downloadButton.addEventListener('click', function() {
+
+      const rows = [
+        ["name1", "city", "extra info"],
+        ["name2", "city2", "extra info 2"]
+      ]
+      
+      let csvContent = "data:text/csv;charset=utf-8," + rows.map(e => e.join(",")).join("\n");
+      
+      var encodedUri = encodeURI(csvContent);
+      // window.open(encodedUri);
+      
+      var link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", "my_data.csv");
+      document.body.appendChild(link);
+      
+      link.click();
+
+    })
+    
+  }
+}
+
+
+
 
 /******************************************************************************/
 // Tutorial walkthrough
