@@ -325,6 +325,13 @@ function addHeaders(details) {
 
 /**
  * Initializes the analysis with a refresh after being triggered
+ * 
+ * -- NOTE: This below is a proposed idea, not actually implemented --
+ * Essentially we want to make sure GPC headers and dom properties 
+ * are added here. Handle that HERE
+ * 
+ * (1) Add GPC headers
+ * (2) Attach DOM property to page after reload
  */
 function runAnalysis() {
   // console.log("Reloading site, sendingGPC =", sendingGPC);
@@ -332,6 +339,20 @@ function runAnalysis() {
   changingSitesOnAnalysis = true;
   addGPCHeaders();
   chrome.tabs.reload();
+
+  // // This is a proposed better implementation that consolidates all the 
+  // // GPC signals to be sent into one function
+  // changingSitesOnUserRequest = false;
+  // let reloading = browser.tabs.reload();
+  // function onReloaded(details) {
+  //   function addDomListener(details) {
+  //     addDomSignal(details);
+  //     chrome.webNavigation.onCommitted.removeListener(addDomListener)
+  //   }
+  //   chrome.webNavigation.onCommitted.addListener(addDomListener)
+  // }
+  // function onError(e) { console.error(e) }
+  // reloading.then(onReloaded, onError)
 }
 
 function disableAnalysis() {
@@ -378,6 +399,10 @@ function disableAnalysis() {
   return (psl.parse(urlObj.hostname)).domain;
 }
 
+/**
+ * Checks for do not sell links as responses come in
+ * @param {*} details 
+ */
 function webRequestFiltering(details) {
   console.log("webRequestFiltering called");
   let filter = browser.webRequest.filterResponseData(details.requestId);
@@ -389,7 +414,8 @@ function webRequestFiltering(details) {
     data.push(event.data);
   }
 
-  let phrasing = /(Do.?Not|Don.?t).?Sell.?(My)?/gmi
+  let strictPhrasing = /(Do.?Not|Don.?t).?Sell.?(My)?/gmi
+  let phrasing = /((Do.?Not|Don.?t).?Sell)(.?((My).?)?((Personal).?)?((Information|Info).?)?)?/gmi
 
   filter.onstop = event => {
     let str = "";
@@ -401,13 +427,15 @@ function webRequestFiltering(details) {
     // Just change any instance of WebExtension Example in the HTTP response
     // to WebExtension WebExtension Example.
     if (phrasing.test(str)) {
+      let match = str.match(phrasing)
       console.log("found it in webRequestFiltering", str);
       let url = new URL(details.url);
       console.log("found it URL in webRequestFiltering: ", url);
       // let url = new URL(message.location);
       let domain = parseURL(url);
       console.log("domain inside webRequestFiltering: ", domain)
-      logData(domain, "DO_NOT_SELL_LINK_WEB_REQUEST_FILTERING", str);
+      // logData(domain, "DO_NOT_SELL_LINK_WEB_REQUEST_FILTERING", str);
+      logData(domain, "DO_NOT_SELL_LINK_WEB_REQUEST_FILTERING", match);
     }
     filter.write(encoder.encode(str));
     filter.close();
@@ -425,12 +453,12 @@ var analysisUserendSkeleton = () => {
   return {
     "TIMESTAMP": null,
     "DO_NOT_SELL_LINK_EXISTS": null,
-    "SENT_GPC": null,
-    "USPAPI": [],
-    "USPAPI_CORRECT": null
+    "SENT_GPC": false,
+    "USPAPI_BEFORE_GPC": [],
+    "USPAPI_AFTER_GPC": [],
+    "USPAPI_OPTED_OUT": undefined
   }
 }
-
 
 var analysisDataSkeletonThirdParties = () => {
   return {
@@ -481,6 +509,7 @@ var analysisDataSkeletonFirstParties = () => {
 function logData(domain, command, data) {
   let gpcStatusKey = sendingGPC ? "AFTER_GPC" : "BEFORE_GPC";
   // let gpcStatusKey = changingSitesOnUserRequest ? "BEFORE_GPC" : "AFTER_GPC";
+  console.log("changingSitesOnUserRequest", changingSitesOnUserRequest)
 
   console.log("domain from logData: ", domain);
 
@@ -500,6 +529,7 @@ function logData(domain, command, data) {
 
   // FIX TEH USE CASE HERE FOR ARRAYS
 
+  console.log("changingSitesOnUserRequest", changingSitesOnUserRequest)
   if (changingSitesOnUserRequest) {
     console.log("RAN FIRST PART")
     analysis[domain][callIndex] = analysisDataSkeletonFirstParties();
@@ -511,6 +541,7 @@ function logData(domain, command, data) {
     // console.log("Saving to minus one callindex", callIndex)
     // console.log("(4) analysis: ", analysis);
   }
+  console.log("changingSitesOnUserRequest", changingSitesOnUserRequest)
 
   console.log("analysis after maybe addign callindex: ", analysis)
 
@@ -534,11 +565,34 @@ function logData(domain, command, data) {
     // otherwise use the last one
   }
   if (command === "USPAPI") {
-    // console.log("Got to COMMAND === USPAPI");
     analysis[domain][callIndex][gpcStatusKey]["USPAPI"].push(data);
     
-    analysis_user[domain]["USPAPI"].push(data);
-    // if (data. )
+    // Detailed case for summary object
+    if (gpcStatusKey == "BEFORE_GPC") {
+      analysis_userend[domain]["USPAPI_BEFORE_GPC"].push(data);
+    }
+    if (gpcStatusKey == "AFTER_GPC") {
+      analysis_userend[domain]["USPAPI_AFTER_GPC"].push(data);
+      try {
+        let usprivacyString = data.value || data.uspString;
+        console.log("data: ", data);
+        console.log("the usprivacyString breakdown", data.uspString, data.value)
+        console.log("usprivacyString: ", usprivacyString);
+        if (usprivacyString[2] === "Y" || usprivacyString[2] === "y") {
+          analysis_userend[domain]["USPAPI_OPTED_OUT"] = true;
+        } else if (usprivacyString[2] === "-") {
+          analysis_userend[domain]["USPAPI_OPTED_OUT"] = "N/A - Outside CA";
+        } else if (usprivacyString[2] === "N" || usprivacyString[2] == "n") {
+          analysis_userend[domain]["USPAPI_OPTED_OUT"] = false;
+        } else {
+          analysis_userend[domain]["USPAPI_OPTED_OUT"] = null;
+        }
+      } catch (e) {
+        console.error("Parsing USPAPI for analysis_userend failed.", e);
+        analysis_userend[domain]["USPAPI_OPTED_OUT"] = "PARSE_FAILED"; 
+      }
+    }
+
   }
   if (command === "DO_NOT_SELL_LINK") {
     // console.log("Got to COMMAND === USPAPI");
@@ -598,20 +652,24 @@ let listenerForUSPCookies = chrome.cookies.onChanged.addListener(
 })
 
 chrome.webNavigation.onCommitted.addListener((details) => {
+  console.log("onCommitted Triggered!!")
 // https://developer.chrome.com/docs/extensions/reference/history/#transition_types
   let validTransition = isValidTransition(details.transitionType);
   console.log("transitionType: ", details.transitionType);
 
   // changingSitesOnAnalysis, changingSitesOnUserRequest, sendingGPC
+  console.log("changingSitesOnUserRequest", changingSitesOnUserRequest)
+  // console.log("changingSitesOnAnalysis", changingSitesOnAnalysis)
   if (validTransition) {
     if (changingSitesOnAnalysis) {
       // add SENDING GPC TO FILE
       // Turn off changing sites on analysis 
-      addDomSignal();
+      addDomSignal(details);
       changingSitesOnAnalysis = false;
     } else {  // Must be on user request
       disableAnalysis();
       changingSitesOnUserRequest = true;
+      console.log("cancelling analysis!")
     }
   }
 })
