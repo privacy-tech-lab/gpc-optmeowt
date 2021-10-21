@@ -469,7 +469,9 @@ backgroundPort.onMessage.addListener(function(message) {
   if (message.msg === "RESPONSE_MODE") {
     mode = message.data;
     loadModeButton();
-    loadCSVDownload();
+    chrome.runtime.sendMessage({
+      msg: "CSV_DATA_REQUEST"
+    })
   }
 })
 // console.log("SENT CONNECTION");
@@ -498,6 +500,8 @@ chrome.runtime.sendMessage({
   data: null,
 }, (response) =>  { /*console.log(response)*/ });
 
+
+
 /**
  * Listens for messages from background page that call functions to populate
  * the popup badge counter and build the popup domain list HTML, respectively
@@ -511,6 +515,9 @@ chrome.runtime.onMessage.addListener(function (message, _, __) {
   if (message.msg === "POPUP_DATA") {
     var analysis = message.data.analysis;
     var analysis_userend = message.data.analysis_userend;
+  }
+  if (message.msg === "CSV_DATA_RESPONSE") {
+    loadCSVDownload(message.data);
   }
 });
 
@@ -536,7 +543,7 @@ function loadModeButton() {
 
 
 
-function loadCSVDownload() {
+function loadCSVDownload(csvData) {
   // enable analysis mode badge
   if (mode && mode === modes.analysis) {
 
@@ -545,14 +552,32 @@ function loadCSVDownload() {
     download.innerHTML = downloadHTML;
 
     let downloadButton = document.getElementById("csv-download-button");
-    downloadButton.addEventListener('click', function() {
 
-      const rows = [
-        ["name1", "city", "extra info"],
-        ["name2", "city2", "extra info 2"]
-      ]
-      
-      let csvContent = "data:text/csv;charset=utf-8," + rows.map(e => e.join(",")).join("\n");
+    function loadCSV() {
+      // convert to an array which can easily become a CSV file
+      let columnTitles = [
+        "Domain",
+        "TIMESTAMP", 
+        "DO_NOT_SELL_LINK_EXISTS", 
+        "SENT_GPC", 
+        "USPAPI_BEFORE_GPC", 
+        "USPAPI_AFTER_GPC", 
+        "USPAPI_OPTED_OUT"
+      ];
+      let csvContent = "data:text/csv;charset=utf-8,"
+      csvContent += columnTitles.join(",") + "\n"
+
+      for (let property in csvData) {
+        csvContent += property + ",";
+        for (let i=1; i<columnTitles.length; i++) {
+          let stringifiedProp = JSON.stringify(csvData[property][columnTitles[i]])
+          if (typeof stringifiedProp === "string") {
+            stringifiedProp = stringifiedProp.replace(/"/g, "\'");
+          }
+          csvContent += '\"' + stringifiedProp + "\",";
+        }
+        csvContent += "\n"
+      }
       
       var encodedUri = encodeURI(csvContent);
       // window.open(encodedUri);
@@ -563,8 +588,9 @@ function loadCSVDownload() {
       document.body.appendChild(link);
       
       link.click();
+    }
 
-    })
+    downloadButton.addEventListener('click', loadCSV);
     
   }
 }

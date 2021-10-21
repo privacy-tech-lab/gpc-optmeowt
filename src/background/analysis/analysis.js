@@ -699,6 +699,12 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
       data: { analysis, analysis_userend }
     }); 
   }
+  if (message.msg === "CSV_DATA_REQUEST") {
+    chrome.runtime.sendMessage({
+      msg: "CSV_DATA_RESPONSE",
+      data: analysis_userend
+    });
+  }
 });
 
 chrome.runtime.onConnect.addListener(function(port) {
