@@ -103,28 +103,28 @@ function dnsLinkFinder() {
 
 	/* (2) Searches for DNS link */
 	window.onload = function() {
-    // dnsLinkFinder();
-    console.log("Initializing dnsLinkFinder();")
-    var tagtypes = ["a","button","footer"]; //tag types to search for
-    // var phrasing = /Do.Not.Sell.\(My\)?|Don't.Sell.\(My\)?/gmi
-    var phrasing = /(Do.Not|Don.t).Sell.(My)?/gmi
+    // // dnsLinkFinder();
+    // console.log("Initializing dnsLinkFinder();")
+    // var tagtypes = ["a","button","footer"]; //tag types to search for
+    // // var phrasing = /Do.Not.Sell.\(My\)?|Don't.Sell.\(My\)?/gmi
+    // var phrasing = /(Do.Not|Don.t).Sell.(My)?/gmi
 
-    for (let x=0; x<tagtypes.length;x++){
-      var elements = document.getElementsByTagName(tagtypes[x]);
-      for (let i = 0; i<elements.length; i++){
-        var element = elements[i];
-        var dnsText = element.innerHTML;
-        if (phrasing.test(dnsText)){
-          console.log("Found it, here is the DNS", dnsText);
-          chrome.runtime.sendMessage({ 
-            msg: "DNS_FINDER_TO_BACKGROUND", 
-            data: dnsText, 
-            location: this.location.href
-          });
-          break;
-        }
-      }
-	  }
+    // for (let x=0; x<tagtypes.length;x++){
+    //   var elements = document.getElementsByTagName(tagtypes[x]);
+    //   for (let i = 0; i<elements.length; i++){
+    //     var element = elements[i];
+    //     var dnsText = element.innerHTML;
+    //     if (phrasing.test(dnsText)){
+    //       console.log("Found it, here is the DNS", dnsText);
+    //       chrome.runtime.sendMessage({ 
+    //         msg: "DNS_FINDER_TO_BACKGROUND", 
+    //         data: dnsText, 
+    //         location: this.location.href
+    //       });
+    //       break;
+    //     }
+    //   }
+	  // }
     injectScript(uspapi);
 		injectScript(runAnalysisProperty);
 	}

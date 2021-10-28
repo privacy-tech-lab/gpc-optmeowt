@@ -315,7 +315,7 @@ console.log(cookiesRegex);
 
 
 function addHeaders(details) {
-  webRequestFiltering(details);
+  webRequestResponseFiltering(details);
   for (let signal in headers) {
     let s = headers[signal]
     details.requestHeaders.push({ name: s.name, value: s.value })
@@ -399,51 +399,53 @@ function disableAnalysis() {
   return (psl.parse(urlObj.hostname)).domain;
 }
 
+
+const strictPhrasing = /(Do.?Not|Don.?t).?Sell.?(My)?/gmi
+const doNotSellPhrasing = /((Do.?Not|Don.?t).?Sell)(.?((My).?)?((Personal).?)?((Information|Info).?)?)?/gmi
+
+/**
+ * Processes caught responses via webRequest filtering as they come in
+ * Parses all incoming responses for Do Not Sell links
+ * @param {Object, String}
+ */
+function handleResponseChunk(details, str) {
+  if (doNotSellPhrasing.test(str)) {
+    let match = str.match(doNotSellPhrasing)
+    // console.log("found it in webRequestResponseFiltering", str);
+    let url = new URL(details.url);
+    // console.log("found it URL in webRequestResponseFiltering: ", url);
+    // let url = new URL(message.location);
+    let domain = parseURL(url);
+    // console.log("domain inside webRequestResponseFiltering: ", domain)
+    logData(domain, "DO_NOT_SELL_LINK_WEB_REQUEST_FILTERING", match);
+  }
+}
+
 /**
  * Checks for do not sell links as responses come in
  * @param {*} details 
  */
-function webRequestFiltering(details) {
-  console.log("webRequestFiltering called");
+function webRequestResponseFiltering(details) {
   let filter = browser.webRequest.filterResponseData(details.requestId);
   let decoder = new TextDecoder("utf-8");
   let encoder = new TextEncoder();
   
   let data = [];
   filter.ondata = event => {
-    data.push(event.data);
+    filter.write(event.data); // Write immediately, we don't want to change the response
+    const decodedChunk = decoder.decode(event.data, { stream: true });
+    data.push(decodedChunk);
   }
-
-  let strictPhrasing = /(Do.?Not|Don.?t).?Sell.?(My)?/gmi
-  let phrasing = /((Do.?Not|Don.?t).?Sell)(.?((My).?)?((Personal).?)?((Information|Info).?)?)?/gmi
 
   filter.onstop = event => {
-    let str = "";
-    for (let buffer of data) {
-      str += decoder.decode(buffer, {stream: true});
-    }
-    str += decoder.decode();
-
-    // Just change any instance of WebExtension Example in the HTTP response
-    // to WebExtension WebExtension Example.
-    if (phrasing.test(str)) {
-      let match = str.match(phrasing)
-      console.log("found it in webRequestFiltering", str);
-      let url = new URL(details.url);
-      console.log("found it URL in webRequestFiltering: ", url);
-      // let url = new URL(message.location);
-      let domain = parseURL(url);
-      console.log("domain inside webRequestFiltering: ", domain)
-      // logData(domain, "DO_NOT_SELL_LINK_WEB_REQUEST_FILTERING", str);
-      logData(domain, "DO_NOT_SELL_LINK_WEB_REQUEST_FILTERING", match);
-    }
-    filter.write(encoder.encode(str));
     filter.close();
+    const str = data.toString();
+    handleResponseChunk(details, str);
   }
 
-    // filter.write(encoder.encode(str));
-    // filter.disconnect();
-  // }
+  filter.onerror = event => { 
+    console.error(event) 
+  }
 }
 
 // Tentative idea:
