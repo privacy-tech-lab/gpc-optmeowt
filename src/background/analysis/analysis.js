@@ -400,8 +400,9 @@ function disableAnalysis() {
 }
 
 
-const strictPhrasing = /(Do.?Not|Don.?t).?Sell.?(My)?/gmi
-const doNotSellPhrasing = /((Do.?Not|Don.?t).?Sell)(.?((My).?)?((Personal).?)?((Information|Info).?)?)?/gmi
+// This regex requires at least one of (do not|don't), (sell), & (information|info)
+const doNotSellPhrasing = /(Do.?Not|Don.?t).?Sell.?(My)?.?(Personal)?.?(Information|Info)/gmi
+
 
 /**
  * Processes caught responses via webRequest filtering as they come in
@@ -443,8 +444,10 @@ function webRequestResponseFiltering(details) {
     handleResponseChunk(details, str);
   }
 
-  filter.onerror = event => { 
-    console.error(event) 
+  filter.onerror = event => {
+    console.error(event);
+    console.error(filter.error);
+    request.error = filter.error;
   }
 }
 
