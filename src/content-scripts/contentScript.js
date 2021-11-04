@@ -33,7 +33,7 @@ const uspapi = `
       window.postMessage({ type: "USPAPI_TO_CONTENT_SCRIPT", result: data, url: currURL });
     });
   } catch (e) {
-    console.log(e);
+    console.log("Failed calling USPAPI", e);
   }
 `
 
@@ -54,7 +54,6 @@ function injectScript(script) {
 
 
 
-
 /******************************************************************************/
 /******************************************************************************/
 /**********                   # Main functionality                   **********/
@@ -62,19 +61,28 @@ function injectScript(script) {
 /******************************************************************************/
 
 
+async function getWellknown(url) {
+  const response = await fetch(`${url.origin}/.well-known/gpc.json`);
+	const wellknownData = await response.json();
+
+	chrome.runtime.sendMessage({
+		msg: "CONTENT_SCRIPT_WELLKNOWN",
+		data: wellknownData,
+	});
+}
+
 /**
  * Passes info to background scripts for processing via messages
  * https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/runtime/sendMessage
  * There are other ways to do this, but I use an IIFE to run everything at once
  * https://developer.mozilla.org/en-US/docs/Glossary/IIFE
  */
-(async () => {
-
-	/* MAIN CONTENT SCRIPT PROCESSES GO HERE */
-
+(() => {
+	/*   MAIN CONTENT SCRIPT PROCESSES GO HERE   */
 	console.log("MAIN CONTENT SCRIPT INIT:: ");
 
 	let url = new URL(location); // location object
+  console.log(url)
 
 	/* (1) Gets Frame:0 Tab content */
 	// leave this commented out while debugging ANALYSIS MODE
@@ -84,21 +92,14 @@ function injectScript(script) {
 	// });
 
 	/* (2) Injects scripts */
-	window.onload = function() {
-
+  window.addEventListener('load', function() {
+    console.log("running window.onload");
     injectScript(uspapi);
 		injectScript(runAnalysisProperty);
-	}
+	}, false);
 
 	/* (3) Fetches .well-known GPC file */
-	const response = await fetch(`${url.origin}/.well-known/gpc.json`);
-	const wellknownData = await response.json();
-
-	chrome.runtime.sendMessage({
-		msg: "CONTENT_SCRIPT_WELLKNOWN",
-		data: wellknownData,
-	});
-
+  getWellknown(url);
 })();
 
 
