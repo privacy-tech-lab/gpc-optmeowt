@@ -24,6 +24,7 @@ import {
 } from "../../components/util.js";
 import { settingsView } from "../settings-view/settings-view.js";
 import { domainlistView } from "../domainlist-view/domainlist-view.js";
+import { analysisView } from "../analysis-view/analysis-view.js";
 import { aboutView } from "../about-view/about-view.js";
 import { storage, stores } from "../../../background/storage.js";
 import Darkmode from "../../../theme/darkmode";
@@ -65,6 +66,21 @@ function displayDomainlist(bodyTemplate) {
       */
       document.querySelector('.navbar-item.active').classList.remove('active')
       document.querySelector('#main-view-domainlist').classList.add('active')
+}
+
+function displayAnalysis(bodyTemplate) {
+  // console.log("displayDomainList");
+  analysisView(bodyTemplate);
+  //Animations were broken for some reason, replaced with above line- maybe add back later? -stanley
+  /*
+    animateCSS("#scaffold", 'fadeOut', async function() {
+        document.getElementById('scaffold').remove()
+        await domainlistView(bodyTemplate)
+        animateCSS("#scaffold", 'fadeIn');
+      });
+      */
+      document.querySelector('.navbar-item.active').classList.remove('active')
+      document.querySelector('#main-view-analysis').classList.add('active')
 }
 
 /**
@@ -118,6 +134,9 @@ export async function mainView() {
   document
     .getElementById("main-view-about")
     .addEventListener("click", () => displayAbout(bodyTemplate));
+  document
+    .getElementById("main-view-analysis")
+    .addEventListener("click", () => displayAnalysis(bodyTemplate));
 
   // DARK MODE
   const darkmode = new Darkmode();
