@@ -21,7 +21,7 @@ import {
 import { modes } from "../../data/modes.js";
 import { defaultSettings } from "../../data/defaultSettings.js";
 import { headers } from "../../data/headers.js";
-import { initIAB } from "./cookiesIAB.js";
+import { initIAB } from "../cookiesIAB.js";
 import { initCookiesPerDomain } from "./cookiesOnInstall.js";
 import psl from "psl";
 

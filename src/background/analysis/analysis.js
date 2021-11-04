@@ -401,7 +401,7 @@ function disableAnalysis() {
 
 
 // This regex requires at least one of (do not|don't), (sell), & (information|info)
-const doNotSellPhrasing = /(Do.?Not|Don.?t).?Sell.?(My)?.?(Personal)?.?(Information|Info)/gmi
+const doNotSellPhrasing = /(Do.?Not|Don.?t).?Sell.?(My)?.?(Personal)?.?(Information|Info|Data)/gmi
 
 
 /**

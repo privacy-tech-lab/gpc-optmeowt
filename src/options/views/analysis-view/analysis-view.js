@@ -14,7 +14,8 @@ analysis-view.js loads analysis-view.html when clicked on the options page
 
 
 import { storage, stores } from '../../../background/storage.js';
-import { renderParse, fetchParse } from '../../components/util.js'
+import { renderParse, fetchParse } from '../../components/util.js';
+import { isValidSignalIAB } from '../../../background/cookiesIAB.js'
 
 
 /******************************************************************************/
@@ -45,12 +46,17 @@ export async function dropListener(domain) {
   const analysisKeys = await storage.getAllKeys(stores.analysis)
   const analysisValues = await storage.getAll(stores.analysis)
   let domain;
-  let domainValue;
+  let data;
   for (let index in analysisKeys) {
     domain = analysisKeys[index];
+    data = analysisValues[index];
 
     dropListener(domain)
-    compliant(coinflip(), domain)
+    if (data.DO_NOT_SELL_LINK_EXISTS && data.SENT_GPC && data.USPAPI_OPTED_OUT && (data.USPAPI_BEFORE_GPC.length != 0) && isValidSignalIAB(data.USPAPI_BEFORE_GPC[0].uspString)){
+        compliant(true, domain); 
+    } else {
+        compliant(false, domain); 
+    }
   }
 }
 
@@ -62,9 +68,10 @@ function coinflip(){
 
 /**
  * Create the compliance label
- * @param {string} domain
+ * @param {Boolean} verdict
+ * @param {String} domain
  */
- function compliant (verdict ,domain) {
+ function compliant (verdict, domain) {
    let identifier = document.getElementById(`${domain} compliance`);
    if(verdict == true){
     identifier.classList.add("compliant");
@@ -192,39 +199,34 @@ async function buildList() {
     domain = analysisKeys[index]
     console.log("dnslink", analysisValues[index].DO_NOT_SELL_LINK_EXISTS,"sent gpc", analysisValues[index].SENT_GPC);
 
-    let object = {
-      name: domain,
-      dnslink: coinflip(),
-      stringfound: coinflip(),
-      gpcsent: coinflip(),
-      stringchanged: coinflip()
-    };
-
     let dnslink;
     let stringfound;
     let gpcsent;
     let stringchanged;
-    if (analysisValues[index].DO_NOT_SELL_LINK_EXISTS){
+
+    let data = analysisValues[index];
+    if (data.DO_NOT_SELL_LINK_EXISTS){
       dnslink = pos;
     } else {
       dnslink = neg;
     }
-    if (object.stringfound){
+    let beforeGPC = data.USPAPI_BEFORE_GPC
+    if ((beforeGPC.length != 0) && isValidSignalIAB(beforeGPC[0].uspString)) {
       stringfound = pos;
     } else {
       stringfound = neg;
     }
-    if (analysisValues[index].SENT_GPC){
+    if (data.SENT_GPC){
       gpcsent = pos;
     } else {
       gpcsent = neg;
     }
-    if (object.stringchanged){
+    if (data.USPAPI_OPTED_OUT){
       stringchanged = pos;
     } else {
       stringchanged = neg;
     }
-    domainValue = analysisValues[index]
+    
 
     /***************************************************************/
     /*********Insert Logic to decide check marks or crosses*********/
