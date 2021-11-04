@@ -52,10 +52,6 @@ function injectScript(script) {
   document.documentElement.prepend(scriptElem);
 }
 
-<<<<<<< HEAD
-
-=======
->>>>>>> origin/main
 
 
 /******************************************************************************/
@@ -96,13 +92,8 @@ async function getWellknown(url) {
 	// });
 
 	/* (2) Injects scripts */
-<<<<<<< HEAD
-	window.onload = function() {
-
-=======
   window.addEventListener('load', function() {
     console.log("running window.onload");
->>>>>>> origin/main
     injectScript(uspapi);
 		injectScript(runAnalysisProperty);
 	}, false);

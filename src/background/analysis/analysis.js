@@ -445,10 +445,6 @@ function webRequestResponseFiltering(details) {
   }
 
   filter.onerror = event => {
-<<<<<<< HEAD
-    console.error(event);
-=======
->>>>>>> origin/main
     console.error(filter.error);
     request.error = filter.error;
   }
