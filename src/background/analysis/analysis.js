@@ -392,14 +392,6 @@ function disableAnalysis() {
   return (psl.parse(urlObj.hostname)).domain;
 }
 
-<<<<<<< HEAD
-
-// This regex requires at least one of (do not|don't), (sell), & (information|info)
-const doNotSellPhrasing = /(Do.?Not|Don.?t).?Sell.?(My)?.?(Personal)?.?(Information|Info|Data)/gmi
-
-
-=======
->>>>>>> origin/main
 /**
  * Processes caught responses via webRequest filtering as they come in
  * Parses all incoming responses for Do Not Sell links

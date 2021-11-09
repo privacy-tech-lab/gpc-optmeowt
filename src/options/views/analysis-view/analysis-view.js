@@ -28,11 +28,11 @@ export async function dropListener(domain) {
     if (document.getElementById(domain + " analysis").style.display === "none") {
       document.getElementById("dropdown " + domain).src = "../assets/chevron-up.svg"
       document.getElementById(domain + " analysis").style.display = ""
-      document.getElementById("divider " + domain).style.display = ""
+      document.getElementById("li " + domain + " info").style.display = ""
     } else {
       document.getElementById("dropdown " + domain).src = "../assets/chevron-down.svg"
       document.getElementById(domain + " analysis").style.display = "none"
-      document.getElementById("divider " + domain).style.display = "none"
+      document.getElementById("li " + domain + " info").style.display = "none"
     }
   });
 }
@@ -256,41 +256,7 @@ async function buildList() {
         </div>
         <div class="domain uk-width-expand">
           ${domain}
-          <hr class="divide" id="divider ${domain}" style="margin:0px; display: none">
-          <ul id="${domain} analysis" class="uk-list" style="display:none">
-            <li>
-            <div uk-grid class="uk-grid-small uk-width-1-1" style="font-size: medium;">
-            <div class="domain uk-width-expand">
-             Do Not Sell Link 
-             </div>
-             <img src = ${dnslink} width = "40px" height = "40px" ${specs}>
-             </div>
-             </li>
-            <li>
-            <div uk-grid class="uk-grid-small uk-width-1-1" style="font-size: medium;">
-            <div class="domain uk-width-expand">
-             US Privacy String 
-             </div>
-             <img src = ${stringfound} width = "40px" height = "40px" ${specs}>
-             </div>
-             </li>
-            <li>
-            <div uk-grid class="uk-grid-small uk-width-1-1" style="font-size: medium;">
-            <div class="domain uk-width-expand">
-             Signal Sent 
-             </div>
-             <img src = ${gpcsent} width = "40px" height = "40px" ${specs}>
-             </div>
-             </li>
-            <li>
-            <div uk-grid class="uk-grid-small uk-width-1-1" style="font-size: medium;">
-            <div class="domain uk-width-expand">
-             US Privacy String Updated 
-             </div>
-             <img src = ${stringchanged} width = "40px" height = "40px" ${specs}>
-             </div> 
-             </li>
-          </ul>
+
         </div>
         <div style="
           margin-right: 5px;
@@ -323,6 +289,43 @@ async function buildList() {
         >
           Loading...
         </div>
+    </li>
+
+    <li id="li ${domain} info" style="display: none">
+        <ul id="${domain} analysis" class="uk-list" style="display:none;padding-left:60px">
+            <li>
+                <div uk-grid class="uk-grid-small uk-width-1-1" style="font-size: medium;">
+                    <div class="domain uk-width-expand">
+                    Do Not Sell Link 
+                    </div>
+                    <img src = ${dnslink} width = "40px" height = "40px" ${specs}>
+                </div>
+            </li>
+            <li>
+                <div uk-grid class="uk-grid-small uk-width-1-1" style="font-size: medium;">
+                    <div class="domain uk-width-expand">
+                    US Privacy String 
+                    </div>
+                    <img src = ${stringfound} width = "40px" height = "40px" ${specs}>
+                </div>
+            </li>
+            <li>
+                <div uk-grid class="uk-grid-small uk-width-1-1" style="font-size: medium;">
+                    <div class="domain uk-width-expand">
+                    Signal Sent 
+                    </div>
+                    <img src = ${gpcsent} width = "40px" height = "40px" ${specs}>
+                </div>
+            </li>
+            <li>
+                <div uk-grid class="uk-grid-small uk-width-1-1" style="font-size: medium;">
+                    <div class="domain uk-width-expand">
+                    US Privacy String Updated 
+                    </div>
+                    <img src = ${stringchanged} width = "40px" height = "40px" ${specs}>
+                </div> 
+            </li>
+        </ul>
     </li>
           `
   }

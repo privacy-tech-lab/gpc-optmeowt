@@ -106,6 +106,13 @@ Sticky Domain List Navbar
   background-color: white;
   padding-top: 5px;
 }
+/*
+Sticky Analysis List Navbar
+*/
+.analysis-navbar {
+  background-color: white;
+  padding-top: 5px;
+}
 
 /* Added with  */
 .sticky {
