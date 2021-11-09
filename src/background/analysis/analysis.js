@@ -35,6 +35,7 @@ GPC signal to a site that also has/does not have usprivacy strings.
 import { modes } from "../../data/modes.js";
 import { defaultSettings } from "../../data/defaultSettings.js";
 import { stores, storage } from "./../storage.js";
+import { cookiesPhrasing, doNotSellPhrasing } from "../../data/regex"
 // import { debug } from "webpack";
 import psl from "psl";
 import { onBeforeSendHeaders } from "../protection/events.js";
@@ -305,14 +306,6 @@ const FILTER = { urls: ["<all_urls>"] };
 
 let newIncognitoTab = chrome.windows.create({ "url": null, "incognito": true });
 
-// /us-?_?privacy/g;
-let cookiesRegex = new RegExp([
-  /(us-?_?privacy)|/,
-  /(OptanonConsent)/
-].map(r => r.source).join(''), "gmi");
-
-console.log(cookiesRegex);
-
 
 function addHeaders(details) {
   webRequestResponseFiltering(details);
@@ -399,11 +392,14 @@ function disableAnalysis() {
   return (psl.parse(urlObj.hostname)).domain;
 }
 
+<<<<<<< HEAD
 
 // This regex requires at least one of (do not|don't), (sell), & (information|info)
 const doNotSellPhrasing = /(Do.?Not|Don.?t).?Sell.?(My)?.?(Personal)?.?(Information|Info|Data)/gmi
 
 
+=======
+>>>>>>> origin/main
 /**
  * Processes caught responses via webRequest filtering as they come in
  * Parses all incoming responses for Do Not Sell links
@@ -651,7 +647,7 @@ let listenerForUSPCookies = chrome.cookies.onChanged.addListener(
       domain = domain[0] == '.' ? domain.substring(1) : domain;
       let urlObj = psl.parse(domain);
 
-      if (cookiesRegex.test(cookie.name)) {
+      if (cookiesPhrasing.test(cookie.name)) {
         // console.log("Init logData() from listenerForUSPCookies")
         // console.log("logData domain: ", urlObj.domain)
         logData(urlObj.domain, "COOKIES", cookie);
