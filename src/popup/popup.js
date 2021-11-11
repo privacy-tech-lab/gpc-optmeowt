@@ -34,6 +34,7 @@ import Darkmode from "../theme/darkmode";
 
 var mode = undefined;
 
+
 /******************************************************************************/
 // Inflates main content
 
@@ -89,19 +90,19 @@ document.addEventListener("DOMContentLoaded", async (event) => {
           parsedDomain = parsed.domain;
 
           if (parsedDomain) {
-            document.getElementById("domain").innerHTML = parsedDomain;
+            document.getElementById("domain-title").innerHTML = parsedDomain;
 
             // Initializes the tutorial if it needs to be loaded
             initPopUpWalkthrough();
 
           } else {
-            document.getElementById("dns-body").style.display = "none";
-            document.getElementById("domain").style.display = "none";
+            document.getElementById("dns-enabled-body").style.display = "none";
+            document.getElementById("domain-title").style.display = "none";
           }
           resolve();
         } catch(e) {
           console.error(e);
-          document.getElementById("domain").innerHTML = location.href;
+          document.getElementById("domain-title").innerHTML = location.href;
           reject();
         }
       });
@@ -126,16 +127,16 @@ document.addEventListener("DOMContentLoaded", async (event) => {
       .getElementById("enable-disable")
       .setAttribute("uk-tooltip", "Disable");
     document.getElementById("content").style.opacity = "1";
-    document.getElementById("message").style.opacity = "0";
-    document.getElementById("message").style.display = "none";
+    document.getElementById("extension-disabled-message").style.opacity = "0";
+    document.getElementById("extension-disabled-message").style.display = "none";
   } else {
-    document.getElementById("message").style.display = "";
+    document.getElementById("extension-disabled-message").style.display = "";
     document.getElementById("img").src = "../assets/play-circle-outline.svg";
     document
       .getElementById("enable-disable")
       .setAttribute("uk-tooltip", "Enable");
     document.getElementById("content").style.opacity = "0.1";
-    document.getElementById("message").style.opacity = "1";
+    document.getElementById("extension-disabled-message").style.opacity = "1";
   }
 
   // Listener: ENABLE/DISABLE button
@@ -145,14 +146,14 @@ document.addEventListener("DOMContentLoaded", async (event) => {
     const isDomainlisted = await storage.get(stores.settings, "IS_DOMAINLISTED");
     // if (mode === modes.readiness.enabled || mode === modes.readiness.domainlisted) {
     if (isEnabled) {
-      document.getElementById("message").style.display = "";
+      document.getElementById("extension-disabled-message").style.display = "";
       document.getElementById("img").src =
         "../assets/play-circle-outline.svg";
       document
         .getElementById("enable-disable")
         .setAttribute("uk-tooltip", "Enable");
       document.getElementById("content").style.opacity = "0.1";
-      document.getElementById("message").style.opacity = "1";
+      document.getElementById("extension-disabled-message").style.opacity = "1";
       // chrome.runtime.sendMessage({ msg: "CHANGE_MODE", data: modes.readiness.disabled })
       chrome.runtime.sendMessage({ msg: "CHANGE_MODE", data: { isEnabled: false } });
       // chrome.runtime.sendMessage({ msg: "CHANGE_IS_DOMAINLISTED", data: { isDomainlisted: false } });
@@ -163,8 +164,8 @@ document.addEventListener("DOMContentLoaded", async (event) => {
         .getElementById("enable-disable")
         .setAttribute("uk-tooltip", "Disable");
       document.getElementById("content").style.opacity = "1";
-      document.getElementById("message").style.opacity = "0";
-      document.getElementById("message").style.display = "none";
+      document.getElementById("extension-disabled-message").style.opacity = "0";
+      document.getElementById("extension-disabled-message").style.display = "none";
       // chrome.runtime.sendMessage({ msg: "CHANGE_MODE", data: modes.readiness.enabled })
       chrome.runtime.sendMessage({ msg: "CHANGE_MODE", data: { isEnabled: true } });
       // chrome.runtime.sendMessage({ msg: "CHANGE_IS_DOMAINLISTED", data: { isDomainlisted: false } });
@@ -185,15 +186,15 @@ document.addEventListener("DOMContentLoaded", async (event) => {
         text = "Do Not Sell Disabled";
       }
       document.getElementById("switch-label").innerHTML = checkbox;
-      document.getElementById("dns-text").innerHTML = text;
+      document.getElementById("dns-enabled-text").innerHTML = text;
     } catch(e) {
       console.error(e);
       document.getElementById("switch-label").innerHTML = checkbox;
-      document.getElementById("dns-text").innerHTML = text;
+      document.getElementById("dns-enabled-text").innerHTML = text;
     }
   } else {
     document.getElementById("switch-label").innerHTML = checkbox;
-    document.getElementById("dns-text").innerHTML = text;
+    document.getElementById("dns-enabled-text").innerHTML = text;
   }
 
   // Listener: 1st party domain "Do Not Sell Enabled/Disabled" text + toggle
@@ -213,7 +214,7 @@ document.addEventListener("DOMContentLoaded", async (event) => {
       // await storage.set(stores.domainlist, true, parsedDomain);
       setToDomainlist(parsedDomain, true);
     }
-    document.getElementById("dns-text").innerHTML = elemString;
+    document.getElementById("dns-enabled-text").innerHTML = elemString;
   })
 
   // Init: Sets "X domains receiving signals" information section
@@ -221,58 +222,41 @@ document.addEventListener("DOMContentLoaded", async (event) => {
   let count = Object.keys(domainlistValues).filter((key) => {
     return domainlistValues[key] == true;
   }).length
-  document.getElementById("block-count").innerHTML = `
+  document.getElementById("visited-domains-stats").innerHTML = `
     <p id = "domain-count" class="blue-heading" style="font-size:25px;
     font-weight: bold">${count}</p> domains receiving signals
   `;
 
   // Listener: Generates 3rd party domain list droptdown toggle functionality
-  document.getElementById("third-party-domains").addEventListener("click", () => {
+  document.getElementById("dropdown-1").addEventListener("click", () => {
     // var icon = document.getElementById("dropdown")
-    if (document.getElementById("third-party-domains-list").style.display === "none") {
-      document.getElementById("dropdown-1").src = "../assets/chevron-up.svg"
-      document.getElementById("third-party-domains-list").style.display = ""
-      document.getElementById("third-party-domains").classList.add("dropdown-tab-click")
+    if (document.getElementById("dropdown-1-expandable").style.display === "none") {
+      document.getElementById("dropdown-chevron-1").src = "../assets/chevron-up.svg"
+      document.getElementById("dropdown-1-expandable").style.display = ""
+      document.getElementById("dropdown-1").classList.add("dropdown-tab-click")
       document.getElementById("divider-1").style.display = ""
     } else {
-      document.getElementById("dropdown-1").src = "../assets/chevron-down.svg"
-      document.getElementById("third-party-domains-list").style.display = "none"
-      document.getElementById("third-party-domains").classList.remove("dropdown-tab-click")
+      document.getElementById("dropdown-chevron-1").src = "../assets/chevron-down.svg"
+      document.getElementById("dropdown-1-expandable").style.display = "none"
+      document.getElementById("dropdown-1").classList.remove("dropdown-tab-click")
       document.getElementById("divider-1").style.display = "none"
     }
   });
 
   // Listener: Generates wellknown json dropdown list toggle functionality
-  document.getElementById("well-known-response").addEventListener("click", () => {
-    if (document.getElementById("well-known-response-list").style.display === "none") {
-      document.getElementById("dropdown-2").src = "../assets/chevron-up.svg"
-      document.getElementById("well-known-response-list").style.display = ""
-      document.getElementById("well-known-response").classList.add("dropdown-tab-click")
+  document.getElementById("dropdown-2").addEventListener("click", () => {
+    if (document.getElementById("dropdown-2-expandable").style.display === "none") {
+      document.getElementById("dropdown-chevron-2").src = "../assets/chevron-up.svg"
+      document.getElementById("dropdown-2-expandable").style.display = ""
+      document.getElementById("dropdown-2").classList.add("dropdown-tab-click")
       document.getElementById("divider-2").style.display = ""
     } else {
-      document.getElementById("dropdown-2").src = "../assets/chevron-down.svg"
-      document.getElementById("well-known-response-list").style.display = "none"
-      document.getElementById("well-known-response").classList.remove("dropdown-tab-click")
+      document.getElementById("dropdown-chevron-2").src = "../assets/chevron-down.svg"
+      document.getElementById("dropdown-2-expandable").style.display = "none"
+      document.getElementById("dropdown-2").classList.remove("dropdown-tab-click")
       document.getElementById("divider-2").style.display = "none"
     }
   });
-
-  // Compliance analysis mode UI. WIP!
-  // Commented out for 2.0.0 release
-
-  // let btn = document.getElementById('complianceAnalysisButton');
-  // btn.addEventListener('click', function() {
-  //   alert("Compliance checked! Check console...");
-  //   chrome.runtime.sendMessage({
-  //     msg: "COMPLIANCECHECK",
-  //     data: "https://www.dailymail.co.uk",
-  //     return: true,
-  //   }, (response) => {
-  //     // console.log("done...")
-  //   }
-  //   );
-  // });
-
 
 })
 
@@ -304,7 +288,7 @@ function addThirdPartyDomainToggleListener(requestDomain) {
       // chrome.runtime.sendMessage({ msg: "ADD_TO_DOMAINLIST", data: { "DOMAIN": requestDomain, "KEY": true } })
       setToDomainlist(requestDomain, true);
     }
-    document.getElementById(`dns-text-${requestDomain}`).innerHTML = elemString;
+    document.getElementById(`dns-enabled-text-${requestDomain}`).innerHTML = elemString;
   })
 };
 
@@ -344,7 +328,7 @@ async function buildDomains(requests) {
     </div>
     <div uk-grid  style="margin-top: 4%; ">
       <div
-        id="dns-text-${requestDomain}"
+        id="dns-enabled-text-${requestDomain}"
         class="uk-width-expand uk-margin-auto-vertical"
         style="font-size: small;"
       >
@@ -369,7 +353,7 @@ async function buildDomains(requests) {
   </li>
   `;
   }
-  document.getElementById("third-party-domains-list").innerHTML = items;
+  document.getElementById("dropdown-1-expandable").innerHTML = items;
 
   // Sets the 3rd party domain toggle listeners
   for (let requestDomain in requests) {
@@ -454,7 +438,7 @@ async function buildWellKnown(requests) {
     </li>
   ` : ``;
 
-  document.getElementById("well-known-response-list").innerHTML = `${explainer} ${wellknown}`;
+  document.getElementById("dropdown-2-expandable").innerHTML = `${explainer} ${wellknown}`;
   // document.getElementById("website-response-tab").innerHTML = tabDetails;
 }
 
