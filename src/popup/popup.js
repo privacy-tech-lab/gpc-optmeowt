@@ -555,15 +555,12 @@ function loadCSVDownload(csvData) {
 
     function loadCSV() {
       // convert to an array which can easily become a CSV file
-      let columnTitles = [
-        "Domain",
-        "TIMESTAMP", 
-        "DO_NOT_SELL_LINK_EXISTS", 
-        "SENT_GPC", 
-        "USPAPI_BEFORE_GPC", 
-        "USPAPI_AFTER_GPC", 
-        "USPAPI_OPTED_OUT"
-      ];
+
+      // columnTitles is an array of "Domain" + the rest of the sections
+      // in csvData (i.e. the analysis_userend object).
+      let columnTitles = ["Domain"];
+      Object.keys(csvData).map((key, i) => columnTitles.append(i));
+
       let csvContent = "data:text/csv;charset=utf-8,"
       csvContent += columnTitles.join(",") + "\n"
 
