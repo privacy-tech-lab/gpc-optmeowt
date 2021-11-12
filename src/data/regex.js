@@ -12,8 +12,8 @@ extension in multiple locations
 */
 
 
-// This regex requires at least one of (do not|don't), (sell), & (information|info)
-export const doNotSellPhrasing = /(Do.?Not|Don.?t).?Sell.?(My)?.?(Personal)?.?(Information|Info)/gmi
+// This regex requires at least one of (do not|don't), (sell), & (information|info|data)
+export const doNotSellPhrasing = /(Do.?Not|Don.?t).?Sell.?(My)?.?(Personal)?.?(Information|Info|Data)/gmi
 
 export const cookiesPhrasing = new RegExp([
 	/(us-?_?privacy)|/,

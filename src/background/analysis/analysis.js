@@ -445,10 +445,15 @@ var analysisUserendSkeleton = () => {
   return {
     "TIMESTAMP": null,
     "DO_NOT_SELL_LINK_EXISTS": null,
+    "DO_NOT_SELL_LINK_EXISTS_TIMESTAMP": null,
     "SENT_GPC": false,
+    "SENT_GPC_TIMESTAMP": null,
     "USPAPI_BEFORE_GPC": [],
+    "USPAPI_BEFORE_GPC_TIMESTAMP": null,
     "USPAPI_AFTER_GPC": [],
-    "USPAPI_OPTED_OUT": undefined
+    "USPAPI_AFTER_GPC_TIMESTAMP": null,
+    "USPAPI_OPTED_OUT": undefined,
+    "USPAPI_OPTED_OUT_TIMESTAMP": null
   }
 }
 
@@ -537,8 +542,9 @@ async function logData(domain, command, data) {
 
   console.log("analysis after maybe addign callindex: ", analysis)
 
+  let ms = Date.now();
+
   if (!analysis[domain][callIndex][gpcStatusKey]["TIMESTAMP"]) {
-    let ms = Date.now();
     analysis[domain][callIndex][gpcStatusKey]["TIMESTAMP"] = ms; 
     analysis_userend[domain]["TIMESTAMP"] = ms;
   }
@@ -546,6 +552,7 @@ async function logData(domain, command, data) {
   if (sendingGPC) {
     analysis[domain][callIndex]["SENT_GPC"] = true;
     analysis_userend[domain]["SENT_GPC"] = true;
+    analysis_userend[domain]["SENT_GPC_TIMESTAMP"] = ms;
   }
 
   // Let's assume that data does have a name property as a cookie should
@@ -562,9 +569,11 @@ async function logData(domain, command, data) {
     // Detailed case for summary object
     if (gpcStatusKey == "BEFORE_GPC") {
       analysis_userend[domain]["USPAPI_BEFORE_GPC"].push(data);
+      analysis_userend[domain]["USPAPI_BEFORE_GPC_TIMESTAMP"] = ms;
     }
     if (gpcStatusKey == "AFTER_GPC") {
       analysis_userend[domain]["USPAPI_AFTER_GPC"].push(data);
+      analysis_userend[domain]["USPAPI_AFTER_GPC_TIMESTAMP"] = ms;
       try {
         let usprivacyString = data.value || data.uspString;
         console.log("data: ", data);
@@ -583,6 +592,7 @@ async function logData(domain, command, data) {
         console.error("Parsing USPAPI for analysis_userend failed.", e);
         analysis_userend[domain]["USPAPI_OPTED_OUT"] = "PARSE_FAILED"; 
       }
+      analysis_userend[domain]["USPAPI_OPTED_OUT_TIMESTAMP"] = ms;
     }
 
   }
@@ -591,12 +601,15 @@ async function logData(domain, command, data) {
     analysis[domain][callIndex][gpcStatusKey]["DO_NOT_SELL_LINK"].push(data);
     analysis[domain][callIndex][gpcStatusKey]["DO_NOT_SELL_LINK_EXISTS"] = true;
     analysis_userend[domain]["DO_NOT_SELL_LINK_EXISTS"] = true;
+    analysis_userend[domain]["DO_NOT_SELL_LINK_EXISTS_TIMESTAMP"] = ms;
   }
   if (command === "DO_NOT_SELL_LINK_WEB_REQUEST_FILTERING") {
     // console.log("Got to COMMAND === USPAPI");
     analysis[domain][callIndex][gpcStatusKey]["DO_NOT_SELL_LINK_WEB_REQUEST_FILTERING"].push(data);
     analysis[domain][callIndex][gpcStatusKey]["DO_NOT_SELL_LINK_EXISTS"] = true;
     analysis_userend[domain]["DO_NOT_SELL_LINK_EXISTS"] = true;
+    analysis_userend[domain]["DO_NOT_SELL_LINK_EXISTS_TIMESTAMP"] = ms;
+
   }
   console.log("Updated analysis logs: ", analysis);
   console.log("Updated analysis_userend logs: ", analysis_userend);

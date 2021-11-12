@@ -60,11 +60,6 @@ export async function dropListener(domain) {
   }
 }
 
-function coinflip(){
-    let x = Math.round(Math.random());
-    return x    
-}
-
 
 /**
  * Create the compliance label
@@ -86,25 +81,6 @@ function coinflip(){
    }
 }
 
-
-// /**                     ****** Not Sure if this is functionality we want *****
-//  * Delete buttons for each domain
-//  * @param {string} domain
-//  */
-//  function deleteButtonListener (domain) {
-//   document.getElementById(`delete ${domain}`).addEventListener("click",
-//     (async () => {
-//       let deletePrompt = `Are you sure you would like to permanently delete this domain from the Domain List?`
-//       let successPrompt = `Successfully deleted ${domain} from the Domain List.
-// NOTE: It will be automatically added back to the list when the domain is requested again.`
-//       if (confirm(deletePrompt)) {
-//         // await storage.delete(stores.domainlist, domain)
-//         chrome.runtime.sendMessage({ msg: "REMOVE_FROM_DOMAINLIST", data: domain });
-//         alert(successPrompt)
-//         document.getElementById(`li ${domain}`).remove();
-//       }
-//   }))
-//  }
 
 /******************************************************************************/
 
@@ -188,7 +164,6 @@ async function buildList() {
     `
   let items = ""
   let domain;
-  let domainValue; 
 
   const analysisKeys = await storage.getAllKeys(stores.analysis);
   console.log("analysisKeys", analysisKeys);
@@ -226,11 +201,7 @@ async function buildList() {
     } else {
       stringchanged = neg;
     }
-    
 
-    /***************************************************************/
-    /*********Insert Logic to decide check marks or crosses*********/
-    /***************************************************************/
 
     items +=
           `
