@@ -72,7 +72,7 @@ popup.html is the html scaffolding for OptMeowt's popup page
         />
       </div>
     </div>
-    <hr class="divide" class="uk-margin-small-top" />
+    <hr id= "divider-1" class="divide" class="uk-margin-small-top" />
     
     <!-- Popup body content -->
     <div class="uk-inline uk-width-expand">
@@ -80,17 +80,51 @@ popup.html is the html scaffolding for OptMeowt's popup page
       <!-- Content -->
       <div id="content">
 
+
         <!-- Domain List UI elements here -->
+
+        <div 
+          class = ".uk-width-auto"
+          style="font-weight: bold;
+                 font-size: large;
+                 text-align: center;">
+          <div
+          id = "optMode"
+          class="uk-badge switch"
+          style="
+            margin-right: auto;
+            margin-left: auto;
+            margin-top: auto;
+            margin-bottom: auto;
+            padding-right: auto;
+            padding-left: auto;
+            background-color: white;
+            border: 1px solid rgb(89,98,127);
+            color: rgb(89,98,127);
+            font-size: 20px;
+          "
+        >
+          Protection Mode
+          <img id = "p-dark" src = "../../../assets/cat-w-text/protect.png" width = "20px" height = "20px">
+          <img id = "p-light" src = "../../../assets/cat-w-text/protect1.png" width = "20px" height = "20px" style = "display: none;">
+          <img id = "a-dark" src = "../../../assets/cat-w-text/analysis.png" width = "20px" height = "20px" style = "display: none;">
+          <img id = "a-light" src = "../../../assets/cat-w-text/analysis1.png" width = "20px" height = "20px" style = "display: none;">
+          </div>
+        </div>
+        <hr id = "divider-1.5" class="divide" style="margin:15px;">
+
         <div id="modifier-buttons">
           <div id="mode-badge" style="display:flex;justify-content:center;"></div>
           <div id="test-csv" style="display:flex;justify-content:center;"></div>
         </div>
+
+        <div id="domain-title"
+        class="blue-heading uk-flex-inline uk-width-1-1 uk-flex-center uk-text-center uk-text-large uk-text-bold uk-text-truncate"
+      >
+        <!-- Active tab domain inflated here -->
+      </div>
+
         <div id="dns-enabled-body">
-          <div id="domain-title"
-            class="blue-heading uk-flex-inline uk-width-1-1 uk-flex-center uk-text-center uk-text-large uk-text-bold uk-text-truncate"
-          >
-            <!-- Active tab domain inflated here -->
-          </div>
           <div uk-grid style="margin-top: 4%; margin-bottom: 4%;">
             <div id="dns-enabled-text"
               class="uk-width-expand uk-margin-auto-vertical"
@@ -109,14 +143,35 @@ popup.html is the html scaffolding for OptMeowt's popup page
             </div>
           </div>
         </div>
-        <hr class="divide" style="margin:0px;">
+
+        <div id="compliance-body" style="display:none;">
+          <div uk-grid style="margin-top: 4%; margin-bottom: 4%;">
+            <div id="compliance-text"
+              class="uk-width-expand uk-margin-auto-vertical"
+              style="font-weight: bold; font-size: medium"
+            >
+              CCPA Compliance: 
+            </div>
+            <div>
+              <div uk-grid>
+                <div class="uk-width-auto">
+                  <label class="switch tooltip-1" id="compliance-label">
+                    <!-- Populate switch preference here -->
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <hr id = "divider-2" class="divide" style="margin:0px;">
 
         <!-- stats about visited domains -->
         <div uk-grid class="uk-width-expand uk-text-center" style="font-size: medium; padding: 10px; margin-left:0px;">
           <div id="visited-domains-stats"  class="uk-text-center">
           </div>
         </div>
-        <hr class="divide" style="margin:0px;">
+        <hr id = "divider-3" class="divide" style="margin:0px;">
 
         <!-- Dropdown 1 -->
         <div id="dropdown-1"
@@ -145,12 +200,12 @@ popup.html is the html scaffolding for OptMeowt's popup page
             3rd Party Domains
           </div>
         </div>
-        <hr class="divide" id="divider-1" style="margin:0px; display: none">
+        <hr class="divide" id="divider-4" style="margin:0px; display: none">
 
         <ul id="dropdown-1-expandable" class="uk-list" style="display:none">
           <!-- Inflate dropdown 1 info here -->
         </ul>
-        <hr class="divide" style="margin:0px;">
+        <hr id="divider-5" class="divide" style="margin:0px;">
 
         <!-- Dropdown 2 -->
         <div id="dropdown-2"
@@ -179,12 +234,12 @@ popup.html is the html scaffolding for OptMeowt's popup page
             Website Response
           </div>
         </div>
-        <hr class="divide" id="divider-2" style="margin:0px; display: none">
+        <hr class="divide" id="divider-6" style="margin:0px; display: none">
 
         <ul id="dropdown-2-expandable" class="uk-list" style="display:none">
           <!-- Inflate dropdown 2 info here -->
         </ul>
-        <hr class="divide" style="margin:0px;">
+        <hr id="divider-7" class="divide" style="margin:0px;">
 
         <!-- Domain List link -->
         <div id="domain-list" 
@@ -199,7 +254,21 @@ popup.html is the html scaffolding for OptMeowt's popup page
             Domain List
           </div>
         </div>
-        <hr class="divide" style="margin:0px;" >
+
+        <div id="analysis-list" 
+        uk-grid 
+        class="analysis-list" 
+        style="margin-right:-30px; display:none;"
+        >
+          <div id="analysis-list-text"
+            class="uk-width-expand uk-text-center" 
+            style="font-weight: bold; font-size: medium; margin-right:20px;"
+          >
+            All Analyzed Sites
+          </div>
+        </div>
+
+        <hr id="divider-8" class="divide" style="margin:0px;" >
 
         <!-- Dark Mode -->
          <div uk-grid class="uk-margin-top" style="margin-bottom: 4%;">

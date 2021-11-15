@@ -125,6 +125,16 @@ export async function mainView() {
     document.querySelector('#main-view-domainlist').classList.add('active');
   }
 
+  let analysisPressed = await storage.get(stores.settings, "ANALYSIS_PRESSED");
+  if (!domainlistPressed) {
+    settingsView(bodyTemplate); // First page
+    document.querySelector('#main-view-settings').classList.add('active');
+  } else {
+    domainlistView(bodyTemplate); // First page
+    await storage.set(stores.settings, false, "ANALYSIS_PRESSED");
+    document.querySelector('#main-view-analysis').classList.add('active');
+  }
+
   document
     .getElementById("main-view-settings")
     .addEventListener("click", () => displaySettings(bodyTemplate));

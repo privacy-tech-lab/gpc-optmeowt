@@ -38,6 +38,9 @@ var mode = undefined;
 /******************************************************************************/
 // Inflates main content
 
+//Note: this must be initialized first
+var parsedDomain = "";
+
 /**
  * Initializes the popup window after DOM content is loaded
  * @param {Object} event - contains information about the event
@@ -71,12 +74,62 @@ document.addEventListener("DOMContentLoaded", async (event) => {
     chrome.runtime.sendMessage({
   	  msg: "DARKSWITCH_PRESSED",
     });
+
+    if (darkmode.isActivated()){
+      document.getElementById("optMode").style.color = "rgb(89,98,127)";
+      document.getElementById("optMode").style.border = "1px solid rgb(89,98,127)";
+      if (document.getElementById("a-light").style.display = ""){
+        document.getElementById("a-light").style.display = "none"
+        document.getElementById("a-dark").style.display = ""
+      }  else if (document.getElementById("p-light").style.display = ""){
+        document.getElementById("p-light").style.display = "none"
+        document.getElementById("p-dark").style.display = ""
+      }
+    } else {
+      document.getElementById("optMode").style.color = "rgb(238,238,238)"
+      document.getElementById("optMode").style.border = "1px solid rgb(238,238,238)"
+      if (document.getElementById("a-dark").style.display = ""){
+        document.getElementById("a-dark").style.display = "none"
+        document.getElementById("a-light").style.display = ""
+      }  else if (document.getElementById("p-dark").style.display = ""){
+        document.getElementById("p-dark").style.display = "none"
+        document.getElementById("p-light").style.display = ""
+      }
+    }
+
     darkmode.toggle();
+
   });
+  
 
+  async function dnsEnabled(){
+    let checkbox;
+    let text;
+    document.getElementById("compliance-body").style.display = "none"
+    document.getElementById("dns-enabled-body").style.display = "";
+    if (parsedDomain) {
+      try {
+        const parsedDomainValue = await storage.get(stores.domainlist, parsedDomain);
+        if (parsedDomainValue) {
+          checkbox = `<input type="checkbox" id="input" checked/><span></span>`;
+          text = "Do Not Sell Enabled";
+        } else {
+          checkbox = `<input type="checkbox" id="input"/><span></span>`;
+          text = "Do Not Sell Disabled";
+        }
+        document.getElementById("switch-label").innerHTML = checkbox;
+        document.getElementById("dns-enabled-text").innerHTML = text;
+      } catch(e) {
+        console.error(e);
+        document.getElementById("switch-label").innerHTML = checkbox;
+        document.getElementById("dns-enabled-text").innerHTML = text;
+      }
+    } else {
+      document.getElementById("switch-label").innerHTML = checkbox;
+      document.getElementById("dns-enabled-text").innerHTML = text;
+    }
+  }
 
-  //Note: this must be initialized first
-  var parsedDomain = "";
 
   // Init: Queries, parses, and sets the visible active tab 1st party domain
   // NOTE: This MUST happen first. The rest can be rendered separately.
@@ -175,27 +228,31 @@ document.addEventListener("DOMContentLoaded", async (event) => {
   // Init: 1st party domain "Do Not Sell Enabled/Disabled" text + toggle
   let checkbox = "";
   let text = "";
-  if (parsedDomain) {
-    try {
-      const parsedDomainValue = await storage.get(stores.domainlist, parsedDomain);
-      if (parsedDomainValue) {
-        checkbox = `<input type="checkbox" id="input" checked/><span></span>`;
-        text = "Do Not Sell Enabled";
-      } else {
-        checkbox = `<input type="checkbox" id="input"/><span></span>`;
-        text = "Do Not Sell Disabled";
-      }
-      document.getElementById("switch-label").innerHTML = checkbox;
-      document.getElementById("dns-enabled-text").innerHTML = text;
-    } catch(e) {
-      console.error(e);
-      document.getElementById("switch-label").innerHTML = checkbox;
-      document.getElementById("dns-enabled-text").innerHTML = text;
+
+  if (!darkmode.isActivated()){
+    document.getElementById("optMode").style.color = "rgb(89,98,127)";
+    document.getElementById("optMode").style.border = "1px solid rgb(89,98,127)";
+    if (document.getElementById("a-light").style.display = ""){
+      document.getElementById("a-light").style.display = "none"
+      document.getElementById("a-dark").style.display = ""
+    }  else if (document.getElementById("p-light").style.display = ""){
+      document.getElementById("p-light").style.display = "none"
+      document.getElementById("p-dark").style.display = ""
     }
   } else {
-    document.getElementById("switch-label").innerHTML = checkbox;
-    document.getElementById("dns-enabled-text").innerHTML = text;
+    document.getElementById("optMode").style.color = "rgb(238,238,238)"
+    document.getElementById("optMode").style.border = "1px solid rgb(238,238,238)"
+    if (document.getElementById("a-dark").style.display = ""){
+      document.getElementById("a-dark").style.display = "none"
+      document.getElementById("a-light").style.display = ""
+    }  else if (document.getElementById("p-dark").style.display = ""){
+      document.getElementById("p-dark").style.display = "none"
+      document.getElementById("p-light").style.display = ""
+    }
   }
+
+
+  dnsEnabled();
 
   // Listener: 1st party domain "Do Not Sell Enabled/Disabled" text + toggle
   document.getElementById("switch-label").addEventListener("click", async () => {
@@ -234,12 +291,12 @@ document.addEventListener("DOMContentLoaded", async (event) => {
       document.getElementById("dropdown-chevron-1").src = "../assets/chevron-up.svg"
       document.getElementById("dropdown-1-expandable").style.display = ""
       document.getElementById("dropdown-1").classList.add("dropdown-tab-click")
-      document.getElementById("divider-1").style.display = ""
+      document.getElementById("divider-4").style.display = ""
     } else {
       document.getElementById("dropdown-chevron-1").src = "../assets/chevron-down.svg"
       document.getElementById("dropdown-1-expandable").style.display = "none"
       document.getElementById("dropdown-1").classList.remove("dropdown-tab-click")
-      document.getElementById("divider-1").style.display = "none"
+      document.getElementById("divider-4").style.display = "none"
     }
   });
 
@@ -249,15 +306,16 @@ document.addEventListener("DOMContentLoaded", async (event) => {
       document.getElementById("dropdown-chevron-2").src = "../assets/chevron-up.svg"
       document.getElementById("dropdown-2-expandable").style.display = ""
       document.getElementById("dropdown-2").classList.add("dropdown-tab-click")
-      document.getElementById("divider-2").style.display = ""
+      document.getElementById("divider-6").style.display = ""
     } else {
       document.getElementById("dropdown-chevron-2").src = "../assets/chevron-down.svg"
       document.getElementById("dropdown-2-expandable").style.display = "none"
       document.getElementById("dropdown-2").classList.remove("dropdown-tab-click")
-      document.getElementById("divider-2").style.display = "none"
+      document.getElementById("divider-6").style.display = "none"
     }
   });
 
+  
 })
 
 
@@ -621,4 +679,210 @@ document.getElementById("more").addEventListener("click", () => {
 document.getElementById("domain-list").addEventListener("click", async () => {
   await storage.set(stores.settings, true, "DOMAINLIST_PRESSED");
   chrome.runtime.openOptionsPage();
+});
+
+// Listener: Opens analysislist in options page
+document.getElementById("analysis-list").addEventListener("click", async () => {
+  await storage.set(stores.settings, true, "ANALYSIS_PRESSED");
+  chrome.runtime.openOptionsPage();
+});
+
+function logoSwitch(){
+  console.log("logoSwitch called 1");
+  //console.log(document.getElementById("a-dark").src);
+  console.log("logoSwitch called 2");
+  if (document.getElementById("a-dark").style.display = ""){
+    document.getElementById("a-dark").style.display = "none"
+    document.getElementById("a-light").style.display = ""
+  } else if (document.getElementById("a-light").style.display = ""){
+    document.getElementById("a-dark").style.display = ""
+    document.getElementById("a-light").style.display = "none"
+  } else if (document.getElementById("p-dark").style.display = ""){
+    document.getElementById("p-dark").style.display = "none"
+    document.getElementById("p-light").style.display = ""
+  } else if (document.getElementById("p-light").style.display = ""){
+    document.getElementById("p-dark").style.display = ""
+    document.getElementById("p-light").style.display = "none"
+  }
+}
+
+async function buildAnalysis() {
+  let pos = "../../../assets/cat-w-text/check1.png";
+  let neg = "../../../assets/cat-w-text/cross1.png"
+  let specs = `style= "
+    margin-right: 5px;
+    margin-left: 5px;
+    margin-top: auto;
+    margin-bottom: auto;
+    padding-right: 5px;
+    padding-left: 5px;"
+    `
+  let items = "";
+
+  let dnslink;
+  let stringfound;
+  let gpcsent;
+  let stringchanged;
+
+  const data = await storage.get(stores.analysis, parsedDomain)
+
+  if (data.DO_NOT_SELL_LINK_EXISTS){
+    dnslink = pos;
+  } else {
+    dnslink = neg;
+  }
+  let beforeGPC = data.USPAPI_BEFORE_GPC
+  if ((beforeGPC.length != 0) && isValidSignalIAB(beforeGPC[0].uspString)) {
+    stringfound = pos;
+  } else {
+    stringfound = neg;
+  }
+  if (data.SENT_GPC){
+    gpcsent = pos;
+  } else {
+    gpcsent = neg;
+  }
+  if (data.USPAPI_OPTED_OUT){
+    stringchanged = pos;
+  } else {
+    stringchanged = neg;
+  }
+
+
+  // Sets the 3rd party domain elements
+
+    items +=
+    `
+    <li>
+    <div uk-grid class="uk-grid-small uk-width-1-1" style="font-size: medium;">
+    <div class="domain uk-width-expand">
+     Do Not Sell Link 
+     </div>
+     <img src = ${dnslink} width = "40px" height = "40px" ${specs}>
+     </div>
+     </li>
+    <li>
+    <div uk-grid class="uk-grid-small uk-width-1-1" style="font-size: medium;">
+    <div class="domain uk-width-expand">
+     US Privacy String 
+     </div>
+     <img src = ${stringfound} width = "40px" height = "40px" ${specs}>
+     </div>
+     </li>
+    <li>
+    <div uk-grid class="uk-grid-small uk-width-1-1" style="font-size: medium;">
+    <div class="domain uk-width-expand">
+     GPC Signal Sent
+     </div>
+     <img src = ${gpcsent} width = "40px" height = "40px" ${specs}>
+     </div>
+     </li>
+    <li>
+    <div uk-grid class="uk-grid-small uk-width-1-1" style="font-size: medium;">
+    <div class="domain uk-width-expand">
+     US Privacy String Updated 
+     </div>
+     <img src = ${stringchanged} width = "40px" height = "40px" ${specs}>
+     </div> 
+     </li>`;
+
+  document.getElementById("dropdown-1-expandable").innerHTML = items;
+}
+
+async function compliance(){
+  console.log("Compliance is running...")
+  let checkbox = ""
+  if (parsedDomain) {
+    try {
+      const data = await storage.get(stores.analysis, parsedDomain)
+      console.log(parsedDomain);
+      if (data.DO_NOT_SELL_LINK_EXISTS && data.SENT_GPC && data.USPAPI_OPTED_OUT
+        && (data.USPAPI_BEFORE_GPC.length != 0) && isValidSignalIAB(data.USPAPI_BEFORE_GPC[0].uspString)) {
+        checkbox = `<div
+        id = "compliance-text"
+        class="uk-badge"
+        style="
+          margin-right: auto;
+          margin-left: auto;
+          margin-top: auto;
+          margin-bottom: auto;
+          padding-right: auto;
+          padding-left: auto;
+          background-color: white;
+          border: 1px solid rgb(64,107,202);
+          color: rgb(64,107,202);
+          font-size: 12px;
+        "
+      >
+        Compliant
+      </div>`;
+      } else {
+        checkbox = `<div
+        id = "${parsedDomain} compliance"
+        class="uk-badge"
+        style="
+          margin-right: auto;
+          margin-left: auto;
+          margin-top: auto;
+          margin-bottom: auto;
+          padding-right: auto;
+          padding-left: auto;
+          background-color: white;
+          border: 1px solid rgb(222,107,20);
+          color: rgb(222,107,20);
+          font-size: 12px;
+        "
+      >
+        Not Compliant
+      </div>`;
+      }
+      document.getElementById("compliance-label").innerHTML = checkbox;
+    } catch(e) {
+      console.error(e);
+      document.getElementById("compliance-label").innerHTML = checkbox;
+    }
+  } else {
+    document.getElementById("compliance-label").innerHTML = checkbox;
+  }
+
+}
+
+function analysisSwitch(){
+  console.log("Switching to analysis view");
+  document.getElementById("optMode").innerText = "Analysis Mode";
+  //logoSwitch();
+  document.getElementById("visited-domains-stats").style.display = "none";
+  document.getElementById("dropdown-1-text").innerHTML = "Analysis Breakdown";
+  buildAnalysis();
+  document.getElementById("dropdown-2").style.display = "none";
+  document.getElementById("analysis-list").style.display = "";
+  document.getElementById("domain-list").style.display = "none";
+  document.getElementById("divider-3").style.display = "none";
+  document.getElementById("divider-5").style.display = "none";
+  document.getElementById("divider-7").style.display = "none";
+  document.getElementById("compliance-body").style.display = ""
+  document.getElementById("dns-enabled-body").style.display = "none";
+  compliance();
+}
+
+function protectSwitch(){
+  console.log("Switching to protect view");
+  document.getElementById("optMode").innerText = "Protection Mode";
+  //logoSwitch();
+  document.getElementById("visited-domains-stats").style.display = "";
+  document.getElementById("dropdown-1-text").innerHTML = "3rd Party Domains";
+  document.getElementById("dropdown-2").style.display = "";
+  document.getElementById("analysis-list").style.display = "none";
+  document.getElementById("domain-list").style.display = "";
+  document.getElementById("divider-3").style.display = "";
+  document.getElementById("divider-5").style.display = "";
+  document.getElementById("divider-7").style.display = "";
+  document.getElementById("compliance-body").style.display = "none"
+  document.getElementById("dns-enabled-body").style.display = "";
+  dnsEnabled();
+  
+}
+
+document.getElementById("optMode").addEventListener("click", function(){
+    analysisSwitch();
 });

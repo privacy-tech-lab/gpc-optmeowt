@@ -98,6 +98,12 @@ Animated 3rd party domains/domain list buttons/links
   transition: ease-out 0.1s;
 }
 
+.analysis-list:hover {
+  background-color: var(--accent-color);
+  color: white;
+  transition: ease-out 0.1s;
+}
+
 .dropdown-tab:hover {
   background-color: var(--highlight-light);
   color: var(--text-color-darker);

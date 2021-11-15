@@ -304,7 +304,7 @@ const MOZ_REQUEST_SPEC = ["requestHeaders", "blocking"];
 const MOZ_RESPONSE_SPEC = ["responseHeaders", "blocking"];
 const FILTER = { urls: ["<all_urls>"] };
 
-let newIncognitoTab = chrome.windows.create({ "url": null, "incognito": true });
+//let newIncognitoTab = chrome.windows.create({ "url": null, "incognito": true });
 
 
 function addHeaders(details) {
