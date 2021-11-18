@@ -35,7 +35,7 @@ GPC signal to a site that also has/does not have usprivacy strings.
 import { modes } from "../../data/modes.js";
 import { defaultSettings } from "../../data/defaultSettings.js";
 import { stores, storage } from "./../storage.js";
-import { cookiesPhrasing, doNotSellPhrasing } from "../../data/regex"
+import { cookiesPhrasing, uspPhrasing, doNotSellPhrasing } from "../../data/regex"
 // import { debug } from "webpack";
 import psl from "psl";
 import { onBeforeSendHeaders } from "../protection/events.js";
@@ -54,6 +54,7 @@ import { popperOffsets } from "@popperjs/core";
 
 var analysis = {};
 var analysis_userend = {};
+var urlsWithUSPString = [];
 var urlFlags;
 // var hasReloaded = false;
 
@@ -307,9 +308,20 @@ const FILTER = { urls: ["<all_urls>"] };
 let newIncognitoTab = chrome.windows.create({ "url": null, "incognito": true });
 
 
-function addHeaders(details) {
-  webRequestResponseFiltering(details);
-  for (let signal in headers) {
+async function checkForUSPString(url) {
+  if (uspPhrasing.test(url)) {
+    urlsWithUSPString.push(url)
+    // console.log("Matched URL with US_PRIVACY substring: ", url);
+    // console.log("URLs with US_PRIVACY string: ", urlsWithUSPString);
+  }
+}
+
+function onBeforeSendHeadersCallback(details) {
+  // console.log("DETAILS.URL: ", details.url);
+  checkForUSPString(details.url); // Dump all URLs that contain a us_privacy string
+  webRequestResponseFiltering(details);        // Filter for Do Not Sell link
+
+  for (let signal in headers) {                // add GPC headers
     let s = headers[signal]
     details.requestHeaders.push({ name: s.name, value: s.value })
   }
@@ -400,12 +412,9 @@ function disableAnalysis() {
 function handleResponseChunk(details, str) {
   if (doNotSellPhrasing.test(str)) {
     let match = str.match(doNotSellPhrasing)
-    // console.log("found it in webRequestResponseFiltering", str);
     let url = new URL(details.url);
-    // console.log("found it URL in webRequestResponseFiltering: ", url);
     // let url = new URL(message.location);
     let domain = parseURL(url);
-    // console.log("domain inside webRequestResponseFiltering: ", domain)
     logData(domain, "DO_NOT_SELL_LINK_WEB_REQUEST_FILTERING", match);
   }
 }
@@ -627,7 +636,7 @@ function logData(domain, command, data) {
 var addGPCHeaders = function() {
   sendingGPC = true;
   chrome.webRequest.onBeforeSendHeaders.addListener(
-    addHeaders,
+    onBeforeSendHeadersCallback,
     FILTER,
     MOZ_REQUEST_SPEC
   );
@@ -635,7 +644,7 @@ var addGPCHeaders = function() {
 
 var removeGPCHeaders = function() {
   sendingGPC = false;
-  chrome.webRequest.onBeforeSendHeaders.removeListener(addHeaders);
+  chrome.webRequest.onBeforeSendHeaders.removeListener(onBeforeSendHeadersCallback);
 }
 
 // Cookie listener - grabs ALL cookies as they are changed
