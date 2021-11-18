@@ -674,7 +674,10 @@ chrome.webNavigation.onCommitted.addListener((details) => {
     } else {  // Must be on user request
       disableAnalysis();
       changingSitesOnUserRequest = true;
-      console.log("cancelling analysis!")
+      let url = new URL(details.url);
+      let domain = parseURL(url);
+      logData(domain, null, null); // Makes sure to log the 1st party domain to analysis_userend
+      console.log("cancelling analysis!");
     }
   }
 })
