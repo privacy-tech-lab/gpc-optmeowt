@@ -434,7 +434,7 @@ function webRequestResponseFiltering(details) {
 
   filter.onerror = event => {
     console.error(filter.error);
-    request.error = filter.error;
+    // request.error = filter.error;
   }
 }
 
@@ -707,7 +707,10 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
   if (message.msg === "CSV_DATA_REQUEST") {
     chrome.runtime.sendMessage({
       msg: "CSV_DATA_RESPONSE",
-      data: analysis_userend
+      data: {
+        csvData: analysis_userend,
+        titles: analysisUserendSkeleton()
+      }
     });
   }
 });
