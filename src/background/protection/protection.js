@@ -32,7 +32,6 @@ import psl from "psl";
 
 
 var domainlist = {};    // Caches & mirrors domainlist in storage
-var mode = defaultSettings["MODE"]; // Caches the extension mode
 var isDomainlisted = defaultSettings["IS_DOMAINLISTED"];
 var tabs = {};          // Caches all tab infomration, i.e. requests, etc. 
 var wellknown = {};     // Caches wellknown info to be sent to popup
@@ -40,7 +39,17 @@ var signalPerTab = {};  // Caches if a signal is sent to render the popup icon
 var activeTabID = 0;    // Caches current active tab id
 var sendSignal = true;  // Caches if the signal can be sent to the curr domain
 
+var isFirefox = ("$BROWSER" === "firefox");
 
+
+async function reloadVars() {
+  let storedDomainlisted = await storage.get(stores.settings, "IS_DOMAINLISTED");
+  if (storedDomainlisted) {
+    isDomainlisted = storedDomainlisted;
+  }
+}
+
+reloadVars();
 
 /******************************************************************************/
 /******************************************************************************/
@@ -327,106 +336,112 @@ function dataToPopup() {
 /******************************************************************************/
 /******************************************************************************/
 
-/**
- * This longtime connectkikkion is made specifically between the popup and the 
- * background page at the moment. 
- * The reason for this is I want to run our domainlist sync function when the 
- * popup itself is closed. The onDisconnect will help make this happen.
- * We need a port for this to work. Hence the function below. 
- */
-function initMessagePassing() {
 
-  chrome.runtime.onConnect.addListener(function(port) {
-    console.log("PORT CONNECTED");
-    if (port.name === "POPUP"
-    //  || port.name === "OPTIONS_PAGE"
-    ) {
-      port.onDisconnect.addListener(function() {
-        console.log("POPT DISCONNECTED");
-        syncDomainlists();
-      })
-    }
-  })
-  
-  
-  /**
+/**
+ * Currently only handles syncing domainlists between storage and memory
+ * This runs when the popup disconnects from the background page
+ * @param {Port} port 
+ */
+function onConnectHandler(port) {
+  console.log("PORT CONNECTED");
+  if (port.name === "POPUP"
+  //  || port.name === "OPTIONS_PAGE"
+  ) {
+    port.onDisconnect.addListener(function() {
+      console.log("POPT DISCONNECTED");
+      syncDomainlists();
+    })
+  }
+}
+
+
+/**
    * Listeners for information from --POPUP-- or --OPTIONS-- page
    * This is the main "hub" for message passing between the extension components
    * https://developer.chrome.com/docs/extensions/mv3/messaging/
    */
-  chrome.runtime.onMessage.addListener(async function (message, sender, sendResponse) {
-    // console.log(`Recieved message @ background page.`);
-    if (message.msg === "CHANGE_IS_DOMAINLISTED") {
-      isDomainlisted = message.data.isDomainlisted;
-      storage.set(stores.settings, isDomainlisted, "IS_DOMAINLISTED");
-    }
-    if (message.msg === "SET_TO_DOMAINLIST") {
-      let { domain, key } = message.data;
-      domainlist[domain] = key;                     // Sets to cache
-      storage.set(stores.domainlist, key, domain);  // Sets to long term storage
-    }
-    if (message.msg === "REMOVE_FROM_DOMAINLIST") {
-      let domain = message.data;
-      storage.delete(stores.domainlist, domain);
-      delete domainlist[domain];
-    }
-    if (message.msg === "POPUP") {
-      dataToPopup()
-    }
-    if (message.msg === "CONTENT_SCRIPT_WELLKNOWN") {
-      let tabID = sender.tab.id;
-      wellknown[tabID] = message.data
-      if (wellknown[tabID]["gpc"] === true) {
-        setTimeout(()=>{}, 10000);
-        if (signalPerTab[tabID] === true) {
-          chrome.browserAction.setIcon(
-            {
-              tabId: tabID,
-              path: "assets/face-icons/optmeow-face-circle-green-128.png",
-            },
-            function () { /*console.log("Updated icon to SOLID GREEN.");*/ }
-          );
-        }
+async function onMessageHandler(message, sender, sendResponse) {
+  // console.log(`Recieved message @ background page.`);
+  if (message.msg === "CHANGE_IS_DOMAINLISTED") {
+    isDomainlisted = message.data.isDomainlisted;
+    storage.set(stores.settings, isDomainlisted, "IS_DOMAINLISTED");
+  }
+  if (message.msg === "SET_TO_DOMAINLIST") {
+    let { domain, key } = message.data;
+    domainlist[domain] = key;                     // Sets to cache
+    storage.set(stores.domainlist, key, domain);  // Sets to long term storage
+  }
+  if (message.msg === "REMOVE_FROM_DOMAINLIST") {
+    let domain = message.data;
+    storage.delete(stores.domainlist, domain);
+    delete domainlist[domain];
+  }
+  if (message.msg === "POPUP") {
+    dataToPopup()
+  }
+  if (message.msg === "CONTENT_SCRIPT_WELLKNOWN") {
+    let tabID = sender.tab.id;
+    wellknown[tabID] = message.data
+    if (wellknown[tabID]["gpc"] === true) {
+      setTimeout(()=>{}, 10000);
+      if (signalPerTab[tabID] === true) {
+        chrome.browserAction.setIcon(
+          {
+            tabId: tabID,
+            path: "assets/face-icons/optmeow-face-circle-green-128.png",
+          },
+          function () { /*console.log("Updated icon to SOLID GREEN.");*/ }
+        );
       }
     }
+  }
 
-    if (message.msg === "CONTENT_SCRIPT_TAB") {
-      // console.log("CONTENT_SCRIPT_TAB MESSAGE HAS BEEN RECEIVED")
-      let url = new URL(sender.origin);
-      let parsed = psl.parse(url.hostname);
-      let domain = parsed.domain;
-      let tabID = sender.tab.id;
-      if (tabs[tabID] === undefined) {
-        tabs[tabID] = {
-          DOMAIN: domain,
-          REQUEST_DOMAINS: {},
-          TIMESTAMP: message.data,
-        };
-      } else if (tabs[tabID].DOMAIN !== domain) {
-        tabs[tabID].DOMAIN = domain;
-        let urls = tabs[tabID]["REQUEST_DOMAINS"];
-        // console.log("urls are:", urls)
-        for (let key in urls) {
-          if (urls[key]["TIMESTAMP"] >= message.data) {
-            tabs[tabID]["REQUEST_DOMAINS"][key] = urls[key];
-          } else {
-            delete tabs[tabID]["REQUEST_DOMAINS"][key];
-          }
+  if (message.msg === "CONTENT_SCRIPT_TAB") {
+    // console.log("CONTENT_SCRIPT_TAB MESSAGE HAS BEEN RECEIVED")
+    let url = new URL(sender.origin);
+    let parsed = psl.parse(url.hostname);
+    let domain = parsed.domain;
+    let tabID = sender.tab.id;
+    if (tabs[tabID] === undefined) {
+      tabs[tabID] = {
+        DOMAIN: domain,
+        REQUEST_DOMAINS: {},
+        TIMESTAMP: message.data,
+      };
+    } else if (tabs[tabID].DOMAIN !== domain) {
+      tabs[tabID].DOMAIN = domain;
+      let urls = tabs[tabID]["REQUEST_DOMAINS"];
+      // console.log("urls are:", urls)
+      for (let key in urls) {
+        if (urls[key]["TIMESTAMP"] >= message.data) {
+          tabs[tabID]["REQUEST_DOMAINS"][key] = urls[key];
+        } else {
+          delete tabs[tabID]["REQUEST_DOMAINS"][key];
         }
-        tabs[tabID]["TIMESTAMP"] = message.data;
       }
+      tabs[tabID]["TIMESTAMP"] = message.data;
     }
-    if (message.msg === "SET_OPTOUT_COOKEIS") {
-      // This is initialized when cookies are to be reset to a page after
-      // do not sell is turned back on (e.g., when its turned on from the popup).
+  }
+  if (message.msg === "SET_OPTOUT_COOKEIS") {
+    // This is initialized when cookies are to be reset to a page after
+    // do not sell is turned back on (e.g., when its turned on from the popup).
 
-      // This is specifically for when cookies are removed when a user turns off
-      // do not sell for a particular site, and chooses to re-enable it
-      initCookiesPerDomain(message.data)
-    }
-  });
+    // This is specifically for when cookies are removed when a user turns off
+    // do not sell for a particular site, and chooses to re-enable it
+    initCookiesPerDomain(message.data)
+  }
+}
 
-} // closing initMessagePassing();
+
+function initMessagePassing() {
+  chrome.runtime.onConnect.addListener(onConnectHandler);
+  chrome.runtime.onMessage.addListener(onMessageHandler);
+}
+
+function closeMessagePassing() {
+  chrome.runtime.onConnect.removeListener(onConnectHandler);
+  chrome.runtime.onMessage.removeListener(onMessageHandler);
+}
 
 
 
@@ -437,8 +452,16 @@ function initMessagePassing() {
 /******************************************************************************/
 
 
-function initSetup () {
+/**
+ * Listener for tab switch that updates the cached current tab variable
+ */
+function onActivatedProtectionMode(info) {
+  activeTabID = info.tabId;
+  // dataToPopup()
+}
 
+// Handles misc. setup & setup listeners
+function initSetup () {
   pullToDomainlistCache();
 
   // Runs on startup to initialize the cached current tab variable
@@ -448,20 +471,24 @@ function initSetup () {
     }
   });
 
-  // Listener for tab switch that updates the cached current tab variable
-  chrome.tabs.onActivated.addListener(function (info) {
-    activeTabID = info.tabId;
-    // dataToPopup()
-  });
+  chrome.tabs.onActivated.addListener(onActivatedProtectionMode);
+} 
 
-  // Opens the options page on extension install
-  chrome.runtime.onInstalled.addListener(function (details) {
-    if (details.reason === 'install') {
-      chrome.runtime.openOptionsPage((result) => {});
-    }
-  });
-  
-} // closing initStartUp();
+function closeSetup() {
+  chrome.tabs.onActivated.removeListener(onActivatedProtectionMode);
+}
+
+/**
+ * Inteded to facilitate transitioning between analysis & protection modes
+ */
+ function wipeLocalVars() {
+  domainlist = {};    // Caches & mirrors domainlist in storage
+  tabs = {};          // Caches all tab infomration, i.e. requests, etc. 
+  wellknown = {};     // Caches wellknown info to be sent to popup
+  signalPerTab = {};  // Caches if a signal is sent to render the popup icon
+  activeTabID = 0;    // Caches current active tab id
+  sendSignal = false;  // Caches if the signal can be sent to the curr domain
+}
 
 
 
@@ -475,7 +502,9 @@ function initSetup () {
 // export function preinit() {}
 
 export function init() {
-  initCookiesOnInstall();
+  reloadVars();
+  initCookiesOnInstall();   // NOTE: This replaces ALL do not sell cookies
+
 	enableListeners(listenerCallbacks);
   initMessagePassing();
   initSetup();
@@ -485,4 +514,8 @@ export function init() {
 
 export function halt() {
 	disableListeners(listenerCallbacks);
+  closeMessagePassing();
+  closeSetup();
+
+  wipeLocalVars();
 }

@@ -46,19 +46,19 @@ function eventListeners() {
   document
     .getElementById("settings-view-radio0")
     .addEventListener("click", () => {
-      chrome.runtime.sendMessage({ msg: "CHANGE_MODE", data: { isEnabled: true } });
+      chrome.runtime.sendMessage({ msg: "TURN_ON_OFF", data: { isEnabled: true } });
       chrome.runtime.sendMessage({ msg: "CHANGE_IS_DOMAINLISTED", data: { isDomainlisted: false } });
     });
   document
     .getElementById("settings-view-radio1")
     .addEventListener("click", () => {
-      chrome.runtime.sendMessage({ msg: "CHANGE_MODE", data: { isEnabled: false } });
+      chrome.runtime.sendMessage({ msg: "TURN_ON_OFF", data: { isEnabled: false } });
       chrome.runtime.sendMessage({ msg: "CHANGE_IS_DOMAINLISTED", data: { isDomainlisted: false } });
     });
   document
     .getElementById("settings-view-radio2")
     .addEventListener("click", () => {
-      chrome.runtime.sendMessage({ msg: "CHANGE_MODE", data: { isEnabled: true } });
+      chrome.runtime.sendMessage({ msg: "TURN_ON_OFF", data: { isEnabled: true } });
       chrome.runtime.sendMessage({ msg: "CHANGE_IS_DOMAINLISTED", data: { isDomainlisted: true } });
     });
   document

@@ -15,10 +15,6 @@ to manage the state & functionality mode of the extension
 
 import { init as initProtection, halt as haltProtection, halt } from "./protection/protection.js";
 import { init as initAnalysis, halt as haltAnalysis } from "./analysis/analysis.js";
-
-// import { background as analysis } from "./analysis/background";
-// import { background as protection } from "./protection/background";
-
 import { modes } from "../data/modes.js";
 import { defaultSettings } from "../data/defaultSettings.js";
 import { stores, storage } from "./storage.js";
@@ -32,32 +28,31 @@ function enable() {
   switch (mode) {
     case modes.analysis:
       initAnalysis();
-      console.log(`Initializing Analysis mode. `);
+      haltProtection();
+      console.log(`INITIALIZING Analysis mode.`);
       break;
     case modes.protection:
 			initProtection();
-			console.log(`Initializing Protection mode. `);
+      haltAnalysis();
+			console.log(`INITIALIZING Protection mode.`);
 			break;
 		default:
-			console.error(`Failed to enable() OptMeowt. `);
+			console.error(`FAILED to ENABLE OptMeowt.`);
 	}
 }
 
 function disable() {
-  // analysis.halt();
-  // protection.halt();
   haltAnalysis();
   haltProtection();
 }
 
 
 /******************************************************************************/
-
 // Initializers
 
-
-// Default settings init
+// This is the very first thing the extension runs
 (async () => {
+  // Initializes the default settings
   let settingsDB = await storage.getStore(stores.settings);
   for (let setting in defaultSettings) {
     if (!settingsDB[setting]) {
@@ -65,15 +60,20 @@ function disable() {
     }
   }
 
-  // Mode init
-  if (isEnabled) {
+  if (isEnabled) {  // Turns on the extension
     enable();
   }
 })();
 
+// Opens the options page on extension install
+chrome.runtime.onInstalled.addListener(function (details) {
+  if (details.reason === 'install') {
+    chrome.runtime.openOptionsPage((result) => {});
+  }
+});
+
 
 /******************************************************************************/
-
 // Mode listeners
 
 
@@ -88,10 +88,8 @@ function disable() {
  */
  chrome.runtime.onMessage.addListener(async function (message, sender, sendResponse) {
 	// console.log(`Recieved message @ background page.`);
-  if (message.msg === "CHANGE_MODE") {
+  if (message.msg === "TURN_ON_OFF") {
     isEnabled = message.data.isEnabled;           // can be undefined
-    // mode = message.data.mode;
-    // console.log("CHANGE_MODE: mode = ", mode);
 
     if (isEnabled) {
       await storage.set(stores.settings, true, "IS_ENABLED");
@@ -100,6 +98,18 @@ function disable() {
       await storage.set(stores.settings, false, "IS_ENABLED");
       disable();
     }
+  }
+  if (message.msg === "CHANGE_MODE") {
+    mode = message.data;
+    console.log("CHANGE_MODE: mode = ", mode);
+    await storage.set(stores.settings, mode, "MODE");
+    if (isEnabled) {
+      enable();
+    }
+    chrome.runtime.sendMessage({
+      msg: "RELOAD_DUE_TO_MODE_CHANGE",
+      data: mode
+    }); 
   }
   if (message.msg === "CHANGE_IS_DOMAINLISTED") {
     isDomainlisted = message.data.isDomainlisted; // can be undefined

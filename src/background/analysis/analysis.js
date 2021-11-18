@@ -32,16 +32,14 @@ GPC signal to a site that also has/does not have usprivacy strings.
 */
 
 
+// import { debug } from "webpack";
 import { modes } from "../../data/modes.js";
 import { defaultSettings } from "../../data/defaultSettings.js";
 import { stores, storage } from "./../storage.js";
 import { cookiesPhrasing, uspPhrasing, doNotSellPhrasing } from "../../data/regex"
-// import { debug } from "webpack";
 import psl from "psl";
-import { onBeforeSendHeaders } from "../protection/events.js";
 import { IS_BROWSER } from "../../theme/darkmode.js";
 import { headers } from "../../data/headers"
-import { popperOffsets } from "@popperjs/core";
 
 
 
@@ -55,241 +53,10 @@ import { popperOffsets } from "@popperjs/core";
 var analysis = {};
 var analysis_userend = {};
 var urlsWithUSPString = [];
-var urlFlags;
-// var hasReloaded = false;
-
-// var domainlist = {};    // Caches & mirrors domainlist in storage
-// var mode = defaultSettings["MODE"]; // Caches the extension mode
-// var isDomainlisted = defaultSettings["IS_DOMAINLISTED"];
-// var tabs = {};          // Caches all tab infomration, i.e. requests, etc. 
-// var wellknown = {};     // Caches wellknown info to be sent to popup
-// var signalPerTab = {};  // Caches if a signal is sent to render the popup icon
-// var activeTabID = 0;    // Caches current active tab id
-// var sendSignal = true;  // Caches if the signal can be sent to the curr domain
-
 
 var sendingGPC = false;
 var changingSitesOnAnalysis = false;
 var changingSitesOnUserRequest = false;  // used to create new analysis section
-// use this to bump all teh variables up one
-
-
-/*
-
-Analysis object prototype structure
-
-var analysis = {
-  "wired.com": {  // DOMAIN LEVEL
-    0: {
-      "BEFORE_GPC": {  // All of the info here will be scraped if privacy flag found
-        "COOKIES": {
-          "usprivacy": {
-            domain: "www.wired.com",
-            expirationDate: 1663019064,
-            firstPartyDomain: "",
-            hostOnly: true,
-            httpOnly: false,
-            name: "usprivacy",
-            path: "/",
-            sameSite: "lax",
-            secure: false,
-            session: false,
-            storeId: "firefox-default",
-            value: "1---"
-          }
-        },
-        "DO_NOT_SELL_LINK_EXISTS": false,
-        "HEADERS": {},
-        "URLS": {},
-        "USPAPI": {
-          "uspString": {
-            uspString: "1---",
-            version: 1
-          }
-        },
-        "USPAPI_LOCATOR": {}, // Not sure if we need this here
-        "THIRD_PARTIES": {
-          // 'RECURSIVE' 2nd DOMAIN LEVEL
-          "https://eus.rubiconproject.com/usync.html?us_privacy=1---": {
-            0: {
-              "BEFORE_GPC": {
-                "COOKIES": {},
-                "HEADERS": {},
-                "URLS": {
-                  "us_privacy": "1---"
-                },
-                "USPAPI": {},
-                "USPAPI_LOCATOR": {}
-              }, 
-              "AFTER_GPC": {
-                ...
-              }
-            }
-          }
-        }
-      },
-      "AFTER_GPC": {
-        ...
-      }
-    },
-    1: {
-      ...
-    }
-  }
-}
-
-{
-  "accuweather.com": 
-    "FIRST_USP": "1YNN",
-    "FIRST_USP_BOOL": false,
-    "GPC_SENT": true,
-    "SECOND_USP": "1YYN",
-    "SECOND_USP_BOOL": "true",
-    "RESULT": ,
-    "CONFLICTS": 
-}
-
-
-var analysis = {
-  "wired.com": [  // DOMAIN LEVEL
-    {
-      "TIMESTAMP": {},
-      "BEFORE_GPC": {  // All of the info here will be scraped if privacy flag found
-        "COOKIES": {
-          "usprivacy": {
-            domain: "www.wired.com",
-            expirationDate: 1663019064,
-            firstPartyDomain: "",
-            hostOnly: true,
-            httpOnly: false,
-            name: "usprivacy",
-            path: "/",
-            sameSite: "lax",
-            secure: false,
-            session: false,
-            storeId: "firefox-default",
-            value: "1---"
-          }
-        },
-        "DO_NOT_SELL_LINK_EXISTS": false,
-        "HEADERS": {},
-        "URLS": {},
-        "USPAPI": {
-          "uspString": {
-            uspString: "1---",
-            version: 1
-          }
-        },
-        "USPAPI_LOCATOR": {}, // Not sure if we need this here
-        "THIRD_PARTIES": {
-          "https://eus.rubiconproject.com/usync.html?us_privacy=1---": 
-          [
-            {
-              "BEFORE_GPC": {
-                "COOKIES": {},
-                "HEADERS": {},
-                "URLS": { "us_privacy": "1---" },
-                "USPAPI": {},
-                "USPAPI_LOCATOR": {}
-              }, 
-              "AFTER_GPC": { ... }
-            }
-          ]
-        }
-      },
-      "AFTER_GPC": { ... }
-    }
-  ]
-}
-
-*/
-
-
-/******************************************************************************/
-/******************************************************************************/
-/**********                  # Stanley's functions                   **********/
-/******************************************************************************/
-/******************************************************************************/
-
-
-/**
- * 
- * @returns 
- */
-function loadFlags() {
-  var urlFlags = [];
-  //Load the privacy flags from the static json file
-  fetch(chrome.extension.getURL('/data/privacy_flags.json'))
-    .then((resp) => resp.json())
-    .then(function (jsonData) {
-      console.log("flagdata" + JSON.stringify(jsonData));
-      flagObject = jsonData;
-      console.log("FLAGONE" + jsonData.flags[0].name);
-      flagObject.flags.forEach(flag => {
-        urlFlags.push(flag.name);
-      });
-      console.log("URLFLAGS" + urlFlags);
-    });
-    return urlFlags;
-}
-
-// 1: details 2: did we privatize this request?
-// Firefox implementation for fingerprinting classification flags
-// https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/webRequest/onBeforeSendHeaders
-/**
- * 
- * @param {*} details 
- * @param {*} privatized 
- * @returns 
- */
-function processTrackingRequest (details, privatized){
-  var urlFlags = loadFlags();
-
-  debug.log("Fingerprinting request recieved")
-  if (details.urlClassification != null) {
-    // await storage.set(stores.analysis,details.documentURL,true);
-    storage.set(stores.analysis,details.documentURL,true); 
-    debug.log("Fingerprinting request recieved")
-    debug.log(details.urlClassification)
-
-    var settingsdict = parseURLForSignal(details.documentURL)
-    //parse header
-    for (let header of e.requestHeaders) {
-      if (header.name.toLowerCase() in urlFlags) {
-        // flag was in header
-      }
-    }
-
-  }
-  return details
-}
-
-/**
- * 
- * @param {*} url 
- * @returns 
- */
-function parseURLForSignal(url) {
-  var flagSettingsDict = [];
-
-  //Unescape the URL strip off everything until the parameter bit 
-  // (anything after the question mark)
-  url = unescape(url);
-  url = url.substring(url.indexOf("\?"));
-  if (url.length == 0) {
-    return;
-  }
-
-  var params = new URLSearchParams(url);
-
-  urlFlags.forEach(flag => {
-    if (params.has(flag)) {
-      flagSettingsDict[flag] = params.get(flag);
-    }
-  });
-
-  return flagSettingsDict;
-}
 
 
 
@@ -305,7 +72,7 @@ const MOZ_REQUEST_SPEC = ["requestHeaders", "blocking"];
 const MOZ_RESPONSE_SPEC = ["responseHeaders", "blocking"];
 const FILTER = { urls: ["<all_urls>"] };
 
-let newIncognitoTab = chrome.windows.create({ "url": null, "incognito": true });
+let newIncognitoTab = browser.windows.create({ "url": null, "incognito": true });
 
 
 async function checkForUSPString(url) {
@@ -316,8 +83,16 @@ async function checkForUSPString(url) {
   }
 }
 
-function onBeforeSendHeadersCallback(details) {
-  // console.log("DETAILS.URL: ", details.url);
+/**
+ * Though the name says just GPC headers are added here, we also:
+ * (1) Check the current stopped URL for a us_privacy string
+ * (2) Pass the incoming stream to a filter to look for a Do Not Sell Link
+ * (3) Attatch the GPC headers
+ * NOTE: We attach the DOM property in another listener upon finishing reloading
+ * @param {Object} details 
+ * @returns Object
+ */
+function addGPCHeadersCallback(details) {
   checkForUSPString(details.url); // Dump all URLs that contain a us_privacy string
   webRequestResponseFiltering(details);        // Filter for Do Not Sell link
 
@@ -328,43 +103,37 @@ function onBeforeSendHeadersCallback(details) {
   return { requestHeaders: details.requestHeaders }
 }
 
+var addGPCHeaders = function() {
+  sendingGPC = true;
+  chrome.webRequest.onBeforeSendHeaders.addListener(
+    addGPCHeadersCallback,
+    FILTER,
+    MOZ_REQUEST_SPEC
+  );
+}
+
+var removeGPCSignals = function() {
+  sendingGPC = false;
+  chrome.webRequest.onBeforeSendHeaders.removeListener(addGPCHeadersCallback);
+}
+
 /**
  * Initializes the analysis with a refresh after being triggered
- * 
- * -- NOTE: This below is a proposed idea, not actually implemented --
- * Essentially we want to make sure GPC headers and dom properties 
- * are added here. Handle that HERE
  * 
  * (1) Add GPC headers
  * (2) Attach DOM property to page after reload
  */
 function runAnalysis() {
-  // console.log("Reloading site, sendingGPC =", sendingGPC);
   sendingGPC = true;
   changingSitesOnAnalysis = true;
   addGPCHeaders();
   chrome.tabs.reload();
-
-  // // This is a proposed better implementation that consolidates all the 
-  // // GPC signals to be sent into one function
-  // changingSitesOnUserRequest = false;
-  // let reloading = browser.tabs.reload();
-  // function onReloaded(details) {
-  //   function addDomListener(details) {
-  //     addDomSignal(details);
-  //     chrome.webNavigation.onCommitted.removeListener(addDomListener)
-  //   }
-  //   chrome.webNavigation.onCommitted.addListener(addDomListener)
-  // }
-  // function onError(e) { console.error(e) }
-  // reloading.then(onReloaded, onError)
 }
 
 function disableAnalysis() {
-  // console.log("DISABLING ANALYSIS, REMOVING GPC HEADERS")
   sendingGPC = false;
   changingSitesOnAnalysis = false;
-  removeGPCHeaders();
+  removeGPCSignals();
 }
 
 /**
@@ -633,22 +402,10 @@ function logData(domain, command, data) {
 /******************************************************************************/
 
 
-var addGPCHeaders = function() {
-  sendingGPC = true;
-  chrome.webRequest.onBeforeSendHeaders.addListener(
-    onBeforeSendHeadersCallback,
-    FILTER,
-    MOZ_REQUEST_SPEC
-  );
-}
-
-var removeGPCHeaders = function() {
-  sendingGPC = false;
-  chrome.webRequest.onBeforeSendHeaders.removeListener(onBeforeSendHeadersCallback);
-}
-
-// Cookie listener - grabs ALL cookies as they are changed
-let listenerForUSPCookies = chrome.cookies.onChanged.addListener(
+/**
+ * Cookie listener - grabs ALL cookies as they are changed
+ */
+function cookiesOnChangedCallback() {
   (changeInfo) => {
     if (!changeInfo.removed) {
       let cookie = changeInfo.cookie;
@@ -663,11 +420,18 @@ let listenerForUSPCookies = chrome.cookies.onChanged.addListener(
       }
     }
     // console.log(analysis);
-})
+  }
+}
 
-chrome.webNavigation.onCommitted.addListener((details) => {
+/**
+ * Runs anytime the webNavigation.onCommitted listers triggers,
+ * especially when making transitions from running analysis and being passive.
+ * Also important in making sure all sites without anything noteworthy are logged
+ * @param {Object} details 
+ */
+function onCommittedCallback(details) {
   console.log("onCommitted Triggered!!")
-// https://developer.chrome.com/docs/extensions/reference/history/#transition_types
+  // https://developer.chrome.com/docs/extensions/reference/history/#transition_types
   let validTransition = isValidTransition(details.transitionType);
   console.log("transitionType: ", details.transitionType);
 
@@ -689,10 +453,12 @@ chrome.webNavigation.onCommitted.addListener((details) => {
       console.log("cancelling analysis!");
     }
   }
-})
+}
 
-// Message passing listener - for collecting USPAPI call data from window
-chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
+/**
+ * Message passing listener - for collecting USPAPI call data from the window
+ */
+ function onMessageHandler(message, sender, sendResponse) {
   if (message.msg === "USPAPI_TO_BACKGROUND") {
     let url = new URL(message.location);
     let domain = parseURL(url);
@@ -725,16 +491,35 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
       }
     });
   }
-});
+}
 
-chrome.runtime.onConnect.addListener(function(port) {
+/**
+ * Handles actually running the analysis when it is fired
+ */
+ function onConnectHandler(port) {
   port.onMessage.addListener(function (message) {
     if (message.msg === "RUN_ANALYSIS_FROM_BACKGROUND") {
       runAnalysis();
     }
   })
-})
+}
 
+/**
+ * Enables all the important listeners in one place
+ */
+function enableListeners() {
+  chrome.cookies.onChanged.addListener(cookiesOnChangedCallback);
+  chrome.webNavigation.onCommitted.addListener(onCommittedCallback);
+  chrome.runtime.onMessage.addListener(onMessageHandler);
+  chrome.runtime.onConnect.addListener(onConnectHandler);
+}
+
+function disableListeners() {
+  chrome.cookies.onChanged.removeListener(cookiesOnChangedCallback);
+  chrome.webNavigation.onCommitted.removeListener(onCommittedCallback);
+  chrome.runtime.onMessage.removeListener(onMessageHandler);
+  chrome.runtime.onConnect.removeListener(onConnectHandler);
+}
 
 
 
@@ -745,17 +530,18 @@ chrome.runtime.onConnect.addListener(function(port) {
 /******************************************************************************/
 
 
-function preinit() {
-  // urlFlags = loadFlags()
-}
+// function preinit() {
+//   // urlFlags = loadFlags()
+// }
 
 export function init() {
+  // SHOW SOME WARNING TO USERS ABOUT MESSING UP THEIR DATA
 	newIncognitoTab;
-  listenerForUSPCookies;
+  enableListeners();
 }
 
-function postinit() {}
+// function postinit() {}
   
 export function halt() {
-	// disableListeners(listenerCallbacks);
+	disableListeners();
 }

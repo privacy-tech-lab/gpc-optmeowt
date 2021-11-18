@@ -34,7 +34,7 @@ var mode = undefined;
 /******************************************************************************/
 
 //Init: initialize darkmode button
-function renderDarkmodeElement() {
+function generateDarkmodeElement() {
   const darkmode = new Darkmode();
 
   // Darkmode text
@@ -55,10 +55,7 @@ function renderDarkmodeElement() {
       />`;
   }
   darkSwitch.outerHTML = darkmodeText;
-}
 
-// Listener: Dark mode listener for `main-view.js`
-function listenerDarkmodeButton() {
   document.getElementById("darkSwitch").addEventListener("click", () => {
     chrome.runtime.sendMessage({
   	  msg: "DARKSWITCH_PRESSED",
@@ -130,7 +127,7 @@ function listenerExtensionIsEnabledDisabledButton(isEnabled, isDomainlisted, mod
         .setAttribute("uk-tooltip", "Enable");
       document.getElementById("content").style.opacity = "0.1";
       document.getElementById("extension-disabled-message").style.opacity = "1";
-      chrome.runtime.sendMessage({ msg: "CHANGE_MODE", data: { isEnabled: false } });
+      chrome.runtime.sendMessage({ msg: "TURN_ON_OFF", data: { isEnabled: false } });
     } else {
       document.getElementById("img").src =
         "../assets/pause-circle-outline.svg";
@@ -140,7 +137,7 @@ function listenerExtensionIsEnabledDisabledButton(isEnabled, isDomainlisted, mod
       document.getElementById("content").style.opacity = "1";
       document.getElementById("extension-disabled-message").style.opacity = "0";
       document.getElementById("extension-disabled-message").style.display = "none";
-      chrome.runtime.sendMessage({ msg: "CHANGE_MODE", data: { isEnabled: true } });
+      chrome.runtime.sendMessage({ msg: "TURN_ON_OFF", data: { isEnabled: true } });
     }
   });
 }
@@ -174,7 +171,7 @@ async function renderFirstPartyDomainToggle(parsedDomain) {
 
 function listenerFirstPartyDomainToggle() {
   document.getElementById("switch-label").addEventListener("click", async () => {
-    chrome.runtime.sendMessage({ msg: "CHANGE_MODE", data: { isEnabled: true } });
+    chrome.runtime.sendMessage({ msg: "TURN_ON_OFF", data: { isEnabled: true } });
     chrome.runtime.sendMessage({ msg: "CHANGE_IS_DOMAINLISTED", data: { isDomainlisted: true } });
     const parsedDomainValue = await storage.get(stores.domainlist, parsedDomain);
     let elemString = "";
@@ -256,14 +253,18 @@ document.addEventListener("DOMContentLoaded", async (event) => {
   renderFirstPartyDomainToggle(parsedDomain); // Render 1P domain "DNS Enabled/Disabled" text+toggle
   renderDomainCounter(); // Render "X domains receiving signals" info section
   renderThirdPartyDomainToggle(); // Render 3rd party domain list dropdown
-  renderDarkmodeElement();  // Render darkmode
+
+  generateDarkmodeElement();  // Render darkmode
 
   // Listeners associated with the buttons / toggles rendered above
   listenerExtensionIsEnabledDisabledButton(isEnabled, isDomainlisted, mode);
   listenerFirstPartyDomainToggle();
   listenerThirdPartyDomainToggle();
-  listenerDarkmodeButton();
 })
+
+function redrawPopup() {
+  window.close();   // lol
+}
 
 
 
@@ -280,7 +281,7 @@ document.addEventListener("DOMContentLoaded", async (event) => {
  */
 function addThirdPartyDomainToggleListener(requestDomain) {
   document.getElementById(`input-${requestDomain}`).addEventListener("click", async () => {
-    chrome.runtime.sendMessage({ msg: "CHANGE_MODE", data: { isEnabled: true } });
+    chrome.runtime.sendMessage({ msg: "TURN_ON_OFF", data: { isEnabled: true } });
     chrome.runtime.sendMessage({ msg: "CHANGE_IS_DOMAINLISTED", data: { isDomainlisted: true } });
     const requestDomainValue = await storage.get(stores.domainlist, requestDomain)
     let elemString = "";
@@ -473,6 +474,9 @@ backgroundPort.onMessage.addListener(function(message) {
  * the popup badge counter and build the popup domain list HTML, respectively
  */
 chrome.runtime.onMessage.addListener(function (message, _, __) {
+  if (message.msg === "RELOAD_DUE_TO_MODE_CHANGE") {
+    redrawPopup();
+  }
   if (message.msg === "POPUP_DATA") {
     let { requests, wellknown } = message.data;
     buildDomains(requests);
@@ -499,7 +503,7 @@ function setToDomainlist(d, k) {
 
 // function setMode(mode) {
 //   chrome.runtime.sendMessage({
-//     msg: "CHANGE_MODE",
+//     msg: "TURN_ON_OFF",
 //     data: { "DOMAIN": domain, "KEY": key }
 //   }, (response) => { /*console.log(response)*/ })
 // }
@@ -585,6 +589,20 @@ function loadCSVDownloadButton() {
   let downloadButton = document.getElementById("csv-download-button");
   downloadButton.addEventListener('click', downloadCSVOnClick);
 }
+
+function loadChangeMode() {
+  let modeButton = document.getElementById("mode-changer-button");
+  modeButton.addEventListener('click', function() {
+    let newMode = (mode === modes.analysis) ? modes.protection : modes.analysis;
+    mode = newMode;
+    chrome.runtime.sendMessage({
+      msg: "CHANGE_MODE",
+      data: newMode
+    })
+  })
+}
+
+loadChangeMode();
 
 
 

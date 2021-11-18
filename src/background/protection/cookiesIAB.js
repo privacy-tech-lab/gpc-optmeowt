@@ -238,31 +238,3 @@ function isValidSignalIAB(signal) {
 }
 
 /******************************************************************************/
-
-/**
- * Stores the url, assuming a IAB cookie was found by the extension,
- * to a special location for debuggin purposes.
- * --- TO BE REMOVED IN FINAL VERSION ---
- * @param {string} url - url to be stored
- */
-function storeURLforDev(url) {
-  chrome.storage.local.get(["IAB"],
-  function (result) {
-    var iab = result.IAB
-    if (iab[url] === undefined) {
-      iab[url] = false
-      chrome.storage.local.set({"IAB": iab});
-      //console.log("Stored current iab website");
-    }
-  })
-}
-
-/**
- * Initializes the "IAB" object in the local storage
- * for debugging purposes
- */
-chrome.storage.local.get(["IAB"], function (result) {
-  if (result.IAB == undefined) {
-    chrome.storage.local.set({ IAB: {} });
-  }
-});
