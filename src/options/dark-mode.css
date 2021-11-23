@@ -112,6 +112,11 @@ Settings page
   color: #CBCBCB !important;
 }
 
+.darkmode--activated .analysis-navbar {
+  background-color: #252522 !important;
+  color: #CBCBCB !important;
+}
+
 .darkmode--activated .sticky {
   box-shadow: 0 8px 8px -10px #111111 !important;
 }
@@ -134,6 +139,11 @@ Buttons and Switches
   border: 1px solid rgb(70, 70, 70) !important;
   transition: all 0.3s ease;
   color: #eee !important;
+}
+
+.darkmode--activated .uk-badge {
+  background-color: rgb(37, 37, 34) !important;
+
 }
 
 .darkmode--activated .button:hover {

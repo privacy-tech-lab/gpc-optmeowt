@@ -391,6 +391,10 @@ function logData(domain, command, data) {
   }
   console.log("Updated analysis logs: ", analysis);
   console.log("Updated analysis_userend logs: ", analysis_userend);
+
+  console.log("Attempting to update stores...");
+  storage.set(stores.analysis, analysis_userend[domain], domain);
+  // console.log(a);
 }
 
 

@@ -214,7 +214,7 @@ function deleteCookie(url, name) {
  * @param {string} signal - `us_privacy` string
  * @returns {bool} - Represents if signal is a valid signal
  */
-function isValidSignalIAB(signal) {
+export function isValidSignalIAB(signal) {
   var validChars = ['y', 'n', 'Y', 'N', '-']
   if (signal.length != 4) {
     return false

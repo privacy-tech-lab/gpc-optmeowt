@@ -20,6 +20,7 @@ import { modes } from "./modes"
 export const defaultSettings = {
 	'BROWSER': '$BROWSER',
 	'DOMAINLIST_PRESSED': false,
+	'ANALYSIS_PRESSED' : false,
 	'IS_DOMAINLISTED': false,
 	'IS_ENABLED': true,
 	'MODE': modes.analysis,
