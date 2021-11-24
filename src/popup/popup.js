@@ -400,6 +400,7 @@ function showProtectionInfo() {
   document.getElementById("dropdown-2-expandable").style.display = "none";
   document.getElementById("visited-domains-stats").style.display = "";
   document.getElementById("run-analysis").style.display = "none";
+  document.getElementById("stop-analysis").style.display = "none";
   document.getElementById("misc-options").style.display = "none";
   document.getElementById("download-analysis-data").style.display = "none";
   document.getElementById("analysis-list").style.display = "none";
@@ -442,6 +443,7 @@ function showAnalysisInfo() {
   document.getElementById("dropdown-2-expandable").style.display = "none";
   document.getElementById("visited-domains-stats").style.display = "none";
   document.getElementById("run-analysis").style.display = "";
+  document.getElementById("stop-analysis").style.display = "";
   document.getElementById("misc-options").style.display = "";
   document.getElementById("download-analysis-data").style.display = "";
   document.getElementById("analysis-list").style.display = "";
@@ -944,8 +946,15 @@ function downloadCSVOnClick() {
 /**
  * Run analysis button
  */
-function modeBadgeButtonOnClick() {
+function runAnalysisButtonOnClick() {
   backgroundPort.postMessage({ msg: "RUN_ANALYSIS_FROM_BACKGROUND", data: null });
+}
+
+/**
+ * Stop analysis button
+ */
+function stopAnalysisButtonOnClick() {
+  backgroundPort.postMessage({ msg: "STOP_ANALYSIS_FROM_BACKGROUND", data: null });
 }
 
 /**
@@ -985,7 +994,12 @@ document.getElementById("analysis-list").addEventListener("click", async () => {
 
 // Listener: Opens analysislist in options page
 document.getElementById("run-analysis").addEventListener("click", 
-  modeBadgeButtonOnClick
+  runAnalysisButtonOnClick
+);
+
+// Listener: Opens analysislist in options page
+document.getElementById("stop-analysis").addEventListener("click", 
+  stopAnalysisButtonOnClick
 );
 
 // Listener: Opens analysislist in options page

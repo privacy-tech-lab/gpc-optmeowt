@@ -191,10 +191,14 @@ async function buildList() {
       dnslink = neg;
     }
     let beforeGPC = data.USPAPI_BEFORE_GPC
-    if ((beforeGPC.length != 0) && isValidSignalIAB(beforeGPC[0].uspString)) {
-      stringfound = pos;
-    } else {
+    if (!beforeGPC[0]) {
       stringfound = neg;
+    } else {
+      if ((beforeGPC.length != 0) && isValidSignalIAB(beforeGPC[0].uspString)) {
+        stringfound = pos;
+      } else {
+        stringfound = neg;
+      }
     }
     if (data.SENT_GPC){
       gpcsent = pos;

@@ -52,11 +52,14 @@ import { headers } from "../../data/headers"
 
 var analysis = {};
 var analysis_userend = {};
+var analysis_counter = {};
+var domains_collected_during_analysis = [];
+
 var urlsWithUSPString = [];
 
-var sendingGPC = false;
+// var sendingGPC = false;
 var changingSitesOnAnalysis = false;
-var changingSitesOnUserRequest = false;  // used to create new analysis section
+// var changingSitesOnUserRequest = false;  // used to create new analysis section
 
 
 
@@ -71,6 +74,20 @@ var changingSitesOnUserRequest = false;  // used to create new analysis section
 const MOZ_REQUEST_SPEC = ["requestHeaders", "blocking"];
 const MOZ_RESPONSE_SPEC = ["responseHeaders", "blocking"];
 const FILTER = { urls: ["<all_urls>"] };
+
+
+function updateAnalysisCounter() {
+
+  let domains_collected = Object.keys(domains_collected_during_analysis);
+  for (let i=0; i<domains_collected_during_analysis.length; i++) {
+    console.log("key", i);
+    analysis_counter[domains_collected[i]] += 1;
+    console.log("analysis_counter[key]", analysis_counter[domains_collected[i]]);
+  }
+
+  domains_collected_during_analysis = [];
+}
+
 
 async function checkForUSPString(url) {
   if (uspPhrasing.test(url)) {
@@ -90,6 +107,11 @@ async function checkForUSPString(url) {
  * @returns Object
  */
 function addGPCHeadersCallback(details) {
+  // changingSitesOnUserRequest = true;
+  // let url = new URL(details.url);
+  // let domain = parseURL(url);
+  // logData(domain, null, null);
+
   checkForUSPString(details.url); // Dump all URLs that contain a us_privacy string
   webRequestResponseFiltering(details);        // Filter for Do Not Sell link
 
@@ -101,7 +123,7 @@ function addGPCHeadersCallback(details) {
 }
 
 var addGPCHeaders = function() {
-  sendingGPC = true;
+  // sendingGPC = true;
   chrome.webRequest.onBeforeSendHeaders.addListener(
     addGPCHeadersCallback,
     FILTER,
@@ -110,7 +132,7 @@ var addGPCHeaders = function() {
 }
 
 var removeGPCSignals = function() {
-  sendingGPC = false;
+  // sendingGPC = false;
   chrome.webRequest.onBeforeSendHeaders.removeListener(addGPCHeadersCallback);
 }
 
@@ -121,15 +143,18 @@ var removeGPCSignals = function() {
  * (2) Attach DOM property to page after reload
  */
 function runAnalysis() {
-  sendingGPC = true;
+  console.log("Starting analysis.");
+  // sendingGPC = true;
   changingSitesOnAnalysis = true;
   addGPCHeaders();
   chrome.tabs.reload();
 }
 
 function disableAnalysis() {
-  sendingGPC = false;
+  console.log("Stopping analysis.")
+  // sendingGPC = false;
   changingSitesOnAnalysis = false;
+  updateAnalysisCounter();
   removeGPCSignals();
 }
 
@@ -279,43 +304,37 @@ var analysisDataSkeletonFirstParties = () => {
  * Parameters - type: STRING, data: ANY
  */
 function logData(domain, command, data) {
-  let gpcStatusKey = sendingGPC ? "AFTER_GPC" : "BEFORE_GPC";
+  let gpcStatusKey = changingSitesOnAnalysis ? "AFTER_GPC" : "BEFORE_GPC";
   // let gpcStatusKey = changingSitesOnUserRequest ? "BEFORE_GPC" : "AFTER_GPC";
-  console.log("changingSitesOnUserRequest", changingSitesOnUserRequest)
-
+  // console.log("changingSitesOnUserRequest", changingSitesOnUserRequest)
   console.log("domain from logData: ", domain);
 
   if (!analysis[domain]) {
-    console.log(`Adding analysis[${domain}] = [];`)
+    // console.log(`Adding analysis[${domain}] = [];`)
     analysis[domain] = [];
     analysis_userend[domain] = [];
+    analysis_counter[domain] = 0;
   }
-  let callIndex = analysis[domain].length;
-
-  console.log("analysis after adding domain: ", analysis)
-  // // Check to see if you are running analysis, but no logs inside BEFORE_GPC
-  // if (analysis[domain][callIndex]["BEFORE_GPC"]) {  // if initialized
-  //   if (!analysis[domain][callIndex]["BEFORE_GPC"]["TIMESTAMP"]) {}
-  // }
+  if (domains_collected_during_analysis[domain] == undefined || domains_collected_during_analysis[domain] == null) {
+    domains_collected_during_analysis.push(domain);
+  }
+  let callIndex = analysis_counter[domain];
   console.log("call index: ", callIndex)
+  // console.log("analysis after adding domain: ", analysis)
 
   // FIX TEH USE CASE HERE FOR ARRAYS
 
-  console.log("changingSitesOnUserRequest", changingSitesOnUserRequest)
-  if (changingSitesOnUserRequest) {
+  if (!analysis[domain][callIndex]) {
     console.log("RAN FIRST PART")
     analysis[domain][callIndex] = analysisDataSkeletonFirstParties();
     analysis_userend[domain] = analysisUserendSkeleton();
-    changingSitesOnUserRequest = false;
-  } else {
-    console.log("RAN SECOND PART")
-    callIndex -= 1;
-    // console.log("Saving to minus one callindex", callIndex)
-    // console.log("(4) analysis: ", analysis);
+    // changingSitesOnUserRequest = false;
+  // } else {
+  //   console.log("RAN SECOND PART")
+  //   callIndex -= 1;
   }
-  console.log("changingSitesOnUserRequest", changingSitesOnUserRequest)
-
-  console.log("analysis after maybe addign callindex: ", analysis)
+  console.log("Current callIndex: ", callIndex, "command: ", command, "data: ", data);
+  console.log("analysis after maybe adding callindex: ", analysis);
 
   let ms = Date.now();
 
@@ -324,7 +343,7 @@ function logData(domain, command, data) {
     analysis_userend[domain]["TIMESTAMP"] = ms;
   }
 
-  if (sendingGPC) {
+  if (changingSitesOnAnalysis) {
     analysis[domain][callIndex]["SENT_GPC"] = true;
     analysis_userend[domain]["SENT_GPC"] = true;
     analysis_userend[domain]["SENT_GPC_TIMESTAMP"] = ms;
@@ -437,21 +456,23 @@ function onCommittedCallback(details) {
   console.log("transitionType: ", details.transitionType);
 
   // changingSitesOnAnalysis, changingSitesOnUserRequest, sendingGPC
-  console.log("changingSitesOnUserRequest", changingSitesOnUserRequest)
+  // console.log("changingSitesOnUserRequest", changingSitesOnUserRequest)
   // console.log("changingSitesOnAnalysis", changingSitesOnAnalysis)
   if (validTransition) {
+    let url = new URL(details.url);
+    let domain = parseURL(url);
     if (changingSitesOnAnalysis) {
       // add SENDING GPC TO FILE
       // Turn off changing sites on analysis 
+      // sendingGPC = true;
+      logData(domain, null, null);
       addDomSignal(details);
-      changingSitesOnAnalysis = false;
-    } else {  // Must be on user request
-      disableAnalysis();
-      changingSitesOnUserRequest = true;
-      let url = new URL(details.url);
-      let domain = parseURL(url);
-      logData(domain, null, null); // Makes sure to log the 1st party domain to analysis_userend
-      console.log("cancelling analysis!");
+      // changingSitesOnAnalysis = false;
+    // } else {  // Must be on user request
+    //   disableAnalysis();
+    //   // changingSitesOnUserRequest = true;
+    //   logData(domain, null, null); // Makes sure to log the 1st party domain to analysis_userend
+    //   console.log("cancelling analysis!");
     }
   }
 }
@@ -510,6 +531,9 @@ function onCommittedCallback(details) {
   port.onMessage.addListener(function (message) {
     if (message.msg === "RUN_ANALYSIS_FROM_BACKGROUND") {
       runAnalysis();
+    }
+    if (message.msg === "STOP_ANALYSIS_FROM_BACKGROUND") {
+      disableAnalysis();
     }
   })
 }
