@@ -11,7 +11,9 @@ popup.js supplements and renders complex elements on popup.html
 */
 
 
-import { stores, storage } from "../background/storage.js";
+import { stores, storage } from "../background/storage";
+import { isValidSignalIAB } from "../background/cookiesIAB";
+import { csvGenerator } from "../background/csvGenerator"
 import { modes } from "../data/modes.js";
 import "../../node_modules/uikit/dist/css/uikit.min.css"
 import "../../node_modules/animate.css/animate.min.css"
@@ -21,10 +23,26 @@ import "../../node_modules/uikit/dist/js/uikit"
 import "../../node_modules/uikit/dist/js/uikit-icons"
 import "../../node_modules/@popperjs/core/dist/umd/popper"
 import tippy from "../../node_modules/tippy.js/dist/tippy-bundle.umd";
+import UIkit from "uikit"
 import Darkmode from "../theme/darkmode";
 
 
-var mode = undefined;
+// Global scope settings variables
+var isEnabled;
+var isDomainlisted;
+var mode;
+var parsedDomain;
+
+// Protection mode data
+var domainsInfo;
+var wellknownInfo;
+
+// Analysis mode data
+var analysis;
+var analysis_userend;
+
+// Darkmode
+const darkmode = new Darkmode();
 
 
 /******************************************************************************/
@@ -33,11 +51,54 @@ var mode = undefined;
 /******************************************************************************/
 /******************************************************************************/
 
-//Init: initialize darkmode button
-function generateDarkmodeElement() {
-  const darkmode = new Darkmode();
+// Sets the current mode icon
+function changeOptModeIcon() {
+  let optMode = document.getElementById("optMode");
+  let pl = document.getElementById("p-light");
+  let al = document.getElementById("a-light");
+  let pd = document.getElementById("p-dark");
+  let ad = document.getElementById("a-dark");
 
-  // Darkmode text
+  // optMode badge icon
+  pl.style.display = "none";
+  al.style.display = "none";
+  pd.style.display = "none";
+  ad.style.display = "none";
+  if (darkmode.isActivated()) {
+    (mode === modes.analysis) ? al.style.display="" : pl.style.display="";
+  } else {
+    (mode === modes.analysis) ? ad.style.display="" : pd.style.display="";
+  }
+}
+
+
+// Changes-the-icon listener
+function changeOptModeIconListenerCallback() {
+  let optMode = document.getElementById("optMode");
+  let pl = document.getElementById("p-light");
+  let al = document.getElementById("a-light");
+  let pd = document.getElementById("p-dark");
+  let ad = document.getElementById("a-dark");
+
+  // optMode badge icon
+  pl.style.display = "none";
+  al.style.display = "none";
+  pd.style.display = "none";
+  ad.style.display = "none";
+  if (darkmode.isActivated()) {
+    // optMode.style.color = "rgb(89,98,127)";
+    // optMode.style.border = "1px solid rgb(89,98,127)";
+    (mode === modes.analysis) ? ad.style.display="" : pd.style.display="";
+  } else {
+    // optMode.style.color = "rgb(238,238,238)";
+    // optMode.style.border = "1px solid rgb(238,238,238)";
+    (mode === modes.analysis) ? al.style.display="" : pl.style.display="";
+  }
+}
+
+
+//Init: initialize darkmode button (NOTE: accesses global scope `mode`)
+function generateDarkmodeElement() {
   let darkSwitch = document.getElementById("darkSwitch");
   let darkmodeText = "";
   if (darkmode.isActivated()) {
@@ -60,33 +121,13 @@ function generateDarkmodeElement() {
     chrome.runtime.sendMessage({
   	  msg: "DARKSWITCH_PRESSED",
     });
-
-    if (darkmode.isActivated()){
-      document.getElementById("optMode").style.color = "rgb(89,98,127)";
-      document.getElementById("optMode").style.border = "1px solid rgb(89,98,127)";
-      if (document.getElementById("a-light").style.display = ""){
-        document.getElementById("a-light").style.display = "none"
-        document.getElementById("a-dark").style.display = ""
-      }  else if (document.getElementById("p-light").style.display = ""){
-        document.getElementById("p-light").style.display = "none"
-        document.getElementById("p-dark").style.display = ""
-      }
-    } else {
-      document.getElementById("optMode").style.color = "rgb(238,238,238)"
-      document.getElementById("optMode").style.border = "1px solid rgb(238,238,238)"
-      if (document.getElementById("a-dark").style.display = ""){
-        document.getElementById("a-dark").style.display = "none"
-        document.getElementById("a-light").style.display = ""
-      }  else if (document.getElementById("p-dark").style.display = ""){
-        document.getElementById("p-dark").style.display = "none"
-        document.getElementById("p-light").style.display = ""
-      }
-    }
-
+    changeOptModeIconListenerCallback();
     darkmode.toggle();
   });
 }
 
+
+// Fetches the current domain 
 function getCurrentParsedDomain() {
   return new Promise((resolve, reject) => {
     try {
@@ -94,8 +135,9 @@ function getCurrentParsedDomain() {
         let tab = tabs[0];
         let url = new URL(tab.url);
         let parsed = psl.parse(url.hostname);
-        let parsedDomain = parsed.domain;
-        resolve(parsedDomain);
+        let domain = parsed.domain;
+        parsedDomain = domain;  // for global scope variable
+        resolve(domain);
       });
     } catch(e) {
       console.log(e)
@@ -104,17 +146,25 @@ function getCurrentParsedDomain() {
   })
 }
 
+
+/**
+ * In sync with global scope `parsedDomain`
+ * @param {String} parsedDomain 
+ */
 function renderFirstPartyDomain(parsedDomain) {
   if (parsedDomain) {
     document.getElementById("domain-title").innerHTML = parsedDomain;
     initPopUpWalkthrough();
   } else {
-    document.getElementById("dns-enabled-body").style.display = "none";
+    // document.getElementById("more-info-body").style.display = "none";
     document.getElementById("domain-title").style.display = "none";
   }
 }
 
-function renderExtenionIsEnabledDisabled(isEnabled, isDomainlisted, mode) {
+
+// Extension on/off renderer helper
+
+function renderExtenionIsEnabledDisabled(isEnabled, isDomainlisted) {
   if (isEnabled === undefined || isDomainlisted === undefined) {
     document.getElementById("img").src = "../assets/play-circle-outline.svg";
     document
@@ -166,7 +216,23 @@ function listenerExtensionIsEnabledDisabledButton(isEnabled, isDomainlisted, mod
 }
 
 
-async function renderFirstPartyDomainToggle(parsedDomain) {
+// Domain counter for Protection mode helper
+
+async function renderDomainCounter() {
+  const domainlistValues = await storage.getAll(stores.domainlist);
+  let count = Object.keys(domainlistValues).filter((key) => {
+    return domainlistValues[key] == true;
+  }).length;
+  document.getElementById("visited-domains-stats").innerHTML = `
+    <p id = "domain-count" class="blue-heading" style="font-size:25px;
+    font-weight: bold">${count}</p> domains receiving signals
+  `;
+}
+
+
+// First party domain and the Do Not Sell listener helper
+
+async function renderFirstPartyDomainDNSToggle() {
   let checkbox = "";
   let text = "";
   if (parsedDomain) {
@@ -180,99 +246,128 @@ async function renderFirstPartyDomainToggle(parsedDomain) {
         text = "Do Not Sell Disabled";
       }
       document.getElementById("switch-label").innerHTML = checkbox;
-      document.getElementById("dns-enabled-text").innerHTML = text;
+      document.getElementById("more-info-text").innerHTML = text;
     } catch(e) {
       console.error(e);
       document.getElementById("switch-label").innerHTML = checkbox;
-      document.getElementById("dns-enabled-text").innerHTML = text;
+      document.getElementById("more-info-text").innerHTML = text;
     }
   } else {
     document.getElementById("switch-label").innerHTML = checkbox;
-    document.getElementById("dns-enabled-text").innerHTML = text;
+    document.getElementById("more-info-text").innerHTML = text;
   }
-  
+}
 
-  if (!darkmode.isActivated()){
-    document.getElementById("optMode").style.color = "rgb(89,98,127)";
-    document.getElementById("optMode").style.border = "1px solid rgb(89,98,127)";
-    if (document.getElementById("a-light").style.display = ""){
-      document.getElementById("a-light").style.display = "none"
-      document.getElementById("a-dark").style.display = ""
-    }  else if (document.getElementById("p-light").style.display = ""){
-      document.getElementById("p-light").style.display = "none"
-      document.getElementById("p-dark").style.display = ""
-    }
+async function listenerFirstPartyDomainDNSToggleCallback() {
+  chrome.runtime.sendMessage({ msg: "TURN_ON_OFF", data: { isEnabled: true } });
+  chrome.runtime.sendMessage({ msg: "CHANGE_IS_DOMAINLISTED", data: { isDomainlisted: true } });
+  const parsedDomainValue = await storage.get(stores.domainlist, parsedDomain);
+  let elemString = "";
+  if (parsedDomainValue) {
+    elemString = "Do Not Sell Disabled";
+    setToDomainlist(parsedDomain, false);
   } else {
-    document.getElementById("optMode").style.color = "rgb(238,238,238)"
-    document.getElementById("optMode").style.border = "1px solid rgb(238,238,238)"
-    if (document.getElementById("a-dark").style.display = ""){
-      document.getElementById("a-dark").style.display = "none"
-      document.getElementById("a-light").style.display = ""
-    }  else if (document.getElementById("p-dark").style.display = ""){
-      document.getElementById("p-dark").style.display = "none"
-      document.getElementById("p-light").style.display = ""
-    }
+    elemString = "Do Not Sell Enabled";
+    setToDomainlist(parsedDomain, true);
+  }
+  document.getElementById("more-info-text").innerHTML = elemString;
+}
+
+function listenerFirstPartyDomainDNSToggle() {
+  document.getElementById("switch-label").addEventListener(
+    "click", listenerFirstPartyDomainDNSToggleCallback
+  );
+}
+
+function removeFirstPartyDomainDNSToggle() {
+  document.getElementById("switch-label").removeEventListener(
+    "click", listenerFirstPartyDomainDNSToggleCallback
+  );
+  document.getElementById("switch-label").innerHTML = "";
+  document.getElementById("more-info-text").innerHTML = "";
+}
+
+
+// Dropdown helpers
+
+function renderDropdown1Toggle() {
+  if (document.getElementById("dropdown-1-expandable").style.display === "none") {
+    document.getElementById("dropdown-chevron-1").src = "../assets/chevron-down.svg"
+    document.getElementById("dropdown-1-expandable").style.display = "none"
+    document.getElementById("dropdown-1").classList.remove("dropdown-tab-click")
+    document.getElementById("divider-4").style.display = "none"
+  } else {
+    document.getElementById("dropdown-chevron-1").src = "../assets/chevron-up.svg"
+    document.getElementById("dropdown-1-expandable").style.display = ""
+    document.getElementById("dropdown-1").classList.add("dropdown-tab-click")
+    document.getElementById("divider-4").style.display = ""
   }
 }
 
-function listenerFirstPartyDomainToggle() {
-  document.getElementById("switch-label").addEventListener("click", async () => {
-    chrome.runtime.sendMessage({ msg: "TURN_ON_OFF", data: { isEnabled: true } });
-    chrome.runtime.sendMessage({ msg: "CHANGE_IS_DOMAINLISTED", data: { isDomainlisted: true } });
-    const parsedDomainValue = await storage.get(stores.domainlist, parsedDomain);
-    let elemString = "";
-    if (parsedDomainValue) {
-      elemString = "Do Not Sell Disabled";
-      setToDomainlist(parsedDomain, false);
-    } else {
-      elemString = "Do Not Sell Enabled";
-      setToDomainlist(parsedDomain, true);
-    }
-    document.getElementById("dns-enabled-text").innerHTML = elemString;
-  })
+function renderDropdown2Toggle() {
+  if (document.getElementById("dropdown-2-expandable").style.display === "none") {
+    document.getElementById("dropdown-chevron-2").src = "../assets/chevron-down.svg"
+    document.getElementById("dropdown-2-expandable").style.display = "none"
+    document.getElementById("dropdown-2").classList.remove("dropdown-tab-click")
+    document.getElementById("divider-6").style.display = "none"
+  } else {
+    document.getElementById("dropdown-chevron-2").src = "../assets/chevron-up.svg"
+    document.getElementById("dropdown-2-expandable").style.display = ""
+    document.getElementById("dropdown-2").classList.add("dropdown-tab-click")
+    document.getElementById("divider-6").style.display = ""
+  }
 }
 
-async function renderDomainCounter() {
-  const domainlistValues = await storage.getAll(stores.domainlist);
-  let count = Object.keys(domainlistValues).filter((key) => {
-    return domainlistValues[key] == true;
-  }).length;
-  document.getElementById("visited-domains-stats").innerHTML = `
-    <p id = "domain-count" class="blue-heading" style="font-size:25px;
-    font-weight: bold">${count}</p> domains receiving signals
-  `;
+function listenerDropdown1ToggleCallback() {
+  if (document.getElementById("dropdown-1-expandable").style.display === "none") {
+    document.getElementById("dropdown-chevron-1").src = "../assets/chevron-up.svg"
+    document.getElementById("dropdown-1-expandable").style.display = ""
+    document.getElementById("dropdown-1").classList.add("dropdown-tab-click")
+    document.getElementById("divider-4").style.display = ""
+  } else {
+    document.getElementById("dropdown-chevron-1").src = "../assets/chevron-down.svg"
+    document.getElementById("dropdown-1-expandable").style.display = "none"
+    document.getElementById("dropdown-1").classList.remove("dropdown-tab-click")
+    document.getElementById("divider-4").style.display = "none"
+  }
 }
 
-function renderThirdPartyDomainToggle() {
-  document.getElementById("dropdown-1").addEventListener("click", () => {
-    if (document.getElementById("dropdown-1-expandable").style.display === "none") {
-      document.getElementById("dropdown-chevron-1").src = "../assets/chevron-up.svg"
-      document.getElementById("dropdown-1-expandable").style.display = ""
-      document.getElementById("dropdown-1").classList.add("dropdown-tab-click")
-      document.getElementById("divider-4").style.display = ""
-    } else {
-      document.getElementById("dropdown-chevron-1").src = "../assets/chevron-down.svg"
-      document.getElementById("dropdown-1-expandable").style.display = "none"
-      document.getElementById("dropdown-1").classList.remove("dropdown-tab-click")
-      document.getElementById("divider-4").style.display = "none"
-    }
-  });
+function listenerDropdown2ToggleCallback() {
+  if (document.getElementById("dropdown-2-expandable").style.display === "none") {
+    document.getElementById("dropdown-chevron-2").src = "../assets/chevron-up.svg"
+    document.getElementById("dropdown-2-expandable").style.display = ""
+    document.getElementById("dropdown-2").classList.add("dropdown-tab-click")
+    document.getElementById("divider-6").style.display = ""
+  } else {
+    document.getElementById("dropdown-chevron-2").src = "../assets/chevron-down.svg"
+    document.getElementById("dropdown-2-expandable").style.display = "none"
+    document.getElementById("dropdown-2").classList.remove("dropdown-tab-click")
+    document.getElementById("divider-6").style.display = "none"
+  }
 }
 
-function listenerThirdPartyDomainToggle() {
-  document.getElementById("dropdown-2").addEventListener("click", () => {
-    if (document.getElementById("dropdown-2-expandable").style.display === "none") {
-      document.getElementById("dropdown-chevron-2").src = "../assets/chevron-up.svg"
-      document.getElementById("dropdown-2-expandable").style.display = ""
-      document.getElementById("dropdown-2").classList.add("dropdown-tab-click")
-      document.getElementById("divider-6").style.display = ""
-    } else {
-      document.getElementById("dropdown-chevron-2").src = "../assets/chevron-down.svg"
-      document.getElementById("dropdown-2-expandable").style.display = "none"
-      document.getElementById("dropdown-2").classList.remove("dropdown-tab-click")
-      document.getElementById("divider-6").style.display = "none"
-    }
-  });
+function listenerDropdown1Toggle() {
+  document.getElementById("dropdown-1").addEventListener("click", 
+    listenerDropdown1ToggleCallback
+  )
+}
+
+function listenerDropdown2Toggle() {
+  document.getElementById("dropdown-2").addEventListener("click", 
+    listenerDropdown2ToggleCallback
+  )
+}
+
+function removeListenerDropdown1Toggle() {
+  document.getElementById("dropdown-1").removeEventListener("click", 
+    listenerDropdown1ToggleCallback
+  )
+}
+
+function removeListenerDropdown2Toggle() {
+  document.getElementById("dropdown-2").removeEventListener("click", 
+    listenerDropdown2ToggleCallback
+  )
 }
 
 
@@ -283,34 +378,128 @@ function listenerThirdPartyDomainToggle() {
 /******************************************************************************/
 /******************************************************************************/
 
+
+/**
+ * Redraws the popup for protection mode
+ */
+function showProtectionInfo() {
+  removeFirstPartyDomainDNSToggle();
+  removeListenerDropdown1Toggle();
+  removeListenerDropdown2Toggle();
+  document.getElementById("optMode-text").innerText = "Protection Mode";
+  document.getElementById("switch-label").innerHTML = "";
+  document.getElementById("more-info-body").style.display = "";
+  document.getElementById("more-info-text").innerHTML = "Do Not Sell Enabled!";
+  document.getElementById("dropdown-1").style.display = "";
+  document.getElementById("dropdown-2").style.display = "";
+  document.getElementById("dropdown-1-text").innerHTML = "3rd Party Domains";
+  document.getElementById("dropdown-2-text").innerHTML = "Website Response";
+  document.getElementById("dropdown-1-expandable").innerHTML = "";
+  document.getElementById("dropdown-2-expandable").innerHTML = "";
+  document.getElementById("dropdown-1-expandable").style.display = "none";
+  document.getElementById("dropdown-2-expandable").style.display = "none";
+  document.getElementById("visited-domains-stats").style.display = "";
+  document.getElementById("run-analysis").style.display = "none";
+  document.getElementById("misc-options").style.display = "none";
+  document.getElementById("download-analysis-data").style.display = "none";
+  document.getElementById("analysis-list").style.display = "none";
+  document.getElementById("domain-list").style.display = "";
+
+  // Generate `Do Not Sell Enabled` elem
+  renderDomainCounter(); // Render "X domains receiving signals" info section
+  renderFirstPartyDomainDNSToggle(); // Render 1P domain "DNS Enabled/Disabled" text+toggle
+
+  // Listeners associated with the buttons / toggles rendered above
+  listenerFirstPartyDomainDNSToggle();
+  listenerDropdown1Toggle();
+  listenerDropdown2Toggle();
+
+  chrome.runtime.sendMessage({
+    msg: "POPUP_PROTECTION",
+    data: null,
+  }, (response) =>  { /*console.log(response)*/ });
+}
+
+
+/**
+ * Redraws the popup for analysis mode
+ */
+function showAnalysisInfo() {
+  removeFirstPartyDomainDNSToggle();
+  removeListenerDropdown1Toggle();
+  removeListenerDropdown2Toggle();  
+  document.getElementById("optMode-text").innerText = "Analysis Mode";
+  document.getElementById("switch-label").innerHTML = "";
+  document.getElementById("more-info-body").style.display = "";
+  document.getElementById("more-info-text").innerHTML = "CCPA Compliance: ";
+  document.getElementById("dropdown-1").style.display = "";
+  document.getElementById("dropdown-2").style.display = "none";
+  document.getElementById("dropdown-1-text").innerHTML = "Analysis Breakdown";
+  document.getElementById("dropdown-2-text").innerHTML = "";
+  document.getElementById("dropdown-1-expandable").innerHTML = "";
+  document.getElementById("dropdown-2-expandable").innerHTML = "";
+  document.getElementById("dropdown-1-expandable").style.display = "none";
+  document.getElementById("dropdown-2-expandable").style.display = "none";
+  document.getElementById("visited-domains-stats").style.display = "none";
+  document.getElementById("run-analysis").style.display = "";
+  document.getElementById("misc-options").style.display = "";
+  document.getElementById("download-analysis-data").style.display = "";
+  document.getElementById("analysis-list").style.display = "";
+  document.getElementById("domain-list").style.display = "none";
+
+  // renderDropdown1Toggle();
+  listenerDropdown1Toggle();
+  
+  chrome.runtime.sendMessage({
+    msg: "POPUP_ANALYSIS",
+    data: null,
+  }, (r) =>  { /*console.log(r)*/ });
+}
+
+
+/**
+ * In sync with global scope `mode`
+ * @param {Modes} mode - from modes.js
+ */
+async function switchMode(mode) {
+  const analysisWarningShown = await storage.get(stores.settings, 'ANALYSIS_WARNING_SHOWN');
+  if (!analysisWarningShown && mode === modes.analysis) {
+    analysisWarning();
+    storage.set(stores.settings, true, 'ANALYSIS_WARNING_SHOWN');
+  }
+
+  changeOptModeIcon();
+  if (mode === modes.protection) {
+    console.log("Switching to protection view");
+    showProtectionInfo();
+  } else {
+    console.log("Switching to analysis view");
+    showAnalysisInfo();
+  }
+}
+
+
 /**
  * Initializes the popup window after DOM content is loaded
  * @param {Object} event - contains information about the event
  */
 document.addEventListener("DOMContentLoaded", async (event) => {
 
-  const isEnabled = await storage.get(stores.settings, "IS_ENABLED");
-  const isDomainlisted = await storage.get(stores.settings, "IS_DOMAINLISTED");
-  const mode = await storage.get(stores.settings, "MODE");
-  const parsedDomain = await getCurrentParsedDomain(); // This must happen first
+  isEnabled = await storage.get(stores.settings, "IS_ENABLED");
+  isDomainlisted = await storage.get(stores.settings, "IS_DOMAINLISTED");
+  mode = await storage.get(stores.settings, "MODE");
+  parsedDomain = await getCurrentParsedDomain(); // This must happen first
 
-  renderExtenionIsEnabledDisabled(isEnabled, isDomainlisted, mode); // Render global ENABLED/DISABLED mode
+  renderExtenionIsEnabledDisabled(isEnabled, isDomainlisted); // Render global ENABLED/DISABLED mode
+  listenerExtensionIsEnabledDisabledButton(isEnabled);
+
   renderFirstPartyDomain(parsedDomain); // Render 1P domain 
-  renderFirstPartyDomainToggle(parsedDomain); // Render 1P domain "DNS Enabled/Disabled" text+toggle
-  renderDomainCounter(); // Render "X domains receiving signals" info section
-  renderThirdPartyDomainToggle(); // Render 3rd party domain list dropdown
 
   generateDarkmodeElement();  // Render darkmode
+  // changeOptModeIcon();
 
-  // Listeners associated with the buttons / toggles rendered above
-  listenerExtensionIsEnabledDisabledButton(isEnabled, isDomainlisted, mode);
-  listenerFirstPartyDomainToggle();
-  listenerThirdPartyDomainToggle();
+  switchMode(mode); // requires global scope mode to be loaded
 })
-
-function redrawPopup() {
-  window.close();   // lol
-}
 
 
 
@@ -320,12 +509,13 @@ function redrawPopup() {
 /******************************************************************************/
 /******************************************************************************/
 
+
 /**
  * Builds the listener to enable toggling 3rd party domains on/off in domainlist
  * @param {String} requestDomain - the domain related to the element which
  * the listener should be attached
  */
-function addThirdPartyDomainToggleListener(requestDomain) {
+function addThirdPartyDomainDNSToggleListener(requestDomain) {
   document.getElementById(`input-${requestDomain}`).addEventListener("click", async () => {
     chrome.runtime.sendMessage({ msg: "TURN_ON_OFF", data: { isEnabled: true } });
     chrome.runtime.sendMessage({ msg: "CHANGE_IS_DOMAINLISTED", data: { isDomainlisted: true } });
@@ -407,7 +597,7 @@ async function buildDomains(requests) {
 
   // Sets the 3rd party domain toggle listeners
   for (let requestDomain in requests) {
-    addThirdPartyDomainToggleListener(requestDomain)
+    addThirdPartyDomainDNSToggleListener(requestDomain)
   }
 
 }
@@ -493,365 +683,88 @@ async function buildWellKnown(requests) {
 }
 
 
-
-/******************************************************************************/
-/******************************************************************************/
-/**********                   # Message handling                     **********/
-/******************************************************************************/
-/******************************************************************************/
-
-// Initializng a longterm port with the top-level background for the onDisconnect event
-let backgroundPort = chrome.runtime.connect({ name: "POPUP" });
-backgroundPort.postMessage({ msg: "REQUEST_MODE" });  // queries control.js for mode
-
-backgroundPort.onMessage.addListener(function(message) {
-  if (message.msg === "RESPONSE_MODE") {  // when mode is recieved from control.js
-    mode = message.data;                  // global mode variable
-    if (mode && mode === modes.analysis) {
-      loadModeButton();
-      loadCSVDownloadButton();
-  }
-  }
-})
-// console.log("SENT CONNECTION");
-
 /**
- * Listens for messages from background page that call functions to populate
- * the popup badge counter and build the popup domain list HTML, respectively
+ * Builds Analysis info dropdown in dropdown-1
  */
-chrome.runtime.onMessage.addListener(function (message, _, __) {
-  if (message.msg === "RELOAD_DUE_TO_MODE_CHANGE") {
-    redrawPopup();
-  }
-  if (message.msg === "POPUP_DATA") {
-    let { requests, wellknown } = message.data;
-    buildDomains(requests);
-    buildWellKnown(wellknown);
-  }
-  if (message.msg === "POPUP_DATA") {
-    var analysis = message.data.analysis;
-    var analysis_userend = message.data.analysis_userend;
-  }
-  if (message.msg === "CSV_DATA_RESPONSE") {
-    downloadCSVOnClickCallback(message.data.csvData, message.data.titles);
-  }
-});
-
-
-// Initializes the process to add to domainlist, via the background script
-// This is to ensure all processes happen correctly
-function setToDomainlist(d, k) {
-  chrome.runtime.sendMessage({
-    msg: "SET_TO_DOMAINLIST",
-    data: { domain: d, key: k }
-  }, (response) => { /*console.log(response)*/ })
-}
-
-// function setMode(mode) {
-//   chrome.runtime.sendMessage({
-//     msg: "TURN_ON_OFF",
-//     data: { "DOMAIN": domain, "KEY": key }
-//   }, (response) => { /*console.log(response)*/ })
-// }
-
-/**
- * Sends "POPUP" message to background page to retrieve necessary info
- */
-chrome.runtime.sendMessage({
-  msg: "POPUP",
-  data: null,
-}, (response) =>  { /*console.log(response)*/ });
-
-
-
-/******************************************************************************/
-/******************************************************************************/
-/**********                     # Analysis Mode                      **********/
-/******************************************************************************/
-/******************************************************************************/
-
-function modeBadgeButtonOnClick() {
-  backgroundPort.postMessage({ msg: "RUN_ANALYSIS_FROM_BACKGROUND", data: null });
-}
-
-function downloadCSVOnClick() {
-  chrome.runtime.sendMessage({
-    msg: "CSV_DATA_REQUEST"
-  })
-}
-
-/**
- * Generates the CSV to download consisting of the data in `csvData` with column
- * titles according to `titles` — specifically for analysis_userend
- * @param {Object} csvData 
- * @param {Object} titles 
- */
-function downloadCSVOnClickCallback(csvData, titles) {
-
-  // columnTitles is an array of "Domain" + the rest of the column titles defined 
-  // as the keys in the `titles` object. 
-  let columnTitles = ["Domain"];
-  (Object.keys(titles)).map((key, i) => columnTitles.push(key));
-
-  let csvContent = "data:text/csv;charset=utf-8,";  // inits the top of the csv
-  csvContent += columnTitles.join(",") + "\n"       // appends the column titles
-
-  for (let property in csvData) {                   // appends the data
-    csvContent += property + ",";
-    for (let i=1; i<columnTitles.length; i++) {
-      let stringifiedProp = JSON.stringify(csvData[property][columnTitles[i]]);
-      if (typeof stringifiedProp === "string") {
-        stringifiedProp = stringifiedProp.replace(/"/g, "\'");  // handles quotes in csv files
-      }
-      csvContent += '\"' + stringifiedProp + "\",";
-    }
-    csvContent += "\n"
-  }
-  
-  var encodedUri = encodeURI(csvContent);
-  var link = document.createElement("a");
-  link.setAttribute("href", encodedUri);
-  link.setAttribute("download", "my_data.csv");
-  document.body.appendChild(link);
-
-  link.click();
-}
-
-// This is a temporary mode button injector to make it easy to call a page refresh
-function loadModeButton() {
-  let modeBadge = document.getElementById("mode-badge");
-  let modeBadgeHTML = `<button id="mode-badge-button" class="importexport-button">Run Analysis</button>`;
-  modeBadge.innerHTML = modeBadgeHTML;
-
-  let modeBadgeButton = document.getElementById("mode-badge-button");
-  modeBadgeButton.addEventListener('click', modeBadgeButtonOnClick);
-}
-
-function loadCSVDownloadButton() {
-  let download = document.getElementById("test-csv");
-  let downloadHTML = `<button id="csv-download-button" class="importexport-button">Download</button>`; 
-  download.innerHTML = downloadHTML;
-
-  let downloadButton = document.getElementById("csv-download-button");
-  downloadButton.addEventListener('click', downloadCSVOnClick);
-}
-
-function loadChangeMode() {
-  let modeButton = document.getElementById("mode-changer-button");
-  modeButton.addEventListener('click', function() {
-    let newMode = (mode === modes.analysis) ? modes.protection : modes.analysis;
-    mode = newMode;
-    chrome.runtime.sendMessage({
-      msg: "CHANGE_MODE",
-      data: newMode
-    })
-  })
-}
-
-loadChangeMode();
-
-
-
-/******************************************************************************/
-/******************************************************************************/
-/**********                  # Tutorial walkthorugh                  **********/
-/******************************************************************************/
-/******************************************************************************/
-
-// Init: Check to see if we should do tutorial
-async function initPopUpWalkthrough() {
-  const tutorialShownInPopup = await storage.get(stores.settings, 'TUTORIAL_SHOWN_IN_POPUP');
-  // console.log("Tutorial shown: ", tutorialShownInPopup)
-  if (!tutorialShownInPopup) {
-    popUpWalkthrough();
-  }
-  storage.set(stores.settings, true, 'TUTORIAL_SHOWN_IN_POPUP');
-}
-
-// Walkthrough function
-function popUpWalkthrough() {
-  tippy(".tooltip-1", {
-    content:
-      "Toggle this switch to enable or disable sending Do Not Sell signals to this site",
-    trigger: "manual",
-    placement: "bottom",
-    duration: 1000,
-    theme: "custom-2",
-    maxWidth: 250,
-  });
-  let tooltip = document.getElementsByClassName("tooltip-1")[0]
-    ._tippy;
-  tooltip.show();
-}
-
-
-/******************************************************************************/
-/******************************************************************************/
-/**********           # Misc. initializers and listeners             **********/
-/******************************************************************************/
-/******************************************************************************/
-
-// Listener: Opens options page
-document.getElementById("more").addEventListener("click", () => {
-  chrome.runtime.openOptionsPage();
-});
-
-// Listener: Opens domainlist in options page
-document.getElementById("domain-list").addEventListener("click", async () => {
-  await storage.set(stores.settings, true, "DOMAINLIST_PRESSED");
-  chrome.runtime.openOptionsPage();
-});
-
-// Listener: Opens analysislist in options page
-document.getElementById("analysis-list").addEventListener("click", async () => {
-  await storage.set(stores.settings, true, "ANALYSIS_PRESSED");
-  chrome.runtime.openOptionsPage();
-});
-
-/**
- * 
- */
- async function dnsEnabled(){
-  let checkbox;
-  let text;
-  document.getElementById("compliance-body").style.display = "none"
-  document.getElementById("dns-enabled-body").style.display = "";
-  if (parsedDomain) {
-    try {
-      const parsedDomainValue = await storage.get(stores.domainlist, parsedDomain);
-      if (parsedDomainValue) {
-        checkbox = `<input type="checkbox" id="input" checked/><span></span>`;
-        text = "Do Not Sell Enabled";
-      } else {
-        checkbox = `<input type="checkbox" id="input"/><span></span>`;
-        text = "Do Not Sell Disabled";
-      }
-      document.getElementById("switch-label").innerHTML = checkbox;
-      document.getElementById("dns-enabled-text").innerHTML = text;
-    } catch(e) {
-      console.error(e);
-      document.getElementById("switch-label").innerHTML = checkbox;
-      document.getElementById("dns-enabled-text").innerHTML = text;
-    }
-  } else {
-    document.getElementById("switch-label").innerHTML = checkbox;
-    document.getElementById("dns-enabled-text").innerHTML = text;
-  }
-}
-
-function logoSwitch(){
-  console.log("logoSwitch called 1");
-  //console.log(document.getElementById("a-dark").src);
-  console.log("logoSwitch called 2");
-  if (document.getElementById("a-dark").style.display = ""){
-    document.getElementById("a-dark").style.display = "none"
-    document.getElementById("a-light").style.display = ""
-  } else if (document.getElementById("a-light").style.display = ""){
-    document.getElementById("a-dark").style.display = ""
-    document.getElementById("a-light").style.display = "none"
-  } else if (document.getElementById("p-dark").style.display = ""){
-    document.getElementById("p-dark").style.display = "none"
-    document.getElementById("p-light").style.display = ""
-  } else if (document.getElementById("p-light").style.display = ""){
-    document.getElementById("p-dark").style.display = ""
-    document.getElementById("p-light").style.display = "none"
-  }
-}
-
-async function buildAnalysis() {
+async function buildAnalysis(data) {
   let pos = "../../../assets/cat-w-text/check1.png";
   let neg = "../../../assets/cat-w-text/cross1.png"
   let specs = `style= "
-    margin-right: 5px;
-    margin-left: 5px;
-    margin-top: auto;
-    margin-bottom: auto;
-    padding-right: 5px;
-    padding-left: 5px;"
+      margin-right: -20px;
+      margin-left: auto;
+      margin-top: auto;
+      margin-bottom: auto;
+      padding-right: 5px;
+      padding-left: 5px;"
     `
-  let items = "";
 
-  let dnslink;
-  let stringfound;
-  let gpcsent;
-  let stringchanged;
+  // const data = await storage.get(stores.analysis, parsedDomain);
+  console.log("stores.analysis", data);
 
-  const data = await storage.get(stores.analysis, parsedDomain)
-
-  if (data.DO_NOT_SELL_LINK_EXISTS){
-    dnslink = pos;
-  } else {
-    dnslink = neg;
-  }
-  let beforeGPC = data.USPAPI_BEFORE_GPC
-  if ((beforeGPC.length != 0) && isValidSignalIAB(beforeGPC[0].uspString)) {
-    stringfound = pos;
-  } else {
-    stringfound = neg;
-  }
-  if (data.SENT_GPC){
-    gpcsent = pos;
-  } else {
-    gpcsent = neg;
-  }
-  if (data.USPAPI_OPTED_OUT){
-    stringchanged = pos;
-  } else {
-    stringchanged = neg;
-  }
-
+  let items         = "";
+  let dnslink       = (data.DO_NOT_SELL_LINK_EXISTS) ? pos : neg;
+  let beforeGPC     = data.USPAPI_BEFORE_GPC;
+  let stringfound   = ((beforeGPC.length != 0) 
+                      && isValidSignalIAB(beforeGPC[0].uspString)) ? pos : neg;
+  let gpcsent       = (data.SENT_GPC) ? pos : neg;
+  let stringchanged = (data.USPAPI_OPTED_OUT) ? pos : neg;
 
   // Sets the 3rd party domain elements
-
-    items +=
-    `
-    <li>
+    items += `
+  <li>
     <div uk-grid class="uk-grid-small uk-width-1-1" style="font-size: medium;">
-    <div class="domain uk-width-expand">
-     Do Not Sell Link 
-     </div>
-     <img src = ${dnslink} width = "40px" height = "40px" ${specs}>
-     </div>
-     </li>
-    <li>
+      <div class="domain uk-width-expand">
+        Do Not Sell Link 
+      </div>
+      <img src = ${dnslink} width = "40px" height = "40px" ${specs}>
+    </div>
+  </li>
+  <li>
     <div uk-grid class="uk-grid-small uk-width-1-1" style="font-size: medium;">
-    <div class="domain uk-width-expand">
-     US Privacy String 
-     </div>
-     <img src = ${stringfound} width = "40px" height = "40px" ${specs}>
-     </div>
-     </li>
-    <li>
+      <div class="domain uk-width-expand">
+        US Privacy String 
+      </div>
+      <img src = ${stringfound} width = "40px" height = "40px" ${specs}>
+    </div>
+  </li>
+  <li>
     <div uk-grid class="uk-grid-small uk-width-1-1" style="font-size: medium;">
-    <div class="domain uk-width-expand">
-     GPC Signal Sent
-     </div>
-     <img src = ${gpcsent} width = "40px" height = "40px" ${specs}>
-     </div>
-     </li>
-    <li>
+      <div class="domain uk-width-expand">
+        GPC Signal Sent
+      </div>
+      <img src = ${gpcsent} width = "40px" height = "40px" ${specs}>
+    </div>
+  </li>
+  <li>
     <div uk-grid class="uk-grid-small uk-width-1-1" style="font-size: medium;">
-    <div class="domain uk-width-expand">
-     US Privacy String Updated 
-     </div>
-     <img src = ${stringchanged} width = "40px" height = "40px" ${specs}>
-     </div> 
-     </li>`;
+      <div class="domain uk-width-expand">
+        US Privacy String Updated 
+      </div>
+      <img src = ${stringchanged} width = "40px" height = "40px" ${specs}>
+    </div> 
+  </li>`;
 
   document.getElementById("dropdown-1-expandable").innerHTML = items;
 }
 
-async function compliance(){
+/**
+ * Builds per-site compliance snippet
+ */
+async function buildComplianceInfo(data) {
   console.log("Compliance is running...")
   let checkbox = ""
   if (parsedDomain) {
     try {
-      const data = await storage.get(stores.analysis, parsedDomain)
+    //   const data = await storage.get(stores.analysis, parsedDomain)
       console.log(parsedDomain);
-      if (data.DO_NOT_SELL_LINK_EXISTS && data.SENT_GPC && data.USPAPI_OPTED_OUT
-        && (data.USPAPI_BEFORE_GPC.length != 0) && isValidSignalIAB(data.USPAPI_BEFORE_GPC[0].uspString)) {
+      if (data.DO_NOT_SELL_LINK_EXISTS 
+          && data.SENT_GPC 
+          && data.USPAPI_OPTED_OUT
+          && (data.USPAPI_BEFORE_GPC.length != 0) 
+          && isValidSignalIAB(data.USPAPI_BEFORE_GPC[0].uspString)
+        ) {
         checkbox = `<div
-        id = "compliance-text"
+        id = "${parsedDomain} compliance"
         class="uk-badge"
         style="
           margin-right: auto;
@@ -888,53 +801,211 @@ async function compliance(){
         Not Compliant
       </div>`;
       }
-      document.getElementById("compliance-label").innerHTML = checkbox;
+      document.getElementById("switch-label").innerHTML = checkbox;
     } catch(e) {
       console.error(e);
-      document.getElementById("compliance-label").innerHTML = checkbox;
+      document.getElementById("switch-label").innerHTML = checkbox;
     }
   } else {
-    document.getElementById("compliance-label").innerHTML = checkbox;
+    document.getElementById("switch-label").innerHTML = checkbox;
   }
 
 }
 
-function analysisSwitch(){
-  console.log("Switching to analysis view");
-  document.getElementById("optMode").innerText = "Analysis Mode";
-  //logoSwitch();
-  document.getElementById("visited-domains-stats").style.display = "none";
-  document.getElementById("dropdown-1-text").innerHTML = "Analysis Breakdown";
-  buildAnalysis();
-  document.getElementById("dropdown-2").style.display = "none";
-  document.getElementById("analysis-list").style.display = "";
-  document.getElementById("domain-list").style.display = "none";
-  document.getElementById("divider-3").style.display = "none";
-  document.getElementById("divider-5").style.display = "none";
-  document.getElementById("divider-7").style.display = "none";
-  document.getElementById("compliance-body").style.display = ""
-  document.getElementById("dns-enabled-body").style.display = "none";
-  compliance();
-}
 
-function protectSwitch(){
-  console.log("Switching to protect view");
-  document.getElementById("optMode").innerText = "Protection Mode";
-  //logoSwitch();
-  document.getElementById("visited-domains-stats").style.display = "";
-  document.getElementById("dropdown-1-text").innerHTML = "3rd Party Domains";
-  document.getElementById("dropdown-2").style.display = "";
-  document.getElementById("analysis-list").style.display = "none";
-  document.getElementById("domain-list").style.display = "";
-  document.getElementById("divider-3").style.display = "";
-  document.getElementById("divider-5").style.display = "";
-  document.getElementById("divider-7").style.display = "";
-  document.getElementById("compliance-body").style.display = "none"
-  document.getElementById("dns-enabled-body").style.display = "";
-  dnsEnabled();
-  
-}
 
-document.getElementById("optMode").addEventListener("click", function(){
-    analysisSwitch();
+/******************************************************************************/
+/******************************************************************************/
+/**********                   # Message handling                     **********/
+/******************************************************************************/
+/******************************************************************************/
+
+// Initializng a longterm port with the top-level background for the onDisconnect event
+let backgroundPort = chrome.runtime.connect({ name: "POPUP" });
+backgroundPort.postMessage({ msg: "REQUEST_MODE" });  // queries control.js for mode
+backgroundPort.onMessage.addListener(function(message) {
+  if (message.msg === "RESPONSE_MODE") {  // when mode is recieved from control.js
+    mode = message.data;                  // global mode variable
+    if (mode && mode === modes.analysis) {
+
+    }
+  }
+})
+// console.log("SENT CONNECTION");
+
+/**
+ * Listens for messages from background page that call functions to populate
+ * the popup badge counter and build the popup domain list HTML, respectively
+ */
+chrome.runtime.onMessage.addListener(function (message, _, __) {
+  if (message.msg === "RELOAD_DUE_TO_MODE_CHANGE") {
+  }
+  if (message.msg === "POPUP_PROTECTION_DATA") {
+    let { requests, wellknown } = message.data;
+    domainsInfo = requests;
+    wellknownInfo = wellknown;
+    buildDomains(requests);
+    buildWellKnown(wellknown);
+  }
+  if (message.msg === "POPUP_ANALYSIS_DATA") {
+    analysis = message.data.analysis;
+    analysis_userend = message.data.analysis_userend;
+    let data = analysis_userend[parsedDomain] || {};
+    buildAnalysis(data);
+    buildComplianceInfo(data);
+  }
+  if (message.msg === "CSV_DATA_RESPONSE") {
+    csvGenerator(message.data.csvData, message.data.titles);
+  }
 });
+
+
+// Initializes the process to add to domainlist, via the background script
+// This is to ensure all processes happen correctly
+function setToDomainlist(d, k) {
+  chrome.runtime.sendMessage({
+    msg: "SET_TO_DOMAINLIST",
+    data: { domain: d, key: k }
+  }, (response) => { /*console.log(response)*/ })
+}
+
+
+
+/******************************************************************************/
+/******************************************************************************/
+/**********                  # Tutorial walkthorugh                  **********/
+/******************************************************************************/
+/******************************************************************************/
+
+
+function analysisWarning() {
+  let modal = UIkit.modal("#analysis-modal");
+  modal.show();
+  document.getElementById("modal-button-1").onclick = function () {
+    // browser.windows.create({ "url": null, "incognito": true });
+    modal.hide();
+  }
+}
+
+// Walkthrough function
+function popUpWalkthrough() {
+  let contentStr = (mode === modes.analysis) ? 
+    "Analysis Mode collects info about the current site's CCPA compliance" 
+    : "Toggle this switch to enable or disable sending Do Not Sell signals to this site in Protection mode";
+  tippy(".tooltip-1", {
+    content:
+      contentStr,
+    trigger: "manual",
+    placement: "bottom",
+    duration: 1000,
+    theme: "custom-2",
+    maxWidth: 250,
+  });
+  let tooltip = document.getElementsByClassName("tooltip-1")[0]
+    ._tippy;
+  tooltip.show();
+}
+
+// Init: Check to see if we should do tutorial
+async function initPopUpWalkthrough() {
+  const tutorialShownInPopup = await storage.get(stores.settings, 'TUTORIAL_SHOWN_IN_POPUP');
+  const mode = await storage.get(stores.settings, "MODE");
+  const analysisWarningShown = await storage.get(stores.settings, 'ANALYSIS_WARNING_SHOWN');
+
+  // console.log("Tutorial shown: ", tutorialShownInPopup)
+  if (!tutorialShownInPopup) {
+    popUpWalkthrough(mode);
+    storage.set(stores.settings, true, 'TUTORIAL_SHOWN_IN_POPUP');
+  }
+  if (!analysisWarningShown && mode === modes.analysis) {
+    analysisWarning();
+    storage.set(stores.settings, true, 'ANALYSIS_WARNING_SHOWN');
+  }
+}
+
+
+
+/******************************************************************************/
+/******************************************************************************/
+/**********           # Misc. initializers and listeners             **********/
+/******************************************************************************/
+/******************************************************************************/
+
+
+/**
+ * Download analysis data button
+ */
+function downloadCSVOnClick() {
+  chrome.runtime.sendMessage({
+    msg: "CSV_DATA_REQUEST"
+  })
+}
+
+/**
+ * Run analysis button
+ */
+function modeBadgeButtonOnClick() {
+  backgroundPort.postMessage({ msg: "RUN_ANALYSIS_FROM_BACKGROUND", data: null });
+}
+
+/**
+ * Mode switch button
+ */
+function loadChangeMode() {
+  let modeButton = document.getElementById("optMode");
+  modeButton.addEventListener('click', function() {
+    let newMode = (mode === modes.analysis) ? modes.protection : modes.analysis;
+    mode = newMode;
+    // changeOptModeIcon();
+    chrome.runtime.sendMessage({
+      msg: "CHANGE_MODE",
+      data: newMode
+    })
+    switchMode(mode);
+  })
+}
+loadChangeMode();
+
+// Listener: Opens options page
+document.getElementById("more").addEventListener("click", () => {
+  chrome.runtime.openOptionsPage();
+});
+
+// Listener: Opens domainlist in options page
+document.getElementById("domain-list").addEventListener("click", async () => {
+  await storage.set(stores.settings, true, "DOMAINLIST_PRESSED");
+  chrome.runtime.openOptionsPage();
+});
+
+// Listener: Opens analysislist in options page
+document.getElementById("analysis-list").addEventListener("click", async () => {
+  await storage.set(stores.settings, true, "ANALYSIS_PRESSED");
+  chrome.runtime.openOptionsPage();
+});
+
+// Listener: Opens analysislist in options page
+document.getElementById("run-analysis").addEventListener("click", 
+  modeBadgeButtonOnClick
+);
+
+// Listener: Opens analysislist in options page
+document.getElementById("download-analysis-data").addEventListener("click", 
+  downloadCSVOnClick
+);
+
+
+
+/******************************************************************************/
+/******************************************************************************/
+/**********             # Mode switching functionality               **********/
+/******************************************************************************/
+/******************************************************************************/
+
+
+/**
+ * For Chrome users:
+ * We don't want to expose analysis mode to chrome users
+ */
+if ("$BROWSER" != "firefox") {
+  document.getElementById("optMode-parent").style.display = "none";
+}

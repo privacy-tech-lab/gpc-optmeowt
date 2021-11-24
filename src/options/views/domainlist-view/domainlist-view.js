@@ -105,7 +105,7 @@ NOTE: It will be automatically added back to the list when the domain is request
  */
 const headings = {
     title: 'Domain List',
-    subtitle: "Toggle which domains you would like to receive Do Not Sell signals"
+    subtitle: "Toggle which domains you would like to receive Do Not Sell signals in Protection Mode"
 }
 
 /**

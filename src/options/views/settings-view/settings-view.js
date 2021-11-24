@@ -19,6 +19,7 @@ import {
   storage,
   // extensionMode
 } from "../../../background/storage.js";
+import { csvGenerator } from "../../../background/csvGenerator.js";
 import { modes } from "../../../data/modes.js";
 
 // Used in tutorial
@@ -38,6 +39,18 @@ const headings = {
   title: "Settings",
   subtitle: "Adjust extension settings",
 };
+
+function handleDownloadAnalysis() {
+  chrome.runtime.sendMessage({
+    msg: "CSV_DATA_REQUEST_FROM_SETTINGS"
+  })
+}
+
+chrome.runtime.onMessage.addListener(function (message, _, __) {
+  if (message.msg === "CSV_DATA_RESPONSE_TO_SETTINGS") {
+    csvGenerator(message.data.csvData, message.data.titles);
+  }
+});
 
 /**
  * Creates the event listeners for the `Settings` page buttons and options
@@ -64,6 +77,9 @@ function eventListeners() {
   document
     .getElementById("download-button")
     .addEventListener("click", handleDownload);
+  document
+    .getElementById("download-analysis-button")
+    .addEventListener("click", handleDownloadAnalysis)
   document.getElementById("upload-button").addEventListener("click", () => {
     const verify = confirm(
       `This option will load a list of domains from a file, clearing all domains currently in the list.\n Do you wish to continue?`

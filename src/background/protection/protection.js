@@ -322,7 +322,7 @@ function dataToPopup() {
     }
 
     chrome.runtime.sendMessage({
-      msg: "POPUP_DATA",
+      msg: "POPUP_PROTECTION_DATA",
       data: popupData
     }, handleSendMessageError);
   });
@@ -376,7 +376,7 @@ async function onMessageHandler(message, sender, sendResponse) {
     storage.delete(stores.domainlist, domain);
     delete domainlist[domain];
   }
-  if (message.msg === "POPUP") {
+  if (message.msg === "POPUP_PROTECTION") {
     dataToPopup()
   }
   if (message.msg === "CONTENT_SCRIPT_WELLKNOWN") {

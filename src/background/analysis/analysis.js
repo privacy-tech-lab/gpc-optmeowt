@@ -72,9 +72,6 @@ const MOZ_REQUEST_SPEC = ["requestHeaders", "blocking"];
 const MOZ_RESPONSE_SPEC = ["responseHeaders", "blocking"];
 const FILTER = { urls: ["<all_urls>"] };
 
-let newIncognitoTab = browser.windows.create({ "url": null, "incognito": true });
-
-
 async function checkForUSPString(url) {
   if (uspPhrasing.test(url)) {
     urlsWithUSPString.push(url)
@@ -480,15 +477,24 @@ function onCommittedCallback(details) {
   if (message.msg === "RUN_ANALYSIS") {
     runAnalysis();
   }
-  if (message.msg === "POPUP") {
+  if (message.msg === "POPUP_ANALYSIS") {
     chrome.runtime.sendMessage({
-      msg: "POPUP_DATA",
+      msg: "POPUP_ANALYSIS_DATA",
       data: { analysis, analysis_userend }
     }); 
   }
   if (message.msg === "CSV_DATA_REQUEST") {
     chrome.runtime.sendMessage({
       msg: "CSV_DATA_RESPONSE",
+      data: {
+        csvData: analysis_userend,
+        titles: analysisUserendSkeleton()
+      }
+    });
+  }
+  if (message.msg === "CSV_DATA_REQUEST_FROM_SETTINGS") {
+    chrome.runtime.sendMessage({
+      msg: "CSV_DATA_RESPONSE_TO_SETTINGS",
       data: {
         csvData: analysis_userend,
         titles: analysisUserendSkeleton()
@@ -540,7 +546,6 @@ function disableListeners() {
 
 export function init() {
   // SHOW SOME WARNING TO USERS ABOUT MESSING UP THEIR DATA
-	newIncognitoTab;
   enableListeners();
 }
 
