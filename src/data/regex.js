@@ -13,9 +13,15 @@ extension in multiple locations
 
 
 // This regex requires at least one of (do not|don't), (sell), & (information|info|data)
-export const doNotSellPhrasing = /(Do.?Not|Don.?t).?Sell.?(My)?.?(Personal)?.?(Information|Info|Data)/gmi
+// OR a notice of the form "California Resident - Do Not Sell"
+export const doNotSellPhrasing = new RegExp([
+	/((California|CA).?Resident).{0,10}((Do.?Not|Don.?t).?Sell)|/,
+	/(Do.?Not|Don.?t).?Sell.?(My)?.?(Personal)?.?(Information|Info|Data)/,
+  ].map(r => r.source).join(''), "gmi");
+
 export const uspPhrasing = /(us(-|_|.)?privacy)/gmi
 
+// Do Not Sell - Cookie variations
 export const cookiesPhrasing = new RegExp([
 	/(us-?_?privacy)|/,
 	/(OptanonConsent)/
