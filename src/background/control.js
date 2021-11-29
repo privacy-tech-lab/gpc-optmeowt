@@ -60,6 +60,10 @@ function disable() {
     }
   }
 
+  mode = await storage.get(stores.settings, "MODE");
+  isEnabled = await storage.get(stores.settings, "IS_ENABLED");
+  isDomainlisted = await storage.get(stores.settings, "IS_DOMAINLISTED");
+
   if (isEnabled) {  // Turns on the extension
     enable();
   }
