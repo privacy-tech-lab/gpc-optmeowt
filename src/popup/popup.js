@@ -431,8 +431,8 @@ function showAnalysisInfo() {
   removeListenerDropdown2Toggle();  
   document.getElementById("optMode-text").innerText = "Analysis Mode";
   document.getElementById("switch-label").innerHTML = "";
-  document.getElementById("more-info-body").style.display = "";
-  document.getElementById("more-info-text").innerHTML = "CCPA Compliance: ";
+  document.getElementById("more-info-body").style.display = "none";
+  document.getElementById("more-info-text").innerHTML = "none";
   document.getElementById("dropdown-1").style.display = "";
   document.getElementById("dropdown-2").style.display = "none";
   document.getElementById("dropdown-1-text").innerHTML = "Analysis Breakdown";
@@ -854,7 +854,7 @@ chrome.runtime.onMessage.addListener(function (message, _, __) {
     analysis_userend = message.data.analysis_userend;
     let data = analysis_userend[parsedDomain] || {};
     buildAnalysis(data);
-    buildComplianceInfo(data);
+    // buildComplianceInfo(data);
   }
   if (message.msg === "CSV_DATA_RESPONSE") {
     csvGenerator(message.data.csvData, message.data.titles);

@@ -52,16 +52,17 @@ export async function dropListener(domain) {
     data = analysisValues[index];
 
     dropListener(domain)
-    if (data.DO_NOT_SELL_LINK_EXISTS 
-        && data.SENT_GPC 
-        && data.USPAPI_OPTED_OUT 
-        && (data.USPAPI_BEFORE_GPC.length != 0) 
-        && isValidSignalIAB(data.USPAPI_BEFORE_GPC[0].uspString)
-      ){
-        compliant(true, domain); 
-    } else {
-        compliant(false, domain); 
-    }
+    // Compliance information
+    // if (data.DO_NOT_SELL_LINK_EXISTS 
+    //     && data.SENT_GPC 
+    //     && data.USPAPI_OPTED_OUT 
+    //     && (data.USPAPI_BEFORE_GPC.length != 0) 
+    //     && isValidSignalIAB(data.USPAPI_BEFORE_GPC[0].uspString)
+    //   ){
+    //     compliant(true, domain); 
+    // } else {
+    //     compliant(false, domain); 
+    // }
   }
 }
 
@@ -252,23 +253,6 @@ async function buildList() {
           `
             <span></span>
           </label>
-          <div
-          id = "${domain} compliance"
-          class="uk-badge"
-          style="
-            margin-right: 5px;
-            margin-left: 5px;
-            margin-top: auto;
-            margin-bottom: auto;
-            padding-right: 5px;
-            padding-left: 5px;
-            background-color: white;
-            border: 1px solid #ffff00;
-            color: #ffff00;
-          "
-        >
-          Loading...
-        </div>
     </li>
 
     <li id="li ${domain} info" style="display: none">
