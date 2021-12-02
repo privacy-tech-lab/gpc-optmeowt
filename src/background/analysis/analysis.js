@@ -57,6 +57,8 @@ var domains_collected_during_analysis = [];
 
 var urlsWithUSPString = [];
 
+var firstPartyDomain = "";
+
 // var sendingGPC = false;
 var changingSitesOnAnalysis = false;
 // var changingSitesOnUserRequest = false;  // used to create new analysis section
@@ -139,21 +141,36 @@ var removeGPCSignals = function() {
 /**
  * Initializes the analysis with a refresh after being triggered
  * 
- * (1) Add GPC headers
- * (2) Attach DOM property to page after reload
+ * (1) Query the first party domain for data recording use
+ * (2) Add GPC headers
+ * (3) Attach DOM property to page after reload
  */
 function runAnalysis() {
   console.log("Starting analysis.");
   // sendingGPC = true;
-  changingSitesOnAnalysis = true;
-  addGPCHeaders();
-  chrome.tabs.reload();
+  changingSitesOnAnalysis = true; // Analysis=ON flag
+
+  function afterFetchingFirstPartyDomain() {
+    addGPCHeaders();
+    chrome.tabs.reload();
+  }
+
+  chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+    let tab = tabs[0];
+    let url = new URL(tab.url);
+    let parsed = psl.parse(url.hostname);
+    let domain = parsed.domain;
+    firstPartyDomain = domain;  // Saves first party domain to global scope
+
+    afterFetchingFirstPartyDomain();
+  });
 }
 
 function disableAnalysis() {
   console.log("Stopping analysis.")
   // sendingGPC = false;
   changingSitesOnAnalysis = false;
+  firstPartyDomain = "";
   updateAnalysisCounter();
   removeGPCSignals();
 }
@@ -304,11 +321,13 @@ var analysisDataSkeletonFirstParties = () => {
  * Parameters - type: STRING, data: ANY
  */
 function logData(domain, command, data) {
+  // This is to associate data collected during analysis w/ first party domain
+  domain = changingSitesOnAnalysis ? firstPartyDomain : domain;
   let gpcStatusKey = changingSitesOnAnalysis ? "AFTER_GPC" : "BEFORE_GPC";
-  // let gpcStatusKey = changingSitesOnUserRequest ? "BEFORE_GPC" : "AFTER_GPC";
-  // console.log("changingSitesOnUserRequest", changingSitesOnUserRequest)
+
   console.log("domain from logData: ", domain);
 
+  // If domain doesn't exist, initialize it
   if (!analysis[domain]) {
     // console.log(`Adding analysis[${domain}] = [];`)
     analysis[domain] = [];
@@ -319,19 +338,14 @@ function logData(domain, command, data) {
     domains_collected_during_analysis.push(domain);
   }
   let callIndex = analysis_counter[domain];
+
   console.log("call index: ", callIndex)
-  // console.log("analysis after adding domain: ", analysis)
 
-  // FIX TEH USE CASE HERE FOR ARRAYS
-
+  // Do we associate the incoming info w/ a new request or no? Which index to save at?
   if (!analysis[domain][callIndex]) {
     console.log("RAN FIRST PART")
     analysis[domain][callIndex] = analysisDataSkeletonFirstParties();
     analysis_userend[domain] = analysisUserendSkeleton();
-    // changingSitesOnUserRequest = false;
-  // } else {
-  //   console.log("RAN SECOND PART")
-  //   callIndex -= 1;
   }
   console.log("Current callIndex: ", callIndex, "command: ", command, "data: ", data);
   console.log("analysis after maybe adding callindex: ", analysis);

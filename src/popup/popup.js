@@ -428,7 +428,7 @@ function showProtectionInfo() {
 function showAnalysisInfo() {
   removeFirstPartyDomainDNSToggle();
   removeListenerDropdown1Toggle();
-  removeListenerDropdown2Toggle();  
+  removeListenerDropdown2Toggle();
   document.getElementById("optMode-text").innerText = "Analysis Mode";
   document.getElementById("switch-label").innerHTML = "";
   document.getElementById("more-info-body").style.display = "none";
