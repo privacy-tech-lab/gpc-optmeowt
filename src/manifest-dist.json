@@ -12,6 +12,24 @@
     "cookies",
     "tabs"
   ],
+  "commands": {
+    "run_analysis": {
+      "suggested_key": {
+        "windows": "Alt+Shift+A",
+        "mac": "Alt+Shift+A",
+        "chromeos": "Alt+Shift+A",
+        "linux": "Alt+Shift+A"
+      }
+    },
+    "halt_analysis": {
+      "suggested_key": {
+        "windows": "Alt+Shift+S",
+        "mac": "Alt+Shift+S",
+        "chromeos": "Alt+Shift+S",
+        "linux": "Alt+Shift+S"
+      }
+    }
+  },
   "icons": {
     "128": "assets/face-icons/icon128-face-circle.png"
   },

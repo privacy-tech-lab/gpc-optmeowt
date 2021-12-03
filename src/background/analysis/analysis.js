@@ -36,7 +36,12 @@ GPC signal to a site that also has/does not have usprivacy strings.
 import { modes } from "../../data/modes.js";
 import { defaultSettings } from "../../data/defaultSettings.js";
 import { stores, storage } from "./../storage.js";
-import { cookiesPhrasing, uspPhrasing, doNotSellPhrasing } from "../../data/regex"
+import { 
+  cookiesPhrasing, 
+  uspPhrasing, 
+  uspCookiePhrasing, 
+  doNotSellPhrasing 
+} from "../../data/regex"
 import psl from "psl";
 import { IS_BROWSER } from "../../theme/darkmode.js";
 import { headers } from "../../data/headers"
@@ -99,6 +104,14 @@ async function checkForUSPString(url) {
   }
 }
 
+// Update analysis icon when running
+function setAnalysisIcon(tabID) {
+  chrome.browserAction.setIcon({
+    tabId: tabID,
+    path: "../../assets/face-icons/optmeow-face-circle-yellow-128.png",
+  }, ()=>{ /*console.log("Updated icon to SOLID YELLOW.");*/});
+}
+
 /**
  * Though the name says just GPC headers are added here, we also:
  * (1) Check the current stopped URL for a us_privacy string
@@ -113,6 +126,7 @@ function addGPCHeadersCallback(details) {
   // let url = new URL(details.url);
   // let domain = parseURL(url);
   // logData(domain, null, null);
+  setAnalysisIcon(details.tabId);   // Show analysis icon
 
   checkForUSPString(details.url); // Dump all URLs that contain a us_privacy string
   webRequestResponseFiltering(details);        // Filter for Do Not Sell link
@@ -166,6 +180,9 @@ function runAnalysis() {
   });
 }
 
+/**
+ * Disables analysis collection
+ */
 function disableAnalysis() {
   console.log("Stopping analysis.")
   // sendingGPC = false;
@@ -173,6 +190,16 @@ function disableAnalysis() {
   firstPartyDomain = "";
   updateAnalysisCounter();
   removeGPCSignals();
+
+  chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+    let tab = tabs[0];
+
+    // Change popup icon
+    chrome.browserAction.setIcon({
+      tabId: tab.id,
+      path: "../../assets/face-icons/icon128-face-circle.png",
+    }, ()=>{ /*console.log("Updated icon to REGULAR.");*/});
+  });
 }
 
 /**
@@ -439,15 +466,17 @@ function logData(domain, command, data) {
 /**
  * Cookie listener - grabs ALL cookies as they are changed
  */
-function cookiesOnChangedCallback() {
+function cookiesOnChangedCallback(changeInfo) {
   (changeInfo) => {
     if (!changeInfo.removed) {
       let cookie = changeInfo.cookie;
       let domain = cookie.domain;
       domain = domain[0] == '.' ? domain.substring(1) : domain;
       let urlObj = psl.parse(domain);
+      console.log("changeInfo.cookie", changeInfo.cookie)
 
       if (cookiesPhrasing.test(cookie.name)) {
+        console.log("PASSED COOKIES PHRASING")
         // console.log("Init logData() from listenerForUSPCookies")
         // console.log("logData domain: ", urlObj.domain)
         logData(urlObj.domain, "COOKIES", cookie);
@@ -512,6 +541,9 @@ function onCommittedCallback(details) {
   if (message.msg === "RUN_ANALYSIS") {
     runAnalysis();
   }
+  if (message.msg === "HALT_ANALYSIS") {
+    disableAnalysis();
+  }
   if (message.msg === "POPUP_ANALYSIS") {
     chrome.runtime.sendMessage({
       msg: "POPUP_ANALYSIS_DATA",
@@ -553,6 +585,21 @@ function onCommittedCallback(details) {
 }
 
 /**
+ * 
+ */
+function commandsHandler(command) {
+  console.log(`Keyboard shortcut triggered...`);
+  if (command === "run_analysis") {
+    console.log("Run anlysis running..."); 
+    runAnalysis();
+  }
+  if (command === "halt_analysis") {
+    console.log("Halt anlysis running...");
+    disableAnalysis();
+  }
+}
+
+/**
  * Enables all the important listeners in one place
  */
 function enableListeners() {
@@ -560,6 +607,7 @@ function enableListeners() {
   chrome.webNavigation.onCommitted.addListener(onCommittedCallback);
   chrome.runtime.onMessage.addListener(onMessageHandler);
   chrome.runtime.onConnect.addListener(onConnectHandler);
+  chrome.commands.onCommand.addListener(commandsHandler);
 }
 
 function disableListeners() {
@@ -567,6 +615,7 @@ function disableListeners() {
   chrome.webNavigation.onCommitted.removeListener(onCommittedCallback);
   chrome.runtime.onMessage.removeListener(onMessageHandler);
   chrome.runtime.onConnect.removeListener(onConnectHandler);
+  chrome.commands.onCommand.removeListener(commandsHandler);
 }
 
 

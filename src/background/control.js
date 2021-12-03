@@ -120,6 +120,7 @@ chrome.runtime.onInstalled.addListener(function (details) {
   }
 });
 
+// Handles requests for global mode
 chrome.runtime.onConnect.addListener(function(port) {
   port.onMessage.addListener(function (message) {
     if (message.msg === "REQUEST_MODE") {
