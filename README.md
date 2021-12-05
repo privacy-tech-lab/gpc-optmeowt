@@ -128,6 +128,16 @@ Detailed information on OptMeowt's architecture is available in a [separate read
 OptMeowt uses various [third party libraries](https://github.com/privacy-tech-lab/gpc-optmeowt/blob/main/package.json). We thank the developers.
 
 ## Developer Guide
+  
+### Keyboard Shortcuts
+  
+**Analysis Mode**
+- `Alt+Shift+A` — runs `a`nalysis (eq. to clicking `Run Analysis` in popup)
+- `Alt+Shift+S` — `s`tops analysis (eq. to clicking `Stop Analysis` in popup)
+  
+Reminder: Users **must** "stop analysis" prior to changing sites to prevent recording incorrect data
+  
+### Other Notes
 
 - If you want to contribute, note that we manage all library dependencies with npm. Thus, it is recommended to use `npm i` to install libraries.
 - When viewing your browser's console on a site, a 404 error regarding the domain's GPC status file (`/.well-known/gpc.json`) may be shown. Note that this is normal and will occur (1) on domains that do not support GPC and (2) on domains that support GPC but do not host a `/.well-known/gpc.json` file.
