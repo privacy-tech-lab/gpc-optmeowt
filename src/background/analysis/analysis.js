@@ -604,6 +604,7 @@ function commandsHandler(command) {
   if (command === "halt_analysis") {
     console.log("Halt anlysis running...");
     disableAnalysis();
+    browser.browserAction.openPopup();
   }
 }
 
