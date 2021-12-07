@@ -177,39 +177,36 @@ async function buildList() {
   console.log("analysisValues", analysisValues);
   for (let index in analysisKeys) {
 
-    domain = analysisKeys[index]
-    console.log("dnslink", analysisValues[index].DO_NOT_SELL_LINK_EXISTS,"sent gpc", analysisValues[index].SENT_GPC);
+    domain = analysisKeys[index];
+    console.log("dnsLink", analysisValues[index].DO_NOT_SELL_LINK_EXISTS,"sent gpc", analysisValues[index].SENT_GPC);
 
-    let dnslink;
-    let stringfound;
-    let gpcsent;
-    let stringchanged;
+    let dnsLink;
+    let stringFound;
+    let gpcSent;
+    let stringChanged;
 
     let data = analysisValues[index];
-    if (data.DO_NOT_SELL_LINK_EXISTS){
-      dnslink = pos;
-    } else {
-      dnslink = neg;
-    }
     let beforeGPC = data.USPAPI_BEFORE_GPC
+    let optedOut = data.USPAPI_OPTED_OUT;
+
+    dnsLink = (data.DO_NOT_SELL_LINK_EXISTS) ? pos : neg;
+    gpcSent = (data.SENT_GPC) ? pos : neg;
+    stringChanged = (data.USPAPI_OPTED_OUT) ? pos : neg;
+
     if (!beforeGPC[0]) {
-      stringfound = neg;
+      stringFound = neg;
     } else {
-      if ((beforeGPC.length != 0) && isValidSignalIAB(beforeGPC[0].uspString)) {
-        stringfound = pos;
-      } else {
-        stringfound = neg;
+      stringFound = ((beforeGPC.length != 0) && isValidSignalIAB(beforeGPC[0].uspString)) ? pos : neg;
+    }
+
+    if (typeof optedOut === 'string') {
+      if (optedOut === "PARSE_FAILED") {
+        stringChanged = neg;
+      } else if (optedOut === "NOT_IN_CA") {
+        stringChanged = neg;
       }
-    }
-    if (data.SENT_GPC){
-      gpcsent = pos;
     } else {
-      gpcsent = neg;
-    }
-    if (data.USPAPI_OPTED_OUT){
-      stringchanged = pos;
-    } else {
-      stringchanged = neg;
+      stringChanged = optedOut ? pos : neg;
     }
 
 
@@ -262,7 +259,7 @@ async function buildList() {
                     <div class="domain uk-width-expand">
                     Do Not Sell Link 
                     </div>
-                    <img src = ${dnslink} width = "40px" height = "40px" ${specs}>
+                    <img src = ${dnsLink} width = "40px" height = "40px" ${specs}>
                 </div>
             </li>
             <li>
@@ -270,7 +267,7 @@ async function buildList() {
                     <div class="domain uk-width-expand">
                     US Privacy String 
                     </div>
-                    <img src = ${stringfound} width = "40px" height = "40px" ${specs}>
+                    <img src = ${stringFound} width = "40px" height = "40px" ${specs}>
                 </div>
             </li>
             <li>
@@ -278,7 +275,7 @@ async function buildList() {
                     <div class="domain uk-width-expand">
                     Signal Sent 
                     </div>
-                    <img src = ${gpcsent} width = "40px" height = "40px" ${specs}>
+                    <img src = ${gpcSent} width = "40px" height = "40px" ${specs}>
                 </div>
             </li>
             <li>
@@ -286,7 +283,7 @@ async function buildList() {
                     <div class="domain uk-width-expand">
                     US Privacy String Updated 
                     </div>
-                    <img src = ${stringchanged} width = "40px" height = "40px" ${specs}>
+                    <img src = ${stringChanged} width = "40px" height = "40px" ${specs}>
                 </div> 
             </li>
         </ul>

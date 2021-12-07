@@ -21,6 +21,8 @@ export const doNotSellPhrasing = new RegExp([
 
 export const uspPhrasing = /(us(-|_|.)?privacy)/gmi
 
+export const uspCookiePhrasing = /(us-?_?privacy)/gmi
+
 // Do Not Sell - Cookie variations
 export const cookiesPhrasing = new RegExp([
 	/(us-?_?privacy)|/,

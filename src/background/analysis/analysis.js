@@ -395,6 +395,9 @@ function logData(domain, command, data) {
     analysis[domain][callIndex][gpcStatusKey]["COOKIES"].push(data);
     // console.log("Got to COMMAND === COOKIES");
 
+    // ADD PARSING INFO TO SAVE USP COOKIES ONLY!!! 
+    // WE ARE MISSING AN EDGE CASE, SITES THAT HAVE USP COOKIES ONLY (NO USPAPI)
+
     // Make a new enumerated section under the particular domain
     // otherwise use the last one
   }
@@ -410,15 +413,18 @@ function logData(domain, command, data) {
       analysis_userend[domain]["USPAPI_AFTER_GPC"].push(data);
       analysis_userend[domain]["USPAPI_AFTER_GPC_TIMESTAMP"] = ms;
       try {
-        let usprivacyString = data.value || data.uspString;
+        let USPrivacyString = data.value || data.uspString;
+        // if (USPrivacyString === null || USPrivacyString === undefined) {
+        //   analysis_userend[domain]["USPAPI_OPTED_OUT"] = null;  // when nothing is returned
+        // }
         console.log("data: ", data);
-        console.log("the usprivacyString breakdown", data.uspString, data.value)
-        console.log("usprivacyString: ", usprivacyString);
-        if (usprivacyString[2] === "Y" || usprivacyString[2] === "y") {
+        console.log("the USPrivacyString breakdown", data.uspString, data.value)
+        console.log("USPrivacyString: ", USPrivacyString);
+        if (USPrivacyString[2] === "Y" || USPrivacyString[2] === "y") {
           analysis_userend[domain]["USPAPI_OPTED_OUT"] = true;
-        } else if (usprivacyString[2] === "-") {
-          analysis_userend[domain]["USPAPI_OPTED_OUT"] = "N/A - Outside CA";
-        } else if (usprivacyString[2] === "N" || usprivacyString[2] == "n") {
+        } else if (USPrivacyString[2] === "-") {
+          analysis_userend[domain]["USPAPI_OPTED_OUT"] = "NOT_IN_CA";
+        } else if (USPrivacyString[2] === "N" || USPrivacyString[2] == "n") {
           analysis_userend[domain]["USPAPI_OPTED_OUT"] = false;
         } else {
           analysis_userend[domain]["USPAPI_OPTED_OUT"] = null;
@@ -467,7 +473,8 @@ function logData(domain, command, data) {
  * Cookie listener - grabs ALL cookies as they are changed
  */
 function cookiesOnChangedCallback(changeInfo) {
-  (changeInfo) => {
+  // 
+  (changeInfo) => {   //
     if (!changeInfo.removed) {
       let cookie = changeInfo.cookie;
       let domain = cookie.domain;
@@ -483,7 +490,8 @@ function cookiesOnChangedCallback(changeInfo) {
       }
     }
     // console.log(analysis);
-  }
+  } //
+  // 
 }
 
 /**

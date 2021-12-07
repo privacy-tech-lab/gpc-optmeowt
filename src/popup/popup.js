@@ -704,12 +704,32 @@ async function buildAnalysis(data) {
   console.log("stores.analysis", data);
 
   let items         = "";
-  let dnslink       = (data.DO_NOT_SELL_LINK_EXISTS) ? pos : neg;
+  let dnsLink       = (data.DO_NOT_SELL_LINK_EXISTS) ? pos : neg;
   let beforeGPC     = data.USPAPI_BEFORE_GPC;
-  let stringfound   = ((beforeGPC.length != 0) 
-                      && isValidSignalIAB(beforeGPC[0].uspString)) ? pos : neg;
-  let gpcsent       = (data.SENT_GPC) ? pos : neg;
-  let stringchanged = (data.USPAPI_OPTED_OUT) ? pos : neg;
+  let stringFound;
+  let gpcSent       = (data.SENT_GPC) ? pos : neg;
+
+  if (!beforeGPC[0]) {
+    stringFound = neg;
+  } else {
+    stringFound = ((beforeGPC.length != 0) 
+      && isValidSignalIAB(beforeGPC[0].uspString)) ? pos : neg;
+  }
+
+  let stringChanged;
+  let optedOut = data.USPAPI_OPTED_OUT;
+  if (typeof optedOut === 'string') {
+    if (optedOut === "PARSE_FAILED") {
+      stringChanged = neg;
+    } else if (optedOut === "NOT_IN_CA") {
+      stringChanged = neg;
+    }
+  } else {
+    stringChanged = optedOut ? pos : neg;
+  }
+  // console.log("data.USPAPI_OPTED_OUT", data.USPAPI_OPTED_OUT);
+  // console.log("optedOut", optedOut);
+  // console.log("stringChanged", stringChanged);
 
   // Sets the 3rd party domain elements
     items += `
@@ -718,7 +738,7 @@ async function buildAnalysis(data) {
       <div class="domain uk-width-expand">
         Do Not Sell Link 
       </div>
-      <img src = ${dnslink} width = "40px" height = "40px" ${specs}>
+      <img src = ${dnsLink} width = "40px" height = "40px" ${specs}>
     </div>
   </li>
   <li>
@@ -726,7 +746,7 @@ async function buildAnalysis(data) {
       <div class="domain uk-width-expand">
         US Privacy String 
       </div>
-      <img src = ${stringfound} width = "40px" height = "40px" ${specs}>
+      <img src = ${stringFound} width = "40px" height = "40px" ${specs}>
     </div>
   </li>
   <li>
@@ -734,7 +754,7 @@ async function buildAnalysis(data) {
       <div class="domain uk-width-expand">
         GPC Signal Sent
       </div>
-      <img src = ${gpcsent} width = "40px" height = "40px" ${specs}>
+      <img src = ${gpcSent} width = "40px" height = "40px" ${specs}>
     </div>
   </li>
   <li>
@@ -742,7 +762,7 @@ async function buildAnalysis(data) {
       <div class="domain uk-width-expand">
         US Privacy String Updated 
       </div>
-      <img src = ${stringchanged} width = "40px" height = "40px" ${specs}>
+      <img src = ${stringChanged} width = "40px" height = "40px" ${specs}>
     </div> 
   </li>`;
 
