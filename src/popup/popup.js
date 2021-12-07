@@ -742,9 +742,6 @@ async function buildAnalysis(data) {
   } else {
     stringChanged = optedOut ? pos : neg;
   }
-
-
-
   // console.log("data.USPAPI_OPTED_OUT", data.USPAPI_OPTED_OUT);
   // console.log("optedOut", optedOut);
   // console.log("stringChanged", stringChanged);

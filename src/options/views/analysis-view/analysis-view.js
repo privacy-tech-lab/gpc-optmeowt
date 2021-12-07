@@ -52,17 +52,6 @@ export async function dropListener(domain) {
     data = analysisValues[index];
 
     dropListener(domain)
-    // Compliance information
-    // if (data.DO_NOT_SELL_LINK_EXISTS 
-    //     && data.SENT_GPC 
-    //     && data.USPAPI_OPTED_OUT 
-    //     && (data.USPAPI_BEFORE_GPC.length != 0) 
-    //     && isValidSignalIAB(data.USPAPI_BEFORE_GPC[0].uspString)
-    //   ){
-    //     compliant(true, domain); 
-    // } else {
-    //     compliant(false, domain); 
-    // }
   }
 }
 
@@ -97,7 +86,8 @@ export async function dropListener(domain) {
  */
 const headings = {
     title: 'Analyzed Domains',
-    subtitle: "A breakdown of the CCPA compliance of sites you have visited in Analysis Mode"
+    subtitle: `A breakdown of the CCPA compliance of sites you have visited in Analysis Mode. 
+      \n  Note: If you are not in California, websites may not honor your CCPA request.`
 }
 
 /**
