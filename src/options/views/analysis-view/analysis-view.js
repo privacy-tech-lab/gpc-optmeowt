@@ -186,8 +186,23 @@ async function buildList() {
     let stringChanged;
 
     let data = analysisValues[index];
-    let beforeGPC = data.USPAPI_BEFORE_GPC
+    let beforeGPC = data.USPAPI_BEFORE_GPC;
+    let afterGPC = data.USPAPI_AFTER_GPC;
     let optedOut = data.USPAPI_OPTED_OUT;
+
+    let uspStringBeforeGPC;
+    let uspStringAfterGPC;
+
+    if (beforeGPC && beforeGPC[0] && beforeGPC[0]["uspString"]) {
+      uspStringBeforeGPC = beforeGPC[0]["uspString"];
+    } else {
+      uspStringBeforeGPC = data.USPAPI_OPTED_OUT;
+    }
+    if (afterGPC && afterGPC[0] && afterGPC[0]["uspString"]) {
+      uspStringAfterGPC = afterGPC[0]["uspString"];
+    } else {
+      uspStringAfterGPC = data.USPAPI_OPTED_OUT;
+    }
 
     dnsLink = (data.DO_NOT_SELL_LINK_EXISTS) ? pos : neg;
     gpcSent = (data.SENT_GPC) ? pos : neg;
@@ -267,6 +282,7 @@ async function buildList() {
                     <div class="domain uk-width-expand">
                     US Privacy String 
                     </div>
+                    <button class="uk-badge uspStringElem">${uspStringBeforeGPC}</button>
                     <img src = ${stringFound} width = "40px" height = "40px" ${specs}>
                 </div>
             </li>
@@ -283,6 +299,7 @@ async function buildList() {
                     <div class="domain uk-width-expand">
                     US Privacy String Updated 
                     </div>
+                    <button class="uk-badge uspStringElem">${uspStringAfterGPC}</button>
                     <img src = ${stringChanged} width = "40px" height = "40px" ${specs}>
                 </div> 
             </li>

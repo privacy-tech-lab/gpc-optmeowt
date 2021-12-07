@@ -12,6 +12,11 @@ styles.css is the main css page for OptMeowt's popup page
 
 
 
+:root {
+  --text-gray: rgb(89,98,127);
+
+}
+
 .importexport-button {
   background-color: white;
   border-color: #888fa1;
@@ -43,6 +48,31 @@ styles.css is the main css page for OptMeowt's popup page
 }
 
 
+.uspStringElem {
+  margin: auto;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-right: 8px;
+  padding-left: 8px;
+  background-color: white;
+  border: 1px solid var(--text-gray);
+  color: var(--text-gray);
+  text-align: center; 
+}
+
+.uspStringElem:hover {
+  background-color: white;
+  border: 1px solid var(--text-gray);
+  color: var(--text-gray); 
+}
+
+.uspStringElem:active {
+  background-color: white;
+  border: 1px solid var(--text-gray);
+  color: var(--text-gray); 
+}
+
+
 .optMode {
   margin: auto;
   padding-top: 12px;
@@ -50,8 +80,8 @@ styles.css is the main css page for OptMeowt's popup page
   padding-right: 10px;
   padding-left: 10px;
   background-color: white;
-  border: 1px solid rgb(89,98,127);
-  color: rgb(89,98,127);
+  border: 1px solid var(--text-gray);
+  color: var(--text-gray);
   text-align: center;
   text-decoration-color: none;
   font-size: 20px;
@@ -61,7 +91,7 @@ styles.css is the main css page for OptMeowt's popup page
 }
 
 .optMode:hover {
-  color: rgb(89,98,127) !important;
+  color: var(--text-gray) !important;
   box-shadow: 0 6px 12px rgba(110, 110, 110, 0.2) !important;
   transition: all ease 0.25s;
 }

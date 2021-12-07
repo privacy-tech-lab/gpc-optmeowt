@@ -32,6 +32,8 @@ Colors
   --text-color-inactive: #d3d3d3;
 
   --highlight-light: #f2f2f2;
+
+  --text-gray: rgb(89,98,127);
 }
 
 .text-color-darker {
@@ -192,6 +194,30 @@ input[type="radio"]:hover:not(:checked) {
   border: 1px solid #df3131 !important;
   transition: all 0.3s ease;
   color: #FFF !important;
+}
+
+.uspStringElem {
+  margin: auto;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-right: 8px;
+  padding-left: 8px;
+  background-color: white;
+  border: 1px solid var(--text-gray);
+  color: var(--text-gray);
+  text-align: center; 
+}
+
+.uspStringElem:hover {
+  background-color: white;
+  border: 1px solid var(--text-gray);
+  color: var(--text-gray); 
+}
+
+.uspStringElem:active {
+  background-color: white;
+  border: 1px solid var(--text-gray);
+  color: var(--text-gray); 
 }
 
 /********************************************************/
