@@ -14,19 +14,15 @@
   ],
   "commands": {
     "run_analysis": {
+      "description": "Starts an analysis on the current site",
       "suggested_key": {
-        "windows": "Alt+Shift+A",
-        "mac": "Alt+Shift+A",
-        "chromeos": "Alt+Shift+A",
-        "linux": "Alt+Shift+A"
+        "default": "Alt+Shift+A"
       }
     },
     "halt_analysis": {
+      "description": "Halts the started analysis",
       "suggested_key": {
-        "windows": "Alt+Shift+S",
-        "mac": "Alt+Shift+S",
-        "chromeos": "Alt+Shift+S",
-        "linux": "Alt+Shift+S"
+        "default": "Alt+Shift+S"
       }
     }
   },
