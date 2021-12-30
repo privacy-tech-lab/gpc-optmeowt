@@ -40,6 +40,7 @@ import {
   cookiesPhrasing, 
   uspPhrasing, 
   uspCookiePhrasing, 
+  uspCookiePhrasingList,
   doNotSellPhrasing 
 } from "../../data/regex"
 import psl from "psl";
@@ -153,18 +154,103 @@ var removeGPCSignals = function() {
 }
 
 /**
+ * Fetches all US Privacy cookies on current domain that match USP phrasings 
+ * from uspCookiePhrasingList in regex.js
+ * @returns Promise (resolves to an array of cookies if awaited for)
+ */
+async function fetchUSPCookies() {
+  return new Promise ((resolve, reject) => {
+    let promises = [];
+    let allUSPCookies = [];
+    for (let i in uspCookiePhrasingList) {
+      promises.push(
+        new Promise ((resolve, reject) => {
+          chrome.cookies.getAll({
+            domain: firstPartyDomain,
+            name: uspCookiePhrasingList[i]
+          }, function(cookies) {
+            console.log("uspCookieName", uspCookiePhrasingList[i])
+            console.log("COOKIES FOUND::::", cookies);
+            for (let j in cookies) {
+              allUSPCookies.push(cookies[j]);
+              console.log("item, ", cookies[j])
+            }
+            // allUSPCookies.push(cookies);
+            resolve(cookies);
+          })
+        })
+      )
+    }
+    Promise.all(promises)
+      .then(values => {
+        resolve(allUSPCookies)
+      })
+  })
+}
+
+/**
+ * Fetches all USPAPI data by invoking a script to inject such a call onto 
+ * the current webpage. The data is passed back via messages and resolved. 
+ * @returns Promise (resolves to a USPAPI result object)
+ */
+function fetchUSPAPIData() {
+  return new Promise ((resolve, reject) => {
+    chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+      chrome.tabs.sendMessage(tabs[0].id, {msg: "USPAPI_FETCH_REQUEST"}, function(response) {
+        function onResponseHandler(message, sender, sendResponse) {
+          console.log("RECIEVED A RESPONSE!!!!");
+          chrome.runtime.onMessage.removeListener(onResponseHandler);
+          if (message.msg == "USPAPI_TO_BACKGROUND_FROM_FETCH_REQUEST") {
+            resolve(message);
+          }
+        }
+        chrome.runtime.onMessage.addListener(onResponseHandler);
+        // resolve(response);
+      });
+    });
+  })
+}
+
+/**
+ * Manually fetches all US Privacy data in both the USPAPI if it exists
+ * and also US Privacy cookies if they exist. 
+ * @returns Object - Contains USP cookies, USPAPI data, and the location
+ */
+async function fetchUSPStringData() {
+  let uspCookiePhrasings = [...uspCookiePhrasingList];
+  const uspapiData = await fetchUSPAPIData();
+  const uspCookies = await fetchUSPCookies();   // returns array of all cookies, irrespective of order
+
+  return {
+    cookies: uspCookies,
+    data: uspapiData.data,
+    location: uspapiData.location
+  }
+}
+
+
+/**
  * Initializes the analysis with a refresh after being triggered
  * 
  * (1) Query the first party domain for data recording use
  * (2) Add GPC headers
  * (3) Attach DOM property to page after reload
  */
-function runAnalysis() {
+async function runAnalysis() {
   console.log("Starting analysis.");
-  // sendingGPC = true;
-  changingSitesOnAnalysis = true; // Analysis=ON flag
 
-  function afterFetchingFirstPartyDomain() {
+  async function afterFetchingFirstPartyDomain() {
+    const uspapiData = await fetchUSPStringData();
+    let url = new URL(uspapiData.location);
+    let domain = parseURL(url);
+    if (uspapiData.data !== "USPAPI_FAILED") {
+      logData(domain, "USPAPI", uspapiData.data);
+    }
+    if (uspapiData.cookies) {
+      logData(domain, "COOKIES", uspapiData.cookies);
+    }
+    changingSitesOnAnalysis = true;                     // Analysis=ON flag
+
     addGPCHeaders();
     chrome.tabs.reload();
   }
@@ -183,23 +269,35 @@ function runAnalysis() {
 /**
  * Disables analysis collection
  */
-function disableAnalysis() {
-  console.log("Stopping analysis.")
-  // sendingGPC = false;
-  changingSitesOnAnalysis = false;
-  firstPartyDomain = "";
-  updateAnalysisCounter();
-  removeGPCSignals();
+async function haltAnalysis() {
 
-  chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-    let tab = tabs[0];
+  function afterUSPStringFetched() {
+    changingSitesOnAnalysis = false;
+    firstPartyDomain = "";
+    updateAnalysisCounter();
+    removeGPCSignals();
 
-    // Change popup icon
-    chrome.browserAction.setIcon({
-      tabId: tab.id,
-      path: "../../assets/face-icons/icon128-face-circle.png",
-    }, ()=>{ /*console.log("Updated icon to REGULAR.");*/});
-  });
+    chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+      let tab = tabs[0];
+
+      // Change popup icon
+      chrome.browserAction.setIcon({
+        tabId: tab.id,
+        path: "../../assets/face-icons/icon128-face-circle.png",
+      }, ()=>{ /*console.log("Updated icon to REGULAR.");*/});
+    });
+  }
+
+  const uspapiData = await fetchUSPStringData();
+  let url = new URL(uspapiData.location);
+  let domain = parseURL(url);
+  if (uspapiData.data !== "USPAPI_FAILED") {
+    logData(domain, "USPAPI", uspapiData.data);
+  }
+  if (uspapiData.cookies) {
+    logData(domain, "COOKIES", uspapiData.cookies);
+  }
+  afterUSPStringFetched();
 }
 
 /**
@@ -297,7 +395,13 @@ var analysisUserendSkeleton = () => {
     "USPAPI_AFTER_GPC": [],
     "USPAPI_AFTER_GPC_TIMESTAMP": null,
     "USPAPI_OPTED_OUT": undefined,
-    "USPAPI_OPTED_OUT_TIMESTAMP": null
+    "USPAPI_OPTED_OUT_TIMESTAMP": null,
+    "USP_COOKIES_BEFORE_GPC": [],
+    "USP_COOKIES_BEFORE_GPC_TIMESTAMP": null,
+    "USP_COOKIES_AFTER_GPC": [],
+    "USP_COOKIES_AFTER_GPC_TIMESTAMP": null,
+    "USP_COOKIE_OPTED_OUT": undefined,
+    "USP_COOKIE_OPTED_OUT_TIMESTAMP": null
   }
 }
 
@@ -312,7 +416,7 @@ var analysisDataSkeletonThirdParties = () => {
   }
 }
 
-var analysisDataSkeletonFirstParties = () => { 
+var analysisDataSkeletonFirstParties = () => {
   return {
     "BEFORE_GPC": {
       "TIMESTAMP": null,
@@ -352,7 +456,9 @@ function logData(domain, command, data) {
   domain = changingSitesOnAnalysis ? firstPartyDomain : domain;
   let gpcStatusKey = changingSitesOnAnalysis ? "AFTER_GPC" : "BEFORE_GPC";
 
-  console.log("domain from logData: ", domain);
+  // console.log("domain from logData: ", domain);
+  // console.log("command from logData: ", command);
+  // console.log("data from logData: ", data);
 
   // If domain doesn't exist, initialize it
   if (!analysis[domain]) {
@@ -391,15 +497,54 @@ function logData(domain, command, data) {
   }
 
   // Let's assume that data does have a name property as a cookie should
+  // NOTE: Cookies should be an array of "cookies" objects, not promises, etc. 
   if (command === "COOKIES") {
-    analysis[domain][callIndex][gpcStatusKey]["COOKIES"].push(data);
-    // console.log("Got to COMMAND === COOKIES");
+    // console.log("FOUND COOKIES IN LOGDATA: ", data);
+    for (let i in data) {
+      analysis[domain][callIndex][gpcStatusKey]["COOKIES"].push(data[i]);
+    }
+    
+    // Detailed case for summary object
+    if (gpcStatusKey == "BEFORE_GPC") {
+      analysis_userend[domain]["USP_COOKIES_BEFORE_GPC_TIMESTAMP"] = ms;
+      for (let i in data) {
+        analysis_userend[domain]["USP_COOKIES_BEFORE_GPC"].push(data[i]);
+      }
+    }
+    if (gpcStatusKey == "AFTER_GPC") {
+      analysis_userend[domain]["USP_COOKIES_AFTER_GPC_TIMESTAMP"] = ms;
+      for (let i in data) {
+        analysis_userend[domain]["USP_COOKIES_AFTER_GPC"].push(data[i]);
+        try {
+          if (analysis_userend[domain]["USP_COOKIE_OPTED_OUT"] !== true) {
+            let USPrivacyString = data[i].value || "";
 
-    // ADD PARSING INFO TO SAVE USP COOKIES ONLY!!! 
-    // WE ARE MISSING AN EDGE CASE, SITES THAT HAVE USP COOKIES ONLY (NO USPAPI)
+            console.log("data: ", data);
+            console.log("the USPrivacyString breakdown", data.value)
+            console.log("USPrivacyString: ", USPrivacyString);
 
-    // Make a new enumerated section under the particular domain
-    // otherwise use the last one
+            // Give precedence to USPAPI
+            let optedOut = analysis_userend[domain]["USP_COOKIE_OPTED_OUT"];
+            if (optedOut !== null || optedOut !== undefined) {
+              if (USPrivacyString[2] === "Y" || USPrivacyString[2] === "y") {
+                analysis_userend[domain]["USP_COOKIE_OPTED_OUT"] = true;
+              } else if (USPrivacyString[2] === "-") {
+                analysis_userend[domain]["USP_COOKIE_OPTED_OUT"] = "NOT_IN_CA";
+              } else if (USPrivacyString[2] === "N" || USPrivacyString[2] == "n") {
+                analysis_userend[domain]["USP_COOKIE_OPTED_OUT"] = false;
+              } else {
+                analysis_userend[domain]["USP_COOKIE_OPTED_OUT"] = null;
+              }
+            }
+          }
+        } catch (e) {
+          console.error("Parsing USPAPI for analysis_userend failed.", e);
+          analysis_userend[domain]["USP_COOKIE_OPTED_OUT"] = "PARSE_FAILED"; 
+        }
+        analysis_userend[domain]["USP_COOKIE_OPTED_OUT_TIMESTAMP"] = ms;
+
+      }
+    }
   }
   if (command === "USPAPI") {
     analysis[domain][callIndex][gpcStatusKey]["USPAPI"].push(data);
@@ -476,6 +621,7 @@ function cookiesOnChangedCallback(changeInfo) {
   // 
   (changeInfo) => {   //
     if (!changeInfo.removed) {
+      console.log("NOTICE: RECOGNIZED CHANING COOKIES ... ... ...");
       let cookie = changeInfo.cookie;
       let domain = cookie.domain;
       domain = domain[0] == '.' ? domain.substring(1) : domain;
@@ -520,7 +666,7 @@ function onCommittedCallback(details) {
       addDomSignal(details);
       // changingSitesOnAnalysis = false;
     // } else {  // Must be on user request
-    //   disableAnalysis();
+    //   haltAnalysis();
     //   // changingSitesOnUserRequest = true;
     //   logData(domain, null, null); // Makes sure to log the 1st party domain to analysis_userend
     //   console.log("cancelling analysis!");
@@ -550,7 +696,7 @@ function onCommittedCallback(details) {
     runAnalysis();
   }
   if (message.msg === "HALT_ANALYSIS") {
-    disableAnalysis();
+    haltAnalysis();
   }
   if (message.msg === "POPUP_ANALYSIS") {
     chrome.runtime.sendMessage({
@@ -587,7 +733,7 @@ function onCommittedCallback(details) {
       runAnalysis();
     }
     if (message.msg === "STOP_ANALYSIS_FROM_BACKGROUND") {
-      disableAnalysis();
+      haltAnalysis();
     }
   })
 }
@@ -603,8 +749,8 @@ function commandsHandler(command) {
   }
   if (command === "halt_analysis") {
     console.log("Halt anlysis running...");
-    disableAnalysis();
-    browser.browserAction.openPopup();
+    haltAnalysis();
+    // chrome.browserAction.openPopup();
   }
 }
 

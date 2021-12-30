@@ -707,32 +707,68 @@ async function buildAnalysis(data) {
   let dnsLink       = (data.DO_NOT_SELL_LINK_EXISTS) ? pos : neg;
   let stringFound;
   let gpcSent       = (data.SENT_GPC) ? pos : neg;
-  let beforeGPC     = data.USPAPI_BEFORE_GPC;
-  let afterGPC     = data.USPAPI_AFTER_GPC;
+  let beforeGPCUSPAPI     = data.USPAPI_BEFORE_GPC;
+  let afterGPCUSPAPI      = data.USPAPI_AFTER_GPC;
+  let beforeGPCUSPCookies = data.USP_COOKIES_BEFORE_GPC;
+  let afterGPCUSPCookies  = data.USP_COOKIES_AFTER_GPC;
 
   let uspStringBeforeGPC;
   let uspStringAfterGPC;
 
-  if (beforeGPC && beforeGPC[0] && beforeGPC[0]["uspString"]) {
-    uspStringBeforeGPC = beforeGPC[0]["uspString"];
+  // Generate the US Privacy String BEFORE GPC is sent
+  // Give priority to the USPAPI over USP Cookie
+  if (beforeGPCUSPAPI && beforeGPCUSPAPI[0] && beforeGPCUSPAPI[0]["uspString"]) {
+    uspStringBeforeGPC = beforeGPCUSPAPI[0]["uspString"];
   } else {
-    uspStringBeforeGPC = data.USPAPI_OPTED_OUT;
-  }
-  if (afterGPC && afterGPC[0] && afterGPC[0]["uspString"]) {
-    uspStringAfterGPC = afterGPC[0]["uspString"];
-  } else {
-    uspStringAfterGPC = data.USPAPI_OPTED_OUT;
+    if (beforeGPCUSPCookies && beforeGPCUSPCookies[0] && beforeGPCUSPCookies[0]["value"]) {
+      uspStringBeforeGPC = beforeGPCUSPCookies[0]["value"];
+    } else {
+      uspStringBeforeGPC = data.USPAPI_OPTED_OUT || data.USP_COOKIE_OPTED_OUT;
+    }
   }
 
-  if (!beforeGPC[0]) {
+  // Generate the US Privacy String AFTER GPC is sent
+  // Give priority to the USPAPI over USP Cookie
+  if (afterGPCUSPAPI && afterGPCUSPAPI[0] && afterGPCUSPAPI[0]["uspString"]) {
+    uspStringAfterGPC = afterGPCUSPAPI[0]["uspString"];
+  } else {
+    if (afterGPCUSPCookies && afterGPCUSPCookies[0] && afterGPCUSPCookies[0]["value"]) {
+      uspStringAfterGPC = afterGPCUSPCookies[0]["value"];
+    } else {
+      uspStringAfterGPC = data.USPAPI_OPTED_OUT || data.USP_COOKIE_OPTED_OUT;
+    }
+  }
+
+  if (!beforeGPCUSPAPI && !beforeGPCUSPCookies) {
     stringFound = neg;
   } else {
-    stringFound = ((beforeGPC.length != 0) 
-      && isValidSignalIAB(beforeGPC[0].uspString)) ? pos : neg;
+    let existsUSP = ((beforeGPCUSPAPI.length!=0) || (beforeGPCUSPCookies.length!=0)) ? true : false;
+    let existsAndIsValidBeforeGPCUSPAPI;
+    let existsAndIsValidBeforeGPCUSPCookies;
+
+    if (beforeGPCUSPAPI && beforeGPCUSPAPI[0] && beforeGPCUSPAPI[0].uspString) {
+      existsAndIsValidBeforeGPCUSPAPI = isValidSignalIAB(beforeGPCUSPAPI[0].uspString)
+    } else {
+      existsAndIsValidBeforeGPCUSPAPI = false;
+    }
+    if (beforeGPCUSPCookies && beforeGPCUSPCookies[0] && beforeGPCUSPCookies[0].value) {
+      existsAndIsValidBeforeGPCUSPCookies = isValidSignalIAB(beforeGPCUSPCookies[0].value)
+    } else {
+      existsAndIsValidBeforeGPCUSPCookies = false;
+    }
+
+    stringFound = (existsUSP && 
+      (existsAndIsValidBeforeGPCUSPAPI || existsAndIsValidBeforeGPCUSPCookies))
+      ? pos : neg;
   }
 
   let stringChanged;
-  let optedOut = data.USPAPI_OPTED_OUT;
+  let optedOut;
+  if (data.USPAPI_OPTED_OUT !== null || data.USPAPI_OPTED_OUT !== undefined) {
+    optedOut = data.USPAPI_OPTED_OUT;
+  } else {
+    optedOut = data.USP_COOKIE_OPTED_OUT;
+  }
   if (typeof optedOut === 'string') {
     if (optedOut === "PARSE_FAILED") {
       stringChanged = neg;
@@ -742,7 +778,7 @@ async function buildAnalysis(data) {
   } else {
     stringChanged = optedOut ? pos : neg;
   }
-  // console.log("data.USPAPI_OPTED_OUT", data.USPAPI_OPTED_OUT);
+  // console.log("data.USP_OPTED_OUT", data.USP_OPTED_OUT);
   // console.log("optedOut", optedOut);
   // console.log("stringChanged", stringChanged);
 
@@ -798,9 +834,10 @@ async function buildComplianceInfo(data) {
       console.log(parsedDomain);
       if (data.DO_NOT_SELL_LINK_EXISTS 
           && data.SENT_GPC 
-          && data.USPAPI_OPTED_OUT
-          && (data.USPAPI_BEFORE_GPC.length != 0) 
-          && isValidSignalIAB(data.USPAPI_BEFORE_GPC[0].uspString)
+          && (data.USPAPI_OPTED_OUT || data.USP_COOKIE_OPTED_OUT)
+          && ((data.USPAPI_BEFORE_GPC.length != 0) || (data.USP_COOKIES_BEFORE_GPC.length != 0)) 
+          && ((isValidSignalIAB(data.USPAPI_BEFORE_GPC[0].uspString)) || 
+                (isValidSignalIAB(data.USP_COOKIES_BEFORE_GPC[0].uspString)))
         ) {
         checkbox = `<div
         id = "${parsedDomain} compliance"

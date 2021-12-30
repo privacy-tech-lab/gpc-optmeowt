@@ -176,32 +176,69 @@ async function buildList() {
     let stringChanged;
 
     let data = analysisValues[index];
-    let beforeGPC = data.USPAPI_BEFORE_GPC;
-    let afterGPC = data.USPAPI_AFTER_GPC;
-    let optedOut = data.USPAPI_OPTED_OUT;
+    let beforeGPCUSPAPI     = data.USPAPI_BEFORE_GPC;
+    let afterGPCUSPAPI      = data.USPAPI_AFTER_GPC;
+    let beforeGPCUSPCookies = data.USP_COOKIES_BEFORE_GPC;
+    let afterGPCUSPCookies  = data.USP_COOKIES_AFTER_GPC;
+    let optedOut;
+
+    if (data.USPAPI_OPTED_OUT !== null || data.USPAPI_OPTED_OUT !== undefined) {
+      optedOut = data.USPAPI_OPTED_OUT;
+    } else {
+      optedOut = data.USP_COOKIE_OPTED_OUT;
+    }
 
     let uspStringBeforeGPC;
     let uspStringAfterGPC;
 
-    if (beforeGPC && beforeGPC[0] && beforeGPC[0]["uspString"]) {
-      uspStringBeforeGPC = beforeGPC[0]["uspString"];
+    // Generate the US Privacy String BEFORE GPC is sent
+    // Give priority to the USPAPI over USP Cookie
+    if (beforeGPCUSPAPI && beforeGPCUSPAPI[0] && beforeGPCUSPAPI[0]["uspString"]) {
+      uspStringBeforeGPC = beforeGPCUSPAPI[0]["uspString"];
     } else {
-      uspStringBeforeGPC = data.USPAPI_OPTED_OUT;
+      if (beforeGPCUSPCookies && beforeGPCUSPCookies[0] && beforeGPCUSPCookies[0]["value"]) {
+        uspStringBeforeGPC = beforeGPCUSPCookies[0]["value"];
+      } else {
+        uspStringBeforeGPC = data.USPAPI_OPTED_OUT || data.USP_COOKIE_OPTED_OUT;
+      }
     }
-    if (afterGPC && afterGPC[0] && afterGPC[0]["uspString"]) {
-      uspStringAfterGPC = afterGPC[0]["uspString"];
+
+    // Generate the US Privacy String AFTER GPC is sent
+    // Give priority to the USPAPI over USP Cookie
+    if (afterGPCUSPAPI && afterGPCUSPAPI[0] && afterGPCUSPAPI[0]["uspString"]) {
+      uspStringAfterGPC = afterGPCUSPAPI[0]["uspString"];
     } else {
-      uspStringAfterGPC = data.USPAPI_OPTED_OUT;
+      if (afterGPCUSPCookies && afterGPCUSPCookies[0] && afterGPCUSPCookies[0]["value"]) {
+        uspStringAfterGPC = afterGPCUSPCookies[0]["value"];
+      } else {
+        uspStringAfterGPC = data.USPAPI_OPTED_OUT || data.USP_COOKIE_OPTED_OUT;
+      }
     }
 
     dnsLink = (data.DO_NOT_SELL_LINK_EXISTS) ? pos : neg;
     gpcSent = (data.SENT_GPC) ? pos : neg;
-    stringChanged = (data.USPAPI_OPTED_OUT) ? pos : neg;
 
-    if (!beforeGPC[0]) {
+    if (!beforeGPCUSPAPI && !beforeGPCUSPCookies) {
       stringFound = neg;
     } else {
-      stringFound = ((beforeGPC.length != 0) && isValidSignalIAB(beforeGPC[0].uspString)) ? pos : neg;
+      let existsUSP = ((beforeGPCUSPAPI.length != 0) || (beforeGPCUSPCookies.length != 0)) ? true : false;
+      let existsAndIsValidBeforeGPCUSPAPI;
+      let existsAndIsValidBeforeGPCUSPCookies;
+  
+      if (beforeGPCUSPAPI && beforeGPCUSPAPI[0] && beforeGPCUSPAPI[0].uspString) {
+        existsAndIsValidBeforeGPCUSPAPI = isValidSignalIAB(beforeGPCUSPAPI[0].uspString)
+      } else {
+        existsAndIsValidBeforeGPCUSPAPI = false;
+      }
+      if (beforeGPCUSPCookies && beforeGPCUSPCookies[0] && beforeGPCUSPCookies[0].value) {
+        existsAndIsValidBeforeGPCUSPCookies = isValidSignalIAB(beforeGPCUSPCookies[0].value)
+      } else {
+        existsAndIsValidBeforeGPCUSPCookies = false;
+      }
+  
+      stringFound = (existsUSP && 
+        (existsAndIsValidBeforeGPCUSPAPI || existsAndIsValidBeforeGPCUSPCookies))
+        ? pos : neg;
     }
 
     if (typeof optedOut === 'string') {

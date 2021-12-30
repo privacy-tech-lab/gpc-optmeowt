@@ -37,6 +37,19 @@ const uspapi = `
   }
 `
 
+const uspapiRequest = `
+  try {
+    __uspapi('getUSPData', 1, (data) => {
+      console.log("USP Data: ", data);
+      let currURL = document.URL
+      window.postMessage({ type: "USPAPI_TO_CONTENT_SCRIPT_REQUEST", result: data, url: currURL });
+    });
+  } catch (e) {
+    console.log("Failed calling USPAPI", e);
+    window.postMessage({ type: "USPAPI_TO_CONTENT_SCRIPT_REQUEST", result: "USPAPI_FAILED" });
+  }
+`
+
 const runAnalysisProperty = `
 if (!window.runAnalysis) {
     window.runAnalysis = function() {
@@ -94,7 +107,7 @@ async function getWellknown(url) {
 	/* (2) Injects scripts */
   window.addEventListener('load', function() {
     console.log("running window.onload");
-    injectScript(uspapi);
+    // injectScript(uspapi);
 		injectScript(runAnalysisProperty);
 	}, false);
 
@@ -111,6 +124,13 @@ async function getWellknown(url) {
 /******************************************************************************/
 
 
+chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
+  if (message.msg === "USPAPI_FETCH_REQUEST") {
+    console.log("injecting uspapi call to content script")
+    injectScript(uspapiRequest);
+  }
+});
+
 window.addEventListener('message', function(event) {
 // console.log("EVENT: ", event);
   if (event.data.type == "USPAPI_TO_CONTENT_SCRIPT"
@@ -120,7 +140,14 @@ window.addEventListener('message', function(event) {
     chrome.runtime.sendMessage({ 
       msg: "USPAPI_TO_BACKGROUND", 
       data: event.data.result, 
-      location: this.location.href 
+      location: this.location.href
+    });
+  }
+  if (event.data.type == "USPAPI_TO_CONTENT_SCRIPT_REQUEST") {
+    chrome.runtime.sendMessage({
+      msg: "USPAPI_TO_BACKGROUND_FROM_FETCH_REQUEST", 
+      data: event.data.result, 
+      location: this.location.href
     });
   }
 	if (event.data.type == "RUN_ANALYSIS") {
