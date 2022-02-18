@@ -116,7 +116,7 @@ Currently does nothing. It's in here so we don't forget to implement it.
 
 ## `dom.js`
 
-Attaches the DOM signal to pages approved for our signals. This file gets initialized via a `chrome.tabs.executeScript` call from `events.js` when necessary.
+Attaches the DOM signal to pages approved for our signals. This file gets initialized via a `chrome.scripting.executeScript` call from `events.js` when necessary.
 
 Currently, this is broken for Chrome.
 
