@@ -48,11 +48,11 @@
     "open_in_tab": true
   },
   "background": {
-    "scripts": ["background.bundle.js"]
+    "service_worker": "background.bundle.js"
   },
   "manifest_version": 3,
-  "web_accessible_resources": [
-    "json/*.json"
-  ],
+  "web_accessible_resources": [{
+    "resources" : ["json/*.json"]
+  }],
   "incognito": "spanning"
 }

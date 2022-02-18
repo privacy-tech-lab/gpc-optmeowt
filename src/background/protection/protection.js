@@ -149,11 +149,13 @@ function addHeaders(details) {
  * @param {object} details - retrieved info passed into callback
  */
 function addDomSignal(details) {
-  chrome.scripting.executeScript(details.tabId, {
-    file: "dom.js",
-    frameId: details.frameId, // Supposed to solve multiple injections
-                              // as opposed to allFrames: true
-    runAt: "document_start",
+  chrome.scripting.executeScript({
+    files: ["dom.js"],
+    target: {
+      frameIds: details.frameId,
+      tabId: details.tabId, 
+    },    // Supposed to solve multiple injections as opposed to allFrames: true
+    // runAt: "document_start", // defaults to 'document_idle'
   });
 }
 
