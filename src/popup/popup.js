@@ -715,14 +715,21 @@ async function buildAnalysis(data) {
   let uspStringBeforeGPC;
   let uspStringAfterGPC;
 
+  // console.log("beforeGPCUSPCookies", beforeGPCUSPCookies);
+  // console.log("afterGPCUSPCookies", afterGPCUSPCookies);
+
   // Generate the US Privacy String BEFORE GPC is sent
   // Give priority to the USPAPI over USP Cookie
   if (beforeGPCUSPAPI && beforeGPCUSPAPI[0] && beforeGPCUSPAPI[0]["uspString"]) {
-    uspStringBeforeGPC = beforeGPCUSPAPI[0]["uspString"];
+    // console.log("Triggering 1A:")
+    uspStringBeforeGPC = beforeGPCUSPAPI[0]["uspString"];   // USPAPI exists
   } else {
+    // console.log("Triggering 1B:")
     if (beforeGPCUSPCookies && beforeGPCUSPCookies[0] && beforeGPCUSPCookies[0]["value"]) {
-      uspStringBeforeGPC = beforeGPCUSPCookies[0]["value"];
+      // console.log("Triggering 1C:")
+      uspStringBeforeGPC = beforeGPCUSPCookies[0]["value"]; // USP Cookie exists
     } else {
+      // console.log("Triggering 1D:")
       uspStringBeforeGPC = data.USPAPI_OPTED_OUT || data.USP_COOKIE_OPTED_OUT;
     }
   }
@@ -730,11 +737,15 @@ async function buildAnalysis(data) {
   // Generate the US Privacy String AFTER GPC is sent
   // Give priority to the USPAPI over USP Cookie
   if (afterGPCUSPAPI && afterGPCUSPAPI[0] && afterGPCUSPAPI[0]["uspString"]) {
+    // console.log("Triggering 2A:")
     uspStringAfterGPC = afterGPCUSPAPI[0]["uspString"];
   } else {
+    // console.log("Triggering 2B");
     if (afterGPCUSPCookies && afterGPCUSPCookies[0] && afterGPCUSPCookies[0]["value"]) {
+      // console.log("Triggering 2C");
       uspStringAfterGPC = afterGPCUSPCookies[0]["value"];
     } else {
+      // console.log("Triggering 2D");
       uspStringAfterGPC = data.USPAPI_OPTED_OUT || data.USP_COOKIE_OPTED_OUT;
     }
   }
@@ -764,18 +775,23 @@ async function buildAnalysis(data) {
 
   let stringChanged;
   let optedOut;
-  if (data.USPAPI_OPTED_OUT !== null || data.USPAPI_OPTED_OUT !== undefined) {
+  if (data.USPAPI_OPTED_OUT) {
     optedOut = data.USPAPI_OPTED_OUT;
   } else {
     optedOut = data.USP_COOKIE_OPTED_OUT;
   }
   if (typeof optedOut === 'string') {
+    // console.log("Triggering 3A:");
     if (optedOut === "PARSE_FAILED") {
+      // console.log("Triggering 3B:");
       stringChanged = neg;
     } else if (optedOut === "NOT_IN_CA") {
+      // console.log("Triggering 3C:");
       stringChanged = neg;
     }
   } else {
+    // console.log("Triggering 3D:");
+    // console.log("optedOut: ", optedOut);
     stringChanged = optedOut ? pos : neg;
   }
   // console.log("data.USP_OPTED_OUT", data.USP_OPTED_OUT);

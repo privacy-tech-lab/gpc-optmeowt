@@ -182,7 +182,7 @@ async function buildList() {
     let afterGPCUSPCookies  = data.USP_COOKIES_AFTER_GPC;
     let optedOut;
 
-    if (data.USPAPI_OPTED_OUT !== null || data.USPAPI_OPTED_OUT !== undefined) {
+    if (data.USPAPI_OPTED_OUT) {
       optedOut = data.USPAPI_OPTED_OUT;
     } else {
       optedOut = data.USP_COOKIE_OPTED_OUT;
