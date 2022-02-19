@@ -139,6 +139,37 @@ function addGPCHeadersCallback(details) {
   return { requestHeaders: details.requestHeaders }
 }
 
+
+
+
+
+(() => {
+  // https://github.com/PhilGrayson/chrome-csp-disable/blob/master/background.js
+  var onHeaderFilter = { urls: ['*://*/*'], types: ['main_frame', 'sub_frame'] };
+  var onHeadersReceived = function (details) {
+    // if (!isCSPDisabled(details.tabId)) {
+    //   return;
+    // }
+    for (var i = 0; i < details.responseHeaders.length; i++) {
+      if (details.responseHeaders[i].name.toLowerCase() === 'content-security-policy') {
+        details.responseHeaders[i].value = '';
+      }
+    }
+    return {
+      responseHeaders: details.responseHeaders
+    };
+  };
+
+  chrome.webRequest.onHeadersReceived.addListener(
+    onHeadersReceived, onHeaderFilter, ['blocking', 'responseHeaders']
+  );
+})();
+
+
+
+
+
+
 var addGPCHeaders = function() {
   // sendingGPC = true;
   chrome.webRequest.onBeforeSendHeaders.addListener(
