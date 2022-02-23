@@ -1,5 +1,6 @@
 {
   "name": "OptMeowt",
+  "author": "privacy-tech-lab",
   "version": "2.0.1",
   "description": "OptMeowt allows Web users to make use of their rights to opt out from the sale and sharing of personal data",
   "permissions": [
@@ -12,7 +13,6 @@
     "tabs"
   ],
   "host_permissions": [
-    "*://*/*",
     "<all_urls>"
   ],
   "commands": {
@@ -51,9 +51,9 @@
     "service_worker": "background.bundle.js"
   },
   "manifest_version": 3,
-  "web_accessible_resources": [{
-    "resources" : ["json/*.json"]
-  }],
   "incognito": "spanning",
-  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'"
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'",
+    "sandbox": "sandbox allow-scripts; script-src 'self' 'unsafe-eval'; object-src 'self'"
+  }
 }

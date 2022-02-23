@@ -35,7 +35,7 @@ module.exports = (env, argv) => {
 			path: path.resolve(__dirname, `${isProduction ? "dist" : "dev"}/${browser}` ),
 			// publicPath: "/",
 		},
-		devtool: isProduction ? "source-map" : "eval-source-map",
+		devtool: isProduction ? "source-map" : "cheap-source-map",
 		devServer: {
 			open: true,
 			host: "localhost",
