@@ -1,0 +1,15 @@
+[
+	{
+		"id": 1,
+		"priority": 1,
+		"action": {
+		  "type": "modifyHeaders",
+		  "responseHeaders": [
+			{ "header": "Sec-GPC", "operation": "set", "value": "1" }
+		  ]
+		},
+		"condition": { 
+			"urlFilter": "<all_urls>" 
+		}
+	}
+]

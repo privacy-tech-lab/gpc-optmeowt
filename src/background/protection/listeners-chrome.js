@@ -47,6 +47,7 @@ function enableListeners(callbacks) {
 	} = callbacks;
 
 	// (4) global Chrome listeners
+	// chrome.declarativeNetRequest.addListener()
 	chrome.webRequest.onBeforeSendHeaders.addListener(
 	  onBeforeSendHeaders,
 	  FILTER,

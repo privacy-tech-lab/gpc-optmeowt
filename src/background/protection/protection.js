@@ -39,6 +39,8 @@ var signalPerTab = {};  // Caches if a signal is sent to render the popup icon
 var activeTabID = 0;    // Caches current active tab id
 var sendSignal = true;  // Caches if the signal can be sent to the curr domain
 
+console.log("TABS", tabs);
+
 var isFirefox = ("$BROWSER" === "firefox");
 
 
@@ -73,18 +75,18 @@ const listenerCallbacks = {
    * @returns {array} details.requestHeaders from addHeaders 
    */
   onBeforeSendHeaders: (details) => {
-    // await updateDomainsAndSignal(details);
-    updateDomainlistAndSignal(details);
+    // // await updateDomainsAndSignal(details);
+    // updateDomainlistAndSignal(details);
 
-    if (sendSignal) {
-      signalPerTab[details.tabId] = true;
-      initIAB();
-      updatePopupIcon(details);
-      return addHeaders(details);
-    }
-    // else {
-    //   return details
+    // if (sendSignal) {
+    //   signalPerTab[details.tabId] = true;
+    //   initIAB();
+    //   updatePopupIcon(details);
+    //   return addHeaders(details);
     // }
+    // // else {
+    // //   return details
+    // // }
   },
 
   /**
@@ -104,6 +106,7 @@ const listenerCallbacks = {
       wellknown[details.tabId] = null;
       signalPerTab[details.tabId] = false;
       tabs[activeTabID].REQUEST_DOMAINS = {};
+      console.log("TABS 1", tabs)
     }
   },
 
@@ -149,6 +152,7 @@ function addHeaders(details) {
  * @param {object} details - retrieved info passed into callback
  */
 function addDomSignal(details) {
+  console.log("TABS 2", tabs)
   chrome.scripting.executeScript({
     files: ["dom.js"],
     target: {
