@@ -156,7 +156,7 @@ function addDomSignal(details) {
   chrome.scripting.executeScript({
     files: ["dom.js"],
     target: {
-      frameIds: details.frameId,
+      frameIds: [details.frameId],
       tabId: details.tabId, 
     },    // Supposed to solve multiple injections as opposed to allFrames: true
     // runAt: "document_start", // defaults to 'document_idle'

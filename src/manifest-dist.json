@@ -15,7 +15,7 @@
   ],
   "declarative_net_request": {
     "rule_resources": [{
-      "id": "GPC_everywhere",
+      "id": "universal_GPC",
       "enabled": true,
       "path": "rules.json"
     }]
