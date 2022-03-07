@@ -14,11 +14,18 @@
     "scripting"
   ],
   "declarative_net_request": {
-    "rule_resources": [{
-      "id": "universal_GPC",
-      "enabled": true,
-      "path": "rules.json"
-    }]
+    "rule_resources": [
+      {
+        "id": "universal_GPC",
+        "enabled": true,
+        "path": "rules/universal_gpc_rules.json"
+      },
+      {
+        "id": "GPC_exceptions",
+        "enabled": true,
+        "path": "rules/gpc_exceptions_rules.json"
+      }
+    ]
   },
   "host_permissions": [
     "<all_urls>"

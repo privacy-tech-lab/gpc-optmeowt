@@ -19,6 +19,8 @@ import { modes } from "../data/modes.js";
 import { defaultSettings } from "../data/defaultSettings.js";
 import { stores, storage } from "./storage.js";
 
+import { addDynamicRule } from '../editRules';
+
 var mode = defaultSettings.MODE;
 var isEnabled = defaultSettings.IS_ENABLED;
 var isDomainlisted = defaultSettings.IS_DOMAINLISTED;
@@ -45,6 +47,12 @@ function disable() {
   haltAnalysis();
   haltProtection();
 }
+
+
+
+
+addDynamicRule(2, "nytimes.com");
+
 
 
 /******************************************************************************/

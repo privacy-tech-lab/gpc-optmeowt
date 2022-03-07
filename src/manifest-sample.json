@@ -1,0 +1,19 @@
+{
+	"name": "GPC sample extension",
+	"description": "Sample GPC extension that attaches the Sec-GPC and Do Not Track request headers to all requests. Implemented with declarativeNetRequest.", 
+	"version": "1",
+	"declarative_net_request": {
+		"rule_resources": [{
+			"id": "universal_GPC",
+			"enabled": true,
+			"path": "rules.json"
+		}]
+	},
+	"permissions": [
+		"declarativeNetRequest"
+	],
+	"host_permissions": [
+		"<all_urls>"
+	],
+	"manifest_version": 3
+}

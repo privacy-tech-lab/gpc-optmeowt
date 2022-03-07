@@ -92,7 +92,7 @@ module.exports = (env, argv) => {
 				to: "manifest.json"}],
 			}),
 			new CopyPlugin({
-				patterns: [{ context: path.resolve(__dirname, "src"), from: "rules.json" }],
+				patterns: [{ context: path.resolve(__dirname, "src"), from: "rules", to: "rules" }],
 			}),
 			new CopyPlugin({
 				patterns: [{ context: path.resolve(__dirname, "src/background/protection"), from: "dom.js" }],
