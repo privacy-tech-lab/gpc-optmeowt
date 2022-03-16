@@ -25,7 +25,7 @@ OptMeowt ("Opt Me Out") is a browser extension for opting you out from web track
   <a href="https://chrome.google.com/webstore/detail/optmeowt/hdbnkdbhglahihjdbodmfefogcjbpgbo"><img src="https://github.com/privacy-tech-lab/gpc-optmeowt/blob/main/chrome-web-store-badge.png" width="200px" alt="Chrome Web Store badge"></a>
 <p>
 
-OptMeowt is developed and maintained by Kuba Alicki (@kalicki1), Oliver Wang (@OliverWang13), and Sebastian Zimmeck (@SebastianZimmeck) of the [privacy-tech-lab](https://www.privacytechlab.org/). Stanley Markman (@stanleymarkman), Kiryl Beliauski (@kbeliauski), Daniel Knopf (@dknopf), and Abdallah Salia (@asalia-1) contributed earlier.
+OptMeowt is developed and maintained by Kuba Alicki (@kalicki1), Oliver Wang (@OliverWang13), Sophie Eng (@sophieeng), and Sebastian Zimmeck (@SebastianZimmeck) of the [privacy-tech-lab](https://www.privacytechlab.org/). Stanley Markman (@stanleymarkman), Kiryl Beliauski (@kbeliauski), Daniel Knopf (@dknopf), and Abdallah Salia (@asalia-1) contributed earlier.
 
 ## How does OptMeowt work?
 
