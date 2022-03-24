@@ -22,6 +22,8 @@ import { initCookiesPerDomain } from "./cookiesOnInstall.js";
 import { initCookiesOnInstall } from "./cookiesOnInstall.js";
 import psl from "psl";
 
+// TODO: Remove this when done
+import { addDynamicRule, removeDynamicRule } from "../../editRules"
 
 
 /******************************************************************************/
@@ -87,6 +89,11 @@ const listenerCallbacks = {
     // // else {
     // //   return details
     // // }
+    // TODO: Remove this when done
+    (async() => {
+      let s = await storage.getStore(stores.domainlist)
+      console.log("STORE: ", s)
+    })();
   },
 
   /**
@@ -375,10 +382,14 @@ async function onMessageHandler(message, sender, sendResponse) {
   if (message.msg === "SET_TO_DOMAINLIST") {
     let { domain, key } = message.data;
     domainlist[domain] = key;                     // Sets to cache
+    // findId()
+    addDynamicRule(id, domain)
     storage.set(stores.domainlist, key, domain);  // Sets to long term storage
   }
   if (message.msg === "REMOVE_FROM_DOMAINLIST") {
     let domain = message.data;
+    // findId()
+    removeDynamicRule(id, domain)
     storage.delete(stores.domainlist, domain);
     delete domainlist[domain];
   }

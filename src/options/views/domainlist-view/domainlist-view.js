@@ -64,6 +64,11 @@ export async function toggleListener(elementId, domain) {
  * buttons for each domain
  */
  async function createToggleListeners() {
+  // TODO: Remove this when done
+  (async() => {
+    let s = await storage.getStore(stores.domainlist)
+    console.log("STORE: ", s)
+  })();
   const domainlistKeys = await storage.getAllKeys(stores.domainlist)
   const domainlistValues = await storage.getAll(stores.domainlist)
   let domain;
