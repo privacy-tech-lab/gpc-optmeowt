@@ -39,12 +39,85 @@ const stores = Object.freeze({
 });
 
 
-// TODO: Update these two
-function getFreshId() {
+///////////////////////////////
+/// TODO: REMOVE THIS/////////
+/////////////////////////////
+/**
+ * const ruleIds = [
+ *     {    // Implicitly element 0 (0 - 4999)
+ *         'taken': true,
+ *         'domain': 'duck.com'
+ *     },
+ *     .
+ *     .
+ *     .
+ *     {
+ *         'taken': false,
+ *         'domain': ''
+ *     }
+ * ]
+ */
 
+/**
+ * Ensures ruleIds exists in localstorage
+ * If not, creates ruleIds in localstorage
+ */
+async function ensureRuleIdsExists() {
+  let maxIds = chrome.declarativeNetRequest.MAX_NUMBER_OF_DYNAMIC_AND_SESSION_RULES;
+  let result = await chrome.storage.local.get('ruleIds');
+  let ruleIds = result.ruleIds;
+  if (ruleIds.length === 0) {
+    let newRuleIdsComponent = {
+      'taken': false,
+      'domain': ''
+    };
+    let newRuleIds = [];
+    for (let i=0; i<maxIds; i++) {
+      newRuleIds.push(newRuleIdsComponent);
+    }
+    chrome.storage.local.set({ 'ruleIds': newRuleIds });
+  }
 }
-function freeId() {
 
+/**
+ * Gets fresh rule ID for new DeclarativeNetRequest dynamic rule
+ * @returns {(number|null)} - number of fresh ID, null if non available
+ *
+ * NOTE: ruleIds from localstorage takes the following form: 
+ * let ruleIds: Array<{ 'taken': bool, 'domain': string }>
+ */
+async function getFreshId() {
+  await ensureRuleIdsExists();
+  let result = await chrome.storage.local.get(['ruleIds']);
+  console.log('here is the result: ', result);
+  let ruleIds = result.ruleIds;
+  let freshId = null;
+
+  // for (let i=0; i<5000; i++) {
+  for (let i=0; i<ruleIds.length; i++) {
+    if (!ruleIds[i]['taken']) {
+      ruleIds[i]['taken'] = true; // TODO: Have this sync to localstorage
+      ruleIds[i]['domain'] = '';
+      freshId = i;
+      break;
+    }
+  }
+  chrome.storage.local.set({ 'ruleIds': ruleIds })
+  return freshId;
+}
+
+/**
+ * Removes rule with id 'id' from localstorage
+ * @param {number} id - Id of dynamic rule to be removed
+ */
+async function freeId(id) {
+  await ensureRuleIdsExists();
+  let result = await chrome.storage.local.get('ruleIds');
+  let ruleIds = result.ruleIds;
+  ruleIds[id]['taken'] = false;
+  ruleIds[id]['domain'] = '';
+  chrome.storage.local.set({ 'ruleIds': ruleIds })
+  return
 }
 
 
@@ -177,5 +250,7 @@ export {
     handleUpload,
     // extensionMode,
     stores,
-    storage
+    storage,
+    getFreshId,
+    freeId
 }

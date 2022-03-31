@@ -484,7 +484,7 @@ function initSetup () {
   // Runs on startup to initialize the cached current tab variable
   chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
     if (tabs.id) {
-      activeTabID = tab.id;
+      activeTabID = tabs.id;
     }
   });
 

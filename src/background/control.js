@@ -17,7 +17,7 @@ import { init as initProtection, halt as haltProtection, halt } from "./protecti
 import { init as initAnalysis, halt as haltAnalysis } from "./analysis/analysis.js";
 import { modes } from "../data/modes.js";
 import { defaultSettings } from "../data/defaultSettings.js";
-import { stores, storage } from "./storage.js";
+import { stores, storage, getFreshId, freeId } from "./storage.js";
 
 import { addDynamicRule } from '../editRules';
 
@@ -49,9 +49,22 @@ function disable() {
 }
 
 
-
-
+////////////////////////////////////////////////////////////////////////////////
+//              TODO: DEBUGGING PURPOSES - REMOVE THIS /////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 addDynamicRule(2, "nytimes.com");
+(async () => { 
+  console.log('getFreshId: ', await getFreshId());
+  console.log('getFreshId: ', await getFreshId());
+  console.log('getFreshId: ', await getFreshId());
+  await freeId(7);
+
+  chrome.storage.local.get(['ruleIds'], (res) => {
+    console.log('here is ruleIds from localstorage', res);
+  })
+})();
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 
 
 
