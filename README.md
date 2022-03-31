@@ -62,6 +62,19 @@ In detail, OptMeowt uses five methods to opt you out:
 
 **Note:** OptMeowt is in active development and new features are frequently added, some of which may cause errors. You can always get the stable release version on the [Chrome Web Store](https://chrome.google.com/webstore/detail/optmeowt/hdbnkdbhglahihjdbodmfefogcjbpgbo) and on [Firefox Add-Ons](https://addons.mozilla.org/en-US/firefox/addon/optmeowt/).
 
+  
+## Analysis Mode (Firefox only)
+Note: Analysis Mode **must** be run in a fresh browser without cookies or other user data. Additionally, legal obligations to respect GPC differ by geographic location. Our lab used a VPN pointing to Los Angeles to collect our data.
+1. Load the extension, open the popup and click "Protection" to switch to Analysis Mode
+1. Clear all cookies and all user data
+1. Navigate to a site that you wish to analyze
+1. Wait until 5 seconds pass after the site is fully loaded (i.e., refresh icon does not change back to an X)
+1. Open the popup and hit `run analysis` (alternatively, `Alt+Shift+A`). If this step is done correctly the optmeowt popup logo will change yellow.
+1. Repeat step 4 (Simply wait for the site to finish loading without refreshing)
+1. Open the popup and hit `stop analysis` (alternatively, `ALt+Shift+S`). If this step is done correctly the optmeowt popup logo will return to green.
+1. Open the popup to see the results of analysis
+
+
 ## Installing OptMeowt for Developers
 
 To build the development versions of OptMeowt follow the directions above but replace `npm run build` with `npm run start`. This command will run the npm script (referenced in `package.json`) that will call Webpack in development mode (Webpack settings in `webpack.config.js`). `npm run start` will also initiate Webpack servers for both the Firefox and Chrome versions, which will listen for changes as you work and rebuild as necessary.
@@ -130,8 +143,7 @@ OptMeowt uses various [third party libraries](https://github.com/privacy-tech-la
 ## Developer Guide
   
 ### Keyboard Shortcuts
-  
-**Analysis Mode**
+
 - `Alt+Shift+A` — runs `a`nalysis (eq. to clicking `Run Analysis` in popup)
 - `Alt+Shift+S` — `s`tops analysis (eq. to clicking `Stop Analysis` in popup)
   
