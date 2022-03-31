@@ -59,6 +59,13 @@ const stores = Object.freeze({
  */
 
 /**
+ * WARNING: Clears ruleIds from storage
+ */
+async function wipeRuleIdsFromStorage() {
+    chrome.storage.local.set({ 'ruleIds': [] });
+}
+
+/**
  * Ensures ruleIds exists in localstorage
  * If not, creates ruleIds in localstorage
  */
