@@ -66,7 +66,9 @@ In detail, OptMeowt uses five methods to opt you out:
 ## Analysis Mode (Firefox only)
 Analysis Mode is used to investigate the GPC compliance of a given site. While not every site is required to respect GPC, this function of OptMeowt checks whether a site is compliant by searching for a DNS link (implying compliance), checking the US Privacy String, sending a GPC signal, and rechecking the US Privacy String. If the GPC signal is received, the US Privacy string should change the third character to a Y (i.e. 1YNN to 1YYN). If not, the site is not properly respecting GPC.
 
-Note: Analysis Mode **must** be run in a fresh browser without cookies or other user data. Additionally, legal obligations to respect GPC differ by geographic location. Our lab used a VPN pointing to Los Angeles to collect our data.
+**Warning:** Do **not** browse normally in Analysis Mode. Analysis Mode disables the Content Security Policy on every site you visit. We do this to ensure that we can run an analysis on every site, however this can leave you susceptible to cross-site scripting and other malicious attacks. 
+
+**Usage Note:** Analysis Mode **must** be run in a fresh browser without cookies or other user data. Additionally, legal obligations to respect GPC differ by geographic location. Our lab used a VPN pointing to Los Angeles to collect our data.
 
 1. Load the extension, open the popup and click "Protection" to switch to Analysis Mode
 2. Clear all cookies and all user data

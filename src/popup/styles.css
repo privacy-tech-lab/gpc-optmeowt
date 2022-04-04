@@ -14,7 +14,17 @@ styles.css is the main css page for OptMeowt's popup page
 
 :root {
   --text-gray: rgb(89,98,127);
+}
 
+.small-warning-box {
+  color:white;
+  background-color:#DB4437;
+  padding-left: 10px;
+  padding-right:5px;
+  padding-top:5px;
+  padding-bottom:5px;
+  border-radius: 5px;
+  text-align:left;
 }
 
 .importexport-button {
