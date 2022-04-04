@@ -29,6 +29,10 @@ This can potentially extend into other privacy flags into the future. A more
 direct task nearer to the immediate future is to check how CMP (OneTrust, etc.)
 sites handle opt-out cookies and how they track in accordance with sending a 
 GPC signal to a site that also has/does not have usprivacy strings. 
+
+WARNING:  Content Security Policies are DISABLED while Analysis Mode is ON.
+- This leaves you potentially vulnerable to cross-site scripting attacks!
+- See disableCSPPerRequest function for more details
 */
 
 
@@ -140,34 +144,23 @@ function addGPCHeadersCallback(details) {
 }
 
 
-
-
-
-(() => {
-  // https://github.com/PhilGrayson/chrome-csp-disable/blob/master/background.js
-  var onHeaderFilter = { urls: ['*://*/*'], types: ['main_frame', 'sub_frame'] };
-  var onHeadersReceived = function (details) {
-    // if (!isCSPDisabled(details.tabId)) {
-    //   return;
-    // }
-    for (var i = 0; i < details.responseHeaders.length; i++) {
-      if (details.responseHeaders[i].name.toLowerCase() === 'content-security-policy') {
-        details.responseHeaders[i].value = '';
-      }
+/**
+ * WARNING: Disables CSP for ALL sites while Analysis Mode is ON.
+ * Catches the few sites that didn't work in our initial study.
+ * https://github.com/PhilGrayson/chrome-csp-disable/blob/master/background.js
+ */
+function disableCSPCallback(details) {
+  // if (!isCSPDisabled(details.tabId)) {
+  //   return;
+  // }
+  for (var i = 0; i < details.responseHeaders.length; i++) {
+    if (details.responseHeaders[i].name.toLowerCase() === 'content-security-policy') {
+      details.responseHeaders[i].value = '';
     }
-    return {
-      responseHeaders: details.responseHeaders
-    };
-  };
-
-  chrome.webRequest.onHeadersReceived.addListener(
-    onHeadersReceived, onHeaderFilter, ['blocking', 'responseHeaders']
-  );
-})();
-
-
-
-
+  }
+  return { responseHeaders: details.responseHeaders };
+};
+let disableCSPFilter = { urls: ['*://*/*'], types: ['main_frame', 'sub_frame'] };
 
 
 var addGPCHeaders = function() {
@@ -794,6 +787,9 @@ function enableListeners() {
   chrome.runtime.onMessage.addListener(onMessageHandler);
   chrome.runtime.onConnect.addListener(onConnectHandler);
   chrome.commands.onCommand.addListener(commandsHandler);
+  chrome.webRequest.onHeadersReceived.addListener(
+    disableCSPCallback, disableCSPFilter, ['blocking', 'responseHeaders']
+  );
 }
 
 function disableListeners() {
@@ -802,6 +798,7 @@ function disableListeners() {
   chrome.runtime.onMessage.removeListener(onMessageHandler);
   chrome.runtime.onConnect.removeListener(onConnectHandler);
   chrome.commands.onCommand.removeListener(commandsHandler);
+  chrome.webRequest.onHeadersReceived.removeListener(disableCSPCallback);
 }
 
 
