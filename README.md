@@ -64,15 +64,18 @@ In detail, OptMeowt uses five methods to opt you out:
 
   
 ## Analysis Mode (Firefox only)
+Analysis Mode is used to investigate the GPC compliance of a given site. While not every site is required to respect GPC, this function of OptMeowt checks whether a site is compliant by searching for a DNS link (implying compliance), checking the US Privacy String, sending a GPC signal, and rechecking the US Privacy String. If the GPC signal is received, the US Privacy string should change the third character to a Y (i.e. 1YNN to 1YYN). If not, the site is not properly respecting GPC.
+
 Note: Analysis Mode **must** be run in a fresh browser without cookies or other user data. Additionally, legal obligations to respect GPC differ by geographic location. Our lab used a VPN pointing to Los Angeles to collect our data.
+
 1. Load the extension, open the popup and click "Protection" to switch to Analysis Mode
-1. Clear all cookies and all user data
-1. Navigate to a site that you wish to analyze
-1. Wait until 5 seconds pass after the site is fully loaded (i.e., refresh icon does not change back to an X)
-1. Open the popup and hit `run analysis` (alternatively, `Alt+Shift+A`). If this step is done correctly the optmeowt popup logo will change yellow.
-1. Repeat step 4 (Simply wait for the site to finish loading without refreshing)
-1. Open the popup and hit `stop analysis` (alternatively, `ALt+Shift+S`). If this step is done correctly the optmeowt popup logo will return to green.
-1. Open the popup to see the results of analysis
+2. Clear all cookies and all user data
+3. Navigate to a site that you wish to analyze
+4. Wait until 5 seconds pass after the site is fully loaded (i.e., refresh icon does not change back to an X)
+5. Open the popup and hit `run analysis` (alternatively, `Alt+Shift+A`). If this step is done correctly the optmeowt popup logo will change yellow.
+6. Repeat step 4 (Simply wait for the site to finish loading without refreshing)
+7. Open the popup and hit `stop analysis` (alternatively, `ALt+Shift+S`). If this step is done correctly the optmeowt popup logo will return to green.
+8. Open the popup to see the results of analysis
 
 
 ## Installing OptMeowt for Developers
