@@ -19,7 +19,7 @@ import {
   storage,
   // extensionMode
 } from "../../../background/storage.js";
-import { csvGenerator } from "../../../background/csvGenerator.js";
+import { csvGenerator } from "../../../common/csvGenerator";
 import { modes } from "../../../data/modes.js";
 
 // Used in tutorial

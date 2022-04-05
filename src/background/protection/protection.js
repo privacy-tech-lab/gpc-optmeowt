@@ -23,7 +23,7 @@ import { initCookiesOnInstall } from "./cookiesOnInstall.js";
 import psl from "psl";
 
 // TODO: Remove this when done
-import { addDynamicRule, deleteDynamicRule } from "../../editRules"
+import { addDynamicRule, deleteDynamicRule } from "../../common/editRules"
 // import { getFreshId } from "../../domainlist-rules";
 
 

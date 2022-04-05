@@ -13,7 +13,7 @@ popup.js supplements and renders complex elements on popup.html
 
 import { stores, storage } from "../background/storage";
 import { isValidSignalIAB } from "../background/cookiesIAB";
-import { csvGenerator } from "../background/csvGenerator"
+import { csvGenerator } from "../common/csvGenerator"
 import { modes } from "../data/modes.js";
 import "../../node_modules/uikit/dist/css/uikit.min.css"
 import "../../node_modules/animate.css/animate.min.css"

@@ -19,10 +19,10 @@ import { init as initAnalysis, halt as haltAnalysis } from "./analysis/analysis.
 import { defaultSettings } from "../data/defaultSettings.js";
 import { modes } from "../data/modes.js";
 import { stores, storage } from "./storage.js";
-import { addDynamicRule, deleteAllDynamicRules, getFreshId } from '../editRules';
+import { addDynamicRule, deleteAllDynamicRules, getFreshId } from '../common/editRules';
 
 // TODO: Remove
-import { debugDomainlistAndRules } from '../editDomainlist';
+import { debug_domainlist_and_dynamicrules } from '../common/editDomainlist';
 
 async function enable() {
   let mode = await storage.get(stores.settings, "MODE");
@@ -72,7 +72,7 @@ function disable() {
 
 
 // TODO: Remove
-debugDomainlistAndRules();
+debug_domainlist_and_dynamicrules();
 
 
 // Opens the options page on extension install
