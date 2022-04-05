@@ -23,8 +23,10 @@ our main functionality
 // https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/webRequest/onBeforeRequest
 // https://developer.chrome.com/docs/extensions/reference/webRequest/
 // This is the extraInfoSpec array of strings
-const CHROME_REQUEST_SPEC = ["requestHeaders", "extraHeaders", "blocking"]
-const CHROME_RESPONSE_SPEC = ["responseHeaders", "extraHeaders", "blocking"]
+const CHROME_REQUEST_SPEC = ["requestHeaders", "extraHeaders"]
+const CHROME_RESPONSE_SPEC = ["responseHeaders", "extraHeaders"]
+// const CHROME_REQUEST_SPEC = ["requestHeaders", "extraHeaders", "blocking"]
+// const CHROME_RESPONSE_SPEC = ["responseHeaders", "extraHeaders", "blocking"]
 
 // This is the filter object
 const FILTER = { urls: ["<all_urls>"] }

@@ -898,6 +898,8 @@ async function buildComplianceInfo(data) {
 
 // Initializng a longterm port with the top-level background for the onDisconnect event
 let backgroundPort = chrome.runtime.connect({ name: "POPUP" });
+// TODO: THIS IS OUTMODED IN MV3
+// CHANGE THIS TO BE ASYNC NOW
 backgroundPort.postMessage({ msg: "REQUEST_MODE" });  // queries control.js for mode
 backgroundPort.onMessage.addListener(function(message) {
   if (message.msg === "RESPONSE_MODE") {  // when mode is recieved from control.js

@@ -23,7 +23,8 @@ import { initCookiesOnInstall } from "./cookiesOnInstall.js";
 import psl from "psl";
 
 // TODO: Remove this when done
-import { addDynamicRule, removeDynamicRule } from "../../editRules"
+import { addDynamicRule, deleteDynamicRule } from "../../editRules"
+// import { getFreshId } from "../../domainlist-rules";
 
 
 /******************************************************************************/
@@ -79,6 +80,7 @@ const listenerCallbacks = {
   onBeforeSendHeaders: (details) => {
     // // await updateDomainsAndSignal(details);
     // updateDomainlistAndSignal(details);
+    updateDomainlist(details);
 
     // if (sendSignal) {
     //   signalPerTab[details.tabId] = true;
@@ -92,8 +94,10 @@ const listenerCallbacks = {
     // TODO: Remove this when done
     (async() => {
       let s = await storage.getStore(stores.domainlist)
-      console.log("STORE: ", s)
+      console.log("Current Domainlist: ", s)
     })();
+
+
   },
 
   /**
@@ -123,7 +127,8 @@ const listenerCallbacks = {
    */
   onCommitted: async (details) => {
     // await updateDomainsAndSignal(details)
-    updateDomainlistAndSignal(details);
+    // updateDomainlistAndSignal(details);
+    updateDomainlist(details);
 
     if (sendSignal) {
       addDomSignal(details)
@@ -159,7 +164,7 @@ function addHeaders(details) {
  * @param {object} details - retrieved info passed into callback
  */
 function addDomSignal(details) {
-  console.log("TABS 2", tabs)
+  // console.log("TABS 2", tabs)
   chrome.scripting.executeScript({
     files: ["dom.js"],
     target: {
@@ -175,23 +180,34 @@ function addDomSignal(details) {
  * (1) Parse url to get domain for domainlist
  * (2) Update domains by adding current domain to domainlist in storage.
  * (3) Check to see if we should send signal.
+ * 
+ * Currently, it only adds to domainlist store as NULL if it doesnt exist
  * @param {Object} details - callback object according to Chrome API
  */
-function updateDomainlistAndSignal(details) {
+async function updateDomainlist(details) {
   let url = new URL(details.url);
   let parsedUrl = psl.parse(url.hostname);
   let parsedDomain = parsedUrl.domain;
 
-  let parsedDomainVal = domainlist[parsedDomain];
-  if (parsedDomainVal === undefined) {
-    storage.set(stores.domainlist, true, parsedDomain); // Sets to storage async
-    domainlist[parsedDomain] = true;                    // Sets to cache
-    parsedDomainVal = true;
+  // let freshId = await getFreshId();  // This is for adding rule exceptions
+  // if (freshId) {
+  //   // addDynamicRule(freshId, parsedDomain);
+  // } else {
+  //   console.error('No fresh ID currently available. \
+  //   Manage or delete items from domainlist to add more.');
+  // }
+
+  // let parsedDomainVal = domainlist[parsedDomain];
+  let currDomainValue = await storage.get(stores.domainlist, parsedDomain);
+  if (currDomainValue === undefined) {
+    storage.set(stores.domainlist, null, parsedDomain); // Sets to storage async
+    // domainlist[parsedDomain] = true;                    // Sets to cache
+    // parsedDomainVal = true;
   }
   
-  (isDomainlisted) 
-    ? ((parsedDomainVal === true) ? sendSignal = true : sendSignal = false)
-    : sendSignal = true;
+  // (isDomainlisted) 
+  //   ? ((parsedDomainVal === true) ? sendSignal = true : sendSignal = false)
+  //   : sendSignal = true;
 }
 
 function updatePopupIcon(details) {
@@ -389,7 +405,7 @@ async function onMessageHandler(message, sender, sendResponse) {
   if (message.msg === "REMOVE_FROM_DOMAINLIST") {
     let domain = message.data;
     // findId()
-    removeDynamicRule(id, domain)
+    deleteDynamicRule(id, domain)
     storage.delete(stores.domainlist, domain);
     delete domainlist[domain];
   }
