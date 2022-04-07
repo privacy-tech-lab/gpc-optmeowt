@@ -14,6 +14,11 @@ domainlist-view.js loads domainlist-view.html when clicked on the options page
 import { storage, stores } from '../../../background/storage.js';
 import { renderParse, fetchParse } from '../../components/util.js'
 
+import {
+  addDomainToDomainlistAndRules,
+  removeDomainFromDomainlistAndRules
+} from "../../../common/editDomainlist";
+
 
 /******************************************************************************/
 /***************************** Toggle Functions *******************************/
@@ -23,12 +28,12 @@ import { renderParse, fetchParse } from '../../components/util.js'
  * Generates the HTML that will build the domainlist switch for a given
  * domain in the domainlist
  * @param {string} domain - Any given domain
- * @param {bool} bool - Represents whether it is domainlisted or not
+ * @param {(number|null)} id - Dynamic rule ID if domainlisted as "excluded"
  * @return {string} - The stringified checkbox HTML compontent
  */
- export function buildToggle(domain, bool) {
+ export function buildToggle(domain, id) {
   let toggle;
-  if (bool) {
+  if (!id) {
     // checkbox = `<input type="checkbox" id="select ${domain}"
     //           class="check text-color dark-checkbox" checked />`;
     toggle = `<input type="checkbox" id="${domain}" checked />`;
@@ -48,13 +53,15 @@ import { renderParse, fetchParse } from '../../components/util.js'
  */
 export async function toggleListener(elementId, domain) {
   document.getElementById(elementId).addEventListener("click", async () => {
-    const domainValue = await storage.get(stores.domainlist, domain)
-    if (domainValue) {
+    const domainId = await storage.get(stores.domainlist, domain);
+    if (!domainId) {
       // await storage.set(stores.domainlist, false, domain)
-      chrome.runtime.sendMessage({ msg: "SET_TO_DOMAINLIST", data: { domain: domain, key: false } });
+      // chrome.runtime.sendMessage({ msg: "SET_TO_DOMAINLIST", data: { domain: domain, key: false } });
+      addDomainToDomainlistAndRules(domain);
     } else {
       // await storage.set(stores.domainlist, true, domain)
-      chrome.runtime.sendMessage({ msg: "SET_TO_DOMAINLIST", data: { domain: domain, key: true } });
+      // chrome.runtime.sendMessage({ msg: "SET_TO_DOMAINLIST", data: { domain: domain, key: true } });
+      removeDomainFromDomainlistAndRules(domain);
     }
   })
 }
@@ -66,11 +73,11 @@ export async function toggleListener(elementId, domain) {
  async function createToggleListeners() {
   // TODO: Remove this when done
   (async() => {
-    let s = await storage.getStore(stores.domainlist)
-    console.log("STORE: ", s)
+    let s = await storage.getStore(stores.domainlist);
+    console.log("STORE: ", s);
   })();
-  const domainlistKeys = await storage.getAllKeys(stores.domainlist)
-  const domainlistValues = await storage.getAll(stores.domainlist)
+  const domainlistKeys = await storage.getAllKeys(stores.domainlist);
+  const domainlistValues = await storage.getAll(stores.domainlist);
   let domain;
   let domainValue;
   for (let index in domainlistKeys) {
@@ -89,12 +96,16 @@ export async function toggleListener(elementId, domain) {
  function deleteButtonListener (domain) {
   document.getElementById(`delete ${domain}`).addEventListener("click",
     (async () => {
-      let deletePrompt = `Are you sure you would like to permanently delete this domain from the Domain List?`
+      // let deletePrompt = `Are you sure you would like to permanently delete this domain from the Domain List?`
+      let deletePrompt = `NOT IMPLEMENTED YET`
       let successPrompt = `Successfully deleted ${domain} from the Domain List.
 NOTE: It will be automatically added back to the list when the domain is requested again.`
       if (confirm(deletePrompt)) {
         // await storage.delete(stores.domainlist, domain)
-        chrome.runtime.sendMessage({ msg: "REMOVE_FROM_DOMAINLIST", data: domain });
+        // chrome.runtime.sendMessage({ msg: "REMOVE_FROM_DOMAINLIST", data: domain });
+        
+        // TODO: Implement
+        // await deleteDomainFromDomainlistAndRules(domain);
         alert(successPrompt)
         document.getElementById(`li ${domain}`).remove();
       }

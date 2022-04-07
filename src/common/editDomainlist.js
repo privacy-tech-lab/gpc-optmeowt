@@ -81,6 +81,12 @@ async function addDomainToDomainlistAndRules(domain) {
 	await storage.set(stores.domainlist, id, domain);   // record what rule the domain is associated to
 }
 
+async function removeDomainFromDomainlistAndRules(domain) {
+	let id = await storage.get(stores.domainlist, domain);
+	deleteDynamicRule(id);
+	await storage.set(stores.domainlist, null, domain);
+}
+
 /**
  * If you're calling this on an active domain, the id is in the domainlist
  * @param {string} domain 
@@ -142,7 +148,8 @@ async function print_rules_and_domainlist() {
 export {
 	deleteDomainlistAndDynamicRules,
 	addDomainToDomainlistAndRules,
-	removeDomainFromRules,	
+	removeDomainFromDomainlistAndRules,
+	// removeDomainFromRules,	
 
 	debug_domainlist_and_dynamicrules,	
 	print_rules_and_domainlist

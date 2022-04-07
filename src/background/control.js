@@ -72,7 +72,7 @@ function disable() {
 
 
 // TODO: Remove
-debug_domainlist_and_dynamicrules();
+// debug_domainlist_and_dynamicrules();
 
 
 // Opens the options page on extension install

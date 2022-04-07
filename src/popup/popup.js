@@ -26,6 +26,10 @@ import tippy from "../../node_modules/tippy.js/dist/tippy-bundle.umd";
 import UIkit from "uikit"
 import Darkmode from "../theme/darkmode";
 
+import {
+  addDomainToDomainlistAndRules,
+  removeDomainFromDomainlistAndRules
+} from "../common/editDomainlist";
 
 // Global scope settings variables
 var isEnabled;
@@ -44,6 +48,9 @@ var analysis_userend;
 // Darkmode
 const darkmode = new Darkmode();
 
+
+// TODO: Update the 3rd party domain listeners to correctly toggle their 3rd- \
+// TODO: --party sites, instead of the 1st party site (they all connect to that)
 
 /******************************************************************************/
 /******************************************************************************/
@@ -238,7 +245,8 @@ async function renderFirstPartyDomainDNSToggle() {
   if (parsedDomain) {
     try {
       const parsedDomainValue = await storage.get(stores.domainlist, parsedDomain);
-      if (parsedDomainValue) {
+      // TODO: Note: we must flip the logic here because of the logical truthiness flip in the domainlist
+      if (!parsedDomainValue) {
         checkbox = `<input type="checkbox" id="input" checked/><span></span>`;
         text = "Do Not Sell Enabled";
       } else {
@@ -263,12 +271,14 @@ async function listenerFirstPartyDomainDNSToggleCallback() {
   chrome.runtime.sendMessage({ msg: "CHANGE_IS_DOMAINLISTED", data: { isDomainlisted: true } });
   const parsedDomainValue = await storage.get(stores.domainlist, parsedDomain);
   let elemString = "";
-  if (parsedDomainValue) {
+  if (!parsedDomainValue) {
     elemString = "Do Not Sell Disabled";
-    setToDomainlist(parsedDomain, false);
+    // setToDomainlist(parsedDomain, false);
+    addDomainToDomainlistAndRules(parsedDomain);
   } else {
     elemString = "Do Not Sell Enabled";
-    setToDomainlist(parsedDomain, true);
+    // setToDomainlist(parsedDomain, true);
+    removeDomainFromDomainlistAndRules(parsedDomain);
   }
   document.getElementById("more-info-text").innerHTML = elemString;
 }
@@ -523,12 +533,14 @@ function addThirdPartyDomainDNSToggleListener(requestDomain) {
     chrome.runtime.sendMessage({ msg: "CHANGE_IS_DOMAINLISTED", data: { isDomainlisted: true } });
     const requestDomainValue = await storage.get(stores.domainlist, requestDomain)
     let elemString = "";
-    if (requestDomainValue) {
+    if (!requestDomainValue) {
       elemString = "Do Not Sell Disabled";
-      setToDomainlist(requestDomain, false);
+      // setToDomainlist(requestDomain, false);
+      addDomainToDomainlistAndRules(parsedDomain);
     } else {
       elemString = "Do Not Sell Enabled";
-      setToDomainlist(requestDomain, true);
+      // setToDomainlist(requestDomain, true);
+      removeDomainFromDomainlistAndRules(parsedDomain);
     }
     document.getElementById(`dns-enabled-text-${requestDomain}`).innerHTML = elemString;
   })
@@ -550,7 +562,7 @@ async function buildDomains(requests) {
     let text = ""
     // Find correct index
     let index = domainlistKeys.indexOf(requestDomain)
-    if (index > -1 && domainlistValues[index] === true) {
+    if (index > -1 && !domainlistValues[index]) {
       checkbox = `<input type="checkbox" id="input-${requestDomain}" checked/>`
       text = "Do Not Sell Enabled"
     } else {
