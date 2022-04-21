@@ -178,6 +178,17 @@ function walkthrough() {
   }
 }
 
+/** Survey intializing */
+function survey(){
+  let modal = UIkit.modal("#survey-modal");
+  modal.show();
+
+  document.getElementById("modal-button-1").onclick = function () {
+    modal.hide();
+  }
+}
+
+
 /******************************************************************************/
 
 /**
@@ -210,6 +221,7 @@ export async function settingsView(scaffoldTemplate) {
   }
 
   eventListeners();
+  survey();
 
   // Tutorial walkthrough
   const tutorialShown = await storage.get(stores.settings, 'TUTORIAL_SHOWN');
