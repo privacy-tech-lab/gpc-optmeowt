@@ -229,4 +229,5 @@ export async function settingsView(scaffoldTemplate) {
     walkthrough();
   }
   storage.set(stores.settings, true, 'TUTORIAL_SHOWN')
+  
 }
