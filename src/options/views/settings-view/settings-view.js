@@ -183,8 +183,12 @@ function survey(){
   let modal = UIkit.modal("#survey-modal");
   modal.show();
 
-  document.getElementById("modal-button-1").onclick = function () {
+  document.getElementById("survey-button-1").onclick = function () {
     modal.hide();
+  }
+  document.getElementById("survey-button-2").onclick = function () {
+    modal.hide();
+    window.location.href = "https://www.privacytechlab.org/optmeowt/";
   }
 }
 
@@ -221,7 +225,6 @@ export async function settingsView(scaffoldTemplate) {
   }
 
   eventListeners();
-  survey();
 
   // Tutorial walkthrough
   const tutorialShown = await storage.get(stores.settings, 'TUTORIAL_SHOWN');
@@ -229,5 +232,13 @@ export async function settingsView(scaffoldTemplate) {
     walkthrough();
   }
   storage.set(stores.settings, true, 'TUTORIAL_SHOWN')
+
+  // Survey popup
+  
+  const surveyShown = await storage.get(stores.settings, 'SURVEY_SHOWN');
+  if(surveyShown & tutorialShown){
+    survey();
+  }
+  storage.set(stores.settings, false, 'SURVEY_SHOWN')
   
 }

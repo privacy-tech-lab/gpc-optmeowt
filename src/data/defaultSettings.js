@@ -27,4 +27,5 @@ export const defaultSettings = {
 	'MODE': modes.protection,
 	'TUTORIAL_SHOWN': false,
 	'TUTORIAL_SHOWN_IN_POPUP': false,
+	'SURVEY_SHOWN': true,
 }

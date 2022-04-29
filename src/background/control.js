@@ -71,7 +71,9 @@ function disable() {
 
 // Opens the options page on extension install
 chrome.runtime.onInstalled.addListener(function (details) {
-  if (details.reason === 'install') {
+  if (details.reason === 'install' ) {
+    chrome.runtime.openOptionsPage((result) => {});
+  } else if (details.reason === 'update') {
     chrome.runtime.openOptionsPage((result) => {});
   }
 });
