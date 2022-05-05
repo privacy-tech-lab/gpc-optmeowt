@@ -28,7 +28,7 @@ module.exports = (env, argv) => {
 			background: "./src/background/control.js",
 			popup: "./src/popup/popup.js",
 			options: "./src/options/options.js",
-			contentScript: "./src/content-scripts/contentScript.js"
+			// contentScript: "./src/content-scripts/contentScript.js"
 		},
 		output: {
 			filename: "[name].bundle.js",
@@ -85,6 +85,12 @@ module.exports = (env, argv) => {
 			new CleanWebpackPlugin(),
 			new CopyPlugin({
 				patterns: [{ context: path.resolve(__dirname, "src"), from: "assets", to: "assets" }],
+			}),
+			new CopyPlugin({
+				patterns: [{ 
+					context: path.resolve(__dirname, "src"), 
+					from: "content-scripts", 
+					to: "content-scripts" }],
 			}),
 			new CopyPlugin({
 				patterns: [{ context: path.resolve(__dirname, "src"), 

@@ -53,6 +53,18 @@ function disable() {
 
 // This is the very first thing the extension runs
 (async () => {
+
+  // TODO: Temporarily register content script
+  chrome.scripting.registerContentScripts([
+    {
+      "id": "1",
+      "matches": ["<all_urls>"],
+      "js": ["content-scripts/registration/gpc-dom.js"],
+      "runAt": "document_start"
+    }
+  ])
+  .then(() => { console.log("Registered content script."); })
+
   // Initializes the default settings
   let settingsDB = await storage.getStore(stores.settings);
   for (let setting in defaultSettings) {

@@ -54,7 +54,7 @@
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["contentScript.bundle.js"],
+      "js": ["content-scripts/contentScript.js"],
       "run_at": "document_start"
     }
   ],
@@ -65,6 +65,10 @@
   "background": {
     "service_worker": "background.bundle.js"
   },
+  "web_accessible_resources": [{
+	  "resources": ["content-scripts/injection/gpc-dom.js"],
+	  "matches": ["<all_urls>"]
+	}],
   "manifest_version": 3,
   "incognito": "spanning",
   "content_security_policy": {
