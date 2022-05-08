@@ -160,7 +160,7 @@ Reminder: Users **must** "stop analysis" prior to changing sites to prevent reco
 - If you have questions about OptMeowt's functionality or have found a bug, please check out our [FAQ \ Known quirks](https://github.com/privacy-tech-lab/gpc-optmeowt/wiki/FAQ-%5C-Known-quirks) page on the [Wiki](https://github.com/privacy-tech-lab/gpc-optmeowt/wiki) first. If you cannot find what you are looking for, feel free to open an issue, and we will address it.
 - Note: When viewing your browser's console on a site, a 404 error regarding the domain's GPC status file (`/.well-known/gpc.json`) may be shown. Note that this is normal and will occur (1) on domains that do not support GPC and (2) on domains that support GPC but do not host a `/.well-known/gpc.json` file.
 
-##  10. Thank You!
+## 10. Thank You!
 
 <p align="center"><strong>We would like to thank our financial supporters!</strong></p><br>
 
