@@ -27,6 +27,8 @@
   "homepage": "https://github.com/privacy-tech-lab/gpc-optmeowt#readme",
   "dependencies": {
     "@popperjs/core": "^2.10.0",
+    "acorn": "^8.7.1",
+    "ajv": "^8.11.0",
     "animate.css": "^4.1.1",
     "axios": "^0.21.4",
     "dark-mode-switch": "^1.0.0",
@@ -53,7 +55,6 @@
     "string-replace-loader": "^3.0.3",
     "style-loader": "^2.0.0",
     "wait-on": "^5.3.0",
-    "web-ext": "^6.3.0",
     "webpack": "^5.51.2",
     "webpack-cli": "^4.8.0",
     "webpack-dev-server": "^4.2.1",
