@@ -391,6 +391,12 @@ function onConnectHandler(port) {
    */
 async function onMessageHandler(message, sender, sendResponse) {
   // console.log(`Recieved message @ background page.`);
+  if (message.msg === "APPEND_GPC_PROP") {
+    const response = {
+      sendGPC: true
+    }
+    sendResponse(response);
+  }
   if (message.msg === "CHANGE_IS_DOMAINLISTED") {
     isDomainlisted = message.data.isDomainlisted;
     storage.set(stores.settings, isDomainlisted, "IS_DOMAINLISTED");

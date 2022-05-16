@@ -37,4 +37,9 @@ function injectStaticScript() {
   document.documentElement.prepend(s);
 }
 
-injectStaticScript();
+chrome.runtime.sendMessage({ msg: "APPEND_GPC_PROP" }, (response) => {
+  console.log("recieved response for appending gpc", response);
+  if (response.sendGPC) {
+    injectStaticScript();
+  }
+})
