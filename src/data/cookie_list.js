@@ -5,15 +5,15 @@ privacy-tech-lab, https://www.privacytechlab.org/
 
 
 /*
-cookiesDAA.js
+cookies_list.js
 ================================================================================
-cookiesDAA.js holds all cookies that are placed on the browser on install,
+cookies_list.js holds all cookies that are placed on the browser on install,
 specifically the DAA cookies we have collected
-https://digitaladvertisingalliance.org
+https://digitaladvertisingalliance.org in addition to a few others
 */
 
 
-export const cookiesDAA = {
+export const cookie_list = {
    "33Across<33x_nc>": {
       "name": "33x_nc",
       "value": "33Across+Optout",
@@ -24,15 +24,20 @@ export const cookiesDAA = {
       "value": "true",
       "domain": ".tynt.com"
    },
-   "4Info<optout>": {
+   "AddThis<optout>": {
       "name": "optout",
       "value": "1",
-      "domain": "choices.adhaven.com"
+      "domain": ".addthis.com"
    },
    "Adelphic<cu>": {
       "name": "cu",
       "value": "optout",
       "domain": ".ipredictive.com"
+   },
+   "Adstra<daa-opt-out>": {
+      "name": "daa-opt-out",
+      "value": "1",
+      "domain": ".bluecava.com"
    },
    "Amobee<optOut>": {
       "name": "optOut",
@@ -61,11 +66,6 @@ export const cookiesDAA = {
    },
    "AuDigent<au_adgt_optout>": {
       "name": "au_adgt_optout",
-      "value": "audigent-optout",
-      "domain": ".ad.gt"
-   },
-   "AuDigent<au_adgt_optout>DIFF_CONTENT": {
-      "name": "au_adgt_optout",
       "value": "audigent-nai-optout",
       "domain": ".ad.gt"
    },
@@ -74,19 +74,34 @@ export const cookiesDAA = {
       "value": "optout",
       "domain": ".bidr.io"
    },
+   "Cadent<optout>": {
+      "name": "optout",
+      "value": "1",
+      "domain": "choices.adhaven.com"
+   },
+   "Carbon_RMP<ccoptout>": {
+      "name": "ccoptout",
+      "value": "1",
+      "domain": ".ccgateway.net"
+   },
    "Catalina_BuyerVision<aa>": {
       "name": "aa",
       "value": "opt-out",
       "domain": ".agkn.com"
    },
-   "Clicksco<ccoptout>": {
-      "name": "ccoptout",
+   "Chicory<chicory-opt-out>": {
+      "name": "chicory-opt-out",
       "value": "1",
-      "domain": ".ccgateway.net"
+      "domain": "e.chicoryapp.com"
    },
-   "Cognitiv<daa_opt_out>": {
-      "name": "daa_opt_out",
+   "Choozle<ad-privacy>": {
+      "name": "ad-privacy",
       "value": "1",
+      "domain": ".amazon-adsystem.com"
+   },
+   "Cognitiv<UID>": {
+      "name": "UID",
+      "value": "00000000-0000-0000-0000-000000000000",
       "domain": "beacon.lynx.cognitivlabs.com"
    },
    "Connexity<oo>": {
@@ -109,19 +124,14 @@ export const cookiesDAA = {
       "value": "1",
       "domain": ".hlserve.com"
    },
-   "Criteo<oo>2": {
-      "name": "oo",
-      "value": "",
-      "domain": "www.hlserve.com"
+   "Cross_Pixel<OPTOUT>": {
+      "name": "OPTOUT",
+      "value": "1",
+      "domain": ".crsspxl.com"
    },
    "Cross_Pixel<uid>": {
       "name": "uid",
       "value": "-1",
-      "domain": ".crsspxl.com"
-   },
-   "Cross_Pixel<OPTOUT>": {
-      "name": "OPTOUT",
-      "value": "1",
       "domain": ".crsspxl.com"
    },
    "Cross_Pixel<uuid>": {
@@ -136,15 +146,15 @@ export const cookiesDAA = {
    },
    "Dstillery<orboptout>": {
       "name": "orboptout",
-      "value": "2-1",
-      "domain": ".media6degrees.com"
-   },
-   "Dstillery<orboptout>DIFF_CONTENT": {
-      "name": "orboptout",
       "value": "2-99",
       "domain": ".media6degrees.com"
    },
-   "EMX<opt-out>": {
+   "Engine_Media_Exchange<daa-optout>": {
+      "name": "daa-optout",
+      "value": "1",
+      "domain": ".extremereach.io"
+   },
+   "Extreme_Reach<opt-out>": {
       "name": "opt-out",
       "value": "emxoptout",
       "domain": ".emxdgt.com"
@@ -159,15 +169,15 @@ export const cookiesDAA = {
       "value": "\"optout=1\"",
       "domain": ".flashtalking.com"
    },
+   "FullStory<fs_optout>": {
+      "name": "fs_optout",
+      "value": "1",
+      "domain": ".fullstory.com"
+   },
    "Havas_Edge<ccpa_optout>": {
       "name": "ccpa_optout",
       "value": "1",
       "domain": ".havasedge.com"
-   },
-   "IHS_Markit_Digital<u>": {
-      "name": "u",
-      "value": "OPT_OUT",
-      "domain": "ad.wsod.com"
    },
    "IHS_Markit_Digital<ub>": {
       "name": "ub",
@@ -184,12 +194,6 @@ export const cookiesDAA = {
       "value": "1",
       "domain": ".ipromote.com"
    },
-   "iPromote<optout>Path": {
-      "name": "optout",
-      "value": "1",
-      "domain": ".ipromote.com",
-      "path": "/ad"
-   },
    "IQM.com<iqm.priba.optout>": {
       "name": "iqm.priba.optout",
       "value": "1",
@@ -205,6 +209,11 @@ export const cookiesDAA = {
       "value": "optout",
       "domain": ".crwdcntrl.net"
    },
+   "MediaMath<ccpa>": {
+      "name": "ccpa",
+      "value": "1",
+      "domain": ".mathtag.com"
+   },
    "Merkle<opt-out>": {
       "name": "opt-out",
       "value": "OPT_OUT",
@@ -217,7 +226,7 @@ export const cookiesDAA = {
    },
    "mPlatform<optouts>": {
       "name": "optouts",
-      "value": "2020-07-31T06:48:12.135723Z[UTC]",
+      "value": "2022-05-19T20:01:28.688664Z[UTC]",
       "domain": ".mookie1.com"
    },
    "Nativo<opt_out>": {
@@ -230,65 +239,30 @@ export const cookiesDAA = {
       "value": "opt-out",
       "domain": ".agkn.com"
    },
-   "Oath_Inc<optout>": {
-      "name": "optout",
-      "value": "true",
-      "domain": ".adap.tv"
-   },
-   "Oath_Inc<JEB2>": {
-      "name": "JEB2",
-      "value": "NOID",
-      "domain": ".adtech.de"
-   },
-   "Oath_Inc<OptOut>": {
-      "name": "OptOut",
-      "value": "we will not set any more cookies",
-      "domain": ".adtech.de"
-   },
-   "Oath_Inc<JEB2>2": {
-      "name": "JEB2",
-      "value": "NOID",
-      "domain": ".adtechjp.com"
-   },
-   "Oath_Inc<OptOut>2": {
-      "name": "OptOut",
-      "value": "we will not set any more cookies",
-      "domain": ".adtechjp.com"
-   },
-   "Oath_Inc<JEB2>3": {
-      "name": "JEB2",
-      "value": "NOID",
-      "domain": ".adtechus.com"
-   },
-   "Oath_Inc<OptOut>3": {
-      "name": "OptOut",
-      "value": "we will not set any more cookies",
-      "domain": ".adtechus.com"
-   },
-   "Oath_Inc<ACID>": {
-      "name": "ACID",
-      "value": "optout!",
-      "domain": ".advertising.com"
-   },
-   "Oath_Inc<atdses>": {
-      "name": "atdses",
-      "value": "O",
-      "domain": ".atwola.com"
-   },
-   "Oath_Inc<ACID>2": {
-      "name": "ACID",
-      "value": "optout!",
-      "domain": ".nexage.com"
-   },
-   "Oath_Inc<optout>2": {
-      "name": "optout",
-      "value": "true",
-      "domain": ".yahoo.com"
-   },
    "OpenX<OX_dnt>": {
       "name": "OX_dnt",
       "value": "1",
       "domain": ".openx.net"
+   },
+   "Oracle<optout>": {
+      "name": "optout",
+      "value": "1",
+      "domain": ".addthis.com"
+   },
+   "Oracle<na_id>": {
+      "name": "na_id",
+      "value": "ignore",
+      "domain": ".addthis.com"
+   },
+   "Oracle<optout>": {
+      "name": "optout",
+      "value": "1",
+      "domain": ".bluekai.com"
+   },
+   "Oracle<BKignore>": {
+      "name": "BKignore",
+      "value": "1",
+      "domain": ".bluekai.com"
    },
    "Outbrain<opout>": {
       "name": "opout",
@@ -305,30 +279,15 @@ export const cookiesDAA = {
       "value": "optout",
       "domain": ".owneriq.net"
    },
-   "Parrable<_ccpa_optout>": {
-      "name": "_ccpa_optout",
-      "value": "true",
-      "domain": ".parrable.com"
-   },
    "PebblePost<ppid>": {
       "name": "ppid",
       "value": "OPT-OUT",
       "domain": ".pbbl.co"
    },
-   "Pulpo<_PM_OPTOUT>": {
-      "name": "_PM_OPTOUT",
-      "value": "1",
-      "domain": "www.tentaculos.net"
-   },
    "PulsePoint<CWOptOutCookie>": {
       "name": "CWOptOutCookie",
       "value": "1",
       "domain": ".contextweb.com"
-   },
-   "Qualia<daa-opt-out>": {
-      "name": "daa-opt-out",
-      "value": "1",
-      "domain": ".bluecava.com"
    },
    "Resonate<ROOC>": {
       "name": "ROOC",
@@ -360,6 +319,11 @@ export const cookiesDAA = {
       "value": "1",
       "domain": ".scorecardresearch.com"
    },
+   "Semasio<SUENCY>": {
+      "name": "SUENCY",
+      "value": "OPTOUT",
+      "domain": ".semasio.net"
+   },
    "ShareThis<st_optout>": {
       "name": "st_optout",
       "value": "true",
@@ -367,11 +331,6 @@ export const cookiesDAA = {
    },
    "Simpli.fi<opted_out>": {
       "name": "opted_out",
-      "value": "true",
-      "domain": ".simpli.fi"
-   },
-   "Simpli.fi<opted_out_legacy>": {
-      "name": "opted_out_legacy",
       "value": "true",
       "domain": ".simpli.fi"
    },
@@ -430,6 +389,11 @@ export const cookiesDAA = {
       "value": "1",
       "domain": ".thrtle.com"
    },
+   "Undertone<UTOPTOUT>": {
+      "name": "UTOPTOUT",
+      "value": "OPTOUT",
+      "domain": ".undertone.com"
+   },
    "Unruly_Group<ccpa_optout>": {
       "name": "ccpa_optout",
       "value": "ccpa_optout",
@@ -437,11 +401,6 @@ export const cookiesDAA = {
    },
    "VDX.tv<ANON_ID>": {
       "name": "ANON_ID",
-      "value": "OptOut",
-      "domain": ".tribalfusion.com"
-   },
-   "VDX.tv<ANON_ID_old>": {
-      "name": "ANON_ID_old",
       "value": "OptOut",
       "domain": ".tribalfusion.com"
    },
@@ -455,4 +414,8 @@ export const cookiesDAA = {
       "value": "1",
       "domain": ".yieldmo.com"
    }
+
+
+
+
 }
