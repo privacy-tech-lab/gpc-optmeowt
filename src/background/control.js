@@ -69,14 +69,6 @@ function disable() {
   }
 })();
 
-// Opens the options page on extension install
-chrome.runtime.onInstalled.addListener(function (details) {
-  if (details.reason === 'install') {
-    chrome.runtime.openOptionsPage((result) => {});
-  }
-});
-
-
 /******************************************************************************/
 // Mode listeners
 
