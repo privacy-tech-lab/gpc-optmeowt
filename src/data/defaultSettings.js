@@ -26,5 +26,5 @@ export const defaultSettings = {
 	'IS_ENABLED': true,
 	'MODE': modes.protection,
 	'TUTORIAL_SHOWN': true,
-	'TUTORIAL_SHOWN_IN_POPUP': false,
+	'TUTORIAL_SHOWN_IN_POPUP': true,
 }
