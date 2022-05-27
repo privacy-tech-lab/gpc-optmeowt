@@ -25,6 +25,6 @@ export const defaultSettings = {
 	'IS_DOMAINLISTED': false,
 	'IS_ENABLED': true,
 	'MODE': modes.protection,
-	'TUTORIAL_SHOWN': false,
+	'TUTORIAL_SHOWN': true,
 	'TUTORIAL_SHOWN_IN_POPUP': false,
 }

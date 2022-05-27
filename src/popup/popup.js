@@ -1070,6 +1070,12 @@ document.getElementById("more").addEventListener("click", () => {
   chrome.runtime.openOptionsPage();
 });
 
+// Listener: Opens tutorial
+document.getElementById("tour").addEventListener("click", () => {
+  storage.set(stores.settings, false, 'TUTORIAL_SHOWN')
+  chrome.runtime.openOptionsPage();
+});
+
 // Listener: Opens domainlist in options page
 document.getElementById("domain-list").addEventListener("click", async () => {
   await storage.set(stores.settings, true, "DOMAINLIST_PRESSED");
