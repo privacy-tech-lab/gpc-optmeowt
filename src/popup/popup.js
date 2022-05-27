@@ -190,7 +190,10 @@ function renderExtenionIsEnabledDisabled(isEnabled, isDomainlisted) {
 }
 
 function listenerExtensionIsEnabledDisabledButton(isEnabled, isDomainlisted, mode) {
-  document.getElementById("enable-disable").addEventListener("click", () => {
+  document.getElementById("enable-disable").addEventListener("click", async () => {
+
+    isEnabled = await storage.get(stores.settings, "IS_ENABLED");
+    
     if (isEnabled) {
       document.getElementById("extension-disabled-message").style.display = "";
       document.getElementById("img").src =
