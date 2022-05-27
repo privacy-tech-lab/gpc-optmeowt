@@ -1072,6 +1072,10 @@ document.getElementById("more").addEventListener("click", () => {
 
 // Listener: Opens tutorial
 document.getElementById("tour").addEventListener("click", () => {
+
+  chrome.runtime.sendMessage({
+    msg: "SHOW_TUTORIAL"
+  })
   storage.set(stores.settings, false, 'TUTORIAL_SHOWN')
   chrome.runtime.openOptionsPage();
 });

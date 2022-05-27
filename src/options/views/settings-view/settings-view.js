@@ -178,6 +178,12 @@ function walkthrough() {
   }
 }
 
+chrome.runtime.onMessage.addListener(function (message, _, __) {
+  if (message.msg === "SHOW_TUTORIAL") {
+    walkthrough();
+  }
+});
+
 
 /******************************************************************************/
 
