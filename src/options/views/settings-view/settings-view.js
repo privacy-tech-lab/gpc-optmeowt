@@ -98,6 +98,16 @@ function eventListeners() {
 /*
  * Gives user a walkthrough of install page on first install
  */
+
+function analysisWarning() {
+  let modal = UIkit.modal("#analysis-modal");
+  modal.show();
+  document.getElementById("modal-button-3").onclick = function () {
+    // browser.windows.create({ "url": null, "incognito": true });
+    modal.hide();
+  }
+}
+
 function walkthrough() {
   let modal = UIkit.modal("#welcome-modal");
   modal.show();
@@ -217,4 +227,11 @@ export async function settingsView(scaffoldTemplate) {
     walkthrough();
   }
   storage.set(stores.settings, true, 'TUTORIAL_SHOWN')
+
+  const mode = await storage.get(stores.settings, "MODE");
+  const analysisWarningShown = await storage.get(stores.settings, 'ANALYSIS_WARNING_SHOWN');
+  if (!analysisWarningShown && mode === modes.analysis) {
+    analysisWarning();
+    storage.set(stores.settings, true, 'ANALYSIS_WARNING_SHOWN');
+  }
 }
