@@ -54,46 +54,28 @@ const darkmode = new Darkmode();
 // Sets the current mode icon
 function changeOptModeIcon() {
   let optMode = document.getElementById("optMode");
-  let pl = document.getElementById("p-light");
-  let al = document.getElementById("a-light");
-  let pd = document.getElementById("p-dark");
-  let ad = document.getElementById("a-dark");
 
+  let p = document.getElementById("p");
+  let a = document.getElementById("a");
+  a.style.display="none";
+  p.style.display="none";
   // optMode badge icon
-  pl.style.display = "none";
-  al.style.display = "none";
-  pd.style.display = "none";
-  ad.style.display = "none";
-  if (darkmode.isActivated()) {
-    (mode === modes.analysis) ? al.style.display="" : pl.style.display="";
-  } else {
-    (mode === modes.analysis) ? ad.style.display="" : pd.style.display="";
-  }
+  (mode === modes.analysis) ? a.style.display="" : p.style.display=""
+
 }
 
 
 // Changes-the-icon listener
 function changeOptModeIconListenerCallback() {
   let optMode = document.getElementById("optMode");
-  let pl = document.getElementById("p-light");
-  let al = document.getElementById("a-light");
-  let pd = document.getElementById("p-dark");
-  let ad = document.getElementById("a-dark");
 
+  let p = document.getElementById("p");
+  let a = document.getElementById("a");
+  a.style.display="none";
+  p.style.display="none";
   // optMode badge icon
-  pl.style.display = "none";
-  al.style.display = "none";
-  pd.style.display = "none";
-  ad.style.display = "none";
-  if (darkmode.isActivated()) {
-    // optMode.style.color = "rgb(89,98,127)";
-    // optMode.style.border = "1px solid rgb(89,98,127)";
-    (mode === modes.analysis) ? ad.style.display="" : pd.style.display="";
-  } else {
-    // optMode.style.color = "rgb(238,238,238)";
-    // optMode.style.border = "1px solid rgb(238,238,238)";
-    (mode === modes.analysis) ? al.style.display="" : pl.style.display="";
-  }
+  (mode === modes.analysis) ? a.style.display="" : p.style.display=""
+
 }
 
 
@@ -1070,6 +1052,16 @@ loadChangeMode();
 
 // Listener: Opens options page
 document.getElementById("more").addEventListener("click", () => {
+  chrome.runtime.openOptionsPage();
+});
+
+// Listener: Opens tutorial
+document.getElementById("tour").addEventListener("click", () => {
+
+  chrome.runtime.sendMessage({
+    msg: "SHOW_TUTORIAL"
+  })
+  storage.set(stores.settings, false, 'TUTORIAL_SHOWN')
   chrome.runtime.openOptionsPage();
 });
 

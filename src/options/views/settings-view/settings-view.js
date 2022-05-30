@@ -177,6 +177,13 @@ function walkthrough() {
   }
 }
 
+chrome.runtime.onMessage.addListener(function (message, _, __) {
+  if (message.msg === "SHOW_TUTORIAL") {
+    walkthrough();
+  }
+});
+
+
 /******************************************************************************/
 
 /**
@@ -216,4 +223,5 @@ export async function settingsView(scaffoldTemplate) {
     walkthrough();
   }
   storage.set(stores.settings, true, 'TUTORIAL_SHOWN')
-}
+ }
+

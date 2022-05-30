@@ -81,7 +81,7 @@ popup.html is the html scaffolding for OptMeowt's popup page
       </div>
       <div
         class="uk-container"
-        style="margin: auto; padding: 0"
+        style="margin: auto; padding: 0; padding-right: 8px;"
         uk-tooltip="More"
         id="more"
       >
@@ -91,6 +91,21 @@ popup.html is the html scaffolding for OptMeowt's popup page
           width="20"
           alt="more"
           uk-svg
+        />
+      </div>
+      <div
+      class="uk-container"
+      style="margin: auto; padding: 0;"
+      uk-tooltip="Tutorial"
+      id="tour"
+      >
+        <img
+          src="../assets/question-mark.svg"
+          height="20"
+          width="20"
+          alt="tour"
+          uk-svg
+          id="img"
         />
       </div>
     </div>
@@ -116,10 +131,8 @@ popup.html is the html scaffolding for OptMeowt's popup page
             class="uk-badge optMode"
           >
             <div id="optMode-text"></div>
-            <img id="p-dark" src="../../../assets/cat-w-text/protect.png" width="20px" height="20px" style="display: none">
-            <img id="p-light" src="../../../assets/cat-w-text/protect1.png" width="20px" height="20px" style="display: none;">
-            <img id="a-dark" src="../../../assets/cat-w-text/analysis.png" width="20px" height="20px" style="display: none;">
-            <img id="a-light" src="../../../assets/cat-w-text/analysis1.png" width="20px" height="20px" style="display: none;">
+            <img id="p" src="../../../assets/shield-outline.svg" width="20px" height="20px" style="display: none;" uk-svg>
+            <img id="a" src="../../../assets/flash-outline.svg" width="20px" height="20px" style="display: none;" uk-svg>
           </div>
           <hr id = "divider-1.5" class="divide" style="margin:15px;">
         </div>
