@@ -536,11 +536,11 @@ function addThirdPartyDomainDNSToggleListener(requestDomain) {
     if (!requestDomainValue) {
       elemString = "Do Not Sell Disabled";
       // setToDomainlist(requestDomain, false);
-      addDomainToDomainlistAndRules(parsedDomain);
+      addDomainToDomainlistAndRules(requestDomain);
     } else {
       elemString = "Do Not Sell Enabled";
       // setToDomainlist(requestDomain, true);
-      removeDomainFromDomainlistAndRules(parsedDomain);
+      removeDomainFromDomainlistAndRules(requestDomain);
     }
     document.getElementById(`dns-enabled-text-${requestDomain}`).innerHTML = elemString;
   })
