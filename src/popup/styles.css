@@ -102,7 +102,7 @@ styles.css is the main css page for OptMeowt's popup page
 
 .optMode:hover {
   color: var(--text-gray) !important;
-  box-shadow: 0 6px 12px rgba(110, 110, 110, 0.2) !important;
+  /* box-shadow: 0 6px 12px rgba(110, 110, 110, 0.2) !important; */
   transition: all ease 0.25s;
 }
 

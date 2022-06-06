@@ -26,7 +26,6 @@ import { modes } from "../../../data/modes.js";
 import UIkit from "../../../../node_modules/uikit/dist/js/uikit";
 import tippy from "../../../../node_modules/tippy.js/dist/tippy-bundle.umd";
 
-import "../../../../node_modules/file-saver/src/FileSaver"
 import Darkmode from 'darkmode-js';
 
 // Global scope settings variable
@@ -193,6 +192,7 @@ function walkthrough() {
   }
 }
 
+
 // Show Analysis Warning
 async function initPopUpWalkthrough() {
   const analysisWarningShown = await storage.get(stores.settings, 'ANALYSIS_WARNING_SHOWN');
@@ -221,6 +221,15 @@ function loadChangeMode() {
     })
   }
 }
+
+
+chrome.runtime.onMessage.addListener(function (message, _, __) {
+  if (message.msg === "SHOW_TUTORIAL") {
+    walkthrough();
+  }
+});
+
+
 
 /******************************************************************************/
 
@@ -256,9 +265,16 @@ export async function settingsView(scaffoldTemplate) {
   eventListeners();
 
   // Tutorial walkthrough
+
   
   loadChangeMode();
   
 
-}
+  const tutorialShown = await storage.get(stores.settings, 'TUTORIAL_SHOWN');
+  if (!tutorialShown) {
+    walkthrough();
+  }
+  storage.set(stores.settings, true, 'TUTORIAL_SHOWN')
+ }
+
 
