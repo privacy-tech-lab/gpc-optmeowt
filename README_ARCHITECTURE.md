@@ -17,7 +17,7 @@ src
 │   ├── storage.js
 │   └── storageCookies.js
 ├── data							# Stores constant data (DNS signals, settings, etc.)
-│   ├── cookiesDAA.js
+│   ├── cookie_list.js
 │   ├── defaultSettings.js
 │   ├── headers.js
 │   └── privacyFlags.js

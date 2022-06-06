@@ -193,6 +193,7 @@ function walkthrough() {
 }
 
 
+
 // Show Analysis Warning
 async function initPopUpWalkthrough() {
   const analysisWarningShown = await storage.get(stores.settings, 'ANALYSIS_WARNING_SHOWN');
@@ -221,6 +222,7 @@ function loadChangeMode() {
     })
   }
 }
+
 
 
 chrome.runtime.onMessage.addListener(function (message, _, __) {
@@ -276,5 +278,4 @@ export async function settingsView(scaffoldTemplate) {
   }
   storage.set(stores.settings, true, 'TUTORIAL_SHOWN')
  }
-
 
