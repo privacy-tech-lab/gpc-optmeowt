@@ -451,21 +451,6 @@ function onMessageHandlerSynchronous(message, sender, sendResponse) {
    */
 async function onMessageHandlerAsync(message, sender, sendResponse) {
   // console.log(`Recieved message @ background page.`);
-  // if (message.msg === "APPEND_GPC_PROP") { 
-  //   let url = new URL(sender.origin);
-  //   let parsed = psl.parse(url.hostname);
-  //   let domain = parsed.domain;
-  //   const attachGPCProp = await sendPrivacySignal(domain);
-  //   const response = { 
-  //     msg: "APPEND_GPC_PROP_RESPONSE",
-  //     sendGPC: attachGPCProp
-  //   }
-  //   console.log("Response value, ", response, "response.sendGPC", response.sendGPC)
-  //   // chrome.runtime.sendMessage(response, (r)=>{console.log("SENT R", r)});
-  //   sendResponse(response);
-  //   // chrome.runtime.sendMessage(response, (r)=>{console.log("SENT R", r)});
-  //   return true;
-  // }
   if (message.msg === "CHANGE_IS_DOMAINLISTED") {
     isDomainlisted = message.data.isDomainlisted;
     storage.set(stores.settings, isDomainlisted, "IS_DOMAINLISTED");
