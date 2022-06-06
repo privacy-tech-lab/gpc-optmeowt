@@ -29,6 +29,8 @@ import tippy from "../../../../node_modules/tippy.js/dist/tippy-bundle.umd";
 import "../../../../node_modules/file-saver/src/FileSaver"
 import Darkmode from 'darkmode-js';
 
+// Global scope settings variable
+var mode;
 
 /**
  * @typedef headings
@@ -61,6 +63,7 @@ function eventListeners() {
     .addEventListener("click", () => {
       chrome.runtime.sendMessage({ msg: "TURN_ON_OFF", data: { isEnabled: true } });
       chrome.runtime.sendMessage({ msg: "CHANGE_IS_DOMAINLISTED", data: { isDomainlisted: false } });
+      chrome.runtime.sendMessage({ msg: "CHANGE_MODE", data: modes.protection});
     });
   document
     .getElementById("settings-view-radio1")
@@ -73,6 +76,7 @@ function eventListeners() {
     .addEventListener("click", () => {
       chrome.runtime.sendMessage({ msg: "TURN_ON_OFF", data: { isEnabled: true } });
       chrome.runtime.sendMessage({ msg: "CHANGE_IS_DOMAINLISTED", data: { isDomainlisted: true } });
+      chrome.runtime.sendMessage({ msg: "CHANGE_MODE", data: modes.protection});
     });
   document
     .getElementById("download-button")
@@ -99,10 +103,11 @@ function eventListeners() {
  * Gives user a walkthrough of install page on first install
  */
 
+
 function analysisWarning() {
   let modal = UIkit.modal("#analysis-modal");
   modal.show();
-  document.getElementById("modal-button-3").onclick = function () {
+  document.getElementById("modal-button-5").onclick = function () {
     // browser.windows.create({ "url": null, "incognito": true });
     modal.hide();
   }
@@ -188,6 +193,35 @@ function walkthrough() {
   }
 }
 
+// Show Analysis Warning
+async function initPopUpWalkthrough() {
+  const analysisWarningShown = await storage.get(stores.settings, 'ANALYSIS_WARNING_SHOWN');
+  
+    if (!analysisWarningShown && mode === modes.analysis) {
+      analysisWarning();
+      storage.set(stores.settings, true, 'ANALYSIS_WARNING_SHOWN');
+    }
+  }
+
+
+// Button to change to Analysis Mode
+function loadChangeMode() {
+  if ("$BROWSER" != "firefox") {
+    document.getElementById("optMode-parent").style.display = "none";
+  } else {
+    document.getElementById("optMode").addEventListener('click', function() {
+      mode = modes.analysis;
+      
+      /*let newMode = (mode === modes.analysis) ? modes.protection : modes.analysis;
+      mode = newMode; */
+      
+      chrome.runtime.sendMessage({ msg: "CHANGE_MODE", data: mode});
+      chrome.runtime.sendMessage({ msg: "TURN_ON_OFF", data: { isEnabled: true } });
+      initPopUpWalkthrough();
+    })
+  }
+}
+
 /******************************************************************************/
 
 /**
@@ -222,16 +256,9 @@ export async function settingsView(scaffoldTemplate) {
   eventListeners();
 
   // Tutorial walkthrough
-  const tutorialShown = await storage.get(stores.settings, 'TUTORIAL_SHOWN');
-  if (!tutorialShown) {
-    walkthrough();
-  }
-  storage.set(stores.settings, true, 'TUTORIAL_SHOWN')
+  
+  loadChangeMode();
+  
 
-  const mode = await storage.get(stores.settings, "MODE");
-  const analysisWarningShown = await storage.get(stores.settings, 'ANALYSIS_WARNING_SHOWN');
-  if (!analysisWarningShown && mode === modes.analysis) {
-    analysisWarning();
-    storage.set(stores.settings, true, 'ANALYSIS_WARNING_SHOWN');
-  }
 }
+
