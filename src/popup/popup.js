@@ -449,11 +449,13 @@ function showAnalysisInfo() {
  * @param {Modes} mode - from modes.js
  */
 async function switchMode(mode) {
-  const analysisWarningShown = await storage.get(stores.settings, 'ANALYSIS_WARNING_SHOWN');
+  //const analysisWarningShown = await storage.get(stores.settings, 'ANALYSIS_WARNING_SHOWN');
+  /*
   if (!analysisWarningShown && mode === modes.analysis) {
     analysisWarning();
     storage.set(stores.settings, true, 'ANALYSIS_WARNING_SHOWN');
   }
+  */
 
   changeOptModeIcon();
   if (mode === modes.protection) {
@@ -955,14 +957,7 @@ function setToDomainlist(d, k) {
 /******************************************************************************/
 
 
-function analysisWarning() {
-  let modal = UIkit.modal("#analysis-modal");
-  modal.show();
-  document.getElementById("modal-button-1").onclick = function () {
-    // browser.windows.create({ "url": null, "incognito": true });
-    modal.hide();
-  }
-}
+
 
 // Walkthrough function
 function popUpWalkthrough() {
@@ -986,18 +981,20 @@ function popUpWalkthrough() {
 // Init: Check to see if we should do tutorial
 async function initPopUpWalkthrough() {
   const tutorialShownInPopup = await storage.get(stores.settings, 'TUTORIAL_SHOWN_IN_POPUP');
-  const mode = await storage.get(stores.settings, "MODE");
-  const analysisWarningShown = await storage.get(stores.settings, 'ANALYSIS_WARNING_SHOWN');
+  const mode = await storage.get(stores.settings, "MODE"); //copied
+  //const analysisWarningShown = await storage.get(stores.settings, 'ANALYSIS_WARNING_SHOWN');
 
   // console.log("Tutorial shown: ", tutorialShownInPopup)
   if (!tutorialShownInPopup) {
     popUpWalkthrough(mode);
     storage.set(stores.settings, true, 'TUTORIAL_SHOWN_IN_POPUP');
   }
+  /*
   if (!analysisWarningShown && mode === modes.analysis) {
     analysisWarning();
     storage.set(stores.settings, true, 'ANALYSIS_WARNING_SHOWN');
   }
+  */
 }
 
 
@@ -1033,22 +1030,16 @@ function stopAnalysisButtonOnClick() {
 }
 
 /**
- * Mode switch button
+ * Mode switch 
  */
+
 function loadChangeMode() {
-  let modeButton = document.getElementById("optMode");
-  modeButton.addEventListener('click', function() {
-    let newMode = (mode === modes.analysis) ? modes.protection : modes.analysis;
-    mode = newMode;
-    // changeOptModeIcon();
-    chrome.runtime.sendMessage({
-      msg: "CHANGE_MODE",
-      data: newMode
-    })
-    switchMode(mode);
-  })
+  let newMode = (mode === modes.analysis) ? modes.protection : modes.analysis;
+  mode = newMode;
+  switchMode(mode);
 }
 loadChangeMode();
+
 
 // Listener: Opens options page
 document.getElementById("more").addEventListener("click", () => {
