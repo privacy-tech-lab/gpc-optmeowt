@@ -315,6 +315,37 @@ async function syncDomainlists() {
   }
 }
 
+/**
+ * whether the curr site should get privacy signals
+ * (We need to try and make a synchronous version, esp. for DOM issue & related
+ * message passing with the contentscript which injects the DOM signal)
+ * @returns {bool} sendSignal
+ */
+async function sendPrivacySignal(domain) {
+  let sendSignal;
+  console.log("initializing sendPrivacySignal() withd domain", domain)
+  const extensionEnabled = await storage.get(stores.settings, "IS_ENABLED");
+  const extensionDomainlisted = await storage.get(stores.settings, "IS_DOMAINLISTED");
+  const domainDomainlisted = await storage.get(stores.domainlist, domain);
+  console.log("successfully retreived enabled info.")
+  console.log("domainDomainlisted = ", domainDomainlisted)
+
+  if (extensionEnabled) {
+    if (extensionDomainlisted) {
+      // Recall we must flip the value of the domainlisted domain
+      // due to how to how defined domainlisted values, corresponding to MV3
+      // declarativeNetRequest rule exceptions 
+      // (i.e., null => no rule exists, valued => exception rule exists)
+      sendSignal = (!domainDomainlisted) ? true : false;
+    } else {
+      sendSignal = true;
+    }
+  } else {
+    sendSignal = false;
+  }
+  console.log("returning value...", sendSignal);
+  return sendSignal
+}
 
 
 /******************************************************************************/
@@ -385,18 +416,56 @@ function onConnectHandler(port) {
 
 
 /**
+ * This is currently only to handle adding the GPC DOM signal. 
+ * I'm not sure how to fit it into an async call, it doesn't want to connect. 
+ * It would be nice to merge the two onMessage handlers. 
+ * TODO: This method still seems to have a timing issue. Doesn't always show DOM signal as thumbs up on reference site.
+ * @returns {Bool} true (lets us send asynchronous responses to senders)
+ */
+function onMessageHandlerSynchronous(message, sender, sendResponse) {
+  // console.log("Started it...")
+  if (message.msg === "APPEND_GPC_PROP") { 
+    let url = new URL(sender.origin);
+    let parsed = psl.parse(url.hostname);
+    let domain = parsed.domain;
+
+    const r = sendPrivacySignal(domain);
+    r.then((r) => {
+      const response = { 
+        msg: "APPEND_GPC_PROP_RESPONSE",
+        sendGPC: r
+      }
+      console.log("Response value, ", response, "response.sendGPC", response.sendGPC)
+      // chrome.runtime.sendMessage(response, (r)=>{ console.log("SENT R"); });
+      sendResponse(response);
+    })
+  }
+  return true;
+}
+
+
+/**
    * Listeners for information from --POPUP-- or --OPTIONS-- page
    * This is the main "hub" for message passing between the extension components
    * https://developer.chrome.com/docs/extensions/mv3/messaging/
    */
-async function onMessageHandler(message, sender, sendResponse) {
+async function onMessageHandlerAsync(message, sender, sendResponse) {
   // console.log(`Recieved message @ background page.`);
-  if (message.msg === "APPEND_GPC_PROP") {
-    const response = {
-      sendGPC: true
-    }
-    sendResponse(response);
-  }
+  // if (message.msg === "APPEND_GPC_PROP") { 
+  //   let url = new URL(sender.origin);
+  //   let parsed = psl.parse(url.hostname);
+  //   let domain = parsed.domain;
+  //   const attachGPCProp = await sendPrivacySignal(domain);
+  //   const response = { 
+  //     msg: "APPEND_GPC_PROP_RESPONSE",
+  //     sendGPC: attachGPCProp
+  //   }
+  //   console.log("Response value, ", response, "response.sendGPC", response.sendGPC)
+  //   // chrome.runtime.sendMessage(response, (r)=>{console.log("SENT R", r)});
+  //   sendResponse(response);
+  //   // chrome.runtime.sendMessage(response, (r)=>{console.log("SENT R", r)});
+  //   return true;
+  // }
   if (message.msg === "CHANGE_IS_DOMAINLISTED") {
     isDomainlisted = message.data.isDomainlisted;
     storage.set(stores.settings, isDomainlisted, "IS_DOMAINLISTED");
@@ -469,17 +538,20 @@ async function onMessageHandler(message, sender, sendResponse) {
     // do not sell for a particular site, and chooses to re-enable it
     initCookiesPerDomain(message.data)
   }
+  return true;    // Async callbacks require this
 }
 
 
 function initMessagePassing() {
   chrome.runtime.onConnect.addListener(onConnectHandler);
-  chrome.runtime.onMessage.addListener(onMessageHandler);
+  chrome.runtime.onMessage.addListener(onMessageHandlerAsync);
+  chrome.runtime.onMessage.addListener(onMessageHandlerSynchronous);
 }
 
 function closeMessagePassing() {
   chrome.runtime.onConnect.removeListener(onConnectHandler);
-  chrome.runtime.onMessage.removeListener(onMessageHandler);
+  chrome.runtime.onMessage.removeListener(onMessageHandlerAsync);
+  chrome.runtime.onMessage.removeListener(onMessageHandlerSynchronous);
 }
 
 
