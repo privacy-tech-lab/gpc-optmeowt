@@ -6,50 +6,75 @@
 src
 ├── assets							# Static images & files
 ├── background						# Manages the background script processes
-│   ├── background.js
-│   ├── contentScript.js
+│   ├── analysis
+│   │   ├── analysis-listeners.js
+│   │   ├── analysis.js
+│   │   ├── background.js
+│   │   └── injectScript.js
+│   ├── protection
+│   │   ├── listeners-chrome.js
+│   │   ├── listeners-firefox.js
+│   │   ├── protection.js
+│   │   ├── background.js
+│   │   ├── cookiesOnInstall.js
+│   │   ├── dom.js
+│   │   └── events.js
+│   ├── control.js
 │   ├── cookiesIAB.js
-│   ├── cookiesOnInstall.js
-│   ├── dom.js
-│   ├── events.js
-│   ├── listeners-chrome.js
-│   ├── listeners-firefox.js
 │   ├── storage.js
 │   └── storageCookies.js
+├── common							# Manages header sending and rules
+│   ├── csvGenerator.js
+│   ├── editDomainlist.js
+│   └── editRules.js
+├── content-scripts					# Runs processes on site on adds DOM signal
+│   ├── injection
+│   │   └── gpc-dom.js
+│   ├── registration
+│   │   └── gpc-dom.js
+│   └── contentScript.js
 ├── data							# Stores constant data (DNS signals, settings, etc.)
 │   ├── cookiesDAA.js
 │   ├── defaultSettings.js
 │   ├── headers.js
-│   └── privacyFlags.js
-├── manifest-dev.json
-├── manifest-dist.json
+│   ├── modes.js
+│   ├── privacyFlags.js
+│   └── regex.js
 ├── options							# Options page frontend
 │   ├── components
 │   │   ├── scaffold-component.html
 │   │   └── util.js
+│   ├── views
+│   │   ├── about-view
+│   │   │   ├── about-view.html
+│   │   │   └── about-view.js
+│   │   ├── analysis-view
+│   │   │   ├── analysis-view.html
+│   │   │   └── analysis-view.js
+│   │   ├── domainlist-view
+│   │   │   ├── domainlist-view.html
+│   │   │   └── domainlist-view.js
+│   │   ├── main-view
+│   │   │   ├── main-view.html
+│   │   │   └── main-view.js
+│   │   └── settings-view
+│   │       ├── settings-view.html
+│   │       └── settings-view.js
 │   ├── dark-mode.css
 │   ├── options.html
 │   ├── options.js
-│   ├── styles.css
-│   └── views
-│       ├── about-view
-│       │   ├── about-view.html
-│       │   └── about-view.js
-│       ├── domainlist-view
-│       │   ├── domainlist-view.html
-│       │   └── domainlist-view.js
-│       ├── main-view
-│       │   ├── main-view.html
-│       │   └── main-view.js
-│       └── settings-view
-│           ├── settings-view.html
-│           └── settings-view.js
+│   └──styles.css
 ├── popup							# Popup page frontend
 │   ├── popup.html
 │   ├── popup.js
 │   └── styles.css
-└── theme							# Contains darkmode
-    └── darkmode.js
+├── rules							# Manages universal rules
+│   ├── gpc_exceptions_rules.json
+│   └── universal_gpc_rules.json
+├── theme							# Contains darkmode
+│   └── darkmode.js
+├── manifest-dev.json
+└── manifest-dist.json
 ```
 
 
@@ -58,7 +83,7 @@ The following folders have detailed descriptions further in the document.
 [src/background]()\
 [src/data]()\
 [src/options]()\
-[src/popup]()\
+[src/popup]()
 
 The extension architecture (background scripts vs. popup vs. options page and their interaction) as well as the build process (Webpack and entry points) are described here.
 
