@@ -21,21 +21,7 @@ popup.html is the html scaffolding for OptMeowt's popup page
   <!-- This is the entry point to 'Popup' -->
   <body class="uk-padding-large" style="width: 320px">
 
-    <div id="analysis-modal" uk-modal>
-      <div class="uk-modal-dialog">
-          <button class="uk-modal-close-default" type="button" uk-close></button>
-          <div class="uk-modal-header uk-flex uk-flex-column uk-flex-middle">
-              <h2 class="uk-align-center text-color-darker">Using Analysis Mode</h2>
-          </div>
-          <div class="uk-modal-body" style="font-size: 15px; text-align: center;">
-            <div>We recommend using a clean browser (cleared cookies) to prevent inaccuracies from possible conflicts with saved data</div>
-            <div>If you would prefer to keep your cookies, feel free to create a new Firefox profile for using Analysis Mode</div>
-          </div>
-          <div class="uk-modal-footer">
-            <button id="modal-button-1" class="text-color uk-button uk-button-default uk-align-right" style="margin: 0px 5px;">OK</button>
-          </div>
-      </div>
-    </div>
+    
 
     <!-- Header -->
     <div id="header"
@@ -75,7 +61,7 @@ popup.html is the html scaffolding for OptMeowt's popup page
       </div>
       <div
         class="uk-container"
-        style="margin: auto; padding: 0"
+        style="margin: auto; padding: 0; padding-right: 8px;"
         uk-tooltip="More"
         id="more"
       >
@@ -85,6 +71,21 @@ popup.html is the html scaffolding for OptMeowt's popup page
           width="20"
           alt="more"
           uk-svg
+        />
+      </div>
+      <div
+      class="uk-container"
+      style="margin: auto; padding: 0;"
+      uk-tooltip="Tutorial"
+      id="tour"
+      >
+        <img
+          src="../assets/question-mark.svg"
+          height="20"
+          width="20"
+          alt="tour"
+          uk-svg
+          id="img"
         />
       </div>
     </div>
@@ -110,10 +111,8 @@ popup.html is the html scaffolding for OptMeowt's popup page
             class="uk-badge optMode"
           >
             <div id="optMode-text"></div>
-            <img id="p-dark" src="../../../assets/cat-w-text/protect.png" width="20px" height="20px" style="display: none">
-            <img id="p-light" src="../../../assets/cat-w-text/protect1.png" width="20px" height="20px" style="display: none;">
-            <img id="a-dark" src="../../../assets/cat-w-text/analysis.png" width="20px" height="20px" style="display: none;">
-            <img id="a-light" src="../../../assets/cat-w-text/analysis1.png" width="20px" height="20px" style="display: none;">
+            <img id="p" src="../../../assets/shield-outline.svg" width="20px" height="20px" style="display: none;" uk-svg>
+            <img id="a" src="../../../assets/flash-outline.svg" width="20px" height="20px" style="display: none;" uk-svg>
           </div>
           <hr id = "divider-1.5" class="divide" style="margin:15px;">
         </div>
@@ -321,22 +320,25 @@ popup.html is the html scaffolding for OptMeowt's popup page
             />
           </a>
         </div>
-      </div>
 
       <!-- Extension is disabled message (when content is hidden) -->
       <div id="extension-disabled-message"
-        class="uk-position-cover uk-flex uk-flex-center uk-flex-middle"
-        style="transition: all ease 0.25s; opacity: 0"
-      >
-        <div class="uk-container uk-text-center">
-          <div style="font-size: medium; font-weight: bold; margin-bottom: 4px">
-            Extension Disabled
-          </div>
-          <div>
-            You may enable the extension by clicking the play button above.
-          </div>
+      class="uk-position-cover uk-flex uk-flex-center uk-flex-middle"
+      style="transition: all ease 0.25s; opacity: 0"
+    >
+      <div class="uk-container uk-text-center">
+        <div style="font-size: medium; font-weight: bold; margin-bottom: 4px">
+          Extension Disabled
+        </div>
+        <div>
+          You may enable the extension by clicking the play button above.
         </div>
       </div>
+    </div>
+
+
+      </div>
+
     </div>
   </body>
 </html>

@@ -12,15 +12,15 @@ their respective cookies (3rd party), and places them.
 */
 
 
-import { cookiesDAA } from "../../data/cookiesDAA.js"
+import { cookie_list } from "../../data/cookie_list.js"
 
 
 function initCookiesOnInstall() {
-  setAllCookies(cookiesDAA)
+  setAllCookies(cookie_list)
 }
 
 function initCookiesPerDomain(domainFilter) {
-  setFilteredCookies(cookiesDAA, domainFilter)
+  setFilteredCookies(cookie_list, domainFilter)
 }
 
 /**

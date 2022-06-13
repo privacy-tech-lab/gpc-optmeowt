@@ -61,46 +61,28 @@ const darkmode = new Darkmode();
 // Sets the current mode icon
 function changeOptModeIcon() {
   let optMode = document.getElementById("optMode");
-  let pl = document.getElementById("p-light");
-  let al = document.getElementById("a-light");
-  let pd = document.getElementById("p-dark");
-  let ad = document.getElementById("a-dark");
 
+  let p = document.getElementById("p");
+  let a = document.getElementById("a");
+  a.style.display="none";
+  p.style.display="none";
   // optMode badge icon
-  pl.style.display = "none";
-  al.style.display = "none";
-  pd.style.display = "none";
-  ad.style.display = "none";
-  if (darkmode.isActivated()) {
-    (mode === modes.analysis) ? al.style.display="" : pl.style.display="";
-  } else {
-    (mode === modes.analysis) ? ad.style.display="" : pd.style.display="";
-  }
+  (mode === modes.analysis) ? a.style.display="" : p.style.display=""
+
 }
 
 
 // Changes-the-icon listener
 function changeOptModeIconListenerCallback() {
   let optMode = document.getElementById("optMode");
-  let pl = document.getElementById("p-light");
-  let al = document.getElementById("a-light");
-  let pd = document.getElementById("p-dark");
-  let ad = document.getElementById("a-dark");
 
+  let p = document.getElementById("p");
+  let a = document.getElementById("a");
+  a.style.display="none";
+  p.style.display="none";
   // optMode badge icon
-  pl.style.display = "none";
-  al.style.display = "none";
-  pd.style.display = "none";
-  ad.style.display = "none";
-  if (darkmode.isActivated()) {
-    // optMode.style.color = "rgb(89,98,127)";
-    // optMode.style.border = "1px solid rgb(89,98,127)";
-    (mode === modes.analysis) ? ad.style.display="" : pd.style.display="";
-  } else {
-    // optMode.style.color = "rgb(238,238,238)";
-    // optMode.style.border = "1px solid rgb(238,238,238)";
-    (mode === modes.analysis) ? al.style.display="" : pl.style.display="";
-  }
+  (mode === modes.analysis) ? a.style.display="" : p.style.display=""
+
 }
 
 
@@ -197,7 +179,10 @@ function renderExtenionIsEnabledDisabled(isEnabled, isDomainlisted) {
 }
 
 function listenerExtensionIsEnabledDisabledButton(isEnabled, isDomainlisted, mode) {
-  document.getElementById("enable-disable").addEventListener("click", () => {
+  document.getElementById("enable-disable").addEventListener("click", async () => {
+
+    isEnabled = await storage.get(stores.settings, "IS_ENABLED");
+    
     if (isEnabled) {
       document.getElementById("extension-disabled-message").style.display = "";
       document.getElementById("img").src =
@@ -474,11 +459,13 @@ function showAnalysisInfo() {
  * @param {Modes} mode - from modes.js
  */
 async function switchMode(mode) {
-  const analysisWarningShown = await storage.get(stores.settings, 'ANALYSIS_WARNING_SHOWN');
+  //const analysisWarningShown = await storage.get(stores.settings, 'ANALYSIS_WARNING_SHOWN');
+  /*
   if (!analysisWarningShown && mode === modes.analysis) {
     analysisWarning();
     storage.set(stores.settings, true, 'ANALYSIS_WARNING_SHOWN');
   }
+  */
 
   changeOptModeIcon();
   if (mode === modes.protection) {
@@ -727,14 +714,21 @@ async function buildAnalysis(data) {
   let uspStringBeforeGPC;
   let uspStringAfterGPC;
 
+  // console.log("beforeGPCUSPCookies", beforeGPCUSPCookies);
+  // console.log("afterGPCUSPCookies", afterGPCUSPCookies);
+
   // Generate the US Privacy String BEFORE GPC is sent
   // Give priority to the USPAPI over USP Cookie
   if (beforeGPCUSPAPI && beforeGPCUSPAPI[0] && beforeGPCUSPAPI[0]["uspString"]) {
-    uspStringBeforeGPC = beforeGPCUSPAPI[0]["uspString"];
+    // console.log("Triggering 1A:")
+    uspStringBeforeGPC = beforeGPCUSPAPI[0]["uspString"];   // USPAPI exists
   } else {
+    // console.log("Triggering 1B:")
     if (beforeGPCUSPCookies && beforeGPCUSPCookies[0] && beforeGPCUSPCookies[0]["value"]) {
-      uspStringBeforeGPC = beforeGPCUSPCookies[0]["value"];
+      // console.log("Triggering 1C:")
+      uspStringBeforeGPC = beforeGPCUSPCookies[0]["value"]; // USP Cookie exists
     } else {
+      // console.log("Triggering 1D:")
       uspStringBeforeGPC = data.USPAPI_OPTED_OUT || data.USP_COOKIE_OPTED_OUT;
     }
   }
@@ -742,11 +736,15 @@ async function buildAnalysis(data) {
   // Generate the US Privacy String AFTER GPC is sent
   // Give priority to the USPAPI over USP Cookie
   if (afterGPCUSPAPI && afterGPCUSPAPI[0] && afterGPCUSPAPI[0]["uspString"]) {
+    // console.log("Triggering 2A:")
     uspStringAfterGPC = afterGPCUSPAPI[0]["uspString"];
   } else {
+    // console.log("Triggering 2B");
     if (afterGPCUSPCookies && afterGPCUSPCookies[0] && afterGPCUSPCookies[0]["value"]) {
+      // console.log("Triggering 2C");
       uspStringAfterGPC = afterGPCUSPCookies[0]["value"];
     } else {
+      // console.log("Triggering 2D");
       uspStringAfterGPC = data.USPAPI_OPTED_OUT || data.USP_COOKIE_OPTED_OUT;
     }
   }
@@ -776,18 +774,23 @@ async function buildAnalysis(data) {
 
   let stringChanged;
   let optedOut;
-  if (data.USPAPI_OPTED_OUT !== null || data.USPAPI_OPTED_OUT !== undefined) {
+  if (data.USPAPI_OPTED_OUT) {
     optedOut = data.USPAPI_OPTED_OUT;
   } else {
     optedOut = data.USP_COOKIE_OPTED_OUT;
   }
   if (typeof optedOut === 'string') {
+    // console.log("Triggering 3A:");
     if (optedOut === "PARSE_FAILED") {
+      // console.log("Triggering 3B:");
       stringChanged = neg;
     } else if (optedOut === "NOT_IN_CA") {
+      // console.log("Triggering 3C:");
       stringChanged = neg;
     }
   } else {
+    // console.log("Triggering 3D:");
+    // console.log("optedOut: ", optedOut);
     stringChanged = optedOut ? pos : neg;
   }
   // console.log("data.USP_OPTED_OUT", data.USP_OPTED_OUT);
@@ -968,14 +971,7 @@ function setToDomainlist(d, k) {
 /******************************************************************************/
 
 
-function analysisWarning() {
-  let modal = UIkit.modal("#analysis-modal");
-  modal.show();
-  document.getElementById("modal-button-1").onclick = function () {
-    // browser.windows.create({ "url": null, "incognito": true });
-    modal.hide();
-  }
-}
+
 
 // Walkthrough function
 function popUpWalkthrough() {
@@ -999,18 +995,20 @@ function popUpWalkthrough() {
 // Init: Check to see if we should do tutorial
 async function initPopUpWalkthrough() {
   const tutorialShownInPopup = await storage.get(stores.settings, 'TUTORIAL_SHOWN_IN_POPUP');
-  const mode = await storage.get(stores.settings, "MODE");
-  const analysisWarningShown = await storage.get(stores.settings, 'ANALYSIS_WARNING_SHOWN');
+  const mode = await storage.get(stores.settings, "MODE"); //copied
+  //const analysisWarningShown = await storage.get(stores.settings, 'ANALYSIS_WARNING_SHOWN');
 
   // console.log("Tutorial shown: ", tutorialShownInPopup)
   if (!tutorialShownInPopup) {
     popUpWalkthrough(mode);
     storage.set(stores.settings, true, 'TUTORIAL_SHOWN_IN_POPUP');
   }
+  /*
   if (!analysisWarningShown && mode === modes.analysis) {
     analysisWarning();
     storage.set(stores.settings, true, 'ANALYSIS_WARNING_SHOWN');
   }
+  */
 }
 
 
@@ -1046,25 +1044,29 @@ function stopAnalysisButtonOnClick() {
 }
 
 /**
- * Mode switch button
+ * Mode switch 
  */
+
 function loadChangeMode() {
-  let modeButton = document.getElementById("optMode");
-  modeButton.addEventListener('click', function() {
-    let newMode = (mode === modes.analysis) ? modes.protection : modes.analysis;
-    mode = newMode;
-    // changeOptModeIcon();
-    chrome.runtime.sendMessage({
-      msg: "CHANGE_MODE",
-      data: newMode
-    })
-    switchMode(mode);
-  })
+  let newMode = (mode === modes.analysis) ? modes.protection : modes.analysis;
+  mode = newMode;
+  switchMode(mode);
 }
 loadChangeMode();
 
+
 // Listener: Opens options page
 document.getElementById("more").addEventListener("click", () => {
+  chrome.runtime.openOptionsPage();
+});
+
+// Listener: Opens tutorial
+document.getElementById("tour").addEventListener("click", () => {
+
+  chrome.runtime.sendMessage({
+    msg: "SHOW_TUTORIAL"
+  })
+  storage.set(stores.settings, false, 'TUTORIAL_SHOWN')
   chrome.runtime.openOptionsPage();
 });
 
