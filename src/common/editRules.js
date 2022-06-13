@@ -3,6 +3,8 @@ Licensed per https://github.com/privacy-tech-lab/gpc-optmeowt/blob/main/LICENSE.
 privacy-tech-lab, https://www.privacytechlab.org/
 */
 
+import { storage, stores } from "../background/storage";
+
 
 /*
 editRules.js
@@ -110,4 +112,39 @@ export async function addDynamicRule(id, domain) {
 	};
 	await chrome.declarativeNetRequest.updateDynamicRules(UpdateRuleOptions);
   // console.log('Added rule id#',id,' [',domain,'].');
+  return;
+}
+
+
+/**
+ * Deletes all rules, queries current domainlist, and re-adds all rules
+ * - Useful when replacing the domainlist via an import/export
+ * - Remember rules as of v3.0.0 are 'exclusion' rules, i.e. excluded from 
+ *   receiving GPC or other opt-outs. 
+ */
+export async function reloadDynamicRules() {
+  // TODO: Make sure we can still import the old file format from VERSION < 3.0.0
+
+  deleteAllDynamicRules();
+  console.log("I got here h;aha")
+  let domainlist = await storage.getStore(stores.domainlist)
+
+  let promises = []
+  Object.keys(domainlist).forEach(async (domain) => {
+    promises.push(new Promise(async (resolve, reject) => {
+      console.log(domain, domainlist[domain]);
+      let id = domainlist[domain]
+      if (id) {
+        await addDynamicRule(id, domain);
+      }
+      resolve();
+    }))
+  })
+
+  Promise.all(promises).then(() => {
+    console.log("Finished that much...")
+    chrome.declarativeNetRequest.getDynamicRules((res) => {
+      console.log("Current dyn rules", res);
+    })
+  })
 }
