@@ -111,7 +111,7 @@ async function checkForUSPString(url) {
 
 // Update analysis icon when running
 function setAnalysisIcon(tabID) {
-  chrome.browserAction.setIcon({
+  chrome.action.setIcon({
     tabId: tabID,
     path: "../../assets/face-icons/optmeow-face-circle-yellow-128.png",
   }, ()=>{ /*console.log("Updated icon to SOLID YELLOW.");*/});
@@ -305,7 +305,7 @@ async function haltAnalysis() {
       let tab = tabs[0];
 
       // Change popup icon
-      chrome.browserAction.setIcon({
+      chrome.action.setIcon({
         tabId: tab.id,
         path: "../../assets/face-icons/icon128-face-circle.png",
       }, ()=>{ /*console.log("Updated icon to REGULAR.");*/});
@@ -329,11 +329,13 @@ async function haltAnalysis() {
  * @param {object} details - retrieved info passed into callback
  */
  function addDomSignal(details) {
-  chrome.tabs.executeScript(details.tabId, {
-    file: "dom.js",
-    frameId: details.frameId, // Supposed to solve multiple injections
-                              // as opposed to allFrames: true
-    runAt: "document_start",
+  chrome.scripting.executeScript({
+    files: ["dom.js"],
+    target: {
+      frameIds: [details.frameId],
+      tabId: details.tabId, 
+    },    // Supposed to solve multiple injections as opposed to allFrames: true
+    // runAt: "document_start", // defaults to 'document_idle'
   });
 }
 
@@ -774,7 +776,7 @@ function commandsHandler(command) {
   if (command === "halt_analysis") {
     console.log("Halt anlysis running...");
     haltAnalysis();
-    // chrome.browserAction.openPopup();
+    // chrome.action.openPopup();
   }
 }
 

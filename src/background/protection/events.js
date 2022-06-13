@@ -122,11 +122,13 @@ function addHeaders(details) {
  * @param {object} details - retrieved info passed into callback
  */
 function addDomSignal(details) {
-  chrome.tabs.executeScript(details.tabId, {
-    file: "dom.js",
-    frameId: details.frameId, // Supposed to solve multiple injections
-                              // as opposed to allFrames: true
-    runAt: "document_start",
+  chrome.scripting.executeScript({
+    files: ["dom.js"],
+    target: {
+      frameIds: [details.frameId],
+      tabId: details.tabId, 
+    },    // Supposed to solve multiple injections as opposed to allFrames: true
+    // runAt: "document_start", // defaults to 'document_idle'
   });
 }
 
@@ -160,7 +162,7 @@ function updatePopupIcon(details) {
     wellknown[details.tabId] = null
   }
   if (wellknown[details.tabId] === null) {
-    chrome.browserAction.setIcon(
+    chrome.action.setIcon(
       {
         tabId: details.tabId,
         path: "assets/face-icons/optmeow-face-circle-green-ring-128.png",
@@ -352,7 +354,7 @@ chrome.runtime.onMessage.addListener(async function (message, sender, sendRespon
     if (wellknown[tabID]["gpc"] === true) {
       setTimeout(()=>{}, 10000);
       if (signalPerTab[tabID] === true) {
-        chrome.browserAction.setIcon(
+        chrome.action.setIcon(
           {
             tabId: tabID,
             path: "assets/face-icons/optmeow-face-circle-green-128.png",

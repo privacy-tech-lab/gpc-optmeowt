@@ -28,14 +28,14 @@ module.exports = (env, argv) => {
 			background: "./src/background/control.js",
 			popup: "./src/popup/popup.js",
 			options: "./src/options/options.js",
-			contentScript: "./src/content-scripts/contentScript.js"
+			// contentScript: "./src/content-scripts/contentScript.js"
 		},
 		output: {
 			filename: "[name].bundle.js",
 			path: path.resolve(__dirname, `${isProduction ? "dist" : "dev"}/${browser}` ),
 			// publicPath: "/",
 		},
-		devtool: isProduction ? "source-map" : "eval-source-map",
+		devtool: isProduction ? "source-map" : "cheap-source-map",
 		devServer: {
 			open: true,
 			host: "localhost",
@@ -87,9 +87,18 @@ module.exports = (env, argv) => {
 				patterns: [{ context: path.resolve(__dirname, "src"), from: "assets", to: "assets" }],
 			}),
 			new CopyPlugin({
+				patterns: [{ 
+					context: path.resolve(__dirname, "src"), 
+					from: "content-scripts", 
+					to: "content-scripts" }],
+			}),
+			new CopyPlugin({
 				patterns: [{ context: path.resolve(__dirname, "src"), 
 				from: (isProduction ? "manifest-dist.json" : "manifest-dev.json"), 
 				to: "manifest.json"}],
+			}),
+			new CopyPlugin({
+				patterns: [{ context: path.resolve(__dirname, "src"), from: "rules", to: "rules" }],
 			}),
 			new CopyPlugin({
 				patterns: [{ context: path.resolve(__dirname, "src/background/protection"), from: "dom.js" }],

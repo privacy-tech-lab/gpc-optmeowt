@@ -46,4 +46,4 @@ export function csvGenerator(csvData, titles) {
 	document.body.appendChild(link);
   
 	link.click();
-  }
+}

@@ -15,16 +15,17 @@ to manage the state & functionality mode of the extension
 
 import { init as initProtection, halt as haltProtection, halt } from "./protection/protection.js";
 import { init as initAnalysis, halt as haltAnalysis } from "./analysis/analysis.js";
-import { modes } from "../data/modes.js";
+
 import { defaultSettings } from "../data/defaultSettings.js";
+import { modes } from "../data/modes.js";
 import { stores, storage } from "./storage.js";
+import { addDynamicRule, deleteAllDynamicRules, getFreshId } from '../common/editRules';
 
-var mode = defaultSettings.MODE;
-var isEnabled = defaultSettings.IS_ENABLED;
-var isDomainlisted = defaultSettings.IS_DOMAINLISTED;
+// TODO: Remove
+import { debug_domainlist_and_dynamicrules } from '../common/editDomainlist';
 
-
-function enable() {
+async function enable() {
+  let mode = await storage.get(stores.settings, "MODE");
   switch (mode) {
     case modes.analysis:
       initAnalysis();
@@ -52,6 +53,18 @@ function disable() {
 
 // This is the very first thing the extension runs
 (async () => {
+
+  // TODO: Temporarily register content script
+  chrome.scripting.registerContentScripts([
+    {
+      "id": "1",
+      "matches": ["<all_urls>"],
+      "js": ["content-scripts/registration/gpc-dom.js"],
+      "runAt": "document_start"
+    }
+  ])
+  .then(() => { console.log("Registered content script."); })
+
   // Initializes the default settings
   let settingsDB = await storage.getStore(stores.settings);
   for (let setting in defaultSettings) {
@@ -60,14 +73,15 @@ function disable() {
     }
   }
 
-  mode = await storage.get(stores.settings, "MODE");
-  isEnabled = await storage.get(stores.settings, "IS_ENABLED");
-  isDomainlisted = await storage.get(stores.settings, "IS_DOMAINLISTED");
+  // mode = await storage.get(stores.settings, "MODE");
+  let isEnabled = await storage.get(stores.settings, "IS_ENABLED");
+  // isDomainlisted = await storage.get(stores.settings, "IS_DOMAINLISTED");
 
   if (isEnabled) {  // Turns on the extension
     enable();
   }
 })();
+
 
 /******************************************************************************/
 // Mode listeners
@@ -85,7 +99,7 @@ function disable() {
  chrome.runtime.onMessage.addListener(async function (message, sender, sendResponse) {
 	// console.log(`Recieved message @ background page.`);
   if (message.msg === "TURN_ON_OFF") {
-    isEnabled = message.data.isEnabled;           // can be undefined
+    let isEnabled = message.data.isEnabled;           // can be undefined
 
     if (isEnabled) {
       await storage.set(stores.settings, true, "IS_ENABLED");
@@ -96,9 +110,10 @@ function disable() {
     }
   }
   if (message.msg === "CHANGE_MODE") {
-    mode = message.data;
-    console.log("CHANGE_MODE: mode = ", mode);
+    let mode = message.data;
+    let isEnabled = await storage.get(stores.settings, "IS_ENABLED");
     await storage.set(stores.settings, mode, "MODE");
+    console.log("CHANGE_MODE: mode = ", mode);
     if (isEnabled) {
       enable();
     }
@@ -108,11 +123,15 @@ function disable() {
     }); 
   }
   if (message.msg === "CHANGE_IS_DOMAINLISTED") {
-    isDomainlisted = message.data.isDomainlisted; // can be undefined
+    let isDomainlisted = message.data.isDomainlisted; // can be undefined
   }
 });
 
 // Handles requests for global mode
+/**
+ * IF YOU EVER NEED TO DEBUG THIS: 
+ * This is outmoded in manifest V3. We cannot maintain global variables anymore. 
+ */
 chrome.runtime.onConnect.addListener(function(port) {
   port.onMessage.addListener(function (message) {
     if (message.msg === "REQUEST_MODE") {

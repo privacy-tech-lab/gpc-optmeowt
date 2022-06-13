@@ -14,6 +14,7 @@ If the domainlist is being handled, then cookies are added/removed here too
 
 import { openDB } from "idb"
 import { storageCookies } from "./storageCookies.js"
+import { reloadDynamicRules } from "../common/editRules"
 
 
 /******************************************************************************/
@@ -32,6 +33,7 @@ import { storageCookies } from "./storageCookies.js"
 // In general, these functions should be use with async / await for 
 // syntactic sweetness & synchronous data handling 
 // i.e., await storage.set(stores.settings, extensionMode.enabled, 'MODE')
+// TODO: Make this an enum
 const stores = Object.freeze({
     settings: 'SETTINGS',
     domainlist: 'DOMAINLIST',
@@ -44,7 +46,7 @@ const stores = Object.freeze({
 /******************************************************************************/
 
 const dbPromise = openDB("extensionDB", 1, {
-    upgrade: (db) => {
+    upgrade: function dbPromiseInternal(db) {
         db.createObjectStore(stores.domainlist)
         db.createObjectStore(stores.settings)
         db.createObjectStore(stores.analysis)
@@ -109,15 +111,16 @@ const storage = {
 /******************************************************************************/
 
 async function handleDownload() {
-    // console.log("Downloading ...");
-    var DOMAIN_NAMES = await storage.getAllKeys(stores.domainlist)
-    var DOMAIN_SETTINGS = await storage.getAll(stores.domainlist)
+    const DOMAINLIST = await storage.getStore(stores.domainlist)
+    const MANIFEST = chrome.runtime.getManifest();
 
-    var blob = new Blob([JSON.stringify(DOMAIN_NAMES, null, 4), JSON.stringify(DOMAIN_SETTINGS, null, 4)],
-                          {type: "text/plain;charset=utf-8"});
+    let data = {
+        VERSION: MANIFEST.version, 
+        DOMAINLIST: DOMAINLIST,
+    }
+
+    let blob = new Blob([JSON.stringify(data, null, 4)], {type: "text/plain;charset=utf-8"});
     saveAs(blob, "OptMeowt_backup.json");
-
-    // console.log("Downloaded!")
 }
 
 /**
@@ -137,21 +140,26 @@ async function handleUpload() {
     const file = this.files[0];
     const fr = new FileReader();
     fr.onload = function(e) {
-        // Parse stored domain list. Stored as two consecutive text arrays: 
-        // first for domain list, second for corresponding bools showing if each domain is enabled.
-        var RAW_LOAD = e.target.result.split("]")
-        RAW_LOAD[0] = RAW_LOAD[0].replace(/(\r\n|\n|\r|\"|\s|\[)/gm,"")
-        RAW_LOAD[1] = RAW_LOAD[1].replace(/(\r\n|\n|\r|\"|\s|\[)/gm,"")
-        var LOADED_KEYS = RAW_LOAD[0].split(",")
-        var LOADED_SETTINGS = RAW_LOAD[1].split(",")
-        for (let i = 0; i < LOADED_KEYS.length; i++) {
-            try {
-                storage.set(stores.domainlist, (LOADED_SETTINGS[i] === 'true'),LOADED_KEYS[i])
-            } catch (error) {
-                alert("Error loading list")
-            } 
-        } 
+        const UPLOADED_DATA = JSON.parse(e.target.result);
+        console.log("submittedData", UPLOADED_DATA);
+        let version = UPLOADED_DATA.VERSION;
+        let domainlist = UPLOADED_DATA.DOMAINLIST;
+        version = version.split('.');
+        console.log("version", version)
 
+        // hardcode if it is the new version
+        if (Number(version[0]) >= 3) {
+            let domainlist_keys = Object.keys(domainlist);
+            let domainlist_vals = Object.values(domainlist);
+            for (let i = 0; i < domainlist_keys.length; i++) {
+                try {
+                    storage.set(stores.domainlist, domainlist_vals[i], domainlist_keys[i]);
+                } catch (error) {
+                    alert("Error loading list")
+                } 
+            } 
+        }
+        reloadDynamicRules();
         // console.log("Finished upload!")
     };
     fr.readAsText(file);
