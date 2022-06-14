@@ -28,7 +28,8 @@ module.exports = (env, argv) => {
 			background: "./src/background/control.js",
 			popup: "./src/popup/popup.js",
 			options: "./src/options/options.js",
-			// contentScript: "./src/content-scripts/contentScript.js"
+			gpc_dom_cs_registration: "./src/content-scripts/gpc_dom_cs_registration.js",
+			gpc_dom_cs_injection: "./src/content-scripts/gpc_dom_cs_injection.js",
 		},
 		output: {
 			filename: "[name].bundle.js",

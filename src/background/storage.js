@@ -53,6 +53,9 @@ const dbPromise = openDB("extensionDB", 1, {
     }
 });
 
+
+// TODO: Make chrome.storage.local support more than domainlist by making it a subobject
+// storage will add data to IDB and also to chrome.storage.local...
 const storage = {
     async get(store, key) {
         return (await dbPromise).get(store, key)
@@ -80,6 +83,10 @@ const storage = {
             // placing or deleting opt out cookies for a given domain key
             // We know that `key` will be a domain, i.e. a string
             if (store === stores.domainlist) {
+                console.log("this is the key", key)
+                let toSet = {};
+                toSet[key] = value;
+                chrome.storage.local.set(toSet);
                 if (value === true) {
                     storageCookies.addCookiesForGivenDomain(key)
                 }
@@ -95,12 +102,16 @@ const storage = {
         // deleting opt out cookies for a given domain key
         // We know that `key` will be a domain, i.e. a string
         if (store === stores.domainlist) {
+            chrome.storage.local.remove([key]);
             storageCookies.deleteCookiesForGivenDomain(key)
         }
 
         return (await dbPromise).delete(store, key)
     },
     async clear(store){
+        if (store === stores.domainlist) {
+            chrome.storage.local.clear();
+        }
         return (await dbPromise).clear(store)
     },
 }

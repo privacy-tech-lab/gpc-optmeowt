@@ -159,21 +159,21 @@ function addHeaders(details) {
   return { requestHeaders: details.requestHeaders };
 }
 
-/**
- * Runs `dom.js` to attach DOM signal
- * @param {object} details - retrieved info passed into callback
- */
-function addDomSignal(details) {
-  // console.log("TABS 2", tabs)
-  chrome.scripting.executeScript({
-    files: ["dom.js"],
-    target: {
-      frameIds: [details.frameId],
-      tabId: details.tabId, 
-    },    // Supposed to solve multiple injections as opposed to allFrames: true
-    // runAt: "document_start", // defaults to 'document_idle'
-  });
-}
+// /**
+//  * Runs `dom.js` to attach DOM signal
+//  * @param {object} details - retrieved info passed into callback
+//  */
+// function addDomSignal(details) {
+//   // console.log("TABS 2", tabs)
+//   chrome.scripting.executeScript({
+//     files: ["dom.js"],
+//     target: {
+//       frameIds: [details.frameId],
+//       tabId: details.tabId, 
+//     },    // Supposed to solve multiple injections as opposed to allFrames: true
+//     // runAt: "document_start", // defaults to 'document_idle'
+//   });
+// }
 
 /**
  * Checks whether a particular domain should receive a DNS signal
@@ -203,6 +203,7 @@ async function updateDomainlist(details) {
     storage.set(stores.domainlist, null, parsedDomain); // Sets to storage async
     // domainlist[parsedDomain] = true;                    // Sets to cache
     // parsedDomainVal = true;
+    // chrome.storage.local.set({parsedDomain: null}, (r)=>{});
   }
   
   // (isDomainlisted) 
@@ -461,6 +462,7 @@ async function onMessageHandlerAsync(message, sender, sendResponse) {
     // findId()
     addDynamicRule(id, domain)
     storage.set(stores.domainlist, key, domain);  // Sets to long term storage
+    // chrome.storage.local.set({key: domain}, ()=>{})
   }
   if (message.msg === "REMOVE_FROM_DOMAINLIST") {
     let domain = message.data;

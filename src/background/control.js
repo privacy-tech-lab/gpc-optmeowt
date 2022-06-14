@@ -59,7 +59,7 @@ function disable() {
     {
       "id": "1",
       "matches": ["<all_urls>"],
-      "js": ["content-scripts/registration/gpc-dom.js"],
+      "js": ["gpc_dom_cs_registration.bundle.js"],
       "runAt": "document_start"
     }
   ])
