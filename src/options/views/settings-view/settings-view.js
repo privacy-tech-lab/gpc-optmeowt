@@ -209,6 +209,7 @@ async function initPopUpWalkthrough() {
 function loadChangeMode() {
   if ("$BROWSER" != "firefox") {
     document.getElementById("optMode-parent").style.display = "none";
+    document.getElementById("analysis-export").style.display = "none";
   } else {
     document.getElementById("optMode").addEventListener('click', function() {
       mode = modes.analysis;
