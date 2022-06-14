@@ -13,7 +13,7 @@ to manage the state & functionality mode of the extension
 */
 
 
-import { init as initProtection, halt as haltProtection, halt } from "./protection/protection.js";
+import { init as initProtection, halt as haltProtection, halt } from "./protection/protection-ff.js";
 import { init as initAnalysis, halt as haltAnalysis } from "./analysis/analysis.js";
 
 import { defaultSettings } from "../data/defaultSettings.js";
