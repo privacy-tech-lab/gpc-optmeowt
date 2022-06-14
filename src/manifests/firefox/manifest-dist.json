@@ -1,0 +1,55 @@
+{
+  "name": "OptMeowt",
+  "author": "privacy-tech-lab",
+  "version": "3.0.0",
+  "description": "OptMeowt allows Web users to make use of their rights to opt out from the sale and sharing of personal data",
+  "permissions": [
+    "webRequest",
+    "<all_urls>",
+    "webNavigation",
+    "storage",
+    "activeTab",
+    "cookies",
+    "tabs"
+  ],
+  "commands": {
+    "run_analysis": {
+      "description": "Starts an analysis on the current site",
+      "suggested_key": {
+        "default": "Alt+Shift+A"
+      }
+    },
+    "halt_analysis": {
+      "description": "Halts the started analysis",
+      "suggested_key": {
+        "default": "Alt+Shift+S"
+      }
+    }
+  },
+  "icons": {
+    "128": "assets/face-icons/icon128-face-circle.png"
+  },
+  "browser_action": {
+    "default_title": "OptMeowt",
+    "default_popup": "popup.html"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content-scripts/contentScript.js"],
+      "run_at": "document_start"
+    }
+  ],
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": true
+  },
+  "background": {
+    "scripts": ["background.bundle.js"]
+  },
+  "web_accessible_resources": [
+    "json/*.json"
+  ],
+  "manifest_version": 2,
+  "incognito": "spanning"
+}

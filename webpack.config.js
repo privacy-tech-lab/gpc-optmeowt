@@ -25,7 +25,7 @@ module.exports = (env, argv) => {
 		name: "background",
 		// This is useful, plus we need it b/c otherwise we get an "unsafe eval" problem
 		entry: {
-			background: "./src/background/control.js",
+			background: env.chrome ? "./src/background/control.js" : "./src/background/control-ff.js",
 			popup: "./src/popup/popup.js",
 			options: "./src/options/options.js",
 			// contentScript: "./src/content-scripts/contentScript.js"
@@ -93,7 +93,7 @@ module.exports = (env, argv) => {
 					to: "content-scripts" }],
 			}),
 			new CopyPlugin({
-				patterns: [{ context: path.resolve(__dirname, "src"), 
+				patterns: [{ context: path.resolve(__dirname, env.chrome ? "src/manifests/chrome" : "src/manifests/firefox"), 
 				from: (isProduction ? "manifest-dist.json" : "manifest-dev.json"), 
 				to: "manifest.json"}],
 			}),
