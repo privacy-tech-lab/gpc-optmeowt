@@ -22,6 +22,8 @@ import { initCookiesPerDomain } from "./cookiesOnInstall.js";
 import { initCookiesOnInstall } from "./cookiesOnInstall.js";
 import psl from "psl";
 
+import { addDynamicRule, deleteDynamicRule } from "../../common/editRules"
+
 
 
 /******************************************************************************/
@@ -47,6 +49,7 @@ var isFirefox = ("$BROWSER" === "firefox");
 async function reloadVars() {
   let storedDomainlisted = await storage.get(stores.settings, "IS_DOMAINLISTED");
   if (storedDomainlisted) {
+    console.log(storedDomainlisted);
     isDomainlisted = storedDomainlisted;
   }
 }
@@ -444,13 +447,13 @@ async function onMessageHandlerAsync(message, sender, sendResponse) {
     let { domain, key } = message.data;
     domainlist[domain] = key;                     // Sets to cache
     // findId()
-    addDynamicRule(id, domain)
+    //addDynamicRule(id, domain)
     storage.set(stores.domainlist, key, domain);  // Sets to long term storage
   }
   if (message.msg === "REMOVE_FROM_DOMAINLIST") {
     let domain = message.data;
     // findId()
-    deleteDynamicRule(id, domain)
+    //deleteDynamicRule(id, domain)
     storage.delete(stores.domainlist, domain);
     delete domainlist[domain];
   }
