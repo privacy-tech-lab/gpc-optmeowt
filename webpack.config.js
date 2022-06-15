@@ -25,7 +25,7 @@ module.exports = (env, argv) => {
 		name: "background",
 		// This is useful, plus we need it b/c otherwise we get an "unsafe eval" problem
 		entry: {
-			background: env.chrome ? "./src/background/control.js" : "./src/background/control-ff.js",
+			background: "./src/background/control.js",
 			popup: "./src/popup/popup.js",
 			options: "./src/options/options.js",
 			// contentScript: "./src/content-scripts/contentScript.js"
