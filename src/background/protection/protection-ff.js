@@ -92,10 +92,6 @@ const listenerCallbacks = {
     // //   return details
     // // }
     // TODO: Remove this when done
-    (async() => {
-      let s = await storage.getStore(stores.domainlist)
-      console.log("Current Domainlist: ", s)
-    })();
 
 
   },
@@ -180,21 +176,20 @@ function addHeaders(details) {
  * Currently, it only adds to domainlist store as NULL if it doesnt exist
  * @param {Object} details - callback object according to Chrome API
  */
-async function updateDomainlist(details) {
+ function updateDomainlist(details) {
   let url = new URL(details.url);
   let parsedUrl = psl.parse(url.hostname);
   let parsedDomain = parsedUrl.domain;
 
-  // let parsedDomainVal = domainlist[parsedDomain];
-  let currDomainValue = await storage.get(stores.domainlist, parsedDomain);
-  if (currDomainValue === undefined) {
+  let parsedDomainVal = domainlist[parsedDomain];
+  if (parsedDomainVal === undefined) {
     storage.set(stores.domainlist, null, parsedDomain); // Sets to storage async
-    //domainlist[parsedDomain] = true;                    // Sets to cache
-    currDomainValue = null;
+    domainlist[parsedDomain] = null;                    // Sets to cache
+    parsedDomainVal = null;
   }
   
   (isDomainlisted) 
-    ? ((currDomainValue === null) ? sendSignal = true : sendSignal = false)
+    ? ((parsedDomainVal === null) ? sendSignal = true : sendSignal = false)
     : sendSignal = true;
 }
 
