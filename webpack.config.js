@@ -93,7 +93,7 @@ module.exports = (env, argv) => {
 					to: "content-scripts" }],
 			}),
 			new CopyPlugin({
-				patterns: [{ context: path.resolve(__dirname, "src"), 
+				patterns: [{ context: path.resolve(__dirname, env.chrome ? "src/manifests/chrome" : "src/manifests/firefox"), 
 				from: (isProduction ? "manifest-dist.json" : "manifest-dev.json"), 
 				to: "manifest.json"}],
 			}),

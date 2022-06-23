@@ -12,7 +12,7 @@ protection.js (1) Implements our per-site functionality for the background liste
 */
 
 
-import { stores, storage } from "./../storage.js";
+import { stores, storage } from "../storage.js";
 import { modes } from "../../data/modes.js";
 import { defaultSettings } from "../../data/defaultSettings.js";
 import { headers } from "../../data/headers.js";
@@ -22,9 +22,8 @@ import { initCookiesPerDomain } from "./cookiesOnInstall.js";
 import { initCookiesOnInstall } from "./cookiesOnInstall.js";
 import psl from "psl";
 
-// TODO: Remove this when done
 import { addDynamicRule, deleteDynamicRule } from "../../common/editRules"
-// import { getFreshId } from "../../domainlist-rules";
+
 
 
 /******************************************************************************/
@@ -50,6 +49,7 @@ var isFirefox = ("$BROWSER" === "firefox");
 async function reloadVars() {
   let storedDomainlisted = await storage.get(stores.settings, "IS_DOMAINLISTED");
   if (storedDomainlisted) {
+    console.log(storedDomainlisted);
     isDomainlisted = storedDomainlisted;
   }
 }
@@ -82,20 +82,16 @@ const listenerCallbacks = {
     // updateDomainlistAndSignal(details);
     updateDomainlist(details);
 
-    // if (sendSignal) {
-    //   signalPerTab[details.tabId] = true;
-    //   initIAB();
-    //   updatePopupIcon(details);
-    //   return addHeaders(details);
-    // }
+    if (sendSignal) {
+      signalPerTab[details.tabId] = true;
+      initIAB();
+      updatePopupIcon(details);
+      return addHeaders(details);
+    }
     // // else {
     // //   return details
     // // }
     // TODO: Remove this when done
-    (async() => {
-      let s = await storage.getStore(stores.domainlist)
-      console.log("Current Domainlist: ", s)
-    })();
 
 
   },
@@ -127,9 +123,8 @@ const listenerCallbacks = {
    */
   onCommitted: async (details) => {
     // await updateDomainsAndSignal(details)
-    // updateDomainlistAndSignal(details);
+    //updateDomainlistAndSignal(details);
     updateDomainlist(details);
-
     if (sendSignal) {
       addDomSignal(details)
     }
@@ -163,15 +158,12 @@ function addHeaders(details) {
  * Runs `dom.js` to attach DOM signal
  * @param {object} details - retrieved info passed into callback
  */
-function addDomSignal(details) {
-  // console.log("TABS 2", tabs)
-  chrome.scripting.executeScript({
-    files: ["dom.js"],
-    target: {
-      frameIds: [details.frameId],
-      tabId: details.tabId, 
-    },    // Supposed to solve multiple injections as opposed to allFrames: true
-    // runAt: "document_start", // defaults to 'document_idle'
+ function addDomSignal(details) {
+  chrome.tabs.executeScript(details.tabId, {
+    file: "../../content-scripts/injection/gpc-dom.js",
+    frameId: details.frameId, // Supposed to solve multiple injections
+                              // as opposed to allFrames: true
+    runAt: "document_start",
   });
 }
 
@@ -184,30 +176,21 @@ function addDomSignal(details) {
  * Currently, it only adds to domainlist store as NULL if it doesnt exist
  * @param {Object} details - callback object according to Chrome API
  */
-async function updateDomainlist(details) {
+ function updateDomainlist(details) {
   let url = new URL(details.url);
   let parsedUrl = psl.parse(url.hostname);
   let parsedDomain = parsedUrl.domain;
 
-  // let freshId = await getFreshId();  // This is for adding rule exceptions
-  // if (freshId) {
-  //   // addDynamicRule(freshId, parsedDomain);
-  // } else {
-  //   console.error('No fresh ID currently available. \
-  //   Manage or delete items from domainlist to add more.');
-  // }
-
-  // let parsedDomainVal = domainlist[parsedDomain];
-  let currDomainValue = await storage.get(stores.domainlist, parsedDomain);
-  if (currDomainValue === undefined) {
+  let parsedDomainVal = domainlist[parsedDomain];
+  if (parsedDomainVal === undefined) {
     storage.set(stores.domainlist, null, parsedDomain); // Sets to storage async
-    // domainlist[parsedDomain] = true;                    // Sets to cache
-    // parsedDomainVal = true;
+    domainlist[parsedDomain] = null;                    // Sets to cache
+    parsedDomainVal = null;
   }
   
-  // (isDomainlisted) 
-  //   ? ((parsedDomainVal === true) ? sendSignal = true : sendSignal = false)
-  //   : sendSignal = true;
+  (isDomainlisted) 
+    ? ((parsedDomainVal === null) ? sendSignal = true : sendSignal = false)
+    : sendSignal = true;
 }
 
 function updatePopupIcon(details) {
@@ -216,7 +199,7 @@ function updatePopupIcon(details) {
     wellknown[details.tabId] = null
   }
   if (wellknown[details.tabId] === null) {
-    chrome.action.setIcon(
+    chrome.browserAction.setIcon(
       {
         tabId: details.tabId,
         path: "assets/face-icons/optmeow-face-circle-green-ring-128.png",
@@ -408,7 +391,7 @@ function onConnectHandler(port) {
   //  || port.name === "OPTIONS_PAGE"
   ) {
     port.onDisconnect.addListener(function() {
-      console.log("POPT DISCONNECTED");
+      console.log("PORT DISCONNECTED");
       syncDomainlists();
     })
   }
@@ -459,13 +442,13 @@ async function onMessageHandlerAsync(message, sender, sendResponse) {
     let { domain, key } = message.data;
     domainlist[domain] = key;                     // Sets to cache
     // findId()
-    addDynamicRule(id, domain)
+    //addDynamicRule(id, domain)
     storage.set(stores.domainlist, key, domain);  // Sets to long term storage
   }
   if (message.msg === "REMOVE_FROM_DOMAINLIST") {
     let domain = message.data;
     // findId()
-    deleteDynamicRule(id, domain)
+    //deleteDynamicRule(id, domain)
     storage.delete(stores.domainlist, domain);
     delete domainlist[domain];
   }
@@ -478,7 +461,7 @@ async function onMessageHandlerAsync(message, sender, sendResponse) {
     if (wellknown[tabID]["gpc"] === true) {
       setTimeout(()=>{}, 10000);
       if (signalPerTab[tabID] === true) {
-        chrome.action.setIcon(
+        chrome.browserAction.setIcon(
           {
             tabId: tabID,
             path: "assets/face-icons/optmeow-face-circle-green-128.png",
