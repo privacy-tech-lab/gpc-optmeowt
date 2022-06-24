@@ -33,7 +33,7 @@ async function enable() {
   if ("$BROWSER" == 'firefox'){
     var initProtection = initProtection_ff;
     var haltProtection = haltProtection_ff;
-  } else if ("$BROWSER" == "chrome"){
+  } else {
     var initProtection = initProtection_cr;
     var haltProtection = haltProtection_cr;
   }
@@ -55,6 +55,14 @@ async function enable() {
 }
 
 function disable() {
+
+  if ("$BROWSER" == 'firefox'){
+    var haltProtection = haltProtection_ff;
+  } else if ("$BROWSER" == 'chrome') {
+    var haltProtection = haltProtection_cr;
+  }
+
+
   haltAnalysis();
   haltProtection();
 }
