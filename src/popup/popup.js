@@ -213,7 +213,7 @@ function listenerExtensionIsEnabledDisabledButton(isEnabled, isDomainlisted, mod
 async function renderDomainCounter() {
   const domainlistValues = await storage.getAll(stores.domainlist);
   let count = Object.keys(domainlistValues).filter((key) => {
-    return domainlistValues[key] == true;
+    return domainlistValues[key] == null;
   }).length;
   document.getElementById("visited-domains-stats").innerHTML = `
     <p id = "domain-count" class="blue-heading" style="font-size:25px;
@@ -1062,11 +1062,23 @@ document.getElementById("more").addEventListener("click", () => {
 
 // Listener: Opens tutorial
 document.getElementById("tour").addEventListener("click", () => {
-
   chrome.runtime.sendMessage({
     msg: "SHOW_TUTORIAL"
-  })
-  storage.set(stores.settings, false, 'TUTORIAL_SHOWN')
+  });
+
+  storage.set(stores.settings, false, "TUTORIAL_SHOWN");
+
+  //chrome.runtime.openOptionsPage();
+});
+
+// Listener: Opens tutorial
+document.getElementById("tour").addEventListener("click", () => {
+  chrome.runtime.sendMessage({
+    msg: "SHOW_TUTORIAL"
+  });
+
+  storage.set(stores.settings, false, "TUTORIAL_SHOWN");
+
   chrome.runtime.openOptionsPage();
 });
 

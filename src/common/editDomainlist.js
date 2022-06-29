@@ -72,18 +72,25 @@ import { deleteAllDynamicRules, deleteDynamicRule, addDynamicRule, getFreshId } 
 
 async function deleteDomainlistAndDynamicRules() {
 	await storage.clear(stores.domainlist);
+	if ("$BROWSER" == 'chrome'){
 	deleteAllDynamicRules();
+	}
 }
   
 async function addDomainToDomainlistAndRules(domain) {
+	let id = 1;
+	if ("$BROWSER" == 'chrome'){
 	let id = await getFreshId();
 	addDynamicRule(id, domain);                         // add the rule for the chosen domain
+	}
 	await storage.set(stores.domainlist, id, domain);   // record what rule the domain is associated to
 }
 
 async function removeDomainFromDomainlistAndRules(domain) {
 	let id = await storage.get(stores.domainlist, domain);
+	if ("$BROWSER" == 'chrome'){
 	deleteDynamicRule(id);
+	}
 	await storage.set(stores.domainlist, null, domain);
 }
 

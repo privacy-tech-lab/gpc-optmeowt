@@ -47,11 +47,6 @@ function handleDownloadAnalysis() {
   })
 }
 
-chrome.runtime.onMessage.addListener(function (message, _, __) {
-  if (message.msg === "CSV_DATA_RESPONSE_TO_SETTINGS") {
-    csvGenerator(message.data.csvData, message.data.titles);
-  }
-});
 
 /**
  * Creates the event listeners for the `Settings` page buttons and options
@@ -94,6 +89,27 @@ function eventListeners() {
   document
     .getElementById("upload-domainlist")
     .addEventListener("change", handleUpload, false);
+
+    chrome.runtime.onMessage.addListener(function (message, _, __) {
+      console.log("message received: " + message.msg);
+      if (message.msg === "SHOW_TUTORIAL") {
+        walkthrough();
+        storage.set(stores.settings, true, 'TUTORIAL_SHOWN')
+        }
+      });
+    createMessageListeners();
+}
+
+function createMessageListeners(){
+  chrome.runtime.onMessage.addListener(function (message, _, __) {
+    // if (message.msg === "SHOW_TUTORIAL") {
+    //   storage.set(stores.settings, false, 'TUTORIAL_SHOWN')
+    //   walkthrough();
+    // }
+    if (message.msg === "CSV_DATA_RESPONSE_TO_SETTINGS") {
+      csvGenerator(message.data.csvData, message.data.titles);
+    }
+  });
 }
 
 /******************************************************************************/
@@ -226,6 +242,7 @@ function loadChangeMode() {
 
 
 
+
 chrome.runtime.onMessage.addListener(function (message, _, __) {
   if (message.msg === "SHOW_TUTORIAL") {
     walkthrough();
@@ -242,6 +259,7 @@ function copyToClipboard() {
   /* Select the text field */
   copyText.select();
   copyText.setSelectionRange(0, 99999); /* For mobile devices */
+
 
    /* Copy the text inside the text field */
   navigator.clipboard.writeText(copyText.value);

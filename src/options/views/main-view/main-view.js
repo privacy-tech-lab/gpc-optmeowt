@@ -126,7 +126,7 @@ export async function mainView() {
   }
 
   let analysisPressed = await storage.get(stores.settings, "ANALYSIS_PRESSED");
-  if (!domainlistPressed) {
+  if (!analysisPressed) {
     settingsView(bodyTemplate); // First page
     document.querySelector('#main-view-settings').classList.add('active');
   } else {
@@ -156,5 +156,9 @@ export async function mainView() {
     if (message.msg === "DARKSWITCH_PRESSED") {
       darkmode.toggle();
     }
+    if (message.msg === "SHOW_TUTORIAL") {
+      displaySettings(bodyTemplate);
+    }
   });
+
 }
