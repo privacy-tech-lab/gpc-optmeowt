@@ -144,10 +144,14 @@ export async function mainView() {
   document
     .getElementById("main-view-about")
     .addEventListener("click", () => displayAbout(bodyTemplate));
-  document
-    .getElementById("main-view-analysis")
-    .addEventListener("click", () => displayAnalysis(bodyTemplate));
-
+  
+  if ("$BROWSER" != "firefox") {
+    document.getElementById("main-view-analysis").style.display = "none";
+  } else {
+    document
+      .getElementById("main-view-analysis")
+      .addEventListener("click", () => displayAnalysis(bodyTemplate));
+  }
   // DARK MODE
   const darkmode = new Darkmode();
 
