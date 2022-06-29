@@ -232,7 +232,24 @@ chrome.runtime.onMessage.addListener(function (message, _, __) {
   }
 });
 
+// Copy confirmation code 
+function copyToClipboard() {
+  
 
+  /* Get the text field */
+  var copyText = document.getElementById("conf-code");
+
+  /* Select the text field */
+  copyText.select();
+  copyText.setSelectionRange(0, 99999); /* For mobile devices */
+
+   /* Copy the text inside the text field */
+  navigator.clipboard.writeText(copyText.value);
+  
+
+  /* Alert the copied text */
+  //alert("Copied the text: " + copyText.value);
+}
 
 /******************************************************************************/
 
@@ -266,9 +283,6 @@ export async function settingsView(scaffoldTemplate) {
   }
 
   eventListeners();
-
-  // Tutorial walkthrough
-
   
   loadChangeMode();
   
@@ -278,5 +292,19 @@ export async function settingsView(scaffoldTemplate) {
     walkthrough();
   }
   storage.set(stores.settings, true, 'TUTORIAL_SHOWN')
+
+  //conf code
+  document.getElementById("conf-code-button").addEventListener("click", () => {
+    copyToClipboard();
+  });
+  
+  /*popup.addEventListener("animationend", () => {
+   popup.classList.remove("active");
+  });
+  */
  }
 
+ 
+ 
+ 
+ 
