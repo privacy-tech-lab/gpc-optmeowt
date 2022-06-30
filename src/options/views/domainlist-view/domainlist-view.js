@@ -124,41 +124,17 @@ const headings = {
     subtitle: "Toggle which domains you would like to receive Do Not Sell signals in Protection Mode"
 }
 
-/**
- * Filterd lists code heavily inspired by
- * `https://www.w3schools.com/howto/howto_js_filter_lists.asp`
- *
- * Enables live filtering of domains via the search bar
- */
- function filterList() {
-  let input, list, li, count
-  input = document.getElementById('searchbar').value.toLowerCase();
-  list = document.getElementById('domainlist-main')
-  li = list.getElementsByTagName('li')
-  count = li.length
 
-  for (let i = 0; i < count; i++) {
-      let d = li[i].getElementsByClassName('domain')[0];
-      let txtValue = d.innerText;
-      if (txtValue.toLowerCase().indexOf(input) > -1) {
-      li[i].style.display = "";
-    } else {
-      li[i].style.display = "none";
-    }
-  };
-}
 
 /**
  * Creates the event listeners for the `domainlist` page buttons and options
  */
 async function eventListeners() {
-    document.getElementById('searchbar').addEventListener('keyup', filterList )
     // document.getElementById('plus-button').addEventListener('keyup', plusButton )
     await createToggleListeners();
 
     window.onscroll = function() { stickyNavbar() };
     var nb = document.getElementById("domainlist-navbar");
-    var sb = document.getElementById("searchbar")
     var sticky = nb.offsetTop;
 
     /**
