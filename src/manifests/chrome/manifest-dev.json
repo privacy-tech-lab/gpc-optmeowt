@@ -66,7 +66,7 @@
     "service_worker": "background.bundle.js"
   },
   "web_accessible_resources": [{
-	  "resources": ["content-scripts/injection/gpc-dom.js"],
+	  "resources": ["content-scripts/injection/gpc-dom.js", "content-scripts/injection/gpc-remove.js"],
 	  "matches": ["<all_urls>"]
 	}],
   "manifest_version": 3,

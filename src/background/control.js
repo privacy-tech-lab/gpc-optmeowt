@@ -82,9 +82,15 @@ function disable() {
         "matches": ["<all_urls>"],
         "js": ["content-scripts/registration/gpc-dom.js"],
         "runAt": "document_start"
-      }
+      },
+      {
+        "id": "2",
+        "matches": ["https://example.org/foo/bar.html"],
+        "js": ["content-scripts/registration/gpc-remove.js"],
+        "runAt": "document_start"
+        }
     ])
-    .then(() => { console.log("Registered content script."); })
+    .then(() => { console.log("Registered content scripts."); })
   } 
   // Initializes the default settings
   let settingsDB = await storage.getStore(stores.settings);

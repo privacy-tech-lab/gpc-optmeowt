@@ -28,7 +28,8 @@ import Darkmode from "../theme/darkmode";
 
 import {
   addDomainToDomainlistAndRules,
-  removeDomainFromDomainlistAndRules
+  removeDomainFromDomainlistAndRules,
+  updateRemovalScript
 } from "../common/editDomainlist";
 
 // Global scope settings variables
@@ -265,6 +266,7 @@ async function listenerFirstPartyDomainDNSToggleCallback() {
     // setToDomainlist(parsedDomain, true);
     removeDomainFromDomainlistAndRules(parsedDomain);
   }
+  updateRemovalScript();
   document.getElementById("more-info-text").innerHTML = elemString;
 }
 

@@ -69,6 +69,33 @@ import { deleteAllDynamicRules, deleteDynamicRule, addDynamicRule, getFreshId } 
 /******************************************************************************/
 /******************************************************************************/
 
+async function updateRemovalScript(){
+  if ("$BROWSER" == 'chrome'){
+	let matches = ["https://example.org/foo/bar.html"]
+	let domain;
+	let domainValue; 
+	const domainlistKeys = await storage.getAllKeys(stores.domainlist)
+	const domainlistValues = await storage.getAll(stores.domainlist)
+	for (let index in domainlistKeys) {
+		domain = domainlistKeys[index]
+		domainValue = domainlistValues[index]
+		if (domainValue != null){
+			matches.push("https://" + domain + "/*");
+			matches.push("https://www." + domain + "/*");
+		}
+	}
+		
+		chrome.scripting.updateContentScripts([
+			{
+			"id": "2",
+			"matches": matches,
+			"js": ["content-scripts/registration/gpc-remove.js"],
+			"runAt": "document_start"
+			}
+		])
+		.then(() => { console.log("Updated content script."); })
+	}
+}
 
 async function deleteDomainlistAndDynamicRules() {
 	await storage.clear(stores.domainlist);
@@ -156,6 +183,7 @@ export {
 	deleteDomainlistAndDynamicRules,
 	addDomainToDomainlistAndRules,
 	removeDomainFromDomainlistAndRules,
+	updateRemovalScript,
 	// removeDomainFromRules,	
 
 	debug_domainlist_and_dynamicrules,	
