@@ -25,7 +25,7 @@ OptMeowt ("Opt Me Out") is a browser extension for opting you out from web track
   <a href="https://chrome.google.com/webstore/detail/optmeowt/hdbnkdbhglahihjdbodmfefogcjbpgbo"><img src="https://github.com/privacy-tech-lab/gpc-optmeowt/blob/main/chrome-web-store-badge.png" width="200px" alt="Chrome Web Store badge"></a>
 <p>
 
-OptMeowt is developed and maintained by Kuba Alicki (@kalicki1), Oliver Wang (@OliverWang13), Sophie Eng (@sophieeng), and Sebastian Zimmeck (@SebastianZimmeck) of the [privacy-tech-lab](https://www.privacytechlab.org/). Stanley Markman (@stanleymarkman), Kiryl Beliauski (@kbeliauski), Daniel Knopf (@dknopf), and Abdallah Salia (@asalia-1) contributed earlier. Learn more [here](https://privacytechlab.org/optmeowt).
+OptMeowt is developed and maintained by Kuba Alicki (@kalicki1), Oliver Wang (@OliverWang13), Sophie Eng (@sophieeng), Jocelyn Wang (@Jocelyn0830), and Sebastian Zimmeck (@SebastianZimmeck) of the [privacy-tech-lab](https://www.privacytechlab.org/). Stanley Markman (@stanleymarkman), Kiryl Beliauski (@kbeliauski), Daniel Knopf (@dknopf), and Abdallah Salia (@asalia-1) contributed earlier. Learn more [here](https://privacytechlab.org/optmeowt).
 
 ## 1. Research
 
@@ -88,16 +88,16 @@ Analysis Mode is used to investigate the GPC compliance of a given site. While n
 To build the development versions of OptMeowt follow the directions above but replace `npm run build` with `npm run start`. This command will run the npm script (referenced in `package.json`) that will call Webpack in development mode (Webpack settings in `webpack.config.js`). `npm run start` will also initiate Webpack servers for both the Firefox and Chrome versions, which will listen for changes as you work and rebuild as necessary.
 
 **Webpack and file structure notes:**
-  
+
 Webpack will build the development versions of OptMeowt into the `dev` subdirectory instead of the `dist` subdirectory. The subdirectories for Chrome and Firefox are `dev/chrome` and `dev/firefox`, respectively.
 
 Also, when you build for development, the development manifest (in `src/manifest-dev.json`) will be used instead of the distribution manifest (in `src/manifest-dist.json`). The development manifest contains an unsafe eval that we use for our source maps during development. The distribution manifest does not contain this eval. Webpack will select the correct manifest depending on whether you build for development or distribution.
 
 To include new dependencies you can run `npm install` instead of `npm ci`. `npm install` will include new dependencies in the `package-lock.json`, which is generated from the `package.json`.
-  
+
 **For Windows users:**
-  
-Note that we have built most of our codebase in MacOS, so path variables and similar code may cause the build to break in other OSs, in particular Windows. We recommend installing a Linux OS if you will be working with the codebase in any significant manner. 
+
+Note that we have built most of our codebase in MacOS, so path variables and similar code may cause the build to break in other OSs, in particular Windows. We recommend installing a Linux OS if you will be working with the codebase in any significant manner.
 
 ### Optional
 
@@ -149,14 +149,14 @@ Detailed information on OptMeowt's architecture is available in a [separate read
 OptMeowt uses various [third party libraries](https://github.com/privacy-tech-lab/gpc-optmeowt/blob/main/package.json). We thank the developers.
 
 ## 10. Developer Guide
-  
+
 ### Keyboard Shortcuts
 
 - `Alt+Shift+A` — runs `a`nalysis (eq. to clicking `Run Analysis` in popup)
 - `Alt+Shift+S` — `s`tops analysis (eq. to clicking `Stop Analysis` in popup)
-  
+
 Reminder: Users **must** "stop analysis" prior to changing sites to prevent recording incorrect data
-  
+
 ### Contributing
 
 - If you want to contribute, note that we manage all library dependencies with npm. Thus, it is recommended to use `npm i` to install libraries.
@@ -188,7 +188,7 @@ Reminder: Users **must** "stop analysis" prior to changing sites to prevent reco
 
 <p align="center">Conclusions reached or positions taken are our own and not necessarily those of our financial supporters, its trustees, officers, or staff.</p>
 
-##  
+##
 
 <p align="center">
   <a href="https://www.privacytechlab.org/"><img src="./plt_logo.png" width="200px" height="200px" alt="privacy-tech-lab logo"></a>
