@@ -26,9 +26,11 @@ editRules.js is an internal API for adding/removing GPC-exclusion dynamic rules
   const rules = await chrome.declarativeNetRequest.getDynamicRules();
 	let freshId = null;
 	let usedRuleIds = [];
+  let usedDomains = [];
 
   for (let i in rules) {
     usedRuleIds.push( rules[i]['id'] );
+    //usedDomains.push( rules[i])
   }
 	usedRuleIds.sort((a, b) => { return a-b; });  // Necessary for next for loop
 
