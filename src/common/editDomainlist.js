@@ -80,7 +80,7 @@ async function deleteDomainlistAndDynamicRules() {
 async function addDomainToDomainlistAndRules(domain) {
 	let id = 1;
 	if ("$BROWSER" == 'chrome'){
-	let id = await getFreshId();
+	let id = await getFreshId(domain);
 	addDynamicRule(id, domain);                         // add the rule for the chosen domain
 	}
 	await storage.set(stores.domainlist, id, domain);   // record what rule the domain is associated to

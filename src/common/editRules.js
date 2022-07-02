@@ -21,7 +21,7 @@ editRules.js is an internal API for adding/removing GPC-exclusion dynamic rules
  *        getFreshId() will spit out the same val next call. 
  * @returns {Promise<(number|null)>} - number of fresh ID, null if non available
  */
- export async function getFreshId() {
+ export async function getFreshId(domain) {
   const MAX_RULES = chrome.declarativeNetRequest.MAX_NUMBER_OF_DYNAMIC_AND_SESSION_RULES;
   const rules = await chrome.declarativeNetRequest.getDynamicRules();
 	let freshId = null;
@@ -29,11 +29,21 @@ editRules.js is an internal API for adding/removing GPC-exclusion dynamic rules
   let usedDomains = [];
 
   for (let i in rules) {
-    usedRuleIds.push( rules[i]['id'] );
-    //usedDomains.push( rules[i])
+    let num = rules[i]['id']
+    usedDomains.push( rules[i]['condition']['urlFilter'])
+    if (rules[i]['condition']['urlFilter'] == domain){
+      chrome.declarativeNetRequest.updateDynamicRules({
+        "removeRuleIds": [num]
+        }
+      )
+    } else {
+      usedRuleIds.push( num );
+    }
   }
 	usedRuleIds.sort((a, b) => { return a-b; });  // Necessary for next for loop
-
+  if (usedDomains.includes(domain)){
+    //return null;
+  }
 	// Make sure the ID starts at 1 (I think 0 is reserved?)
 	for (let i=1; i<MAX_RULES; i++) {
     console.log("ITERATION")

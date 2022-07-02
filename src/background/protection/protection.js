@@ -93,8 +93,14 @@ const listenerCallbacks = {
     // // }
     // TODO: Remove this when done
     (async() => { 
-      let s = chrome.declarativeNetRequest.getDynamicRules()
-      console.log("Current dynamic rules: ", s)
+      let s = await chrome.declarativeNetRequest.getDynamicRules();
+      console.log("Current dynamic rules: ", s);
+      let usedDomains = [];
+
+      for (let i in s) {
+        usedDomains.push( s[i]['condition']['urlFilter'])
+      }
+      console.log("usedDomains: ", usedDomains);
     })();
 
 
