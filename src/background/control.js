@@ -22,7 +22,7 @@ import { init as initAnalysis, halt as haltAnalysis } from "./analysis/analysis.
 import { defaultSettings } from "../data/defaultSettings.js";
 import { modes } from "../data/modes.js";
 import { stores, storage } from "./storage.js";
-import { addDynamicRule, deleteAllDynamicRules, getFreshId } from '../common/editRules';
+import { addDynamicRule, deleteAllDynamicRules, getFreshId, reloadDynamicRules } from '../common/editRules';
 
 // TODO: Remove
 import { debug_domainlist_and_dynamicrules } from '../common/editDomainlist';
@@ -107,6 +107,9 @@ function disable() {
   if (isEnabled) {  // Turns on the extension
     enable();
   }
+
+  reloadDynamicRules();
+
 })();
 
 
@@ -152,6 +155,10 @@ function disable() {
   if (message.msg === "CHANGE_IS_DOMAINLISTED") {
     let isDomainlisted = message.data.isDomainlisted; // can be undefined
   }
+  if (message.msg === "RELOAD_RULES") {
+    reloadDynamicRules();
+  }
+
 });
 
 // Handles requests for global mode

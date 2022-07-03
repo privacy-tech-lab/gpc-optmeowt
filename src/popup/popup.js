@@ -30,7 +30,9 @@ import {
   addDomainToDomainlistAndRules,
   removeDomainFromDomainlistAndRules,
   updateRemovalScript
-} from "../common/editDomainlist";
+} from "../common/editDomainlist.js";
+
+import { reloadDynamicRules } from "../common/editRules.js";
 
 // Global scope settings variables
 var isEnabled;
@@ -266,6 +268,7 @@ async function listenerFirstPartyDomainDNSToggleCallback() {
     // setToDomainlist(parsedDomain, true);
     removeDomainFromDomainlistAndRules(parsedDomain);
   }
+  chrome.runtime.sendMessage
   updateRemovalScript();
   document.getElementById("more-info-text").innerHTML = elemString;
 }
@@ -498,7 +501,6 @@ document.addEventListener("DOMContentLoaded", async (event) => {
 
   generateDarkmodeElement();  // Render darkmode
   // changeOptModeIcon();
-
   switchMode(mode); // requires global scope mode to be loaded
 })
 
@@ -531,6 +533,10 @@ function addThirdPartyDomainDNSToggleListener(requestDomain) {
       // setToDomainlist(requestDomain, true);
       removeDomainFromDomainlistAndRules(requestDomain);
     }
+    chrome.runtime.sendMessage({
+  	  msg: "RELOAD_RULES",
+    });
+    updateRemovalScript();
     document.getElementById(`dns-enabled-text-${requestDomain}`).innerHTML = elemString;
   })
 };
@@ -1054,7 +1060,9 @@ function loadChangeMode() {
   mode = newMode;
   switchMode(mode);
 }
+
 loadChangeMode();
+
 
 
 // Listener: Opens options page

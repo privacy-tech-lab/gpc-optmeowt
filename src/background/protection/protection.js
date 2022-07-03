@@ -95,6 +95,8 @@ const listenerCallbacks = {
     (async() => {
       let s = await storage.getStore(stores.domainlist)
       console.log("Current Domainlist: ", s)
+      let r = await chrome.declarativeNetRequest.getDynamicRules();
+      console.log("Current Rules: ", r)
     })();
 
 

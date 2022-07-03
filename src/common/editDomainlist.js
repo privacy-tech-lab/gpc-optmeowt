@@ -13,7 +13,7 @@ domainlist simultaneously with the dynamic ruleset
 
 
 import { storage, stores } from '../background/storage';
-import { deleteAllDynamicRules, deleteDynamicRule, addDynamicRule, getFreshId } from './editRules';
+import { deleteAllDynamicRules, deleteDynamicRule, addDynamicRule, getFreshId, reloadDynamicRules } from './editRules';
 
 // TODO: Migrate editRules & editDomainlist to one file
 
@@ -107,18 +107,20 @@ async function deleteDomainlistAndDynamicRules() {
 async function addDomainToDomainlistAndRules(domain) {
 	let id = 1;
 	if ("$BROWSER" == 'chrome'){
-	let id = await getFreshId();
-	addDynamicRule(id, domain);                         // add the rule for the chosen domain
+	id = await getFreshId();
+	//addDynamicRule(id, domain);                         // add the rule for the chosen domain
 	}
-	await storage.set(stores.domainlist, id, domain);   // record what rule the domain is associated to
+	await storage.set(stores.domainlist, id, domain);
+	reloadDynamicRules();   // record what rule the domain is associated to
 }
 
 async function removeDomainFromDomainlistAndRules(domain) {
 	let id = await storage.get(stores.domainlist, domain);
 	if ("$BROWSER" == 'chrome'){
-	deleteDynamicRule(id);
+	//deleteDynamicRule(id);
 	}
 	await storage.set(stores.domainlist, null, domain);
+	reloadDynamicRules();
 }
 
 /**
