@@ -94,7 +94,9 @@ const listenerCallbacks = {
     // TODO: Remove this when done
     (async() => {
       let s = await storage.getStore(stores.domainlist)
+      let r = await chrome.declarativeNetRequest.getDynamicRules()
       console.log("Current Domainlist: ", s)
+      console.log("Current rules: ", r);
     })();
 
 
@@ -454,20 +456,6 @@ async function onMessageHandlerAsync(message, sender, sendResponse) {
   if (message.msg === "CHANGE_IS_DOMAINLISTED") {
     isDomainlisted = message.data.isDomainlisted;
     storage.set(stores.settings, isDomainlisted, "IS_DOMAINLISTED");
-  }
-  if (message.msg === "SET_TO_DOMAINLIST") {
-    let { domain, key } = message.data;
-    domainlist[domain] = key;                     // Sets to cache
-    // findId()
-    addDynamicRule(id, domain)
-    storage.set(stores.domainlist, key, domain);  // Sets to long term storage
-  }
-  if (message.msg === "REMOVE_FROM_DOMAINLIST") {
-    let domain = message.data;
-    // findId()
-    deleteDynamicRule(id, domain)
-    storage.delete(stores.domainlist, domain);
-    delete domainlist[domain];
   }
   if (message.msg === "POPUP_PROTECTION") {
     dataToPopup()

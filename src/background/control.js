@@ -91,6 +91,11 @@ function disable() {
         }
     ])
     .then(() => { console.log("Registered content scripts."); })
+    let s = await chrome.declarativeNetRequest.getDynamicRules()
+    console.log("rules: ", s);
+    deleteAllDynamicRules();
+    let h = await chrome.declarativeNetRequest.getDynamicRules()
+    console.log("rules: ", h);
   } 
   // Initializes the default settings
   let settingsDB = await storage.getStore(stores.settings);

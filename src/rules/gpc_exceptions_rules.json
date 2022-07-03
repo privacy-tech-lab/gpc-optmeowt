@@ -1,6 +1,6 @@
 [
 	{
-		"id": 2,
+		"id": 3,
 		"priority": 1,
 		"action": {
 		  "type": "modifyHeaders",
@@ -10,7 +10,7 @@
 		  ]
 		},
 		"condition": { 
-		  "urlFilter": "nytimes.com",
+		  "urlFilter": ["https://example.org/foo/bar.html"],
 		  "resourceTypes": [
         "main_frame", 
         "sub_frame",
