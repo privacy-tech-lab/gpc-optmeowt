@@ -65,7 +65,6 @@ export async function toggleListener(elementId, domain) {
       // chrome.runtime.sendMessage({ msg: "SET_TO_DOMAINLIST", data: { domain: domain, key: true } });
       removeDomainFromDomainlistAndRules(domain);
     }
-    reloadDynamicRules();
     updateRemovalScript();
   })
 }

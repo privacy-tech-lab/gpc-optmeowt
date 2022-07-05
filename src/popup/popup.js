@@ -533,9 +533,6 @@ function addThirdPartyDomainDNSToggleListener(requestDomain) {
       // setToDomainlist(requestDomain, true);
       removeDomainFromDomainlistAndRules(requestDomain);
     }
-    chrome.runtime.sendMessage({
-  	  msg: "RELOAD_RULES",
-    });
     updateRemovalScript();
     document.getElementById(`dns-enabled-text-${requestDomain}`).innerHTML = elemString;
   })

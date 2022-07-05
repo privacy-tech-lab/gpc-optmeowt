@@ -71,6 +71,7 @@ import { deleteAllDynamicRules, deleteDynamicRule, addDynamicRule, getFreshId, r
 
 async function updateRemovalScript(){
   if ("$BROWSER" == 'chrome'){
+	  
 	let matches = ["https://example.org/foo/bar.html"]
 	let domain;
 	let domainValue; 
@@ -108,19 +109,18 @@ async function addDomainToDomainlistAndRules(domain) {
 	let id = 1;
 	if ("$BROWSER" == 'chrome'){
 	id = await getFreshId();
-	//addDynamicRule(id, domain);                         // add the rule for the chosen domain
+	addDynamicRule(id, domain);                         // add the rule for the chosen domain
 	}
-	await storage.set(stores.domainlist, id, domain);
-	reloadDynamicRules();   // record what rule the domain is associated to
+	await storage.set(stores.domainlist, id, domain);   // record what rule the domain is associated to
 }
 
 async function removeDomainFromDomainlistAndRules(domain) {
 	let id = await storage.get(stores.domainlist, domain);
 	if ("$BROWSER" == 'chrome'){
-	//deleteDynamicRule(id);
+	deleteDynamicRule(id);
 	}
 	await storage.set(stores.domainlist, null, domain);
-	reloadDynamicRules();
+
 }
 
 /**
