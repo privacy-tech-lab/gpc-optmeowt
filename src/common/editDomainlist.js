@@ -13,7 +13,7 @@ domainlist simultaneously with the dynamic ruleset
 
 
 import { storage, stores } from '../background/storage';
-import { deleteAllDynamicRules, deleteDynamicRule, addDynamicRule, getFreshId } from './editRules';
+import { deleteAllDynamicRules, deleteDynamicRule, addDynamicRule, getFreshId, reloadDynamicRules } from './editRules';
 
 // TODO: Migrate editRules & editDomainlist to one file
 
@@ -69,6 +69,34 @@ import { deleteAllDynamicRules, deleteDynamicRule, addDynamicRule, getFreshId } 
 /******************************************************************************/
 /******************************************************************************/
 
+async function updateRemovalScript(){
+  if ("$BROWSER" == 'chrome'){
+	  
+	let matches = ["https://example.org/foo/bar.html"]
+	let domain;
+	let domainValue; 
+	const domainlistKeys = await storage.getAllKeys(stores.domainlist)
+	const domainlistValues = await storage.getAll(stores.domainlist)
+	for (let index in domainlistKeys) {
+		domain = domainlistKeys[index]
+		domainValue = domainlistValues[index]
+		if (domainValue != null){
+			matches.push("https://" + domain + "/*");
+			matches.push("https://www." + domain + "/*");
+		}
+	}
+		
+		chrome.scripting.updateContentScripts([
+			{
+			"id": "2",
+			"matches": matches,
+			"js": ["content-scripts/registration/gpc-remove.js"],
+			"runAt": "document_start"
+			}
+		])
+		.then(() => { console.log("Updated content script."); })
+	}
+}
 
 async function deleteDomainlistAndDynamicRules() {
 	await storage.clear(stores.domainlist);
@@ -80,7 +108,7 @@ async function deleteDomainlistAndDynamicRules() {
 async function addDomainToDomainlistAndRules(domain) {
 	let id = 1;
 	if ("$BROWSER" == 'chrome'){
-	let id = await getFreshId();
+	id = await getFreshId();
 	addDynamicRule(id, domain);                         // add the rule for the chosen domain
 	}
 	await storage.set(stores.domainlist, id, domain);   // record what rule the domain is associated to
@@ -92,6 +120,7 @@ async function removeDomainFromDomainlistAndRules(domain) {
 	deleteDynamicRule(id);
 	}
 	await storage.set(stores.domainlist, null, domain);
+
 }
 
 /**
@@ -156,6 +185,7 @@ export {
 	deleteDomainlistAndDynamicRules,
 	addDomainToDomainlistAndRules,
 	removeDomainFromDomainlistAndRules,
+	updateRemovalScript,
 	// removeDomainFromRules,	
 
 	debug_domainlist_and_dynamicrules,	

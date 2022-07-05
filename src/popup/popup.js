@@ -28,8 +28,11 @@ import Darkmode from "../theme/darkmode";
 
 import {
   addDomainToDomainlistAndRules,
-  removeDomainFromDomainlistAndRules
-} from "../common/editDomainlist";
+  removeDomainFromDomainlistAndRules,
+  updateRemovalScript
+} from "../common/editDomainlist.js";
+
+import { reloadDynamicRules } from "../common/editRules.js";
 
 // Global scope settings variables
 var isEnabled;
@@ -265,6 +268,7 @@ async function listenerFirstPartyDomainDNSToggleCallback() {
     // setToDomainlist(parsedDomain, true);
     removeDomainFromDomainlistAndRules(parsedDomain);
   }
+  updateRemovalScript();
   document.getElementById("more-info-text").innerHTML = elemString;
 }
 
@@ -496,7 +500,6 @@ document.addEventListener("DOMContentLoaded", async (event) => {
 
   generateDarkmodeElement();  // Render darkmode
   // changeOptModeIcon();
-
   switchMode(mode); // requires global scope mode to be loaded
 })
 
@@ -529,6 +532,7 @@ function addThirdPartyDomainDNSToggleListener(requestDomain) {
       // setToDomainlist(requestDomain, true);
       removeDomainFromDomainlistAndRules(requestDomain);
     }
+    updateRemovalScript();
     document.getElementById(`dns-enabled-text-${requestDomain}`).innerHTML = elemString;
   })
 };
@@ -1052,7 +1056,9 @@ function loadChangeMode() {
   mode = newMode;
   switchMode(mode);
 }
+
 loadChangeMode();
+
 
 
 // Listener: Opens options page

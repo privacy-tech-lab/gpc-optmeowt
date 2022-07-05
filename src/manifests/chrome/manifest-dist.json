@@ -66,9 +66,13 @@
     "service_worker": "background.bundle.js"
   },
   "web_accessible_resources": [{
-	  "resources": ["content-scripts/injection/gpc-dom.js"],
+	  "resources": ["content-scripts/injection/gpc-dom.js", "content-scripts/injection/gpc-remove.js"],
 	  "matches": ["<all_urls>"]
 	}],
   "manifest_version": 3,
-  "incognito": "spanning"
+  "incognito": "spanning",
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'",
+    "sandbox": "sandbox allow-scripts; script-src 'self' 'unsafe-eval'; object-src 'self'"
+  }
 }

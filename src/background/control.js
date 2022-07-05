@@ -22,10 +22,10 @@ import { init as initAnalysis, halt as haltAnalysis } from "./analysis/analysis.
 import { defaultSettings } from "../data/defaultSettings.js";
 import { modes } from "../data/modes.js";
 import { stores, storage } from "./storage.js";
-import { addDynamicRule, deleteAllDynamicRules, getFreshId } from '../common/editRules';
+import { addDynamicRule, deleteAllDynamicRules, getFreshId, reloadDynamicRules } from '../common/editRules';
 
 // TODO: Remove
-import { debug_domainlist_and_dynamicrules } from '../common/editDomainlist';
+import { debug_domainlist_and_dynamicrules, updateRemovalScript } from '../common/editDomainlist';
 
 async function enable() {
   let mode = await storage.get(stores.settings, "MODE");
@@ -82,9 +82,15 @@ function disable() {
         "matches": ["<all_urls>"],
         "js": ["content-scripts/registration/gpc-dom.js"],
         "runAt": "document_start"
-      }
+      },
+      {
+        "id": "2",
+        "matches": ["https://example.org/foo/bar.html"],
+        "js": ["content-scripts/registration/gpc-remove.js"],
+        "runAt": "document_start"
+        }
     ])
-    .then(() => { console.log("Registered content script."); })
+    .then(() => { console.log("Registered content scripts."); })
   } 
   // Initializes the default settings
   let settingsDB = await storage.getStore(stores.settings);
@@ -101,6 +107,9 @@ function disable() {
   if (isEnabled) {  // Turns on the extension
     enable();
   }
+  updateRemovalScript();
+  reloadDynamicRules();
+
 })();
 
 
@@ -146,6 +155,7 @@ function disable() {
   if (message.msg === "CHANGE_IS_DOMAINLISTED") {
     let isDomainlisted = message.data.isDomainlisted; // can be undefined
   }
+
 });
 
 // Handles requests for global mode

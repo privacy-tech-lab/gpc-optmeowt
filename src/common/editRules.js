@@ -123,28 +123,27 @@ export async function addDynamicRule(id, domain) {
  *   receiving GPC or other opt-outs. 
  */
 export async function reloadDynamicRules() {
-  // TODO: Make sure we can still import the old file format from VERSION < 3.0.0
+    if ("$BROWSER" == 'chrome'){
 
-  deleteAllDynamicRules();
-  console.log("I got here h;aha")
-  let domainlist = await storage.getStore(stores.domainlist)
+    deleteAllDynamicRules();
+    let domainlist = await storage.getStore(stores.domainlist)
 
-  let promises = []
-  Object.keys(domainlist).forEach(async (domain) => {
-    promises.push(new Promise(async (resolve, reject) => {
-      console.log(domain, domainlist[domain]);
-      let id = domainlist[domain]
-      if (id) {
-        await addDynamicRule(id, domain);
-      }
-      resolve();
-    }))
-  })
-
-  Promise.all(promises).then(() => {
-    console.log("Finished that much...")
-    chrome.declarativeNetRequest.getDynamicRules((res) => {
-      console.log("Current dyn rules", res);
+    let promises = []
+    Object.keys(domainlist).forEach(async (domain) => {
+      promises.push(new Promise(async (resolve, reject) => {
+        console.log(domain, domainlist[domain]);
+        let id = domainlist[domain]
+        if (id) {
+          await addDynamicRule(id, domain);
+        }
+        resolve();
+      }))
     })
-  })
+
+    Promise.all(promises).then(() => {
+      chrome.declarativeNetRequest.getDynamicRules((res) => {
+        console.log("Current dyn rules", res);
+      })
+    })
+  }
 }

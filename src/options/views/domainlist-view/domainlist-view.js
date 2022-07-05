@@ -16,8 +16,10 @@ import { renderParse, fetchParse } from '../../components/util.js'
 
 import {
   addDomainToDomainlistAndRules,
-  removeDomainFromDomainlistAndRules
-} from "../../../common/editDomainlist";
+  removeDomainFromDomainlistAndRules,
+  updateRemovalScript
+} from "../../../common/editDomainlist.js";
+import { reloadDynamicRules } from '../../../common/editRules.js';
 
 
 /******************************************************************************/
@@ -63,6 +65,7 @@ export async function toggleListener(elementId, domain) {
       // chrome.runtime.sendMessage({ msg: "SET_TO_DOMAINLIST", data: { domain: domain, key: true } });
       removeDomainFromDomainlistAndRules(domain);
     }
+    updateRemovalScript();
   })
 }
 
