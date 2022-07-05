@@ -268,7 +268,6 @@ async function listenerFirstPartyDomainDNSToggleCallback() {
     // setToDomainlist(parsedDomain, true);
     removeDomainFromDomainlistAndRules(parsedDomain);
   }
-  chrome.runtime.sendMessage
   updateRemovalScript();
   document.getElementById("more-info-text").innerHTML = elemString;
 }

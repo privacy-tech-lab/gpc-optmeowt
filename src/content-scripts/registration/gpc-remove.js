@@ -37,34 +37,3 @@ function injectStaticScript() {
   document.documentElement.prepend(s);
 }
 injectStaticScript();
-
-
-// // Currently, adding a DOMContentLoaded listener makes the signal send late
-// // and (I forget) might break the message passing with the service worker
-// document.addEventListener("DOMContentLoaded", () => {
-
-// chrome.runtime.sendMessage({ 
-//   msg: "APPEND_GPC_PROP",
-//   url: location.href,
-// }, (response) => {
-//   console.log("recieved response for appending gpc at sendMessage response", response);
-//   if (response.sendGPC) {
-//     injectStaticScript();
-//   }
-// })
-
-// // This doesn't seem to work with the background for some reason? Not sure why
-// chrome.runtime.onMessage.addListener(
-//   function onMessageHandler(message, sender, sendResponse) {
-//     console.log("RECIEVED")
-//     if (message.msg == "APPEND_GPC_PROP_RESPONSE") {
-//       console.log("recieved response for appending gpc at addListener", message);
-//       if (message.sendGPC) {
-//         injectStaticScript();
-//       }
-//     }
-//   }
-// );
-
-// });
-

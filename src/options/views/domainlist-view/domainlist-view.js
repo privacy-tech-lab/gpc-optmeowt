@@ -161,7 +161,6 @@ async function eventListeners() {
  * options, to be displayed
  */
 async function buildList() {
-  let matches = []
   let items = ""
   let domain;
   let domainValue; 
@@ -170,9 +169,6 @@ async function buildList() {
   for (let index in domainlistKeys) {
     domain = domainlistKeys[index]
     domainValue = domainlistValues[index]
-    if (domainValue != null){
-      matches.push("https://" + domain + "/*");
-    }
     items +=
           `
     <li id="li ${domain}">
@@ -230,7 +226,6 @@ async function buildList() {
     </li>
           `
   }
-  console.log("matches: " + matches);
   document.getElementById('domainlist-main').innerHTML = items;
 }
 
