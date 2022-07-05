@@ -5,6 +5,7 @@
   "description": "OptMeowt allows Web users to make use of their rights to opt out from the sale and sharing of personal data",
   "permissions": [
     "webRequest",
+    "webRequestBlocking",
     "<all_urls>",
     "webNavigation",
     "storage",
