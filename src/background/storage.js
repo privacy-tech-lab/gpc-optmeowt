@@ -179,11 +179,13 @@ async function adaptDomainlist(){
         domainValue = domainlistValues[index]
         console.log(domain, ": ", domainValue)
         if (domainValue == true){
-            removeDomainFromDomainlistAndRules();
+            await storage.set(stores.domainlist, null, domain);
         } else if (domainValue == false){
-            addDomainToDomainlistAndRules();
+            id = await getFreshId();
+            await storage.set(stores.domainlist, id, domain);
         }
     }
+    console.log(storage.getStore(stores.domainlist));
   }
 
 
