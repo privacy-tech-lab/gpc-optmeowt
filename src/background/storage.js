@@ -183,6 +183,10 @@ async function adaptDomainlist(){
             let id = await getFreshId();
             addDynamicRule(id,domain);
             await storage.set(stores.domainlist, id, domain);
+        } else if (domainValue == null){
+            await storage.set(stores.domainlist, null, domain);
+        } else {
+            await storage.set(stores.domainlist, domainValue, domain);
         }
     }
     console.log(storage.getStore(stores.domainlist));

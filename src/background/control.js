@@ -29,9 +29,7 @@ import { debug_domainlist_and_dynamicrules, updateRemovalScript, update } from '
 
 async function enable() {
   let mode = await storage.get(stores.settings, "MODE");
-  if (mode == null){
-    mode = true;
-  }
+
   if ("$BROWSER" == 'firefox'){
     var initProtection = initProtection_ff;
     var haltProtection = haltProtection_ff;
@@ -52,7 +50,11 @@ async function enable() {
 			console.log(`INITIALIZING Protection mode.`);
 			break;
 		default:
-			console.error(`FAILED to ENABLE OptMeowt.`);
+			initProtection();
+      haltAnalysis();
+      await storage.set(stores.settings, modes.protection, "MODE")
+			console.log(`INITIALIZING Protection mode.`);
+      break;
 	}
 }
 
