@@ -59,11 +59,11 @@ export async function toggleListener(elementId, domain) {
     if (!domainId) {
       // await storage.set(stores.domainlist, false, domain)
       // chrome.runtime.sendMessage({ msg: "SET_TO_DOMAINLIST", data: { domain: domain, key: false } });
-      addDomainToDomainlistAndRules(domain);
+      await addDomainToDomainlistAndRules(domain);
     } else {
       // await storage.set(stores.domainlist, true, domain)
       // chrome.runtime.sendMessage({ msg: "SET_TO_DOMAINLIST", data: { domain: domain, key: true } });
-      removeDomainFromDomainlistAndRules(domain);
+      await removeDomainFromDomainlistAndRules(domain);
     }
     updateRemovalScript();
   })

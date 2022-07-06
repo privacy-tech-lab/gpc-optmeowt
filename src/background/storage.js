@@ -16,7 +16,7 @@ import { openDB } from "idb"
 import { storageCookies } from "./storageCookies.js"
 import { getFreshId, addDynamicRule, deleteDynamicRule, reloadDynamicRules } from "../common/editRules"
 import { addDomainToDomainlistAndRules, removeDomainFromDomainlistAndRules, updateRemovalScript } from "../common/editDomainlist.js";
-
+import { saveAs } from 'file-saver';
 
 /******************************************************************************/
 /**************************  Enumerated settings  *****************************/
