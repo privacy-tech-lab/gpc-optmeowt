@@ -176,7 +176,6 @@ async function adaptDomainlist(){
     for (let index in domainlistKeys) {
         domain = domainlistKeys[index]
         domainValue = domainlistValues[index]
-        console.log(domain, ": ", domainValue)
         if (domainValue == true){
             await storage.set(stores.domainlist, null, domain);
         } else if (domainValue == false){
@@ -189,7 +188,6 @@ async function adaptDomainlist(){
             await storage.set(stores.domainlist, domainValue, domain);
         }
     }
-    console.log(storage.getStore(stores.domainlist));
   }
 
 

@@ -117,6 +117,7 @@ function disable() {
     await adaptDomainlist();
     await storage.set(stores.settings,true,"DOMAINLIST_ADAPTED");
   }
+  
   updateRemovalScript();
   reloadDynamicRules();
 })();
