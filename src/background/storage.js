@@ -168,6 +168,7 @@ async function handleUpload() {
 }
 
 async function adaptDomainlist(){
+    console.log("called");
     let domain;
     let domainValue; 
     const domainlistKeys = await storage.getAllKeys(stores.domainlist);
@@ -176,6 +177,7 @@ async function adaptDomainlist(){
     for (let index in domainlistKeys) {
         domain = domainlistKeys[index]
         domainValue = domainlistValues[index]
+        console.log(domain, ": ", domainValue)
         if (domainValue == true){
             removeDomainFromDomainlistAndRules();
         } else if (domainValue == false){
