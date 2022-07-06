@@ -14,7 +14,7 @@ If the domainlist is being handled, then cookies are added/removed here too
 
 import { openDB } from "idb"
 import { storageCookies } from "./storageCookies.js"
-import { reloadDynamicRules } from "../common/editRules"
+import { getFreshId, addDynamicRule, deleteDynamicRule, reloadDynamicRules } from "../common/editRules"
 import { addDomainToDomainlistAndRules, removeDomainFromDomainlistAndRules, updateRemovalScript } from "../common/editDomainlist.js";
 
 
@@ -168,7 +168,6 @@ async function handleUpload() {
 }
 
 async function adaptDomainlist(){
-    console.log("called");
     let domain;
     let domainValue; 
     const domainlistKeys = await storage.getAllKeys(stores.domainlist);
@@ -181,7 +180,8 @@ async function adaptDomainlist(){
         if (domainValue == true){
             await storage.set(stores.domainlist, null, domain);
         } else if (domainValue == false){
-            id = await getFreshId();
+            let id = await getFreshId();
+            addDynamicRule(id,domain);
             await storage.set(stores.domainlist, id, domain);
         }
     }
