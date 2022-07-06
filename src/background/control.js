@@ -21,11 +21,11 @@ import { init as initAnalysis, halt as haltAnalysis } from "./analysis/analysis.
 
 import { defaultSettings } from "../data/defaultSettings.js";
 import { modes } from "../data/modes.js";
-import { stores, storage } from "./storage.js";
+import { stores, storage, adaptDomainlist } from "./storage.js";
 import { addDynamicRule, deleteAllDynamicRules, getFreshId, reloadDynamicRules } from '../common/editRules';
 
 // TODO: Remove
-import { debug_domainlist_and_dynamicrules, updateRemovalScript } from '../common/editDomainlist';
+import { debug_domainlist_and_dynamicrules, updateRemovalScript, update } from '../common/editDomainlist';
 
 async function enable() {
   let mode = await storage.get(stores.settings, "MODE");
@@ -107,6 +107,8 @@ function disable() {
   if (isEnabled) {  // Turns on the extension
     enable();
   }
+  
+  adaptDomainlist();
   updateRemovalScript();
   reloadDynamicRules();
 

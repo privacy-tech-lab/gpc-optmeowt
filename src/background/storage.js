@@ -178,12 +178,10 @@ async function adaptDomainlist(){
         domainValue = domainlistValues[index]
         if (domainValue == true){
             removeDomainFromDomainlistAndRules();
-        } else {
+        } else if (domainValue == false){
             addDomainToDomainlistAndRules();
         }
     }
-    updateRemovalScript();
-    reloadDynamicRules();
   }
 
 
@@ -195,6 +193,7 @@ export {
     handleDownload,
     startUpload,
     handleUpload,
+    adaptDomainlist,
     // extensionMode,
     stores,
     storage
