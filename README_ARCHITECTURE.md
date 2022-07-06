@@ -16,9 +16,7 @@ src
 │   │   ├── listeners-firefox.js
 │   │   ├── protection.js
 │   │   ├── background.js
-│   │   ├── cookiesOnInstall.js
-│   │   ├── dom.js
-│   │   └── events.js
+│   │   └── cookiesOnInstall.js
 │   ├── control.js
 │   ├── cookiesIAB.js
 │   ├── storage.js
@@ -29,17 +27,26 @@ src
 │   └── editRules.js
 ├── content-scripts					# Runs processes on site on adds DOM signal
 │   ├── injection
-│   │   └── gpc-dom.js
+│   │   ├── gpc-dom.js
+│   │   └── gpc-remove.js
 │   ├── registration
-│   │   └── gpc-dom.js
+│   │   ├── gpc-dom.js
+│   │   └── gpc-remove.js
 │   └── contentScript.js
 ├── data							# Stores constant data (DNS signals, settings, etc.)
-│   ├── cookiesDAA.js
+│   ├── cookie_list.js
 │   ├── defaultSettings.js
 │   ├── headers.js
 │   ├── modes.js
 │   ├── privacyFlags.js
 │   └── regex.js
+├── manifests						# Stores manifests
+│   ├── chrome
+│   │   ├── manifest-dev.json
+│   │   └── manifest-dist.json
+│   ├── firefox
+│   │   ├── manifest-dev.json
+│   │   └── manifest-dist.json
 ├── options							# Options page frontend
 │   ├── components
 │   │   ├── scaffold-component.html
@@ -71,10 +78,8 @@ src
 ├── rules							# Manages universal rules
 │   ├── gpc_exceptions_rules.json
 │   └── universal_gpc_rules.json
-├── theme							# Contains darkmode
-│   └── darkmode.js
-├── manifest-dev.json
-└── manifest-dist.json
+└── theme							# Contains darkmode
+    └── darkmode.js
 ```
 
 
@@ -126,11 +131,9 @@ Contains all the logic and processes for running analysis mode. `FetchUSPCookies
 
 1) `background.js`
 2) `cookiesOnInstall.js`
-3) `dom.js`
-4) `events.js`
-5) `listeners-chrome.js`
-6) `listeners-firefox.js`
-7) `protection.js`
+3) `listeners-chrome.js`
+4) `listeners-firefox.js`
+5) `protection.js`
 
 ### `protection/background.js`
 
@@ -195,14 +198,16 @@ This folder contains our main content script and methods for injecting the GPC s
 ## `src/content-scripts/injection`
 
 1) `gpc-dom.js`
+2) `gpc-remove.js`
 
-Sets the GPC DOM signal.
+`gpc-dom.js` the GPC DOM signal and `gpc-remove.js` removes it.
 
 ## `src/content-scripts/registration`
 
 1) `gpc-dom.js`
+2) `gpc-remove.js`
 
-This file injects `injection/gpc-dom.js` into the page using a static script. (Based on [this stack overflow thread](https://stackoverflow.com/questions/9515704/use-a-content-script-to-access-the-page-context-variables-and-functions))
+These files inject `injection/gpc-dom.js` and `injection/gpc-remove.js` into the page using a static script. (Based on [this stack overflow thread](https://stackoverflow.com/questions/9515704/use-a-content-script-to-access-the-page-context-variables-and-functions))
 
 ## `content-scripts/contentScript.js`
 
@@ -242,6 +247,27 @@ Contains all privacy flags for analysis
 ## `data/regex.js`
 
 Contains regular expressions for finding "do not sell" links and relevant cookies
+
+# `src/manifests`
+
+1) `chrome`
+2) `firefox`
+
+Contains the extension manifests
+
+## `manifests/chrome`
+
+1) `manifest-dev.json`
+2) `manifest-dist.json`
+
+Contains the development and distribution manifests for chrome
+
+## `manifests/firefox`
+
+1) `manifest-dev.json`
+2) `manifest-dist.json`
+
+Contains the development and distribution manifests for firefox
 
 # `src/options`
 
