@@ -85,7 +85,6 @@ const listenerCallbacks = {
     if (sendSignal) {
       signalPerTab[details.tabId] = true;
       initIAB();
-      updatePopupIcon(details);
       return addHeaders(details);
     }
     // // else {
@@ -126,7 +125,8 @@ const listenerCallbacks = {
     //updateDomainlistAndSignal(details);
     updateDomainlist(details);
     if (sendSignal) {
-      addDomSignal(details)
+      addDomSignal(details);
+      updatePopupIcon(details);
     }
   }
 
@@ -194,7 +194,6 @@ function addHeaders(details) {
 }
 
 function updatePopupIcon(details) {
-  // console.log(`TAB ID FOR UPDATEUI ${details.tabId}`)
   if (wellknown[details.tabId] === undefined) {
     wellknown[details.tabId] = null
   }
