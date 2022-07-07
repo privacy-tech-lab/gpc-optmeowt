@@ -76,8 +76,12 @@ function injectScript(script) {
 
 async function getWellknown(url) {
   const response = await fetch(`${url.origin}/.well-known/gpc.json`);
-	const wellknownData = await response.json();
-  console.log("sending message. URL: ", url);
+  let wellknownData
+  try {
+	wellknownData = await response.json();
+  } catch {
+    wellknownData = null
+  }
 	chrome.runtime.sendMessage({
 		msg: "CONTENT_SCRIPT_WELLKNOWN",
 		data: wellknownData,

@@ -82,11 +82,11 @@ const listenerCallbacks = {
     // updateDomainlistAndSignal(details);
     updateDomainlist(details);
 
-   if (sendSignal) {  /* NEEDS TO BE CHANGED */
-    //   signalPerTab[details.tabId] = true;
-    //   initIAB();
-    updatePopupIcon(details);
-    }
+  //  if (sendSignal) {  /* NEEDS TO BE CHANGED */
+  //   //   signalPerTab[details.tabId] = true;
+  //   //   initIAB();
+  //   updatePopupIcon(details);
+  //   }
     // // else {
     // //   return details
     // // }
@@ -206,19 +206,15 @@ async function updateDomainlist(details) {
   //   : sendSignal = true;
 }
 
-function updatePopupIcon(details) {
-  // console.log(`TAB ID FOR UPDATEUI ${details.tabId}`)
-  if (wellknown[details.tabId] === undefined) {
-    wellknown[details.tabId] = null
-  }
-  if (wellknown[details.tabId] === null) {
+function updatePopupIcon(tabId) {
       chrome.action.setIcon(
         {
+          tabId: tabId,
           path: "assets/face-icons/optmeow-face-circle-green-ring-128.png",
         },
-        function () { /*console.log("Updated OptMeowt icon to GREEN RING");*/ }
+        function () { /* console.log("Updated OptMeowt icon to GREEN RING"); */}
       );
-  }
+  
 }
     
 function logData(details) {
@@ -467,20 +463,26 @@ async function onMessageHandlerAsync(message, sender, sendResponse) {
   if (message.msg === "POPUP_PROTECTION") {
     dataToPopup()
   }
-  if (message.msg === "CONTENT_SCRIPT_WELLKNOWN") { /* NEED TO CHANGE */
+  if (message.msg === "CONTENT_SCRIPT_WELLKNOWN") {
+
+    let url = new URL(sender.origin);
+    let parsed = psl.parse(url.hostname);
+    let domain = parsed.domain;
+
     let tabID = sender.tab.id;
     let wellknown = [];
+    let sendSignal = await storage.get(stores.domainlist,domain)
     wellknown[tabID] = message.data;
-    if (wellknown[tabID]["gpc"] === true) {
-      setTimeout(()=>{}, 10000);
-      if (signalPerTab[tabID] === true) {
-          chrome.action.setIcon(
+    if (wellknown[tabID] === null && sendSignal == null){
+      updatePopupIcon(tabID);
+    } else if (wellknown[tabID]["gpc"] === true && sendSignal == null) {
+        chrome.action.setIcon(
             {
+              tabId: tabID,
               path: "assets/face-icons/optmeow-face-circle-green-128.png",
             },
-            function () { /*console.log("Updated icon to SOLID GREEN.");*/ }
+            function () {/* console.log("Updated icon to SOLID GREEN."); */}
           );
-      }
     }
   }
 
