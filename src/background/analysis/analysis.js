@@ -111,7 +111,7 @@ async function checkForUSPString(url) {
 
 // Update analysis icon when running
 function setAnalysisIcon(tabID) {
-  chrome.action.setIcon({
+  chrome.browserAction.setIcon({
     tabId: tabID,
     path: "../../assets/face-icons/optmeow-face-circle-yellow-128.png",
   }, ()=>{ /*console.log("Updated icon to SOLID YELLOW.");*/});
@@ -305,7 +305,7 @@ async function haltAnalysis() {
       let tab = tabs[0];
 
       // Change popup icon
-      chrome.action.setIcon({
+      chrome.browserAction.setIcon({
         tabId: tab.id,
         path: "../../assets/face-icons/icon128-face-circle.png",
       }, ()=>{ /*console.log("Updated icon to REGULAR.");*/});
@@ -329,13 +329,11 @@ async function haltAnalysis() {
  * @param {object} details - retrieved info passed into callback
  */
  function addDomSignal(details) {
-  chrome.scripting.executeScript({
-    files: ["dom.js"],
-    target: {
-      frameIds: [details.frameId],
-      tabId: details.tabId, 
-    },    // Supposed to solve multiple injections as opposed to allFrames: true
-    // runAt: "document_start", // defaults to 'document_idle'
+  chrome.tabs.executeScript(details.tabId, {
+    file: "../../content-scripts/injection/gpc-dom.js",
+    frameId: details.frameId, // Supposed to solve multiple injections
+                              // as opposed to allFrames: true
+    runAt: "document_start",
   });
 }
 
@@ -673,10 +671,10 @@ function cookiesOnChangedCallback(changeInfo) {
  * @param {Object} details 
  */
 function onCommittedCallback(details) {
-  console.log("onCommitted Triggered!!")
+  //console.log("onCommitted Triggered!!")
   // https://developer.chrome.com/docs/extensions/reference/history/#transition_types
   let validTransition = isValidTransition(details.transitionType);
-  console.log("transitionType: ", details.transitionType);
+  //console.log("transitionType: ", details.transitionType);
 
   // changingSitesOnAnalysis, changingSitesOnUserRequest, sendingGPC
   // console.log("changingSitesOnUserRequest", changingSitesOnUserRequest)
