@@ -82,22 +82,21 @@ const listenerCallbacks = {
     // updateDomainlistAndSignal(details);
     updateDomainlist(details);
 
-    // if (sendSignal) {
+   if (sendSignal) {  /* NEEDS TO BE CHANGED */
     //   signalPerTab[details.tabId] = true;
     //   initIAB();
-    // updatePopupIcon(details);
-    //   return addHeaders(details);
-    // }
+    updatePopupIcon(details);
+    }
     // // else {
     // //   return details
     // // }
     // TODO: Remove this when done
-    (async() => {
-      let s = await storage.getStore(stores.domainlist)
-      console.log("Current Domainlist: ", s)
-      let r = await chrome.declarativeNetRequest.getDynamicRules();
-      console.log("Current Rules: ", r)
-    })();
+    // (async() => {
+    //   let s = await storage.getStore(stores.domainlist)
+    //   console.log("Current Domainlist: ", s)
+    //   let r = await chrome.declarativeNetRequest.getDynamicRules();
+    //   console.log("Current Rules: ", r)
+    // })();
 
 
   },
@@ -115,12 +114,7 @@ const listenerCallbacks = {
    */
   onBeforeNavigate: (details) => {
     // Resets certain cached info
-    if (details.frameId === 0) {
-      wellknown[details.tabId] = null;
-      signalPerTab[details.tabId] = false;
-      tabs[activeTabID].REQUEST_DOMAINS = {};
-      console.log("TABS 1", tabs)
-    }
+
   },
 
   /**
@@ -218,23 +212,12 @@ function updatePopupIcon(details) {
     wellknown[details.tabId] = null
   }
   if (wellknown[details.tabId] === null) {
-    if ("$BROWSER" != "firefox") {
       chrome.action.setIcon(
         {
-          tabId: details.tabId,
           path: "assets/face-icons/optmeow-face-circle-green-ring-128.png",
         },
         function () { /*console.log("Updated OptMeowt icon to GREEN RING");*/ }
       );
-    } else {
-      chrome.browserAction.setIcon(
-        {
-          tabId: details.tabId,
-          path: "assets/face-icons/optmeow-face-circle-green-ring-128.png",
-        },
-        function () { /*console.log("Updated OptMeowt icon to GREEN RING");*/ }
-      );
-    }
   }
 }
     
@@ -484,29 +467,19 @@ async function onMessageHandlerAsync(message, sender, sendResponse) {
   if (message.msg === "POPUP_PROTECTION") {
     dataToPopup()
   }
-  if (message.msg === "CONTENT_SCRIPT_WELLKNOWN") {
+  if (message.msg === "CONTENT_SCRIPT_WELLKNOWN") { /* NEED TO CHANGE */
     let tabID = sender.tab.id;
-    wellknown[tabID] = message.data
+    let wellknown = [];
+    wellknown[tabID] = message.data;
     if (wellknown[tabID]["gpc"] === true) {
       setTimeout(()=>{}, 10000);
       if (signalPerTab[tabID] === true) {
-        if ("$BROWSER" != "firefox") {
           chrome.action.setIcon(
             {
-              tabId: tabID,
               path: "assets/face-icons/optmeow-face-circle-green-128.png",
             },
             function () { /*console.log("Updated icon to SOLID GREEN.");*/ }
           );
-        } else {
-          chrome.action.setIcon(
-            {
-              tabId: tabID,
-              path: "assets/face-icons/optmeow-face-circle-green-128.png",
-            },
-            function () { /*console.log("Updated icon to SOLID GREEN.");*/ }
-          );
-        }
       }
     }
   }
