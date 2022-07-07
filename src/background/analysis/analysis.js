@@ -111,7 +111,7 @@ async function checkForUSPString(url) {
 
 // Update analysis icon when running
 function setAnalysisIcon(tabID) {
-  chrome.action.setIcon({
+  chrome.browserAction.setIcon({ // no need for browser specific bc analysis mode is only Firefox
     tabId: tabID,
     path: "../../assets/face-icons/optmeow-face-circle-yellow-128.png",
   }, ()=>{ /*console.log("Updated icon to SOLID YELLOW.");*/});
@@ -305,7 +305,7 @@ async function haltAnalysis() {
       let tab = tabs[0];
 
       // Change popup icon
-      chrome.action.setIcon({
+      chrome.browserAction.setIcon({
         tabId: tab.id,
         path: "../../assets/face-icons/icon128-face-circle.png",
       }, ()=>{ /*console.log("Updated icon to REGULAR.");*/});
