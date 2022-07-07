@@ -199,15 +199,6 @@ function updatePopupIcon(details) {
     wellknown[details.tabId] = null
   }
   if (wellknown[details.tabId] === null) {
-    if ("$BROWSER" != "firefox") {
-      chrome.action.setIcon(
-        {
-          tabId: details.tabId,
-          path: "assets/face-icons/optmeow-face-circle-green-ring-128.png",
-        },
-        function () { /*console.log("Updated OptMeowt icon to GREEN RING");*/ }
-      );
-    } else {
       chrome.browserAction.setIcon(
         {
           tabId: details.tabId,
@@ -215,7 +206,7 @@ function updatePopupIcon(details) {
         },
         function () { /*console.log("Updated OptMeowt icon to GREEN RING");*/ }
       );
-    }
+    
   }
 }
     
@@ -471,15 +462,6 @@ async function onMessageHandlerAsync(message, sender, sendResponse) {
     if (wellknown[tabID]["gpc"] === true) {
       setTimeout(()=>{}, 10000);
       if (signalPerTab[tabID] === true) {
-        if ("$BROWSER" != "firefox") {
-          chrome.action.setIcon(
-            {
-              tabId: tabID,
-              path: "assets/face-icons/optmeow-face-circle-green-128.png",
-            },
-            function () { /*console.log("Updated icon to SOLID GREEN.");*/ }
-          );
-        } else {
           chrome.browserAction.setIcon(
             {
               tabId: tabID,
@@ -487,7 +469,7 @@ async function onMessageHandlerAsync(message, sender, sendResponse) {
             },
             function () { /*console.log("Updated icon to SOLID GREEN.");*/ }
           );
-        }
+        
       }
     }
   }
