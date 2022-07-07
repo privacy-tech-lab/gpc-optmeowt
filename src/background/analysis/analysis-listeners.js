@@ -12,14 +12,6 @@ our main functionality
 */
 
 
-// import {
-// 	onBeforeSendHeaders, 
-// 	onHeadersReceived, 
-// 	onBeforeNavigate,
-// 	onCommitted
-// } from "./events.js"
-
-
 // https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/webRequest/onBeforeRequest
 // https://developer.chrome.com/docs/extensions/reference/webRequest/
 // This is the extraInfoSpec array of strings

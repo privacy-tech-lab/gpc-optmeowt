@@ -4,11 +4,11 @@ privacy-tech-lab, https://www.privacytechlab.org/
 */
 
 
-
 /*
 analysis.js
 ================================================================================
 analysis.js 
+
 
 Overall we have one goal with this script: Run an analysis on a page.
 In order to do this, we will have the following functionality:
@@ -35,8 +35,6 @@ WARNING:  Content Security Policies are DISABLED while Analysis Mode is ON.
 - See disableCSPPerRequest function for more details
 */
 
-
-// import { debug } from "webpack";
 import { modes } from "../../data/modes.js";
 import { defaultSettings } from "../../data/defaultSettings.js";
 import { stores, storage } from "./../storage.js";
@@ -69,9 +67,7 @@ var urlsWithUSPString = [];
 
 var firstPartyDomain = "";
 
-// var sendingGPC = false;
 var changingSitesOnAnalysis = false;
-// var changingSitesOnUserRequest = false;  // used to create new analysis section
 
 
 
@@ -104,8 +100,6 @@ function updateAnalysisCounter() {
 async function checkForUSPString(url) {
   if (uspPhrasing.test(url)) {
     urlsWithUSPString.push(url)
-    // console.log("Matched URL with US_PRIVACY substring: ", url);
-    // console.log("URLs with US_PRIVACY string: ", urlsWithUSPString);
   }
 }
 
@@ -114,7 +108,7 @@ function setAnalysisIcon(tabID) {
   chrome.action.setIcon({
     tabId: tabID,
     path: "../../assets/face-icons/optmeow-face-circle-yellow-128.png",
-  }, ()=>{ /*console.log("Updated icon to SOLID YELLOW.");*/});
+  }, ()=>{});
 }
 
 /**
@@ -127,10 +121,6 @@ function setAnalysisIcon(tabID) {
  * @returns Object
  */
 function addGPCHeadersCallback(details) {
-  // changingSitesOnUserRequest = true;
-  // let url = new URL(details.url);
-  // let domain = parseURL(url);
-  // logData(domain, null, null);
   setAnalysisIcon(details.tabId);   // Show analysis icon
 
   checkForUSPString(details.url); // Dump all URLs that contain a us_privacy string
@@ -150,9 +140,6 @@ function addGPCHeadersCallback(details) {
  * https://github.com/PhilGrayson/chrome-csp-disable/blob/master/background.js
  */
 function disableCSPCallback(details) {
-  // if (!isCSPDisabled(details.tabId)) {
-  //   return;
-  // }
   for (var i = 0; i < details.responseHeaders.length; i++) {
     if (details.responseHeaders[i].name.toLowerCase() === 'content-security-policy') {
       details.responseHeaders[i].value = '';
@@ -164,7 +151,6 @@ let disableCSPFilter = { urls: ['*://*/*'], types: ['main_frame', 'sub_frame'] }
 
 
 var addGPCHeaders = function() {
-  // sendingGPC = true;
   chrome.webRequest.onBeforeSendHeaders.addListener(
     addGPCHeadersCallback,
     FILTER,
@@ -173,7 +159,6 @@ var addGPCHeaders = function() {
 }
 
 var removeGPCSignals = function() {
-  // sendingGPC = false;
   chrome.webRequest.onBeforeSendHeaders.removeListener(addGPCHeadersCallback);
 }
 
@@ -229,7 +214,6 @@ function fetchUSPAPIData() {
           }
         }
         chrome.runtime.onMessage.addListener(onResponseHandler);
-        // resolve(response);
       });
     });
   })
@@ -308,7 +292,7 @@ async function haltAnalysis() {
       chrome.action.setIcon({
         tabId: tab.id,
         path: "../../assets/face-icons/icon128-face-circle.png",
-      }, ()=>{ /*console.log("Updated icon to REGULAR.");*/});
+      }, ()=>{});
     });
   }
 
@@ -334,8 +318,7 @@ async function haltAnalysis() {
     target: {
       frameIds: [details.frameId],
       tabId: details.tabId, 
-    },    // Supposed to solve multiple injections as opposed to allFrames: true
-    // runAt: "document_start", // defaults to 'document_idle'
+    }, 
   });
 }
 
@@ -350,7 +333,7 @@ async function haltAnalysis() {
     || transition === "generated"
     || transition === "reload"
     || transition === "keyword"
-    || transition === "keyword_generated" // Potentially unneeded
+    || transition === "keyword_generated"
   );
 }
 
@@ -372,7 +355,6 @@ function handleResponseChunk(details, str) {
   if (doNotSellPhrasing.test(str)) {
     let match = str.match(doNotSellPhrasing)
     let url = new URL(details.url);
-    // let url = new URL(message.location);
     let domain = parseURL(url);
     logData(domain, "DO_NOT_SELL_LINK_WEB_REQUEST_FILTERING", match);
   }
@@ -402,7 +384,6 @@ function webRequestResponseFiltering(details) {
 
   filter.onerror = event => {
     console.error(filter.error);
-    // request.error = filter.error;
   }
 }
 
@@ -482,13 +463,8 @@ function logData(domain, command, data) {
   domain = changingSitesOnAnalysis ? firstPartyDomain : domain;
   let gpcStatusKey = changingSitesOnAnalysis ? "AFTER_GPC" : "BEFORE_GPC";
 
-  // console.log("domain from logData: ", domain);
-  // console.log("command from logData: ", command);
-  // console.log("data from logData: ", data);
-
   // If domain doesn't exist, initialize it
   if (!analysis[domain]) {
-    // console.log(`Adding analysis[${domain}] = [];`)
     analysis[domain] = [];
     analysis_userend[domain] = [];
     analysis_counter[domain] = 0;
@@ -525,7 +501,6 @@ function logData(domain, command, data) {
   // Let's assume that data does have a name property as a cookie should
   // NOTE: Cookies should be an array of "cookies" objects, not promises, etc. 
   if (command === "COOKIES") {
-    // console.log("FOUND COOKIES IN LOGDATA: ", data);
     for (let i in data) {
       analysis[domain][callIndex][gpcStatusKey]["COOKIES"].push(data[i]);
     }
@@ -585,9 +560,6 @@ function logData(domain, command, data) {
       analysis_userend[domain]["USPAPI_AFTER_GPC_TIMESTAMP"] = ms;
       try {
         let USPrivacyString = data.value || data.uspString;
-        // if (USPrivacyString === null || USPrivacyString === undefined) {
-        //   analysis_userend[domain]["USPAPI_OPTED_OUT"] = null;  // when nothing is returned
-        // }
         console.log("data: ", data);
         console.log("the USPrivacyString breakdown", data.uspString, data.value)
         console.log("USPrivacyString: ", USPrivacyString);
@@ -609,14 +581,12 @@ function logData(domain, command, data) {
 
   }
   if (command === "DO_NOT_SELL_LINK") {
-    // console.log("Got to COMMAND === USPAPI");
     analysis[domain][callIndex][gpcStatusKey]["DO_NOT_SELL_LINK"].push(data);
     analysis[domain][callIndex][gpcStatusKey]["DO_NOT_SELL_LINK_EXISTS"] = true;
     analysis_userend[domain]["DO_NOT_SELL_LINK_EXISTS"] = true;
     analysis_userend[domain]["DO_NOT_SELL_LINK_EXISTS_TIMESTAMP"] = ms;
   }
   if (command === "DO_NOT_SELL_LINK_WEB_REQUEST_FILTERING") {
-    // console.log("Got to COMMAND === USPAPI");
     analysis[domain][callIndex][gpcStatusKey]["DO_NOT_SELL_LINK_WEB_REQUEST_FILTERING"].push(data);
     analysis[domain][callIndex][gpcStatusKey]["DO_NOT_SELL_LINK_EXISTS"] = true;
     analysis_userend[domain]["DO_NOT_SELL_LINK_EXISTS"] = true;
@@ -628,7 +598,6 @@ function logData(domain, command, data) {
 
   console.log("Attempting to update stores...");
   storage.set(stores.analysis, analysis_userend[domain], domain);
-  // console.log(a);
 }
 
 
@@ -656,14 +625,10 @@ function cookiesOnChangedCallback(changeInfo) {
 
       if (cookiesPhrasing.test(cookie.name)) {
         console.log("PASSED COOKIES PHRASING")
-        // console.log("Init logData() from listenerForUSPCookies")
-        // console.log("logData domain: ", urlObj.domain)
         logData(urlObj.domain, "COOKIES", cookie);
       }
     }
-    // console.log(analysis);
-  } //
-  // 
+  } 
 }
 
 /**
@@ -678,9 +643,6 @@ function onCommittedCallback(details) {
   let validTransition = isValidTransition(details.transitionType);
   console.log("transitionType: ", details.transitionType);
 
-  // changingSitesOnAnalysis, changingSitesOnUserRequest, sendingGPC
-  // console.log("changingSitesOnUserRequest", changingSitesOnUserRequest)
-  // console.log("changingSitesOnAnalysis", changingSitesOnAnalysis)
   if (validTransition) {
     let url = new URL(details.url);
     let domain = parseURL(url);
@@ -690,12 +652,6 @@ function onCommittedCallback(details) {
       // sendingGPC = true;
       logData(domain, null, null);
       addDomSignal(details);
-      // changingSitesOnAnalysis = false;
-    // } else {  // Must be on user request
-    //   haltAnalysis();
-    //   // changingSitesOnUserRequest = true;
-    //   logData(domain, null, null); // Makes sure to log the 1st party domain to analysis_userend
-    //   console.log("cancelling analysis!");
     }
   }
 }
@@ -707,10 +663,6 @@ function onCommittedCallback(details) {
   if (message.msg === "USPAPI_TO_BACKGROUND") {
     let url = new URL(message.location);
     let domain = parseURL(url);
-    // console.log("Data from USPAPI returned to background", message.data);
-    // console.log("Message object: ", message);
-    // console.log("Init logData() from runtime.onMessage")
-    // console.log("logData domain: ", domain)
     logData(domain, "USPAPI", message.data);
   }
   if (message.msg === "DNS_FINDER_TO_BACKGROUND") {
@@ -776,7 +728,6 @@ function commandsHandler(command) {
   if (command === "halt_analysis") {
     console.log("Halt anlysis running...");
     haltAnalysis();
-    // chrome.action.openPopup();
   }
 }
 

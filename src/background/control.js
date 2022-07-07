@@ -100,9 +100,7 @@ function disable() {
     }
   }
 
-  // mode = await storage.get(stores.settings, "MODE");
   let isEnabled = await storage.get(stores.settings, "IS_ENABLED");
-  // isDomainlisted = await storage.get(stores.settings, "IS_DOMAINLISTED");
 
   if (isEnabled) {  // Turns on the extension
     enable();
@@ -127,7 +125,6 @@ function disable() {
  * https://developer.chrome.com/docs/extensions/mv3/messaging/
  */
  chrome.runtime.onMessage.addListener(async function (message, sender, sendResponse) {
-	// console.log(`Recieved message @ background page.`);
   if (message.msg === "TURN_ON_OFF") {
     let isEnabled = message.data.isEnabled;           // can be undefined
 
