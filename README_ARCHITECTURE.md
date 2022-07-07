@@ -15,6 +15,7 @@ src
 │   │   ├── listeners-chrome.js
 │   │   ├── listeners-firefox.js
 │   │   ├── protection.js
+│   │   ├── protection-ff.js
 │   │   ├── background.js
 │   │   └── cookiesOnInstall.js
 │   ├── control.js
@@ -134,6 +135,7 @@ Contains all the logic and processes for running analysis mode. `FetchUSPCookies
 3) `listeners-chrome.js`
 4) `listeners-firefox.js`
 5) `protection.js`
+6) `protection-ff.js`
 
 ### `protection/background.js`
 
@@ -150,6 +152,10 @@ Creates listeners for chrome and firefox, respectively.
 ### `protection/protection.js`
 
 Manages the domain list with functions like `logData();`, `updateDomainlistAndSignal();`, `pullToDomainlistCache();`, `syncDomainlists();`. Also responsible for supplying the popup with the proper information with `dataToPopup();`. Also creates listeners to watch the popup for domain list changes.
+
+### `protection/protection-ff.js`
+
+Manages the domain list for firefox.
 
 ## `background/control.js`
 
