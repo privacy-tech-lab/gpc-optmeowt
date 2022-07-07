@@ -162,13 +162,23 @@ function updatePopupIcon(details) {
     wellknown[details.tabId] = null
   }
   if (wellknown[details.tabId] === null) {
-    chrome.action.setIcon(
-      {
-        tabId: details.tabId,
-        path: "assets/face-icons/optmeow-face-circle-green-ring-128.png",
-      },
-      function () { /*console.log("Updated OptMeowt icon to GREEN RING");*/ }
-    );
+    if ("$BROWSER" != "firefox") {
+      chrome.action.setIcon(
+        {
+          tabId: details.tabId,
+          path: "assets/face-icons/optmeow-face-circle-green-ring-128.png",
+        },
+        function () { /*console.log("Updated OptMeowt icon to GREEN RING");*/ }
+      );
+    } else {
+      chrome.browserAction.setIcon(
+        {
+          tabId: details.tabId,
+          path: "assets/face-icons/optmeow-face-circle-green-ring-128.png",
+        },
+        function () { /*console.log("Updated OptMeowt icon to GREEN RING");*/ }
+      );
+    }
   }
   
 }
@@ -354,13 +364,23 @@ chrome.runtime.onMessage.addListener(async function (message, sender, sendRespon
     if (wellknown[tabID]["gpc"] === true) {
       setTimeout(()=>{}, 10000);
       if (signalPerTab[tabID] === true) {
-        chrome.action.setIcon(
-          {
-            tabId: tabID,
-            path: "assets/face-icons/optmeow-face-circle-green-128.png",
-          },
-          function () { /*console.log("Updated icon to SOLID GREEN.");*/ }
-        );
+        if ("$BROWSER" != "firefox") {
+          chrome.action.setIcon(
+            {
+              tabId: tabID,
+              path: "assets/face-icons/optmeow-face-circle-green-128.png",
+            },
+            function () { /*console.log("Updated icon to SOLID GREEN.");*/ }
+          );
+        } else  {
+          chrome.browserAction.setIcon(
+            {
+              tabId: tabID,
+              path: "assets/face-icons/optmeow-face-circle-green-128.png",
+            },
+            function () { /*console.log("Updated icon to SOLID GREEN.");*/ }
+          );
+        }
       }
     }
   }
