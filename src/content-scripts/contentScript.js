@@ -76,8 +76,12 @@ function injectScript(script) {
 
 async function getWellknown(url) {
   const response = await fetch(`${url.origin}/.well-known/gpc.json`);
-	const wellknownData = await response.json();
-
+  let wellknownData
+  try {
+	wellknownData = await response.json();
+  } catch {
+    wellknownData = null
+  }
 	chrome.runtime.sendMessage({
 		msg: "CONTENT_SCRIPT_WELLKNOWN",
 		data: wellknownData,
@@ -105,11 +109,13 @@ async function getWellknown(url) {
 	// });
 
 	/* (2) Injects scripts */
+  if ("$BROWSER" == 'firefox'){
   window.addEventListener('load', function() {
     console.log("running window.onload");
     // injectScript(uspapi);
 		injectScript(runAnalysisProperty);
 	}, false);
+  }
 
 	/* (3) Fetches .well-known GPC file */
   getWellknown(url);

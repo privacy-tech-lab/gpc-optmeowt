@@ -111,7 +111,8 @@ async function checkForUSPString(url) {
 
 // Update analysis icon when running
 function setAnalysisIcon(tabID) {
-  chrome.browserAction.setIcon({
+  chrome.browserAction.setIcon({ // no need for browser specific bc analysis mode is only Firefox
+
     tabId: tabID,
     path: "../../assets/face-icons/optmeow-face-circle-yellow-128.png",
   }, ()=>{ /*console.log("Updated icon to SOLID YELLOW.");*/});

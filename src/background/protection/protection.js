@@ -82,22 +82,21 @@ const listenerCallbacks = {
     // updateDomainlistAndSignal(details);
     updateDomainlist(details);
 
-    // if (sendSignal) {
-    //   signalPerTab[details.tabId] = true;
-    //   initIAB();
-    //   updatePopupIcon(details);
-    //   return addHeaders(details);
-    // }
+  //  if (sendSignal) {  /* NEEDS TO BE CHANGED */
+  //   //   signalPerTab[details.tabId] = true;
+  //   //   initIAB();
+  //   updatePopupIcon(details);
+  //   }
     // // else {
     // //   return details
     // // }
     // TODO: Remove this when done
-    (async() => {
-      let s = await storage.getStore(stores.domainlist)
-      console.log("Current Domainlist: ", s)
-      let r = await chrome.declarativeNetRequest.getDynamicRules();
-      console.log("Current Rules: ", r)
-    })();
+    // (async() => {
+    //   let s = await storage.getStore(stores.domainlist)
+    //   console.log("Current Domainlist: ", s)
+    //   let r = await chrome.declarativeNetRequest.getDynamicRules();
+    //   console.log("Current Rules: ", r)
+    // })();
 
 
   },
@@ -115,12 +114,7 @@ const listenerCallbacks = {
    */
   onBeforeNavigate: (details) => {
     // Resets certain cached info
-    if (details.frameId === 0) {
-      wellknown[details.tabId] = null;
-      signalPerTab[details.tabId] = false;
-      tabs[activeTabID].REQUEST_DOMAINS = {};
-      console.log("TABS 1", tabs)
-    }
+
   },
 
   /**
@@ -212,20 +206,15 @@ async function updateDomainlist(details) {
   //   : sendSignal = true;
 }
 
-function updatePopupIcon(details) {
-  // console.log(`TAB ID FOR UPDATEUI ${details.tabId}`)
-  if (wellknown[details.tabId] === undefined) {
-    wellknown[details.tabId] = null
-  }
-  if (wellknown[details.tabId] === null) {
-    chrome.action.setIcon(
-      {
-        tabId: details.tabId,
-        path: "assets/face-icons/optmeow-face-circle-green-ring-128.png",
-      },
-      function () { /*console.log("Updated OptMeowt icon to GREEN RING");*/ }
-    );
-  }
+function updatePopupIcon(tabId) {
+      chrome.action.setIcon(
+        {
+          tabId: tabId,
+          path: "assets/face-icons/optmeow-face-circle-green-ring-128.png",
+        },
+        function () { /* console.log("Updated OptMeowt icon to GREEN RING"); */}
+      );
+  
 }
     
 function logData(details) {
@@ -475,19 +464,25 @@ async function onMessageHandlerAsync(message, sender, sendResponse) {
     dataToPopup()
   }
   if (message.msg === "CONTENT_SCRIPT_WELLKNOWN") {
+
+    let url = new URL(sender.origin);
+    let parsed = psl.parse(url.hostname);
+    let domain = parsed.domain;
+
     let tabID = sender.tab.id;
-    wellknown[tabID] = message.data
-    if (wellknown[tabID]["gpc"] === true) {
-      setTimeout(()=>{}, 10000);
-      if (signalPerTab[tabID] === true) {
+    let wellknown = [];
+    let sendSignal = await storage.get(stores.domainlist,domain)
+    wellknown[tabID] = message.data;
+    if (wellknown[tabID] === null && sendSignal == null){
+      updatePopupIcon(tabID);
+    } else if (wellknown[tabID]["gpc"] === true && sendSignal == null) {
         chrome.action.setIcon(
-          {
-            tabId: tabID,
-            path: "assets/face-icons/optmeow-face-circle-green-128.png",
-          },
-          function () { /*console.log("Updated icon to SOLID GREEN.");*/ }
-        );
-      }
+            {
+              tabId: tabID,
+              path: "assets/face-icons/optmeow-face-circle-green-128.png",
+            },
+            function () {/* console.log("Updated icon to SOLID GREEN."); */}
+          );
     }
   }
 
