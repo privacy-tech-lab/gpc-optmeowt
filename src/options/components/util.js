@@ -20,14 +20,9 @@ util.js contains global helper functions to help render the options page
 import Mustache from "mustache";
 
 export async function fetchTemplate(path) {
-    try {
-        let response = await fetch(path)
-        let data = await response.text()
-        return data
-    }
-    catch (e) {
-        console.log('Failed to fetch page: ', e);
-    }
+    let response = await fetch(path)
+    let data = await response.text()
+    return data
 }
 
 /**

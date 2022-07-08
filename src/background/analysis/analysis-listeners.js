@@ -57,7 +57,7 @@ function enableListeners(callbacks) {
  * Disables background listeners
  */
 function disableListeners(callbacks) {
-  const {
+	const {
 		onBeforeSendHeaders,
 		onHeadersReceived,
 		onBeforeNavigate,

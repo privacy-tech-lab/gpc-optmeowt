@@ -18,7 +18,6 @@ content script (registered from the extension service worker) for full DOM acces
 function setDomSignal () {
    try {
 
-
 	   var GPCVal = undefined
 	   const GPCDomVal = `Object.defineProperty(Navigator.prototype, "globalPrivacyControl", {
 		   get: () => ${GPCVal},
@@ -32,7 +31,6 @@ function setDomSignal () {
 	   GPCDomElem.innerHTML = GPCDomVal;
 	   document.documentElement.prepend(GPCDomElem);
 	   
-	   console.log(`Removed GPC JS property from DOM.`);
    } catch(e) {
 	   console.error(`Failed to remove DOM signal: ${e}`);
    }

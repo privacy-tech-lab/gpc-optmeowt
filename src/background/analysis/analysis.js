@@ -62,11 +62,8 @@ var analysis = {};
 var analysis_userend = {};
 var analysis_counter = {};
 var domains_collected_during_analysis = [];
-
 var urlsWithUSPString = [];
-
 var firstPartyDomain = "";
-
 var changingSitesOnAnalysis = false;
 
 
@@ -88,9 +85,7 @@ function updateAnalysisCounter() {
 
   let domains_collected = Object.keys(domains_collected_during_analysis);
   for (let i=0; i<domains_collected_during_analysis.length; i++) {
-    console.log("key", i);
     analysis_counter[domains_collected[i]] += 1;
-    console.log("analysis_counter[key]", analysis_counter[domains_collected[i]]);
   }
 
   domains_collected_during_analysis = [];
@@ -108,7 +103,7 @@ function setAnalysisIcon(tabID) {
   chrome.action.setIcon({
     tabId: tabID,
     path: "../../assets/face-icons/optmeow-face-circle-yellow-128.png",
-  }, ()=>{});
+  });
 }
 
 /**
@@ -122,7 +117,6 @@ function setAnalysisIcon(tabID) {
  */
 function addGPCHeadersCallback(details) {
   setAnalysisIcon(details.tabId);   // Show analysis icon
-
   checkForUSPString(details.url); // Dump all URLs that contain a us_privacy string
   webRequestResponseFiltering(details);        // Filter for Do Not Sell link
 
@@ -178,11 +172,8 @@ async function fetchUSPCookies() {
             domain: firstPartyDomain,
             name: uspCookiePhrasingList[i]
           }, function(cookies) {
-            console.log("uspCookieName", uspCookiePhrasingList[i])
-            console.log("COOKIES FOUND::::", cookies);
             for (let j in cookies) {
               allUSPCookies.push(cookies[j]);
-              console.log("item, ", cookies[j])
             }
             // allUSPCookies.push(cookies);
             resolve(cookies);
@@ -190,10 +181,9 @@ async function fetchUSPCookies() {
         })
       )
     }
-    Promise.all(promises)
-      .then(values => {
-        resolve(allUSPCookies)
-      })
+    Promise.all(promises).then(values => {
+      resolve(allUSPCookies)
+    })
   })
 }
 
@@ -207,7 +197,6 @@ function fetchUSPAPIData() {
     chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
       chrome.tabs.sendMessage(tabs[0].id, {msg: "USPAPI_FETCH_REQUEST"}, function(response) {
         function onResponseHandler(message, sender, sendResponse) {
-          console.log("RECIEVED A RESPONSE!!!!");
           chrome.runtime.onMessage.removeListener(onResponseHandler);
           if (message.msg == "USPAPI_TO_BACKGROUND_FROM_FETCH_REQUEST") {
             resolve(message);
@@ -245,7 +234,6 @@ async function fetchUSPStringData() {
  * (3) Attach DOM property to page after reload
  */
 async function runAnalysis() {
-  console.log("Starting analysis.");
 
   async function afterFetchingFirstPartyDomain() {
     const uspapiData = await fetchUSPStringData();
@@ -474,16 +462,12 @@ function logData(domain, command, data) {
   }
   let callIndex = analysis_counter[domain];
 
-  console.log("call index: ", callIndex)
 
   // Do we associate the incoming info w/ a new request or no? Which index to save at?
   if (!analysis[domain][callIndex]) {
-    console.log("RAN FIRST PART")
     analysis[domain][callIndex] = analysisDataSkeletonFirstParties();
     analysis_userend[domain] = analysisUserendSkeleton();
   }
-  console.log("Current callIndex: ", callIndex, "command: ", command, "data: ", data);
-  console.log("analysis after maybe adding callindex: ", analysis);
 
   let ms = Date.now();
 
@@ -519,11 +503,6 @@ function logData(domain, command, data) {
         try {
           if (analysis_userend[domain]["USP_COOKIE_OPTED_OUT"] !== true) {
             let USPrivacyString = data[i].value || "";
-
-            console.log("data: ", data);
-            console.log("the USPrivacyString breakdown", data.value)
-            console.log("USPrivacyString: ", USPrivacyString);
-
             // Give precedence to USPAPI
             let optedOut = analysis_userend[domain]["USP_COOKIE_OPTED_OUT"];
             if (optedOut !== null || optedOut !== undefined) {
@@ -543,7 +522,6 @@ function logData(domain, command, data) {
           analysis_userend[domain]["USP_COOKIE_OPTED_OUT"] = "PARSE_FAILED"; 
         }
         analysis_userend[domain]["USP_COOKIE_OPTED_OUT_TIMESTAMP"] = ms;
-
       }
     }
   }
@@ -560,9 +538,7 @@ function logData(domain, command, data) {
       analysis_userend[domain]["USPAPI_AFTER_GPC_TIMESTAMP"] = ms;
       try {
         let USPrivacyString = data.value || data.uspString;
-        console.log("data: ", data);
-        console.log("the USPrivacyString breakdown", data.uspString, data.value)
-        console.log("USPrivacyString: ", USPrivacyString);
+
         if (USPrivacyString[2] === "Y" || USPrivacyString[2] === "y") {
           analysis_userend[domain]["USPAPI_OPTED_OUT"] = true;
         } else if (USPrivacyString[2] === "-") {
@@ -593,10 +569,6 @@ function logData(domain, command, data) {
     analysis_userend[domain]["DO_NOT_SELL_LINK_EXISTS_TIMESTAMP"] = ms;
 
   }
-  console.log("Updated analysis logs: ", analysis);
-  console.log("Updated analysis_userend logs: ", analysis_userend);
-
-  console.log("Attempting to update stores...");
   storage.set(stores.analysis, analysis_userend[domain], domain);
 }
 
@@ -613,18 +585,14 @@ function logData(domain, command, data) {
  * Cookie listener - grabs ALL cookies as they are changed
  */
 function cookiesOnChangedCallback(changeInfo) {
-  // 
-  (changeInfo) => {   //
+  (changeInfo) => { 
     if (!changeInfo.removed) {
-      console.log("NOTICE: RECOGNIZED CHANING COOKIES ... ... ...");
       let cookie = changeInfo.cookie;
       let domain = cookie.domain;
       domain = domain[0] == '.' ? domain.substring(1) : domain;
       let urlObj = psl.parse(domain);
-      console.log("changeInfo.cookie", changeInfo.cookie)
 
       if (cookiesPhrasing.test(cookie.name)) {
-        console.log("PASSED COOKIES PHRASING")
         logData(urlObj.domain, "COOKIES", cookie);
       }
     }
@@ -638,10 +606,8 @@ function cookiesOnChangedCallback(changeInfo) {
  * @param {Object} details 
  */
 function onCommittedCallback(details) {
-  console.log("onCommitted Triggered!!")
   // https://developer.chrome.com/docs/extensions/reference/history/#transition_types
   let validTransition = isValidTransition(details.transitionType);
-  console.log("transitionType: ", details.transitionType);
 
   if (validTransition) {
     let url = new URL(details.url);
@@ -716,17 +682,12 @@ function onCommittedCallback(details) {
   })
 }
 
-/**
- * 
- */
+
 function commandsHandler(command) {
-  console.log(`Keyboard shortcut triggered...`);
   if (command === "run_analysis") {
-    console.log("Run anlysis running..."); 
     runAnalysis();
   }
   if (command === "halt_analysis") {
-    console.log("Halt anlysis running...");
     haltAnalysis();
   }
 }
@@ -762,17 +723,11 @@ function disableListeners() {
 /******************************************************************************/
 /******************************************************************************/
 
-
-// function preinit() {
-//   // urlFlags = loadFlags()
-// }
-
 export function init() {
   // SHOW SOME WARNING TO USERS ABOUT MESSING UP THEIR DATA
   enableListeners();
 }
 
-// function postinit() {}
   
 export function halt() {
 	disableListeners();

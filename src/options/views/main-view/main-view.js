@@ -34,19 +34,9 @@ import Darkmode from "../../../theme/darkmode";
  * @param {string} bodyTemplate - stringified HTML template
  */
 async function displaySettings(bodyTemplate) {
-  // console.log("displaySettings");
   settingsView(bodyTemplate);
-    //Animations were broken for some reason, replaced with above line- maybe add back later? -stanley
-
-  /*
-    animateCSS("#scaffold", 'fadeOut', async function() {
-        document.getElementById('scaffold').remove()
-        await settingsView(bodyTemplate)
-        animateCSS("#scaffold", 'fadeIn');
-      });
-      */
-      document.querySelector('.navbar-item.active').classList.remove('active')
-      document.querySelector('#main-view-settings').classList.add('active')
+  document.querySelector('.navbar-item.active').classList.remove('active')
+  document.querySelector('#main-view-settings').classList.add('active')
 }
 
 /**
@@ -54,33 +44,15 @@ async function displaySettings(bodyTemplate) {
  * @param {string} bodyTemplate - stringified HTML template
  */
 function displayDomainlist(bodyTemplate) {
-  // console.log("displayDomainList");
   domainlistView(bodyTemplate);
-  //Animations were broken for some reason, replaced with above line- maybe add back later? -stanley
-  /*
-    animateCSS("#scaffold", 'fadeOut', async function() {
-        document.getElementById('scaffold').remove()
-        await domainlistView(bodyTemplate)
-        animateCSS("#scaffold", 'fadeIn');
-      });
-      */
-      document.querySelector('.navbar-item.active').classList.remove('active')
-      document.querySelector('#main-view-domainlist').classList.add('active')
+  document.querySelector('.navbar-item.active').classList.remove('active')
+  document.querySelector('#main-view-domainlist').classList.add('active')
 }
 
 function displayAnalysis(bodyTemplate) {
-  // console.log("displayDomainList");
   analysisView(bodyTemplate);
-  //Animations were broken for some reason, replaced with above line- maybe add back later? -stanley
-  /*
-    animateCSS("#scaffold", 'fadeOut', async function() {
-        document.getElementById('scaffold').remove()
-        await domainlistView(bodyTemplate)
-        animateCSS("#scaffold", 'fadeIn');
-      });
-      */
-      document.querySelector('.navbar-item.active').classList.remove('active')
-      document.querySelector('#main-view-analysis').classList.add('active')
+  document.querySelector('.navbar-item.active').classList.remove('active')
+  document.querySelector('#main-view-analysis').classList.add('active')
 }
 
 /**
@@ -88,19 +60,9 @@ function displayAnalysis(bodyTemplate) {
  * @param {string} bodyTemplate - stringified HTML template
  */
 function displayAbout(bodyTemplate) {
-  // console.log("displayAboutPage");
-
   aboutView(bodyTemplate);
-  //Animations were broken for some reason, replaced with above line- maybe add back later? -stanley
-  /*
-    animateCSS("#scaffold", 'fadeOut', async function() {
-        document.getElementById('scaffold').remove()
-        await aboutView(bodyTemplate)
-        animateCSS("#scaffold", 'fadeIn');
-      });
-      */
-      document.querySelector('.navbar-item.active').classList.remove('active')
-      document.querySelector('#main-view-about').classList.add('active')
+  document.querySelector('.navbar-item.active').classList.remove('active')
+  document.querySelector('#main-view-about').classList.add('active')
 }
 
 /**

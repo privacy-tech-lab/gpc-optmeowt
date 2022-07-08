@@ -21,15 +21,6 @@ import { reloadDynamicRules } from "../common/editRules"
 /**************************  Enumerated settings  *****************************/
 /******************************************************************************/
 
-// We could use strings instead of hard coding the following objects, however using an
-// enumerated object prevents mistyping a string as a parameter, hopefully
-// saving us some potential grief
-// const extensionMode = Object.freeze({
-// 	enabled: 'ENABLED',
-// 	domainlisted: 'DOMAINLISTED',
-// 	disabled: 'DISABLED'
-// });
-
 // In general, these functions should be use with async / await for 
 // syntactic sweetness & synchronous data handling 
 // i.e., await storage.set(stores.settings, extensionMode.enabled, 'MODE')
@@ -135,17 +126,14 @@ async function startUpload() {
  * Imports and updates the domainlist in local storage with an imported backup
  */
 async function handleUpload() {
-    // console.log("Starting upload ...");
     await storage.clear(stores.domainlist)
     const file = this.files[0];
     const fr = new FileReader();
     fr.onload = function(e) {
         const UPLOADED_DATA = JSON.parse(e.target.result);
-        console.log("submittedData", UPLOADED_DATA);
         let version = UPLOADED_DATA.VERSION;
         let domainlist = UPLOADED_DATA.DOMAINLIST;
         version = version.split('.');
-        console.log("version", version)
 
         // hardcode if it is the new version
         if (Number(version[0]) >= 3) {
@@ -160,7 +148,6 @@ async function handleUpload() {
             } 
         }
         reloadDynamicRules();
-        // console.log("Finished upload!")
     };
     fr.readAsText(file);
 }
@@ -174,7 +161,6 @@ export {
     handleDownload,
     startUpload,
     handleUpload,
-    // extensionMode,
     stores,
     storage
 }

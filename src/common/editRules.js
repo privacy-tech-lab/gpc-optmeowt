@@ -34,7 +34,6 @@ editRules.js is an internal API for adding/removing GPC-exclusion dynamic rules
 
 	// Make sure the ID starts at 1 (I think 0 is reserved?)
 	for (let i=1; i<MAX_RULES; i++) {
-    console.log("ITERATION")
 		if (i !== usedRuleIds[i-1]) {
 			freshId = i;      // We have found the first nonzero, unused id
 			break;
@@ -52,7 +51,6 @@ editRules.js is an internal API for adding/removing GPC-exclusion dynamic rules
 export async function deleteDynamicRule(id) {
 	let UpdateRuleOptions = { "removeRuleIds": [id] };
 	await chrome.declarativeNetRequest.updateDynamicRules(UpdateRuleOptions);
-  console.log('Removed rule id#',id);
 }
 
 /**
@@ -63,7 +61,6 @@ export async function deleteAllDynamicRules() {
   let MAX_RULES = chrome.declarativeNetRequest.MAX_NUMBER_OF_DYNAMIC_AND_SESSION_RULES;
 	let UpdateRuleOptions = { "removeRuleIds": [...Array(MAX_RULES).keys()] };
   await chrome.declarativeNetRequest.updateDynamicRules(UpdateRuleOptions);
-  // console.log('Removed all dynamic rules.');
 }
 
 /**
@@ -111,7 +108,6 @@ export async function addDynamicRule(id, domain) {
 	  "removeRuleIds": [id]
 	};
 	await chrome.declarativeNetRequest.updateDynamicRules(UpdateRuleOptions);
-  // console.log('Added rule id#',id,' [',domain,'].');
   return;
 }
 
@@ -123,7 +119,7 @@ export async function addDynamicRule(id, domain) {
  *   receiving GPC or other opt-outs. 
  */
 export async function reloadDynamicRules() {
-    if ("$BROWSER" == 'chrome'){
+  if ("$BROWSER" == 'chrome'){
 
     deleteAllDynamicRules();
     let domainlist = await storage.getStore(stores.domainlist)
@@ -131,7 +127,6 @@ export async function reloadDynamicRules() {
     let promises = []
     Object.keys(domainlist).forEach(async (domain) => {
       promises.push(new Promise(async (resolve, reject) => {
-        console.log(domain, domainlist[domain]);
         let id = domainlist[domain]
         if (id) {
           await addDynamicRule(id, domain);
@@ -140,10 +135,5 @@ export async function reloadDynamicRules() {
       }))
     })
 
-    Promise.all(promises).then(() => {
-      chrome.declarativeNetRequest.getDynamicRules((res) => {
-        console.log("Current dyn rules", res);
-      })
-    })
   }
 }

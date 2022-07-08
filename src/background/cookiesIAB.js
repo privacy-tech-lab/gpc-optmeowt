@@ -203,7 +203,7 @@ function deleteCookie(url, name) {
   chrome.cookies.remove({
     "url": url,
     "name": name
-  }, () => {})
+  })
 }
 
 /**

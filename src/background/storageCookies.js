@@ -37,26 +37,13 @@ export const storageCookies = {
 			cookieArr = cookies
 
 			for (let i in cookieArr) {
-				//(`Cookie #${i}: ${cookieArr[i]}`)
 				chrome.cookies.remove({
 					"url": `https://${domainKey}/`,
 					"name": cookieArr[i].name
-				}, function(details) {
-					if (details === null) {
-						//console.log("Delete failed.")
-					} else {
-						//console.log("Successfully deleted cookie.")
-					}
 				})
 				chrome.cookies.remove({
 					"url": `https://www.${domainKey}/`,
 					"name": cookieArr[i].name
-				}, function(details) {
-					if (details === null) {
-						//console.log("Delete failed.")
-					} else {
-						//console.log("Successfully deleted cookie.")
-					}
 				})
 			}
 		});

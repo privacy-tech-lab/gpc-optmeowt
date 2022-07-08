@@ -4,19 +4,12 @@ privacy-tech-lab, https://www.privacytechlab.org/
 */
 
 
-
 /*
 background.js
 ================================================================================
 background.js is the main background script handling OptMeowt's
 main opt-out functionality
 */
-
-
-
-
-// delete all modes.readiness
-// 
 
 
 import { enableListeners, disableListeners } from "./listeners-$BROWSER.js"
@@ -43,16 +36,6 @@ var userAgent = window.navigator.userAgent.indexOf("Firefox") > -1 ? "moz" : "ch
  * 
  * HIERARCHY:   manifest.json --> background.js --> listeners-$BROWSER.js --> events.js
  */
-// function enable() {
-//   enableListeners();
-// }
-
-/**
- * Disables extension functionality
- */
-// function disable() {
-//   disableListeners();
-// }
 
 
 /******************************************************************************/
@@ -69,22 +52,7 @@ function preinit() {};
  * (3) Sets correct extension on/off mode
  */
 async function init() {
-  // let settingsDB = storage.getStore(stores.settings);
-  // for (let setting in defaultSettings) {
-  //   if (!settingsDB[setting]) {
-  //     await storage.set(stores.settings, defaultSettings[setting], setting);
-  //   }
-  // }
-
   initCookiesOnInstall();
-
-  // const mode = defaultSettings.MODE;
-  // // const mode = 
-  // if (mode === modes.readiness.enabled || mode === modes.readiness.domainlisted) {
-    // enable();
-  // } else {
-  //   disable();
-  // }
   enableListeners();
 }
 

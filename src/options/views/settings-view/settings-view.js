@@ -26,6 +26,7 @@ import { modes } from "../../../data/modes.js";
 import UIkit from "../../../../node_modules/uikit/dist/js/uikit";
 import tippy from "../../../../node_modules/tippy.js/dist/tippy-bundle.umd";
 
+import "../../../../node_modules/file-saver/src/FileSaver"
 import Darkmode from 'darkmode-js';
 
 // Global scope settings variable
@@ -91,7 +92,6 @@ function eventListeners() {
     .addEventListener("change", handleUpload, false);
 
     chrome.runtime.onMessage.addListener(function (message, _, __) {
-      console.log("message received: " + message.msg);
       if (message.msg === "SHOW_TUTORIAL") {
         walkthrough();
         storage.set(stores.settings, true, 'TUTORIAL_SHOWN')
@@ -102,10 +102,6 @@ function eventListeners() {
 
 function createMessageListeners(){
   chrome.runtime.onMessage.addListener(function (message, _, __) {
-    // if (message.msg === "SHOW_TUTORIAL") {
-    //   storage.set(stores.settings, false, 'TUTORIAL_SHOWN')
-    //   walkthrough();
-    // }
     if (message.msg === "CSV_DATA_RESPONSE_TO_SETTINGS") {
       csvGenerator(message.data.csvData, message.data.titles);
     }
@@ -123,7 +119,6 @@ function analysisWarning() {
   let modal = UIkit.modal("#analysis-modal");
   modal.show();
   document.getElementById("modal-button-5").onclick = function () {
-    // browser.windows.create({ "url": null, "incognito": true });
     modal.hide();
   }
 }
@@ -167,8 +162,6 @@ function walkthrough() {
       placement: "right",
       offset: [0, 60],
       onHide() {
-        // trigger3();
-        // This is to skip the dark mode tutorial option
         trigger4();
       },
     });
@@ -229,10 +222,6 @@ function loadChangeMode() {
   } else {
     document.getElementById("optMode").addEventListener('click', function() {
       mode = modes.analysis;
-      
-      /*let newMode = (mode === modes.analysis) ? modes.protection : modes.analysis;
-      mode = newMode; */
-      
       chrome.runtime.sendMessage({ msg: "CHANGE_MODE", data: mode});
       chrome.runtime.sendMessage({ msg: "TURN_ON_OFF", data: { isEnabled: true } });
       initPopUpWalkthrough();
@@ -251,8 +240,6 @@ chrome.runtime.onMessage.addListener(function (message, _, __) {
 
 // Copy confirmation code 
 function copyToClipboard() {
-  
-
   /* Get the text field */
   var copyText = document.getElementById("conf-code");
 
@@ -260,13 +247,8 @@ function copyToClipboard() {
   copyText.select();
   copyText.setSelectionRange(0, 99999); /* For mobile devices */
 
-
    /* Copy the text inside the text field */
   navigator.clipboard.writeText(copyText.value);
-  
-
-  /* Alert the copied text */
-  //alert("Copied the text: " + copyText.value);
 }
 
 /******************************************************************************/
@@ -283,14 +265,11 @@ export async function settingsView(scaffoldTemplate) {
   );
 
   document.getElementById("content").innerHTML = body.innerHTML;
-  document.getElementById("scaffold-component-body").innerHTML =
-    content.innerHTML;
+  document.getElementById("scaffold-component-body").innerHTML = content.innerHTML;
 
   // Render correct extension mode radio button
-  // const mode = await storage.get(stores.settings, "MODE");
   const isEnabled = await storage.get(stores.settings, "IS_ENABLED");
   const isDomainlisted = await storage.get(stores.settings, "IS_DOMAINLISTED");
-  // console.log(`mode = ${mode}`);
 
   if (isEnabled) {
     (isDomainlisted)
@@ -301,9 +280,7 @@ export async function settingsView(scaffoldTemplate) {
   }
 
   eventListeners();
-  
   loadChangeMode();
-  
 
   const tutorialShown = await storage.get(stores.settings, 'TUTORIAL_SHOWN');
   if (!tutorialShown) {
@@ -315,12 +292,7 @@ export async function settingsView(scaffoldTemplate) {
   document.getElementById("conf-code-button").addEventListener("click", () => {
     copyToClipboard();
   });
-  
-  /*popup.addEventListener("animationend", () => {
-   popup.classList.remove("active");
-  });
-  */
- }
+}
 
  
  
