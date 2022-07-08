@@ -296,19 +296,6 @@ async function haltAnalysis() {
   afterUSPStringFetched();
 }
 
-/**
- * Runs `dom.js` to attach DOM signal
- * @param {object} details - retrieved info passed into callback
- */
- function addDomSignal(details) {
-  chrome.scripting.executeScript({
-    files: ["dom.js"],
-    target: {
-      frameIds: [details.frameId],
-      tabId: details.tabId, 
-    }, 
-  });
-}
 
 /**
  * https://developer.chrome.com/docs/extensions/reference/history/#transition_types 

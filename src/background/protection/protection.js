@@ -154,20 +154,6 @@ function addHeaders(details) {
 }
 
 /**
- * Runs `dom.js` to attach DOM signal
- * @param {object} details - retrieved info passed into callback
- */
-function addDomSignal(details) {
-  chrome.scripting.executeScript({
-    files: ["dom.js"],
-    target: {
-      frameIds: [details.frameId],
-      tabId: details.tabId, 
-    },    // Supposed to solve multiple injections as opposed to allFrames: true
-  });
-}
-
-/**
  * Checks whether a particular domain should receive a DNS signal
  * (1) Parse url to get domain for domainlist
  * (2) Update domains by adding current domain to domainlist in storage.

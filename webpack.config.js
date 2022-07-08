@@ -96,9 +96,6 @@ module.exports = (env, argv) => {
 				patterns: [{ context: path.resolve(__dirname, "src"), from: "rules", to: "rules" }],
 			}),
 			new CopyPlugin({
-				patterns: [{ context: path.resolve(__dirname, "src/background/protection"), from: "dom.js" }],
-			}),
-			new CopyPlugin({
 				patterns: [{ context: path.resolve(__dirname, "src/options"), from: "views", to: "views" }],
 			}),
 			new CopyPlugin({
