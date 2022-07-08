@@ -507,6 +507,9 @@ async function onMessageHandlerAsync(message, sender, sendResponse) {
     // do not sell for a particular site, and chooses to re-enable it
     initCookiesPerDomain(message.data)
   }
+  if (message.msg === "FORCE_RELOAD") {
+    pullToDomainlistCache();
+  }
   return true;    // Async callbacks require this
 }
 

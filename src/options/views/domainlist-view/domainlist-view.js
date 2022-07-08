@@ -56,7 +56,7 @@ import { reloadDynamicRules } from '../../../common/editRules.js';
 export async function toggleListener(elementId, domain) {
   document.getElementById(elementId).addEventListener("click", async () => {
     const domainId = await storage.get(stores.domainlist, domain);
-    if (!domainId) {
+    if (domainId == null) {
       // await storage.set(stores.domainlist, false, domain)
       // chrome.runtime.sendMessage({ msg: "SET_TO_DOMAINLIST", data: { domain: domain, key: false } });
       await addDomainToDomainlistAndRules(domain);
@@ -66,6 +66,9 @@ export async function toggleListener(elementId, domain) {
       await removeDomainFromDomainlistAndRules(domain);
     }
     updateRemovalScript();
+    chrome.runtime.sendMessage({
+      msg: "FORCE_RELOAD"
+    }); 
   })
 }
 
