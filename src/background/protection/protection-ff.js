@@ -91,7 +91,10 @@ const listenerCallbacks = {
     // //   return details
     // // }
     // TODO: Remove this when done
-
+    (async() => {
+      let s = await storage.getStore(stores.domainlist)
+      console.log("Current Domainlist: ", s)
+    })
 
   },
 
@@ -180,6 +183,9 @@ function addHeaders(details) {
   let url = new URL(details.url);
   let parsedUrl = psl.parse(url.hostname);
   let parsedDomain = parsedUrl.domain;
+  if (parsedDomain == null || parsedDomain == undefined){
+    return;
+  }
 
   let parsedDomainVal = domainlist[parsedDomain];
   if (parsedDomainVal === undefined) {
@@ -447,9 +453,6 @@ async function onMessageHandlerAsync(message, sender, sendResponse) {
   }
   if (message.msg === "REMOVE_FROM_DOMAINLIST") {
     let domain = message.data;
-    // findId()
-    //deleteDynamicRule(id, domain)
-    storage.delete(stores.domainlist, domain);
     delete domainlist[domain];
   }
   if (message.msg === "POPUP_PROTECTION") {
