@@ -349,18 +349,15 @@ function handleSendMessageError() {
 }
 
 // Info back to popup
-function dataToPopup() {
+function dataToPopup(wellknownData) {
   let requestsData = {};
 
   if (tabs[activeTabID] !== undefined) {
     requestsData = tabs[activeTabID].REQUEST_DOMAINS;
-    // console.log("dataToPopup: tabs[activeTabID].REQUEST_DOMAINS = ", requestsData)
-    // console.log("activeTabID: ", activeTabID)
+
   }
 
   chrome.tabs.query({active: true, currentWindow: true}, function(tabs){
-    let tabID = tabs[0]["id"]
-    let wellknownData = wellknown[tabID]
 
     let popupData = {
       requests: requestsData,
@@ -448,9 +445,6 @@ async function onMessageHandlerAsync(message, sender, sendResponse) {
     addDynamicRule(id, domain)
     storage.set(stores.domainlist, key, domain);  // Sets to long term storage
   }
-  if (message.msg === "POPUP_PROTECTION") {
-    dataToPopup()
-  }
   if (message.msg === "CONTENT_SCRIPT_WELLKNOWN") {
 
     let url = new URL(sender.origin);
@@ -461,6 +455,7 @@ async function onMessageHandlerAsync(message, sender, sendResponse) {
     let wellknown = [];
     let sendSignal = await storage.get(stores.domainlist,domain)
     wellknown[tabID] = message.data;
+    let wellknownData = message.data;
     if (wellknown[tabID] === null && sendSignal == null){
       updatePopupIcon(tabID);
     } else if (wellknown[tabID]["gpc"] === true && sendSignal == null) {
@@ -472,6 +467,14 @@ async function onMessageHandlerAsync(message, sender, sendResponse) {
             function () {/* console.log("Updated icon to SOLID GREEN."); */}
           );
     }
+
+    chrome.runtime.onMessage.addListener(function (message, _, __) {
+      if (message.msg === "POPUP_PROTECTION") {
+        console.log("wellknownData: ", wellknownData)
+        dataToPopup(wellknownData);
+      }
+
+    });
   }
 
   if (message.msg === "CONTENT_SCRIPT_TAB") {
