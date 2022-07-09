@@ -113,8 +113,10 @@ const storage = {
 
 async function handleDownload() {
     const DOMAINLIST = await storage.getStore(stores.domainlist)
-    const MANIFEST = chrome.runtime.getManifest();
-
+    let MANIFEST = chrome.runtime.getManifest();
+    if ("$BROWSER" == 'firefox'){
+        MANIFEST.version = '2.0';
+    }
     let data = {
         VERSION: MANIFEST.version, 
         DOMAINLIST: DOMAINLIST,
@@ -148,21 +150,24 @@ async function handleUpload() {
         version = version.split('.');
         console.log("version", version)
 
+        let domainlist_keys = Object.keys(domainlist);
+        let domainlist_vals = Object.values(domainlist);
+        for (let i = 0; i < domainlist_keys.length; i++) {
+            try {
+                storage.set(stores.domainlist, domainlist_vals[i], domainlist_keys[i]);
+            } catch (error) {
+                alert("Error loading list")
+            } 
+        } 
         // hardcode if it is the new version
         if (Number(version[0]) >= 3) {
-            let domainlist_keys = Object.keys(domainlist);
-            let domainlist_vals = Object.values(domainlist);
-            for (let i = 0; i < domainlist_keys.length; i++) {
-                try {
-                    storage.set(stores.domainlist, domainlist_vals[i], domainlist_keys[i]);
-                } catch (error) {
-                    alert("Error loading list")
-                } 
-            } 
-        }
         reloadDynamicRules();
         updateRemovalScript();
-        // console.log("Finished upload!")
+        } else {
+            chrome.runtime.sendMessage({
+                msg: "FORCE_RELOAD"
+              }); 
+        }
     };
     fr.readAsText(file);
 }
