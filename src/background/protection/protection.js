@@ -23,7 +23,8 @@ import { initCookiesOnInstall } from "./cookiesOnInstall.js";
 import psl from "psl";
 
 // TODO: Remove this when done
-import { addDynamicRule, deleteDynamicRule } from "../../common/editRules"
+import { addDynamicRule, deleteDynamicRule, reloadDynamicRules } from "../../common/editRules"
+import { updateRemovalScript } from "../../common/editDomainlist.js";
 // import { getFreshId } from "../../domainlist-rules";
 
 
@@ -91,12 +92,6 @@ const listenerCallbacks = {
     // //   return details
     // // }
     // TODO: Remove this when done
-    // (async() => {
-    //   let s = await storage.getStore(stores.domainlist)
-    //   console.log("Current Domainlist: ", s)
-    //   let r = await chrome.declarativeNetRequest.getDynamicRules();
-    //   console.log("Current Rules: ", r)
-    // })();
 
 
   },
@@ -452,13 +447,6 @@ async function onMessageHandlerAsync(message, sender, sendResponse) {
     // findId()
     addDynamicRule(id, domain)
     storage.set(stores.domainlist, key, domain);  // Sets to long term storage
-  }
-  if (message.msg === "REMOVE_FROM_DOMAINLIST") {
-    let domain = message.data;
-    // findId()
-    deleteDynamicRule(id, domain)
-    storage.delete(stores.domainlist, domain);
-    delete domainlist[domain];
   }
   if (message.msg === "POPUP_PROTECTION") {
     dataToPopup()

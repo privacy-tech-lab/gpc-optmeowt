@@ -107,11 +107,13 @@ export async function toggleListener(elementId, domain) {
       let successPrompt = `Successfully deleted ${domain} from the Domain List.
 NOTE: It will be automatically added back to the list when the domain is requested again.`
       if (confirm(deletePrompt)) {
-        // await storage.delete(stores.domainlist, domain)
-        // chrome.runtime.sendMessage({ msg: "REMOVE_FROM_DOMAINLIST", data: domain });
+        await storage.delete(stores.domainlist, domain)
+        chrome.runtime.sendMessage({ msg: "REMOVE_FROM_DOMAINLIST", data: domain });
         
         // TODO: Implement
         // await deleteDomainFromDomainlistAndRules(domain);
+        reloadDynamicRules();
+        updateRemovalScript();
         alert(successPrompt)
         document.getElementById(`li ${domain}`).remove();
       }

@@ -92,7 +92,6 @@ const listenerCallbacks = {
     // // }
     // TODO: Remove this when done
 
-
   },
 
   /**
@@ -180,6 +179,9 @@ function addHeaders(details) {
   let url = new URL(details.url);
   let parsedUrl = psl.parse(url.hostname);
   let parsedDomain = parsedUrl.domain;
+  if (parsedDomain == null || parsedDomain == undefined){
+    return;
+  }
 
   let parsedDomainVal = domainlist[parsedDomain];
   if (parsedDomainVal === undefined) {
@@ -447,9 +449,6 @@ async function onMessageHandlerAsync(message, sender, sendResponse) {
   }
   if (message.msg === "REMOVE_FROM_DOMAINLIST") {
     let domain = message.data;
-    // findId()
-    //deleteDynamicRule(id, domain)
-    storage.delete(stores.domainlist, domain);
     delete domainlist[domain];
   }
   if (message.msg === "POPUP_PROTECTION") {
