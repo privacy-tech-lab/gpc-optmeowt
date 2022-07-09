@@ -218,10 +218,6 @@ async function pullToDomainlistCache() {
   }
 }
 
-async function setCachedMode() {
-  mode = await storage.get(stores.settings, "MODE");
-}
-
 
 async function syncDomainlists() {
   // (1) Reconstruct a domainlist indexedDB object from storage
@@ -510,7 +506,6 @@ function closeSetup() {
 export function init() {
   reloadVars();
   initCookiesOnInstall();   // NOTE: This replaces ALL do not sell cookies
-
 	enableListeners(listenerCallbacks);
   initMessagePassing();
   initSetup();
@@ -522,6 +517,5 @@ export function halt() {
 	disableListeners(listenerCallbacks);
   closeMessagePassing();
   closeSetup();
-
   wipeLocalVars();
 }

@@ -24,7 +24,6 @@ import psl from "psl";
 
 // TODO: Remove this when done
 import { addDynamicRule, deleteDynamicRule } from "../../common/editRules"
-// import { getFreshId } from "../../domainlist-rules";
 
 
 /******************************************************************************/
@@ -218,10 +217,6 @@ async function pullToDomainlistCache() {
     domain = domainlistKeys[key];
     domainlist[domain] = domainlistValues[key];
   }
-}
-
-async function setCachedMode() {
-  mode = await storage.get(stores.settings, "MODE");
 }
 
 
