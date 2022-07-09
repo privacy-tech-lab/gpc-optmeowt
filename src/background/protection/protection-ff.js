@@ -507,9 +507,6 @@ function closeSetup() {
 /******************************************************************************/
 /******************************************************************************/
 
-
-// export function preinit() {}
-
 export function init() {
   reloadVars();
   initCookiesOnInstall();   // NOTE: This replaces ALL do not sell cookies

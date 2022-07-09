@@ -76,19 +76,8 @@ const listenerCallbacks = {
    * @returns {array} details.requestHeaders from addHeaders 
    */
   onBeforeSendHeaders: (details) => {
-    // // await updateDomainsAndSignal(details);
-    // updateDomainlistAndSignal(details);
     updateDomainlist(details);
 
-    // if (sendSignal) {
-    //   signalPerTab[details.tabId] = true;
-    //   initIAB();
-    //   updatePopupIcon(details);
-    //   return addHeaders(details);
-    // }
-    // // else {
-    // //   return details
-    // // }
     // TODO: Remove this when done
     (async() => {
       let s = await storage.getStore(stores.domainlist)

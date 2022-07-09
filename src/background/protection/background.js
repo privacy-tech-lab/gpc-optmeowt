@@ -40,9 +40,6 @@ var userAgent = window.navigator.userAgent.indexOf("Firefox") > -1 ? "moz" : "ch
 
 /******************************************************************************/
 
-
-function preinit() {};
-
 /**
  * Initializes the extension
  * Place all initialization necessary, as high level as can be, here:
@@ -56,8 +53,6 @@ async function init() {
   enableListeners();
 }
 
-function postinit() {};
-
 function halt() { disableListeners(); };
 
 
@@ -65,8 +60,6 @@ function halt() { disableListeners(); };
 
 
 export const background = {
-  preinit,
   init,
-  postinit,
   halt,
 }
