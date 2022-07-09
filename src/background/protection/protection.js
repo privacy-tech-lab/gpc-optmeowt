@@ -92,12 +92,6 @@ const listenerCallbacks = {
     // //   return details
     // // }
     // TODO: Remove this when done
-    (async() => {
-      let s = await storage.getStore(stores.domainlist)
-      console.log("Current Domainlist: ", s)
-      let r = await chrome.declarativeNetRequest.getDynamicRules();
-      console.log("Current Rules: ", r)
-    })();
 
 
   },
