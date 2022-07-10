@@ -457,8 +457,10 @@ async function onMessageHandlerAsync(message, sender, sendResponse) {
     wellknown[tabID] = message.data;
     let wellknownData = message.data;
     if (wellknown[tabID] === null && sendSignal == null){
+      initIAB();
       updatePopupIcon(tabID);
     } else if (wellknown[tabID]["gpc"] === true && sendSignal == null) {
+      initIAB();
         chrome.action.setIcon(
             {
               tabId: tabID,
