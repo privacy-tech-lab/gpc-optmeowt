@@ -32,8 +32,6 @@ import {
   updateRemovalScript
 } from "../common/editDomainlist.js";
 
-import { reloadDynamicRules } from "../common/editRules.js";
-
 // Global scope settings variables
 var isEnabled;
 var isDomainlisted;

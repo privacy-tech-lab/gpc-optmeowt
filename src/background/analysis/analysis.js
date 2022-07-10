@@ -41,7 +41,6 @@ import { stores, storage } from "./../storage.js";
 import { 
   cookiesPhrasing, 
   uspPhrasing, 
-  uspCookiePhrasing, 
   uspCookiePhrasingList,
   doNotSellPhrasing 
 } from "../../data/regex"

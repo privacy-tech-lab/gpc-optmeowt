@@ -56,27 +56,6 @@ export async function dropListener(domain) {
 }
 
 
-/**
- * Create the compliance label
- * @param {Boolean} verdict
- * @param {String} domain
- */
- function compliant (verdict, domain) {
-   let identifier = document.getElementById(`${domain} compliance`);
-   if(verdict == true){
-    identifier.classList.add("compliant");
-    identifier.style.border = "1px solid rgb(64,107,202)"; //0 100 170
-    identifier.style.color = "rgb(64,107,202)";
-    identifier.innerText = "Compliant";
-   } else {
-    identifier.classList.add("notCompliant");
-    identifier.style.border = "1px solid rgb(222,107,20)"; //255 121 0
-    identifier.style.color = "rgb(222,107,20)";
-    identifier.innerText = "Not Compliant";
-   }
-}
-
-
 /******************************************************************************/
 
 /**

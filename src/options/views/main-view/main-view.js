@@ -19,8 +19,7 @@ and loads them when called through the navigation bar
 
 import {
   fetchTemplate,
-  parseTemplate,
-  animateCSS,
+  parseTemplate
 } from "../../components/util.js";
 import { settingsView } from "../settings-view/settings-view.js";
 import { domainlistView } from "../domainlist-view/domainlist-view.js";

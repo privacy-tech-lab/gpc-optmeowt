@@ -170,25 +170,6 @@ function walkthrough() {
     tooltip.show();
   }
 
-  function trigger3() {
-    tippy(".tutorial-tooltip3", {
-      content:
-        "<p>Toggle this switch to change the color theme of OptMeowt<p> <button class='uk-button uk-button-default'>Finish</button>",
-      allowHTML: true,
-      trigger: "manual",
-      duration: 1000,
-      theme: "custom-1",
-      placement: "bottom",
-      offset: [-100, 20],
-      onHide() {
-        trigger4();
-      },
-    });
-    let tooltip = document.getElementsByClassName("tutorial-tooltip3")[0]
-      ._tippy;
-    tooltip.show();
-  }
-
   function trigger4() {
     let modal = UIkit.modal("#thank-you-modal")
     modal.show()
@@ -200,8 +181,6 @@ function walkthrough() {
     }
   }
 }
-
-
 
 // Show Analysis Warning
 async function initPopUpWalkthrough() {
