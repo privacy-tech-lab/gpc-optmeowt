@@ -81,10 +81,9 @@ const storage = {
             // placing or deleting opt out cookies for a given domain key
             // We know that `key` will be a domain, i.e. a string
             if (store === stores.domainlist) {
-                if (value === true) {
+                if (value === null) {
                     storageCookies.addCookiesForGivenDomain(key)
-                }
-                if (value === false) {
+                } else {
                     storageCookies.deleteCookiesForGivenDomain(key)
                 }
             }
@@ -178,19 +177,35 @@ async function adaptDomainlist(){
     const domainlistKeys = await storage.getAllKeys(stores.domainlist);
     const domainlistValues = await storage.getAll(stores.domainlist);
     await  storage.clear(stores.domainlist);
-    for (let index in domainlistKeys) {
-        domain = domainlistKeys[index]
-        domainValue = domainlistValues[index]
-        if (domainValue == true){
-            await storage.set(stores.domainlist, null, domain);
-        } else if (domainValue == false){
-            let id = await getFreshId();
-            addDynamicRule(id,domain);
-            await storage.set(stores.domainlist, id, domain);
-        } else if (domainValue == null){
-            await storage.set(stores.domainlist, null, domain);
-        } else {
-            await storage.set(stores.domainlist, domainValue, domain);
+    if ("$BROWSER" == 'chrome'){
+        for (let index in domainlistKeys) {
+            domain = domainlistKeys[index]
+            domainValue = domainlistValues[index]
+            if (domainValue == true){
+                await storage.set(stores.domainlist, null, domain);
+            } else if (domainValue == false){
+                let id = await getFreshId();
+                addDynamicRule(id,domain);
+                await storage.set(stores.domainlist, id, domain);
+            } else if (domainValue == null){
+                await storage.set(stores.domainlist, null, domain);
+            } else {
+                await storage.set(stores.domainlist, domainValue, domain);
+            }
+        }
+    } else {
+        for (let index in domainlistKeys) {
+            domain = domainlistKeys[index]
+            domainValue = domainlistValues[index]
+            if (domainValue == true){
+                await storage.set(stores.domainlist, null, domain);
+            } else if (domainValue == false){
+                await storage.set(stores.domainlist, 1, domain);
+            } else if (domainValue == null){
+                await storage.set(stores.domainlist, null, domain);
+            } else {
+                await storage.set(stores.domainlist, domainValue, domain);
+            }
         }
     }
   }

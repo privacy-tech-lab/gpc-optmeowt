@@ -84,7 +84,6 @@ const listenerCallbacks = {
 
     if (sendSignal) {
       signalPerTab[details.tabId] = true;
-      initIAB();
       return addHeaders(details);
     }
     // // else {
@@ -124,6 +123,7 @@ const listenerCallbacks = {
     //updateDomainlistAndSignal(details);
     updateDomainlist(details);
     if (sendSignal) {
+      initIAB();
       addDomSignal(details);
       updatePopupIcon(details);
     }

@@ -111,15 +111,15 @@ function disable() {
   if (isEnabled) {  // Turns on the extension
     enable();
   }
-
-  let adapted = await storage.get(stores.settings, "DOMAINLIST_ADAPTED");
-  if (!adapted){
-    await adaptDomainlist();
-    await storage.set(stores.settings,true,"DOMAINLIST_ADAPTED");
-  }
-  
-  updateRemovalScript();
-  reloadDynamicRules();
+    let adapted = await storage.get(stores.settings, "DOMAINLIST_ADAPTED");
+    if (!adapted){
+      await adaptDomainlist();
+      await storage.set(stores.settings,true,"DOMAINLIST_ADAPTED");
+    }
+    if ("$BROWSER" == 'chrome'){
+      updateRemovalScript();
+      reloadDynamicRules();
+    } 
 })();
 
 

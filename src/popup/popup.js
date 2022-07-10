@@ -12,7 +12,7 @@ popup.js supplements and renders complex elements on popup.html
 
 
 import { stores, storage } from "../background/storage";
-import { isValidSignalIAB } from "../background/cookiesIAB";
+import { initIAB, isValidSignalIAB } from "../background/cookiesIAB";
 import { csvGenerator } from "../common/csvGenerator"
 import { modes } from "../data/modes.js";
 import "../../node_modules/uikit/dist/css/uikit.min.css"
@@ -527,10 +527,12 @@ function addThirdPartyDomainDNSToggleListener(requestDomain) {
       elemString = "Do Not Sell Disabled";
       // setToDomainlist(requestDomain, false);
       addDomainToDomainlistAndRules(requestDomain);
+      deleteCookiesForGivenDomain(requestDomain);
     } else {
       elemString = "Do Not Sell Enabled";
       // setToDomainlist(requestDomain, true);
       removeDomainFromDomainlistAndRules(requestDomain);
+
     }
     updateRemovalScript();
     document.getElementById(`dns-enabled-text-${requestDomain}`).innerHTML = elemString;
