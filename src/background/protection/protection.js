@@ -179,6 +179,10 @@ async function updateDomainlist(details) {
   let url = new URL(details.url);
   let parsedUrl = psl.parse(url.hostname);
   let parsedDomain = parsedUrl.domain;
+  // let enabled = await storage.get(stores.settings, "IS_ENABLED");
+  // if (!enabled){
+  //   deleteCookiesForGivenDomain(parsedDomain);
+  // }
 
   // let freshId = await getFreshId();  // This is for adding rule exceptions
   // if (freshId) {
@@ -435,8 +439,11 @@ function onMessageHandlerSynchronous(message, sender, sendResponse) {
 async function onMessageHandlerAsync(message, sender, sendResponse) {
   // console.log(`Recieved message @ background page.`);
   if (message.msg === "CHANGE_IS_DOMAINLISTED") {
-    isDomainlisted = message.data.isDomainlisted;
+    let isDomainlisted = message.data.isDomainlisted;
     storage.set(stores.settings, isDomainlisted, "IS_DOMAINLISTED");
+    if ("$BROWSER" == 'chrome' && isDomainlisted){
+      reloadDynamicRules();
+    }
   }
   if (message.msg === "SET_TO_DOMAINLIST") {
     let { domain, key } = message.data;
