@@ -372,6 +372,23 @@ function dataToPopup(wellknownData) {
   });
 }
 
+function dataToPopupRequests() {
+  let requestsData = {};
+
+  if (tabs[activeTabID] !== undefined) {
+    requestsData = tabs[activeTabID].REQUEST_DOMAINS;
+
+  }
+
+  chrome.tabs.query({active: true, currentWindow: true}, function(tabs){
+
+    chrome.runtime.sendMessage({
+      msg: "POPUP_PROTECTION_DATA_REQUESTS",
+      data: requestsData
+    }, handleSendMessageError);
+  });
+}
+
 
 
 /******************************************************************************/
@@ -446,6 +463,9 @@ async function onMessageHandlerAsync(message, sender, sendResponse) {
     // findId()
     addDynamicRule(id, domain)
     storage.set(stores.domainlist, key, domain);  // Sets to long term storage
+  }
+  if (message.msg === "POPUP_PROTECTION_REQUESTS") {
+    dataToPopupRequests()
   }
   if (message.msg === "CONTENT_SCRIPT_WELLKNOWN") {
 

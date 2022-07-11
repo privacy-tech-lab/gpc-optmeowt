@@ -440,6 +440,12 @@ function showProtectionInfo() {
     msg: "POPUP_PROTECTION",
     data: null,
   }, (response) =>  { /*console.log(response)*/ });
+  if ("$BROWSER" == 'chrome'){
+    chrome.runtime.sendMessage({
+      msg: "POPUP_PROTECTION_REQUESTS",
+      data: null,
+    }, (response) =>  { /*console.log(response)*/ });
+  }
 }
 
 
@@ -566,12 +572,15 @@ function addThirdPartyDomainDNSToggleListener(requestDomain) {
  * (requests = tabs[activeTabID].requestDomainS; passed from background page)
  */
 async function buildDomains(requests) {
+  let domain = await getCurrentParsedDomain();
   let items = "";
   const domainlistKeys = await storage.getAllKeys(stores.domainlist)
   const domainlistValues = await storage.getAll(stores.domainlist)
 
   // Sets the 3rd party domain elements
   for (let requestDomain in requests) {
+    if (requestDomain != domain){
+
     let checkbox = ""
     let text = ""
     // Find correct index
@@ -621,12 +630,17 @@ async function buildDomains(requests) {
   </li>
   `;
   }
+}
   document.getElementById("dropdown-1-expandable").innerHTML = items;
 
   // Sets the 3rd party domain toggle listeners
   for (let requestDomain in requests) {
+    if (requestDomain != domain){
+
     addThirdPartyDomainDNSToggleListener(requestDomain)
+    }
   }
+
 
 }
 
@@ -966,6 +980,11 @@ chrome.runtime.onMessage.addListener(function (message, _, __) {
     wellknownInfo = wellknown;
     buildDomains(requests);
     buildWellKnown(wellknown);
+  }
+  if (message.msg === "POPUP_PROTECTION_DATA_REQUESTS") {
+    let requests = message.data;
+    buildDomains(requests);
+
   }
   if (message.msg === "POPUP_ANALYSIS_DATA") {
     analysis = message.data.analysis;
