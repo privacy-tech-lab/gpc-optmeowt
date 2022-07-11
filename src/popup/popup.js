@@ -32,7 +32,8 @@ import {
   updateRemovalScript
 } from "../common/editDomainlist.js";
 
-import { reloadDynamicRules } from "../common/editRules.js";
+import { reloadDynamicRules, addDynamicRule } from "../common/editRules.js";
+
 
 // Global scope settings variables
 var isEnabled;
@@ -181,6 +182,26 @@ function renderExtenionIsEnabledDisabled(isEnabled, isDomainlisted) {
   }
 }
 
+function turnonoff(isEnabled){
+  if ("$BROWSER" == 'chrome'){
+    console.log("turnonoff called. isEnabled is ", isEnabled);
+    if (isEnabled){
+      chrome.scripting.updateContentScripts([
+        {
+        "id": "2",
+        "matches": ["<all_urls>"],
+        "js": ["content-scripts/registration/gpc-remove.js"],
+        "runAt": "document_start"
+        }
+      ])
+      addDynamicRule(4999,"*");
+    } else {
+      updateRemovalScript();
+      reloadDynamicRules();
+    }
+  }
+}
+
 function listenerExtensionIsEnabledDisabledButton(isEnabled, isDomainlisted, mode) {
   document.getElementById("enable-disable").addEventListener("click", async () => {
 
@@ -207,6 +228,7 @@ function listenerExtensionIsEnabledDisabledButton(isEnabled, isDomainlisted, mod
       document.getElementById("extension-disabled-message").style.display = "none";
       chrome.runtime.sendMessage({ msg: "TURN_ON_OFF", data: { isEnabled: true } });
     }
+    turnonoff(isEnabled);
   });
 }
 
@@ -527,7 +549,6 @@ function addThirdPartyDomainDNSToggleListener(requestDomain) {
       elemString = "Do Not Sell Disabled";
       // setToDomainlist(requestDomain, false);
       addDomainToDomainlistAndRules(requestDomain);
-      deleteCookiesForGivenDomain(requestDomain);
     } else {
       elemString = "Do Not Sell Enabled";
       // setToDomainlist(requestDomain, true);

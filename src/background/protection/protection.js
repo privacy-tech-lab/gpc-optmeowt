@@ -179,10 +179,7 @@ async function updateDomainlist(details) {
   let url = new URL(details.url);
   let parsedUrl = psl.parse(url.hostname);
   let parsedDomain = parsedUrl.domain;
-  // let enabled = await storage.get(stores.settings, "IS_ENABLED");
-  // if (!enabled){
-  //   deleteCookiesForGivenDomain(parsedDomain);
-  // }
+
 
   // let freshId = await getFreshId();  // This is for adding rule exceptions
   // if (freshId) {
@@ -441,9 +438,7 @@ async function onMessageHandlerAsync(message, sender, sendResponse) {
   if (message.msg === "CHANGE_IS_DOMAINLISTED") {
     let isDomainlisted = message.data.isDomainlisted;
     storage.set(stores.settings, isDomainlisted, "IS_DOMAINLISTED");
-    if ("$BROWSER" == 'chrome' && isDomainlisted){
-      reloadDynamicRules();
-    }
+
   }
   if (message.msg === "SET_TO_DOMAINLIST") {
     let { domain, key } = message.data;
@@ -461,6 +456,7 @@ async function onMessageHandlerAsync(message, sender, sendResponse) {
     let tabID = sender.tab.id;
     let wellknown = [];
     let sendSignal = await storage.get(stores.domainlist,domain)
+    
     wellknown[tabID] = message.data;
     let wellknownData = message.data;
     if (wellknown[tabID] === null && sendSignal == null){
@@ -476,7 +472,6 @@ async function onMessageHandlerAsync(message, sender, sendResponse) {
             function () {/* console.log("Updated icon to SOLID GREEN."); */}
           );
     }
-
     chrome.runtime.onMessage.addListener(function (message, _, __) {
       if (message.msg === "POPUP_PROTECTION") {
         console.log("wellknownData: ", wellknownData)
