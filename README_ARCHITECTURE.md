@@ -8,16 +8,14 @@ src
 ├── background						# Manages the background script processes
 │   ├── analysis
 │   │   ├── analysis-listeners.js
-│   │   ├── analysis.js
-│   │   ├── background.js
-│   │   └── injectScript.js
+│   │   └── analysis.js
 │   ├── protection
+│   │   ├── background.js
+│   │   ├── cookiesOnInstall.js
 │   │   ├── listeners-chrome.js
 │   │   ├── listeners-firefox.js
 │   │   ├── protection.js
-│   │   ├── protection-ff.js
-│   │   ├── background.js
-│   │   └── cookiesOnInstall.js
+│   │   └── protection-ff.js
 │   ├── control.js
 │   ├── cookiesIAB.js
 │   ├── storage.js
@@ -117,8 +115,6 @@ The background folder splits into the `analysis` and `protection` folders that b
 
 1) `analysis-listeners.js` 
 2) `analysis.js`
-3) `background.js`
-4) `injectScript.js`
 
 ### `analysis/analysis-listeners.js`
 
