@@ -99,7 +99,8 @@ async function checkForUSPString(url) {
 
 // Update analysis icon when running
 function setAnalysisIcon(tabID) {
-  chrome.action.setIcon({
+  chrome.browserAction.setIcon({ // no need for browser specific bc analysis mode is only Firefox
+
     tabId: tabID,
     path: "../../assets/face-icons/optmeow-face-circle-yellow-128.png",
   });
@@ -276,7 +277,7 @@ async function haltAnalysis() {
       let tab = tabs[0];
 
       // Change popup icon
-      chrome.action.setIcon({
+      chrome.browserAction.setIcon({
         tabId: tab.id,
         path: "../../assets/face-icons/icon128-face-circle.png",
       }, ()=>{});
@@ -295,6 +296,18 @@ async function haltAnalysis() {
   afterUSPStringFetched();
 }
 
+/**
+ * Runs `dom.js` to attach DOM signal
+ * @param {object} details - retrieved info passed into callback
+ */
+ function addDomSignal(details) {
+  chrome.tabs.executeScript(details.tabId, {
+    file: "../../content-scripts/injection/gpc-dom.js",
+    frameId: details.frameId, // Supposed to solve multiple injections
+                              // as opposed to allFrames: true
+    runAt: "document_start",
+  });
+}
 
 /**
  * https://developer.chrome.com/docs/extensions/reference/history/#transition_types 

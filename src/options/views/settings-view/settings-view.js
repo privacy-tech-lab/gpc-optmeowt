@@ -28,6 +28,8 @@ import tippy from "../../../../node_modules/tippy.js/dist/tippy-bundle.umd";
 
 import "../../../../node_modules/file-saver/src/FileSaver"
 import Darkmode from 'darkmode-js';
+import { addDynamicRule, deleteAllDynamicRules, reloadDynamicRules } from "../../../common/editRules.js";
+import { updateRemovalScript } from "../../../common/editDomainlist.js";
 
 // Global scope settings variable
 var mode;
@@ -59,12 +61,34 @@ function eventListeners() {
       chrome.runtime.sendMessage({ msg: "TURN_ON_OFF", data: { isEnabled: true } });
       chrome.runtime.sendMessage({ msg: "CHANGE_IS_DOMAINLISTED", data: { isDomainlisted: false } });
       chrome.runtime.sendMessage({ msg: "CHANGE_MODE", data: modes.protection});
+      if ("$BROWSER" == 'chrome'){
+        chrome.scripting.updateContentScripts([
+          {
+          "id": "2",
+          "matches": ["https://example.org/foo/bar.html"],
+          "js": ["content-scripts/registration/gpc-remove.js"],
+          "runAt": "document_start"
+          }
+        ])
+        deleteAllDynamicRules();
+    }
     });
   document
     .getElementById("settings-view-radio1")
     .addEventListener("click", () => {
       chrome.runtime.sendMessage({ msg: "TURN_ON_OFF", data: { isEnabled: false } });
       chrome.runtime.sendMessage({ msg: "CHANGE_IS_DOMAINLISTED", data: { isDomainlisted: false } });
+      if ("$BROWSER" == 'chrome'){
+        chrome.scripting.updateContentScripts([
+          {
+          "id": "2",
+          "matches": ["<all_urls>"],
+          "js": ["content-scripts/registration/gpc-remove.js"],
+          "runAt": "document_start"
+          }
+        ])
+        addDynamicRule(4999,"*");
+    }
     });
   document
     .getElementById("settings-view-radio2")
@@ -72,6 +96,10 @@ function eventListeners() {
       chrome.runtime.sendMessage({ msg: "TURN_ON_OFF", data: { isEnabled: true } });
       chrome.runtime.sendMessage({ msg: "CHANGE_IS_DOMAINLISTED", data: { isDomainlisted: true } });
       chrome.runtime.sendMessage({ msg: "CHANGE_MODE", data: modes.protection});
+      if ("$BROWSER" == 'chrome'){
+        updateRemovalScript();
+        reloadDynamicRules();
+      }
     });
   document
     .getElementById("download-button")

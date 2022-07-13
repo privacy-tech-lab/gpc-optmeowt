@@ -23,7 +23,8 @@ import { initCookiesOnInstall } from "./cookiesOnInstall.js";
 import psl from "psl";
 
 // TODO: Remove this when done
-import { addDynamicRule, deleteDynamicRule } from "../../common/editRules"
+import { addDynamicRule, deleteDynamicRule, reloadDynamicRules } from "../../common/editRules"
+import { updateRemovalScript } from "../../common/editDomainlist.js";
 
 
 /******************************************************************************/
@@ -77,12 +78,6 @@ const listenerCallbacks = {
   onBeforeSendHeaders: (details) => {
     updateDomainlist(details);
 
-    // TODO: Remove this when done
-    (async() => {
-      let s = await storage.getStore(stores.domainlist)
-      let r = await chrome.declarativeNetRequest.getDynamicRules();
-    });
-
 
   },
 
@@ -98,11 +93,6 @@ const listenerCallbacks = {
    */
   onBeforeNavigate: (details) => {
     // Resets certain cached info
-    if (details.frameId === 0) {
-      wellknown[details.tabId] = null;
-      signalPerTab[details.tabId] = false;
-      tabs[activeTabID].REQUEST_DOMAINS = {};
-    }
   },
 
   /**
@@ -161,18 +151,14 @@ async function updateDomainlist(details) {
   }
 }
 
-function updatePopupIcon(details) {
-  if (wellknown[details.tabId] === undefined) {
-    wellknown[details.tabId] = null
-  }
-  if (wellknown[details.tabId] === null) {
-    chrome.action.setIcon(
-      {
-        tabId: details.tabId,
-        path: "assets/face-icons/optmeow-face-circle-green-ring-128.png",
-      },
-    );
-  }
+function updatePopupIcon(tabId) {
+      chrome.action.setIcon(
+        {
+          tabId: tabId,
+          path: "assets/face-icons/optmeow-face-circle-green-ring-128.png",
+        }
+      );
+  
 }
     
 function logData(details) {
@@ -294,7 +280,7 @@ function handleSendMessageError() {
 }
 
 // Info back to popup
-function dataToPopup() {
+function dataToPopup(wellknownData) {
   let requestsData = {};
 
   if (tabs[activeTabID] !== undefined) {
@@ -302,8 +288,6 @@ function dataToPopup() {
   }
 
   chrome.tabs.query({active: true, currentWindow: true}, function(tabs){
-    let tabID = tabs[0]["id"]
-    let wellknownData = wellknown[tabID]
 
     let popupData = {
       requests: requestsData,
@@ -313,6 +297,23 @@ function dataToPopup() {
     chrome.runtime.sendMessage({
       msg: "POPUP_PROTECTION_DATA",
       data: popupData
+    }, handleSendMessageError);
+  });
+}
+
+function dataToPopupRequests() {
+  let requestsData = {};
+
+  if (tabs[activeTabID] !== undefined) {
+    requestsData = tabs[activeTabID].REQUEST_DOMAINS;
+
+  }
+
+  chrome.tabs.query({active: true, currentWindow: true}, function(tabs){
+
+    chrome.runtime.sendMessage({
+      msg: "POPUP_PROTECTION_DATA_REQUESTS",
+      data: requestsData
     }, handleSendMessageError);
   });
 }
@@ -373,8 +374,9 @@ function onMessageHandlerSynchronous(message, sender, sendResponse) {
    */
 async function onMessageHandlerAsync(message, sender, sendResponse) {
   if (message.msg === "CHANGE_IS_DOMAINLISTED") {
-    isDomainlisted = message.data.isDomainlisted;
+    let isDomainlisted = message.data.isDomainlisted;
     storage.set(stores.settings, isDomainlisted, "IS_DOMAINLISTED");
+
   }
   if (message.msg === "SET_TO_DOMAINLIST") {
     let { domain, key } = message.data;
@@ -382,29 +384,40 @@ async function onMessageHandlerAsync(message, sender, sendResponse) {
     addDynamicRule(id, domain)
     storage.set(stores.domainlist, key, domain);  // Sets to long term storage
   }
-  if (message.msg === "REMOVE_FROM_DOMAINLIST") {
-    let domain = message.data;
-    deleteDynamicRule(id, domain)
-    storage.delete(stores.domainlist, domain);
-    delete domainlist[domain];
-  }
-  if (message.msg === "POPUP_PROTECTION") {
-    dataToPopup()
+  if (message.msg === "POPUP_PROTECTION_REQUESTS") {
+    dataToPopupRequests()
   }
   if (message.msg === "CONTENT_SCRIPT_WELLKNOWN") {
+
+    let url = new URL(sender.origin);
+    let parsed = psl.parse(url.hostname);
+    let domain = parsed.domain;
+
     let tabID = sender.tab.id;
-    wellknown[tabID] = message.data
-    if (wellknown[tabID]["gpc"] === true) {
-      setTimeout(()=>{}, 10000);
-      if (signalPerTab[tabID] === true) {
+    let wellknown = [];
+    let sendSignal = await storage.get(stores.domainlist,domain)
+    
+    wellknown[tabID] = message.data;
+    let wellknownData = message.data;
+    if (wellknown[tabID] === null && sendSignal == null){
+      initIAB();
+      updatePopupIcon(tabID);
+    } else if (wellknown[tabID]["gpc"] === true && sendSignal == null) {
+      initIAB();
         chrome.action.setIcon(
-          {
-            tabId: tabID,
-            path: "assets/face-icons/optmeow-face-circle-green-128.png",
-          },
-        );
-      }
+            {
+              tabId: tabID,
+              path: "assets/face-icons/optmeow-face-circle-green-128.png",
+            }
+          );
     }
+    chrome.runtime.onMessage.addListener(function (message, _, __) {
+      if (message.msg === "POPUP_PROTECTION") {
+        console.log("wellknownData: ", wellknownData)
+        dataToPopup(wellknownData);
+      }
+
+    });
   }
 
   if (message.msg === "CONTENT_SCRIPT_TAB") {

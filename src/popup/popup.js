@@ -12,7 +12,7 @@ popup.js supplements and renders complex elements on popup.html
 
 
 import { stores, storage } from "../background/storage";
-import { isValidSignalIAB } from "../background/cookiesIAB";
+import { initIAB, isValidSignalIAB } from "../background/cookiesIAB";
 import { csvGenerator } from "../common/csvGenerator"
 import { modes } from "../data/modes.js";
 import "../../node_modules/uikit/dist/css/uikit.min.css"
@@ -31,6 +31,9 @@ import {
   removeDomainFromDomainlistAndRules,
   updateRemovalScript
 } from "../common/editDomainlist.js";
+
+import { reloadDynamicRules, addDynamicRule } from "../common/editRules.js";
+
 
 // Global scope settings variables
 var isEnabled;
@@ -177,6 +180,26 @@ function renderExtenionIsEnabledDisabled(isEnabled, isDomainlisted) {
   }
 }
 
+function turnonoff(isEnabled){
+  if ("$BROWSER" == 'chrome'){
+    console.log("turnonoff called. isEnabled is ", isEnabled);
+    if (isEnabled){
+      chrome.scripting.updateContentScripts([
+        {
+        "id": "2",
+        "matches": ["<all_urls>"],
+        "js": ["content-scripts/registration/gpc-remove.js"],
+        "runAt": "document_start"
+        }
+      ])
+      addDynamicRule(4999,"*");
+    } else {
+      updateRemovalScript();
+      reloadDynamicRules();
+    }
+  }
+}
+
 function listenerExtensionIsEnabledDisabledButton(isEnabled, isDomainlisted, mode) {
   document.getElementById("enable-disable").addEventListener("click", async () => {
 
@@ -203,6 +226,7 @@ function listenerExtensionIsEnabledDisabledButton(isEnabled, isDomainlisted, mod
       document.getElementById("extension-disabled-message").style.display = "none";
       chrome.runtime.sendMessage({ msg: "TURN_ON_OFF", data: { isEnabled: true } });
     }
+    turnonoff(isEnabled);
   });
 }
 
@@ -412,6 +436,13 @@ function showProtectionInfo() {
     msg: "POPUP_PROTECTION",
     data: null,
   });
+  
+  if ("$BROWSER" == 'chrome'){
+    chrome.runtime.sendMessage({
+      msg: "POPUP_PROTECTION_REQUESTS",
+      data: null,
+    });
+  }
 }
 
 
@@ -510,6 +541,7 @@ function addThirdPartyDomainDNSToggleListener(requestDomain) {
     } else {
       elemString = "Do Not Sell Enabled";
       removeDomainFromDomainlistAndRules(requestDomain);
+
     }
     updateRemovalScript();
     document.getElementById(`dns-enabled-text-${requestDomain}`).innerHTML = elemString;
@@ -522,12 +554,15 @@ function addThirdPartyDomainDNSToggleListener(requestDomain) {
  * (requests = tabs[activeTabID].requestDomainS; passed from background page)
  */
 async function buildDomains(requests) {
+  let domain = await getCurrentParsedDomain();
   let items = "";
   const domainlistKeys = await storage.getAllKeys(stores.domainlist)
   const domainlistValues = await storage.getAll(stores.domainlist)
 
   // Sets the 3rd party domain elements
   for (let requestDomain in requests) {
+    if (requestDomain != domain){
+
     let checkbox = ""
     let text = ""
     // Find correct index
@@ -577,12 +612,17 @@ async function buildDomains(requests) {
   </li>
   `;
   }
+}
   document.getElementById("dropdown-1-expandable").innerHTML = items;
 
   // Sets the 3rd party domain toggle listeners
   for (let requestDomain in requests) {
+    if (requestDomain != domain){
+
     addThirdPartyDomainDNSToggleListener(requestDomain)
+    }
   }
+
 
 }
 
@@ -886,6 +926,11 @@ chrome.runtime.onMessage.addListener(function (message, _, __) {
     wellknownInfo = wellknown;
     buildDomains(requests);
     buildWellKnown(wellknown);
+  }
+  if (message.msg === "POPUP_PROTECTION_DATA_REQUESTS") {
+    let requests = message.data;
+    buildDomains(requests);
+
   }
   if (message.msg === "POPUP_ANALYSIS_DATA") {
     analysis = message.data.analysis;

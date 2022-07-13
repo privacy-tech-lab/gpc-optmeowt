@@ -14,8 +14,9 @@ If the domainlist is being handled, then cookies are added/removed here too
 
 import { openDB } from "idb"
 import { storageCookies } from "./storageCookies.js"
-import { reloadDynamicRules } from "../common/editRules"
-
+import { getFreshId, addDynamicRule, deleteDynamicRule, reloadDynamicRules } from "../common/editRules"
+import { addDomainToDomainlistAndRules, removeDomainFromDomainlistAndRules, updateRemovalScript } from "../common/editDomainlist.js";
+import { saveAs } from 'file-saver';
 
 /******************************************************************************/
 /**************************  Enumerated settings  *****************************/
@@ -71,10 +72,9 @@ const storage = {
             // placing or deleting opt out cookies for a given domain key
             // We know that `key` will be a domain, i.e. a string
             if (store === stores.domainlist) {
-                if (value === true) {
+                if (value === null) {
                     storageCookies.addCookiesForGivenDomain(key)
-                }
-                if (value === false) {
+                } else {
                     storageCookies.deleteCookiesForGivenDomain(key)
                 }
             }
@@ -103,8 +103,10 @@ const storage = {
 
 async function handleDownload() {
     const DOMAINLIST = await storage.getStore(stores.domainlist)
-    const MANIFEST = chrome.runtime.getManifest();
-
+    let MANIFEST = chrome.runtime.getManifest();
+    if ("$BROWSER" == 'firefox'){
+        MANIFEST.version = '2.0';
+    }
     let data = {
         VERSION: MANIFEST.version, 
         DOMAINLIST: DOMAINLIST,
@@ -135,22 +137,66 @@ async function handleUpload() {
         let domainlist = UPLOADED_DATA.DOMAINLIST;
         version = version.split('.');
 
+        let domainlist_keys = Object.keys(domainlist);
+        let domainlist_vals = Object.values(domainlist);
+        for (let i = 0; i < domainlist_keys.length; i++) {
+            try {
+                storage.set(stores.domainlist, domainlist_vals[i], domainlist_keys[i]);
+            } catch (error) {
+                alert("Error loading list")
+            } 
+        } 
         // hardcode if it is the new version
         if (Number(version[0]) >= 3) {
-            let domainlist_keys = Object.keys(domainlist);
-            let domainlist_vals = Object.values(domainlist);
-            for (let i = 0; i < domainlist_keys.length; i++) {
-                try {
-                    storage.set(stores.domainlist, domainlist_vals[i], domainlist_keys[i]);
-                } catch (error) {
-                    alert("Error loading list")
-                } 
-            } 
-        }
         reloadDynamicRules();
+        updateRemovalScript();
+        } else {
+            chrome.runtime.sendMessage({
+                msg: "FORCE_RELOAD"
+              }); 
+        }
     };
     fr.readAsText(file);
 }
+
+async function adaptDomainlist(){
+    let domain;
+    let domainValue; 
+    const domainlistKeys = await storage.getAllKeys(stores.domainlist);
+    const domainlistValues = await storage.getAll(stores.domainlist);
+    await  storage.clear(stores.domainlist);
+    if ("$BROWSER" == 'chrome'){
+        for (let index in domainlistKeys) {
+            domain = domainlistKeys[index]
+            domainValue = domainlistValues[index]
+            if (domainValue == true){
+                await storage.set(stores.domainlist, null, domain);
+            } else if (domainValue == false){
+                let id = await getFreshId();
+                addDynamicRule(id,domain);
+                await storage.set(stores.domainlist, id, domain);
+            } else if (domainValue == null){
+                await storage.set(stores.domainlist, null, domain);
+            } else {
+                await storage.set(stores.domainlist, domainValue, domain);
+            }
+        }
+    } else {
+        for (let index in domainlistKeys) {
+            domain = domainlistKeys[index]
+            domainValue = domainlistValues[index]
+            if (domainValue == true){
+                await storage.set(stores.domainlist, null, domain);
+            } else if (domainValue == false){
+                await storage.set(stores.domainlist, 1, domain);
+            } else if (domainValue == null){
+                await storage.set(stores.domainlist, null, domain);
+            } else {
+                await storage.set(stores.domainlist, domainValue, domain);
+            }
+        }
+    }
+  }
 
 
 /******************************************************************************/
@@ -161,6 +207,7 @@ export {
     handleDownload,
     startUpload,
     handleUpload,
+    adaptDomainlist,
     stores,
     storage
 }

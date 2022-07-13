@@ -75,10 +75,9 @@ const listenerCallbacks = {
 
     if (sendSignal) {
       signalPerTab[details.tabId] = true;
-      initIAB();
-      updatePopupIcon(details);
       return addHeaders(details);
     }
+
   },
 
   /**
@@ -107,7 +106,9 @@ const listenerCallbacks = {
   onCommitted: async (details) => {
     updateDomainlist(details);
     if (sendSignal) {
-      addDomSignal(details)
+      initIAB();
+      addDomSignal(details);
+      updatePopupIcon(details);
     }
   }
 
@@ -136,6 +137,19 @@ function addHeaders(details) {
 }
 
 /**
+ * Runs `dom.js` to attach DOM signal
+ * @param {object} details - retrieved info passed into callback
+ */
+ function addDomSignal(details) {
+  chrome.tabs.executeScript(details.tabId, {
+    file: "../../content-scripts/injection/gpc-dom.js",
+    frameId: details.frameId, // Supposed to solve multiple injections
+                              // as opposed to allFrames: true
+    runAt: "document_start",
+  });
+}
+
+/**
  * Checks whether a particular domain should receive a DNS signal
  * (1) Parse url to get domain for domainlist
  * (2) Update domains by adding current domain to domainlist in storage.
@@ -148,6 +162,9 @@ function addHeaders(details) {
   let url = new URL(details.url);
   let parsedUrl = psl.parse(url.hostname);
   let parsedDomain = parsedUrl.domain;
+  if (parsedDomain == null || parsedDomain == undefined){
+    return;
+  }
 
   let parsedDomainVal = domainlist[parsedDomain];
   if (parsedDomainVal === undefined) {
@@ -166,12 +183,13 @@ function updatePopupIcon(details) {
     wellknown[details.tabId] = null
   }
   if (wellknown[details.tabId] === null) {
-    chrome.browserAction.setIcon(
-      {
-        tabId: details.tabId,
-        path: "assets/face-icons/optmeow-face-circle-green-ring-128.png",
-      },
-    );
+      chrome.browserAction.setIcon(
+        {
+          tabId: details.tabId,
+          path: "assets/face-icons/optmeow-face-circle-green-ring-128.png",
+        }
+      );
+    
   }
 }
     
@@ -382,7 +400,6 @@ async function onMessageHandlerAsync(message, sender, sendResponse) {
   }
   if (message.msg === "REMOVE_FROM_DOMAINLIST") {
     let domain = message.data;
-    storage.delete(stores.domainlist, domain);
     delete domainlist[domain];
   }
   if (message.msg === "POPUP_PROTECTION") {
@@ -394,12 +411,13 @@ async function onMessageHandlerAsync(message, sender, sendResponse) {
     if (wellknown[tabID]["gpc"] === true) {
       setTimeout(()=>{}, 10000);
       if (signalPerTab[tabID] === true) {
-        chrome.browserAction.setIcon(
-          {
-            tabId: tabID,
-            path: "assets/face-icons/optmeow-face-circle-green-128.png",
-          },
-        );
+          chrome.browserAction.setIcon(
+            {
+              tabId: tabID,
+              path: "assets/face-icons/optmeow-face-circle-green-128.png",
+            }
+          );
+        
       }
     }
   }
@@ -432,6 +450,9 @@ async function onMessageHandlerAsync(message, sender, sendResponse) {
     // This is specifically for when cookies are removed when a user turns off
     // do not sell for a particular site, and chooses to re-enable it
     initCookiesPerDomain(message.data)
+  }
+  if (message.msg === "FORCE_RELOAD") {
+    pullToDomainlistCache();
   }
   return true;    // Async callbacks require this
 }

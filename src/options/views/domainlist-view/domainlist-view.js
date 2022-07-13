@@ -52,12 +52,15 @@ import { reloadDynamicRules } from '../../../common/editRules.js';
 export async function toggleListener(elementId, domain) {
   document.getElementById(elementId).addEventListener("click", async () => {
     const domainId = await storage.get(stores.domainlist, domain);
-    if (!domainId) {
-      addDomainToDomainlistAndRules(domain);
+    if (domainId == null) {
+      await addDomainToDomainlistAndRules(domain);
     } else {
-      removeDomainFromDomainlistAndRules(domain);
+      await removeDomainFromDomainlistAndRules(domain);
     }
     updateRemovalScript();
+    chrome.runtime.sendMessage({
+      msg: "FORCE_RELOAD"
+    }); 
   })
 }
 
@@ -90,13 +93,21 @@ export async function toggleListener(elementId, domain) {
  function deleteButtonListener (domain) {
   document.getElementById(`delete ${domain}`).addEventListener("click",
     (async () => {
-      let deletePrompt = `NOT IMPLEMENTED YET`
+      let deletePrompt = `Are you sure you would like to permanently delete this domain from the Domain List?`
       let successPrompt = `Successfully deleted ${domain} from the Domain List.
 NOTE: It will be automatically added back to the list when the domain is requested again.`
-      if (confirm(deletePrompt)) {
+        if (confirm(deletePrompt)){
+        await storage.delete(stores.domainlist, domain)
+        if ("$BROWSER" == 'firefox'){
+          chrome.runtime.sendMessage({ msg: "REMOVE_FROM_DOMAINLIST", data: domain });
+        }
+        
+        reloadDynamicRules();
+        updateRemovalScript();
         alert(successPrompt)
         document.getElementById(`li ${domain}`).remove();
-      }
+        }
+      
   }))
 }
 

@@ -115,9 +115,9 @@ async function addDomainToDomainlistAndRules(domain) {
 }
 
 async function removeDomainFromDomainlistAndRules(domain) {
-	let id = await storage.get(stores.domainlist, domain);
 	if ("$BROWSER" == 'chrome'){
-	deleteDynamicRule(id);
+		let id = await storage.get(stores.domainlist, domain);
+		deleteDynamicRule(id);
 	}
 	await storage.set(stores.domainlist, null, domain);
 
