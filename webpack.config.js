@@ -18,22 +18,17 @@ module.exports = (env, argv) => {
 	const browser = env.chrome ? "chrome" : "firefox"	// default to firefox build
 	const isProduction = argv.mode == "production"	// sets bool depending on build
 
-	console.log("browser = ", browser);
-	console.log("isProduction = ", isProduction);
-
 	return {
 		name: "background",
 		// This is useful, plus we need it b/c otherwise we get an "unsafe eval" problem
 		entry: {
 			background: "./src/background/control.js",
 			popup: "./src/popup/popup.js",
-			options: "./src/options/options.js",
-			// contentScript: "./src/content-scripts/contentScript.js"
+			options: "./src/options/options.js"
 		},
 		output: {
 			filename: "[name].bundle.js",
-			path: path.resolve(__dirname, `${isProduction ? "dist" : "dev"}/${browser}` ),
-			// publicPath: "/",
+			path: path.resolve(__dirname, `${isProduction ? "dist" : "dev"}/${browser}` )
 		},
 		devtool: isProduction ? "source-map" : "cheap-source-map",
 		devServer: {
@@ -99,9 +94,6 @@ module.exports = (env, argv) => {
 			}),
 			new CopyPlugin({
 				patterns: [{ context: path.resolve(__dirname, "src"), from: "rules", to: "rules" }],
-			}),
-			new CopyPlugin({
-				patterns: [{ context: path.resolve(__dirname, "src/background/protection"), from: "dom.js" }],
 			}),
 			new CopyPlugin({
 				patterns: [{ context: path.resolve(__dirname, "src/options"), from: "views", to: "views" }],

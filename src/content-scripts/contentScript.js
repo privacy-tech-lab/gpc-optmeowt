@@ -28,24 +28,19 @@ https://developer.chrome.com/extensions/content_scripts
 const uspapi = `
   try {
     __uspapi('getUSPData', 1, (data) => {
-      console.log("USP Data: ", data);
       let currURL = document.URL
       window.postMessage({ type: "USPAPI_TO_CONTENT_SCRIPT", result: data, url: currURL });
     });
-  } catch (e) {
-    console.log("Failed calling USPAPI", e);
   }
 `
 
 const uspapiRequest = `
   try {
     __uspapi('getUSPData', 1, (data) => {
-      console.log("USP Data: ", data);
       let currURL = document.URL
       window.postMessage({ type: "USPAPI_TO_CONTENT_SCRIPT_REQUEST", result: data, url: currURL });
     });
   } catch (e) {
-    console.log("Failed calling USPAPI", e);
     window.postMessage({ type: "USPAPI_TO_CONTENT_SCRIPT_REQUEST", result: "USPAPI_FAILED" });
   }
 `
@@ -53,7 +48,6 @@ const uspapiRequest = `
 const runAnalysisProperty = `
 if (!window.runAnalysis) {
     window.runAnalysis = function() {
-		  console.log("POSTED RUN_ANALYSIS");
 		  window.postMessage({ type: "RUN_ANALYSIS", result: null });
       return;
     };
@@ -96,10 +90,8 @@ async function getWellknown(url) {
  */
 (() => {
 	/*   MAIN CONTENT SCRIPT PROCESSES GO HERE   */
-	console.log("MAIN CONTENT SCRIPT INIT:: ");
 
 	let url = new URL(location); // location object
-  console.log(url)
 
 	/* (1) Gets Frame:0 Tab content */
 	// leave this commented out while debugging ANALYSIS MODE
@@ -111,7 +103,6 @@ async function getWellknown(url) {
 	/* (2) Injects scripts */
   if ("$BROWSER" == 'firefox'){
   window.addEventListener('load', function() {
-    console.log("running window.onload");
     // injectScript(uspapi);
 		injectScript(runAnalysisProperty);
 	}, false);
@@ -132,17 +123,14 @@ async function getWellknown(url) {
 
 chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
   if (message.msg === "USPAPI_FETCH_REQUEST") {
-    console.log("injecting uspapi call to content script")
     injectScript(uspapiRequest);
   }
 });
 
 window.addEventListener('message', function(event) {
-// console.log("EVENT: ", event);
   if (event.data.type == "USPAPI_TO_CONTENT_SCRIPT"
     // && typeof chrome.app.isInstalled !== 'undefined'
   ) {
-    console.log("USPAPI_RETURNed to contentScript.js!", event.data.result);
     chrome.runtime.sendMessage({ 
       msg: "USPAPI_TO_BACKGROUND", 
       data: event.data.result, 

@@ -36,12 +36,8 @@ import { reloadDynamicRules } from '../../../common/editRules.js';
  export function buildToggle(domain, id) {
   let toggle;
   if (!id) {
-    // checkbox = `<input type="checkbox" id="select ${domain}"
-    //           class="check text-color dark-checkbox" checked />`;
     toggle = `<input type="checkbox" id="${domain}" checked />`;
   } else {
-    // checkbox = `<input type="checkbox" id="select ${domain}"
-    //           class="check text-color dark-checkbox"/>`;
     toggle = `<input type="checkbox" id="${domain}" />`;
   }
   return toggle
@@ -57,12 +53,8 @@ export async function toggleListener(elementId, domain) {
   document.getElementById(elementId).addEventListener("click", async () => {
     const domainId = await storage.get(stores.domainlist, domain);
     if (domainId == null) {
-      // await storage.set(stores.domainlist, false, domain)
-      // chrome.runtime.sendMessage({ msg: "SET_TO_DOMAINLIST", data: { domain: domain, key: false } });
       await addDomainToDomainlistAndRules(domain);
     } else {
-      // await storage.set(stores.domainlist, true, domain)
-      // chrome.runtime.sendMessage({ msg: "SET_TO_DOMAINLIST", data: { domain: domain, key: true } });
       await removeDomainFromDomainlistAndRules(domain);
     }
     updateRemovalScript();
@@ -80,7 +72,6 @@ export async function toggleListener(elementId, domain) {
   // TODO: Remove this when done
   (async() => {
     let s = await storage.getStore(stores.domainlist);
-    console.log("STORE: ", s);
   })();
   const domainlistKeys = await storage.getAllKeys(stores.domainlist);
   const domainlistValues = await storage.getAll(stores.domainlist);
@@ -102,20 +93,20 @@ export async function toggleListener(elementId, domain) {
  function deleteButtonListener (domain) {
   document.getElementById(`delete ${domain}`).addEventListener("click",
     (async () => {
-      // let deletePrompt = `Are you sure you would like to permanently delete this domain from the Domain List?`
+      let deletePrompt = `Are you sure you would like to permanently delete this domain from the Domain List?`
       let successPrompt = `Successfully deleted ${domain} from the Domain List.
 NOTE: It will be automatically added back to the list when the domain is requested again.`
+        if (confirm(deletePrompt)){
         await storage.delete(stores.domainlist, domain)
         if ("$BROWSER" == 'firefox'){
           chrome.runtime.sendMessage({ msg: "REMOVE_FROM_DOMAINLIST", data: domain });
         }
         
-        // TODO: Implement
-        // await deleteDomainFromDomainlistAndRules(domain);
         reloadDynamicRules();
         updateRemovalScript();
         alert(successPrompt)
         document.getElementById(`li ${domain}`).remove();
+        }
       
   }))
 }
@@ -138,7 +129,6 @@ const headings = {
  * Creates the event listeners for the `domainlist` page buttons and options
  */
 async function eventListeners() {
-    // document.getElementById('plus-button').addEventListener('keyup', plusButton )
     await createToggleListeners();
 
     window.onscroll = function() { stickyNavbar() };
@@ -151,12 +141,8 @@ async function eventListeners() {
     function stickyNavbar() {
       if (window.pageYOffset >= sticky) {
         nb.classList.add("sticky")
-        // nb.classList.add("uk-grid")
-        // sb.classList.add("uk-width-1-2")
-        // document.getElementById("width-expand").classList.remove("uk-width-expand")
       } else {
         nb.classList.remove("sticky")
-        // sb.classList.remove("uk-width-3-4")
       }
     }
 }
@@ -183,7 +169,6 @@ async function buildList() {
           `
           +
             buildToggle(domain, domainValue)
-            //<input type="checkbox" id="select" class="check text-color dark-checkbox" />
           +
           `
             <span></span>
@@ -200,12 +185,6 @@ async function buildList() {
           "
         >
           <label class="switch" >
-          `
-          // +
-          // buildToggle(domain, result.DOMAINS[domain])
-          // // `<input type="checkbox" id="toggle-domainlist" />`
-          +
-          `
             <span></span>
           </label>
         </div>

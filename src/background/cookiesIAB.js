@@ -104,7 +104,6 @@ function checkExistsAndHandleIAB(url) {
     // If there are multiple cookies, handle here.
     // Currently deletes default cookie
     if (cookieMatches.length > 1) {
-      //console.log("MULTIPLE COOKIES EXIST!")
       for (var c in cookieMatches) {
         if (cookieMatches[c].name == defaultName &&
           cookieMatches[c].domain.substr(0,1) !== ".")
@@ -189,7 +188,6 @@ function makeCookieIAB(name, value, url) {
 
   let cookie = {}
   cookie.expirationDate = now/1000 + 31557600
-  // cookie.domain = domain
   cookie.url = url;
   cookie.name = name
   cookie.value = value
@@ -205,7 +203,7 @@ function deleteCookie(url, name) {
   chrome.cookies.remove({
     "url": url,
     "name": name
-  }, () => {})
+  })
 }
 
 /**

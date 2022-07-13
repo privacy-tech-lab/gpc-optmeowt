@@ -133,7 +133,6 @@ function getCurrentParsedDomain() {
         resolve(domain);
       });
     } catch(e) {
-      console.log(e)
       reject();
     }
   })
@@ -149,7 +148,6 @@ function renderFirstPartyDomain(parsedDomain) {
     document.getElementById("domain-title").innerHTML = parsedDomain;
     initPopUpWalkthrough();
   } else {
-    // document.getElementById("more-info-body").style.display = "none";
     document.getElementById("domain-title").style.display = "none";
   }
 }
@@ -283,11 +281,9 @@ async function listenerFirstPartyDomainDNSToggleCallback() {
   let elemString = "";
   if (!parsedDomainValue) {
     elemString = "Do Not Sell Disabled";
-    // setToDomainlist(parsedDomain, false);
     addDomainToDomainlistAndRules(parsedDomain);
   } else {
     elemString = "Do Not Sell Enabled";
-    // setToDomainlist(parsedDomain, true);
     removeDomainFromDomainlistAndRules(parsedDomain);
   }
   updateRemovalScript();
@@ -439,12 +435,13 @@ function showProtectionInfo() {
   chrome.runtime.sendMessage({
     msg: "POPUP_PROTECTION",
     data: null,
-  }, (response) =>  { /*console.log(response)*/ });
+  });
+  
   if ("$BROWSER" == 'chrome'){
     chrome.runtime.sendMessage({
       msg: "POPUP_PROTECTION_REQUESTS",
       data: null,
-    }, (response) =>  { /*console.log(response)*/ });
+    });
   }
 }
 
@@ -476,13 +473,12 @@ function showAnalysisInfo() {
   document.getElementById("analysis-list").style.display = "";
   document.getElementById("domain-list").style.display = "none";
 
-  // renderDropdown1Toggle();
   listenerDropdown1Toggle();
   
   chrome.runtime.sendMessage({
     msg: "POPUP_ANALYSIS",
     data: null,
-  }, (r) =>  { /*console.log(r)*/ });
+  });
 }
 
 
@@ -491,20 +487,10 @@ function showAnalysisInfo() {
  * @param {Modes} mode - from modes.js
  */
 async function switchMode(mode) {
-  //const analysisWarningShown = await storage.get(stores.settings, 'ANALYSIS_WARNING_SHOWN');
-  /*
-  if (!analysisWarningShown && mode === modes.analysis) {
-    analysisWarning();
-    storage.set(stores.settings, true, 'ANALYSIS_WARNING_SHOWN');
-  }
-  */
-
   changeOptModeIcon();
   if (mode === modes.protection) {
-    console.log("Switching to protection view");
     showProtectionInfo();
   } else {
-    console.log("Switching to analysis view");
     showAnalysisInfo();
   }
 }
@@ -515,7 +501,6 @@ async function switchMode(mode) {
  * @param {Object} event - contains information about the event
  */
 document.addEventListener("DOMContentLoaded", async (event) => {
-
   isEnabled = await storage.get(stores.settings, "IS_ENABLED");
   isDomainlisted = await storage.get(stores.settings, "IS_DOMAINLISTED");
   mode = await storage.get(stores.settings, "MODE");
@@ -527,7 +512,6 @@ document.addEventListener("DOMContentLoaded", async (event) => {
   renderFirstPartyDomain(parsedDomain); // Render 1P domain 
 
   generateDarkmodeElement();  // Render darkmode
-  // changeOptModeIcon();
   switchMode(mode); // requires global scope mode to be loaded
 })
 
@@ -553,11 +537,9 @@ function addThirdPartyDomainDNSToggleListener(requestDomain) {
     let elemString = "";
     if (!requestDomainValue) {
       elemString = "Do Not Sell Disabled";
-      // setToDomainlist(requestDomain, false);
       addDomainToDomainlistAndRules(requestDomain);
     } else {
       elemString = "Do Not Sell Enabled";
-      // setToDomainlist(requestDomain, true);
       removeDomainFromDomainlistAndRules(requestDomain);
 
     }
@@ -650,11 +632,8 @@ async function buildDomains(requests) {
  * (requests passed from contentScript.js page as of v1.1.3)
  */
 async function buildWellKnown(requests) {
-  //console.log("Well-Known info: ", requests);
-  //console.log(JSON.stringify(requests, null, 4))
 
   let explainer;
-  // let tabDetails;
 
   /*
   This iterates over the cases of possible combinations of
@@ -663,7 +642,6 @@ async function buildWellKnown(requests) {
   for GPC v1
   */
   if (requests !== null && requests["gpc"] == true) {
-    // tabDetails = `GPC Signals Accepted`;
     explainer = `
       <li>
         <p class="uk-text-center uk-text-small uk-text-bold">
@@ -677,7 +655,6 @@ async function buildWellKnown(requests) {
       </li>
       `
   } else if (requests !== null && requests["gpc"] == false) {
-    // tabDetails = `GPC Signals Rejected`;
     explainer = `
       <li>
         <p class="uk-text-center uk-text-small uk-text-bold">
@@ -691,7 +668,6 @@ async function buildWellKnown(requests) {
       </li>
       `
   } else if (requests === null || requests["gpc"] == null) {
-    // tabDetails = `GPC Policy Missing`;
     explainer = `
       <li>
         <p class="uk-text-center uk-text-small uk-text-bold">
@@ -721,7 +697,6 @@ async function buildWellKnown(requests) {
   ` : ``;
 
   document.getElementById("dropdown-2-expandable").innerHTML = `${explainer} ${wellknown}`;
-  // document.getElementById("website-response-tab").innerHTML = tabDetails;
 }
 
 
@@ -740,9 +715,6 @@ async function buildAnalysis(data) {
       padding-left: 5px;"
     `
 
-  // const data = await storage.get(stores.analysis, parsedDomain);
-  console.log("stores.analysis", data);
-
   let items         = "";
   let dnsLink       = (data.DO_NOT_SELL_LINK_EXISTS) ? pos : neg;
   let stringFound;
@@ -755,21 +727,14 @@ async function buildAnalysis(data) {
   let uspStringBeforeGPC;
   let uspStringAfterGPC;
 
-  // console.log("beforeGPCUSPCookies", beforeGPCUSPCookies);
-  // console.log("afterGPCUSPCookies", afterGPCUSPCookies);
-
   // Generate the US Privacy String BEFORE GPC is sent
   // Give priority to the USPAPI over USP Cookie
   if (beforeGPCUSPAPI && beforeGPCUSPAPI[0] && beforeGPCUSPAPI[0]["uspString"]) {
-    // console.log("Triggering 1A:")
     uspStringBeforeGPC = beforeGPCUSPAPI[0]["uspString"];   // USPAPI exists
   } else {
-    // console.log("Triggering 1B:")
     if (beforeGPCUSPCookies && beforeGPCUSPCookies[0] && beforeGPCUSPCookies[0]["value"]) {
-      // console.log("Triggering 1C:")
       uspStringBeforeGPC = beforeGPCUSPCookies[0]["value"]; // USP Cookie exists
     } else {
-      // console.log("Triggering 1D:")
       uspStringBeforeGPC = data.USPAPI_OPTED_OUT || data.USP_COOKIE_OPTED_OUT;
     }
   }
@@ -777,15 +742,11 @@ async function buildAnalysis(data) {
   // Generate the US Privacy String AFTER GPC is sent
   // Give priority to the USPAPI over USP Cookie
   if (afterGPCUSPAPI && afterGPCUSPAPI[0] && afterGPCUSPAPI[0]["uspString"]) {
-    // console.log("Triggering 2A:")
     uspStringAfterGPC = afterGPCUSPAPI[0]["uspString"];
   } else {
-    // console.log("Triggering 2B");
     if (afterGPCUSPCookies && afterGPCUSPCookies[0] && afterGPCUSPCookies[0]["value"]) {
-      // console.log("Triggering 2C");
       uspStringAfterGPC = afterGPCUSPCookies[0]["value"];
     } else {
-      // console.log("Triggering 2D");
       uspStringAfterGPC = data.USPAPI_OPTED_OUT || data.USP_COOKIE_OPTED_OUT;
     }
   }
@@ -821,22 +782,14 @@ async function buildAnalysis(data) {
     optedOut = data.USP_COOKIE_OPTED_OUT;
   }
   if (typeof optedOut === 'string') {
-    // console.log("Triggering 3A:");
     if (optedOut === "PARSE_FAILED") {
-      // console.log("Triggering 3B:");
       stringChanged = neg;
     } else if (optedOut === "NOT_IN_CA") {
-      // console.log("Triggering 3C:");
       stringChanged = neg;
     }
   } else {
-    // console.log("Triggering 3D:");
-    // console.log("optedOut: ", optedOut);
     stringChanged = optedOut ? pos : neg;
   }
-  // console.log("data.USP_OPTED_OUT", data.USP_OPTED_OUT);
-  // console.log("optedOut", optedOut);
-  // console.log("stringChanged", stringChanged);
 
   // Sets the 3rd party domain elements
     items += `
@@ -882,12 +835,9 @@ async function buildAnalysis(data) {
  * Builds per-site compliance snippet
  */
 async function buildComplianceInfo(data) {
-  console.log("Compliance is running...")
   let checkbox = ""
   if (parsedDomain) {
     try {
-    //   const data = await storage.get(stores.analysis, parsedDomain)
-      console.log(parsedDomain);
       if (data.DO_NOT_SELL_LINK_EXISTS 
           && data.SENT_GPC 
           && (data.USPAPI_OPTED_OUT || data.USP_COOKIE_OPTED_OUT)
@@ -960,12 +910,8 @@ backgroundPort.postMessage({ msg: "REQUEST_MODE" });  // queries control.js for 
 backgroundPort.onMessage.addListener(function(message) {
   if (message.msg === "RESPONSE_MODE") {  // when mode is recieved from control.js
     mode = message.data;                  // global mode variable
-    if (mode && mode === modes.analysis) {
-
-    }
   }
 })
-// console.log("SENT CONNECTION");
 
 /**
  * Listens for messages from background page that call functions to populate
@@ -991,7 +937,6 @@ chrome.runtime.onMessage.addListener(function (message, _, __) {
     analysis_userend = message.data.analysis_userend;
     let data = analysis_userend[parsedDomain] || {};
     buildAnalysis(data);
-    // buildComplianceInfo(data);
   }
   if (message.msg === "CSV_DATA_RESPONSE") {
     csvGenerator(message.data.csvData, message.data.titles);
@@ -1005,7 +950,7 @@ function setToDomainlist(d, k) {
   chrome.runtime.sendMessage({
     msg: "SET_TO_DOMAINLIST",
     data: { domain: d, key: k }
-  }, (response) => { /*console.log(response)*/ })
+  })
 }
 
 
@@ -1042,19 +987,11 @@ function popUpWalkthrough() {
 async function initPopUpWalkthrough() {
   const tutorialShownInPopup = await storage.get(stores.settings, 'TUTORIAL_SHOWN_IN_POPUP');
   const mode = await storage.get(stores.settings, "MODE"); //copied
-  //const analysisWarningShown = await storage.get(stores.settings, 'ANALYSIS_WARNING_SHOWN');
 
-  // console.log("Tutorial shown: ", tutorialShownInPopup)
   if (!tutorialShownInPopup) {
     popUpWalkthrough(mode);
     storage.set(stores.settings, true, 'TUTORIAL_SHOWN_IN_POPUP');
   }
-  /*
-  if (!analysisWarningShown && mode === modes.analysis) {
-    analysisWarning();
-    storage.set(stores.settings, true, 'ANALYSIS_WARNING_SHOWN');
-  }
-  */
 }
 
 

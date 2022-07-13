@@ -4,7 +4,6 @@ privacy-tech-lab, https://www.privacytechlab.org/
 */
 
 
-
 /*
 control.js
 ================================================================================
@@ -14,11 +13,8 @@ to manage the state & functionality mode of the extension
 
 
 import { init as initProtection_ff, halt as haltProtection_ff} from "./protection/protection-ff.js";
-
 import { init as initProtection_cr, halt as haltProtection_cr} from "./protection/protection.js";
-
 import { init as initAnalysis, halt as haltAnalysis } from "./analysis/analysis.js";
-
 import { defaultSettings } from "../data/defaultSettings.js";
 import { modes } from "../data/modes.js";
 import { stores, storage, adaptDomainlist } from "./storage.js";
@@ -42,12 +38,10 @@ async function enable() {
     case modes.analysis:
       initAnalysis();
       haltProtection();
-      console.log(`INITIALIZING Analysis mode.`);
       break;
     case modes.protection:
 			initProtection();
       haltAnalysis();
-			console.log(`INITIALIZING Protection mode.`);
 			break;
 		default:
 			initProtection();
@@ -65,7 +59,6 @@ function disable() {
   } else if ("$BROWSER" == 'chrome') {
     var haltProtection = haltProtection_cr;
   }
-
 
   haltAnalysis();
   haltProtection();
@@ -94,7 +87,6 @@ function disable() {
         "runAt": "document_start"
         }
     ])
-    .then(() => { console.log("Registered content scripts."); })
   } 
   // Initializes the default settings
   let settingsDB = await storage.getStore(stores.settings);
@@ -104,9 +96,7 @@ function disable() {
     }
   }
 
-  // mode = await storage.get(stores.settings, "MODE");
   let isEnabled = await storage.get(stores.settings, "IS_ENABLED");
-  // isDomainlisted = await storage.get(stores.settings, "IS_DOMAINLISTED");
 
   if (isEnabled) {  // Turns on the extension
     enable();
@@ -137,7 +127,6 @@ function disable() {
  * https://developer.chrome.com/docs/extensions/mv3/messaging/
  */
  chrome.runtime.onMessage.addListener(async function (message, sender, sendResponse) {
-	// console.log(`Recieved message @ background page.`);
   if (message.msg === "TURN_ON_OFF") {
     let isEnabled = message.data.isEnabled;           // can be undefined
 
@@ -153,7 +142,6 @@ function disable() {
     let mode = message.data;
     let isEnabled = await storage.get(stores.settings, "IS_ENABLED");
     await storage.set(stores.settings, mode, "MODE");
-    console.log("CHANGE_MODE: mode = ", mode);
     if (isEnabled) {
       enable();
     }

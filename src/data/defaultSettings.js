@@ -10,8 +10,6 @@ defaultSettings.js
 defaultSettings.js exports the default global extension settings
 */
 
-
-// import { extensionMode } from "../background/storage.js"
 import { modes } from "./modes"
 
 // We could also make the keys here the values of an enumerated object, but

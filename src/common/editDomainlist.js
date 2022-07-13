@@ -123,17 +123,6 @@ async function removeDomainFromDomainlistAndRules(domain) {
 
 }
 
-/**
- * If you're calling this on an active domain, the id is in the domainlist
- * @param {string} domain 
- * @param {number} id 
- */
-async function removeDomainFromRules(domain, id) {
-	//let id = await queryDomainId();
-	// removeDynamicRule(id);
-}
-
-
 
 /******************************************************************************/
 /******************************************************************************/
@@ -186,8 +175,6 @@ export {
 	addDomainToDomainlistAndRules,
 	removeDomainFromDomainlistAndRules,
 	updateRemovalScript,
-	// removeDomainFromRules,	
-
 	debug_domainlist_and_dynamicrules,	
 	print_rules_and_domainlist
 }

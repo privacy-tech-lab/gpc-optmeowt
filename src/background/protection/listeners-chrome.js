@@ -11,23 +11,11 @@ listeners-chrome.js holds the on-page-visit listeners for chrome that activate
 our main functionality
 */
 
-
-// import {
-// 	onBeforeSendHeaders, 
-// 	onHeadersReceived, 
-// 	onBeforeNavigate,
-// 	onCommitted
-// } from "./events.js"
-
-
 // https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/webRequest/onBeforeRequest
 // https://developer.chrome.com/docs/extensions/reference/webRequest/
 // This is the extraInfoSpec array of strings
 const CHROME_REQUEST_SPEC = ["requestHeaders", "extraHeaders"]
 const CHROME_RESPONSE_SPEC = ["responseHeaders", "extraHeaders"]
-// const CHROME_REQUEST_SPEC = ["requestHeaders", "extraHeaders", "blocking"]
-// const CHROME_RESPONSE_SPEC = ["responseHeaders", "extraHeaders", "blocking"]
-
 // This is the filter object
 const FILTER = { urls: ["<all_urls>"] }
 
@@ -49,7 +37,6 @@ function enableListeners(callbacks) {
 	} = callbacks;
 
 	// (4) global Chrome listeners
-	// chrome.declarativeNetRequest.addListener()
 	chrome.webRequest.onBeforeSendHeaders.addListener(
 	  onBeforeSendHeaders,
 	  FILTER,

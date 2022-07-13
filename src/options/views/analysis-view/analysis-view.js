@@ -56,27 +56,6 @@ export async function dropListener(domain) {
 }
 
 
-/**
- * Create the compliance label
- * @param {Boolean} verdict
- * @param {String} domain
- */
- function compliant (verdict, domain) {
-   let identifier = document.getElementById(`${domain} compliance`);
-   if(verdict == true){
-    identifier.classList.add("compliant");
-    identifier.style.border = "1px solid rgb(64,107,202)"; //0 100 170
-    identifier.style.color = "rgb(64,107,202)";
-    identifier.innerText = "Compliant";
-   } else {
-    identifier.classList.add("notCompliant");
-    identifier.style.border = "1px solid rgb(222,107,20)"; //255 121 0
-    identifier.style.color = "rgb(222,107,20)";
-    identifier.innerText = "Not Compliant";
-   }
-}
-
-
 /******************************************************************************/
 
 /**
@@ -119,7 +98,6 @@ const headings = {
  */
 async function eventListeners() {
     document.getElementById('searchbar').addEventListener('keyup', filterList )
-    // document.getElementById('plus-button').addEventListener('keyup', plusButton )
     await createDropListeners();
 
     window.onscroll = function() { stickyNavbar() };
@@ -133,12 +111,8 @@ async function eventListeners() {
     function stickyNavbar() {
       if (window.pageYOffset >= sticky) {
         nb.classList.add("sticky")
-        // nb.classList.add("uk-grid")
-        // sb.classList.add("uk-width-1-2")
-        // document.getElementById("width-expand").classList.remove("uk-width-expand")
       } else {
         nb.classList.remove("sticky")
-        // sb.classList.remove("uk-width-3-4")
       }
     }
 }
@@ -162,19 +136,15 @@ async function buildList() {
   let domain;
 
   const analysisKeys = await storage.getAllKeys(stores.analysis);
-  console.log("analysisKeys", analysisKeys);
   const analysisValues = await storage.getAll(stores.analysis)
-  console.log("analysisValues", analysisValues);
-  for (let index in analysisKeys) {
 
+  for (let index in analysisKeys) {
     domain = analysisKeys[index];
-    console.log("dnsLink", analysisValues[index].DO_NOT_SELL_LINK_EXISTS,"sent gpc", analysisValues[index].SENT_GPC);
 
     let dnsLink;
     let stringFound;
     let gpcSent;
     let stringChanged;
-
     let data = analysisValues[index];
     let beforeGPCUSPAPI     = data.USPAPI_BEFORE_GPC;
     let afterGPCUSPAPI      = data.USPAPI_AFTER_GPC;

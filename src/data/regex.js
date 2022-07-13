@@ -20,7 +20,6 @@ export const doNotSellPhrasing = new RegExp([
   ].map(r => r.source).join(''), "gmi");
 
 export const uspPhrasing = /(us(-|_|.)?privacy)/gmi
-
 export const uspCookiePhrasing = /(us(-|_)?privacy)/gmi
 export const uspCookiePhrasingList = ["us_privacy", "us-privacy", "usprivacy"];
 

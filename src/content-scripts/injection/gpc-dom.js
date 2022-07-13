@@ -17,11 +17,6 @@ content script (registered from the extension service worker) for full DOM acces
  */
 function setDomSignal () {
    try {
-	   if ('globalPrivacyControl' in Navigator.prototype) {
-		   //console.log("Found globalPrivacyControl DOM signal, doing nothing!")
-		   return
-	   };
-
 	   var GPCVal = true
 	   const GPCDomVal = `Object.defineProperty(Navigator.prototype, "globalPrivacyControl", {
 		   get: () => ${GPCVal},
@@ -30,12 +25,10 @@ function setDomSignal () {
 	   });
 	   document.currentScript.parentElement.removeChild(document.currentScript);
 	   `
-
+	   
 	   const GPCDomElem = document.createElement('script');
 	   GPCDomElem.innerHTML = GPCDomVal;
 	   document.documentElement.prepend(GPCDomElem);
-	   
-	   console.log(`Added GPC JS property to DOM.`);
    } catch(e) {
 	   console.error(`Failed to set DOM signal: ${e}`);
    }
