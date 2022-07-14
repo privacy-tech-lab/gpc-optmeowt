@@ -1,6 +1,5 @@
 # Architecture Overview
 
-**NOTE: This file has been updated as of 07/06/2022 and it is possible changes have been made since then**
 
 ```
 src
