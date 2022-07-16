@@ -30,7 +30,7 @@ OptMeowt is developed and maintained by Kuba Alicki (@kalicki1), Oliver Wang (@O
 ## 1. Research Publications
 
 - Sebastian Zimmeck, [Improving Internet Privacy with Global Privacy Control (GPC)](https://sebastianzimmeck.de/SaTC_PI_Meeting_2022_Poster_GPC_Zimmeck.pdf), 5th NSF Secure and Trustworthy Cyberspace Principal Investigator Meeting (2022 SaTC PI Meeting), Arlington, Virginia, USA, June 2022
-- Sebastian Zimmeck and Kuba Alicki, [Standardizing and Implementing Do Not Sell (Short Paper)](https://sebastianzimmeck.de/zimmeckAndAlicki2020DoNotSell.pdf), 19th Workshop on Privacy in the Electronic Society (WPES), Online Event, November 2020
+- Sebastian Zimmeck and Kuba Alicki, [Standardizing and Implementing Do Not Sell (Short Paper)](https://sebastianzimmeck.de/zimmeckAndAlicki2020DoNotSell.pdf), 19th Workshop on Privacy in the Electronic Society (WPES), Online Event, November 2020 [[BibTeX](https://sebastianzimmeck.de/citations.html#zimmeckAndAlicki2020DoNotSellBibtex)]
 
 ## 2. How does OptMeowt work?
 
