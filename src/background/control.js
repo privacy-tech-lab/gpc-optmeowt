@@ -47,7 +47,6 @@ async function enable() {
 			initProtection();
       haltAnalysis();
       await storage.set(stores.settings, modes.protection, "MODE")
-			console.log(`INITIALIZING Protection mode.`);
       break;
 	}
 }

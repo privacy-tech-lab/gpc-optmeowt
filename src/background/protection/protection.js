@@ -413,7 +413,6 @@ async function onMessageHandlerAsync(message, sender, sendResponse) {
     }
     chrome.runtime.onMessage.addListener(function (message, _, __) {
       if (message.msg === "POPUP_PROTECTION") {
-        console.log("wellknownData: ", wellknownData)
         dataToPopup(wellknownData);
       }
 

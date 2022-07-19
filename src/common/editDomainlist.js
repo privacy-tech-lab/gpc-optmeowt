@@ -94,7 +94,6 @@ async function updateRemovalScript(){
 			"runAt": "document_start"
 			}
 		])
-		.then(() => { console.log("Updated content script."); })
 	}
 }
 
@@ -139,7 +138,6 @@ async function debug_domainlist_and_dynamicrules() {
 	await storage.set(stores.domainlist, 2, 'nytimes.com');   // record what rule the domain is associated to
   
 	await print_rules_and_domainlist();
-	console.log("BREAK");
 	await addDomainToDomainlistAndRules('a.com');
 	await addDomainToDomainlistAndRules('b.com');
 	await addDomainToDomainlistAndRules('c.com');
@@ -150,7 +148,6 @@ async function debug_domainlist_and_dynamicrules() {
 	await addDomainToDomainlistAndRules('h.com');
 	await addDomainToDomainlistAndRules('i.com');
 	await addDomainToDomainlistAndRules('j.com');
-	console.log("BREAK 2");
 	await print_rules_and_domainlist();
 }
 
