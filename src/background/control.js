@@ -161,7 +161,8 @@ function disable() {
  * This is outmoded in manifest V3. We cannot maintain global variables anymore. 
  */
 chrome.runtime.onConnect.addListener(function(port) {
-  port.onMessage.addListener(function (message) {
+  port.onMessage.addListener(async function (message) {
+    let mode = await storage.get(stores.settings, "MODE")
     if (message.msg === "REQUEST_MODE") {
       port.postMessage({ msg: "RESPONSE_MODE", data: mode })
     }

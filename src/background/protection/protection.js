@@ -102,9 +102,6 @@ const listenerCallbacks = {
   onCommitted: async (details) => {
     updateDomainlist(details);
 
-    if (sendSignal) {
-      addDomSignal(details)
-    }
   }
 
 } // closes listenerCallbacks object
