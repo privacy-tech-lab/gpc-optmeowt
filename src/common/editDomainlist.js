@@ -94,6 +94,7 @@ async function updateRemovalScript(){
 			"runAt": "document_start"
 			}
 		])
+	  .then(() => { })
 	}
 }
 
