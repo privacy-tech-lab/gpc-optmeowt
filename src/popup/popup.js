@@ -1046,22 +1046,45 @@ document.getElementById("more").addEventListener("click", () => {
 });
 
 // Listener: Opens tutorial
+if ("$BROWSER" == 'chrome'){
 document.getElementById("tour").addEventListener("click", async () => {
+
+    await storage.set(stores.settings, false, "TUTORIAL_SHOWN");
+
+    chrome.runtime.sendMessage({
+      msg: "SHOW_TUTORIAL"
+    });
+  
+});
+
+document.getElementById("tour").addEventListener("click", async () => {
+
+  await storage.set(stores.settings, false, "TUTORIAL_SHOWN");
+  setTimeout(chrome.runtime.openOptionsPage, 100);
+
+
+});
+
+} else {
+  document.getElementById("tour").addEventListener("click", () => {
     chrome.runtime.sendMessage({
       msg: "SHOW_TUTORIAL"
     });
 
-    await storage.set(stores.settings, false, "TUTORIAL_SHOWN");
-  
-});
+    storage.set(stores.settings, false, "TUTORIAL_SHOWN");
 
-// Listener: Opens tutorial
-document.getElementById("tour").addEventListener("click", async () => {
+  });
 
-  await storage.set(stores.settings, false, "TUTORIAL_SHOWN");
+  document.getElementById("tour").addEventListener("click", () => {
+    chrome.runtime.sendMessage({
+      msg: "SHOW_TUTORIAL"
+    });
 
-  chrome.runtime.openOptionsPage();
-});
+    storage.set(stores.settings, false, "TUTORIAL_SHOWN");
+
+    chrome.runtime.openOptionsPage();
+  });
+}
 
 // Listener: Opens domainlist in options page
 document.getElementById("domain-list").addEventListener("click", async () => {
