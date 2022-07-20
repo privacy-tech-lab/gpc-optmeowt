@@ -119,10 +119,15 @@ function eventListeners() {
     .getElementById("upload-domainlist")
     .addEventListener("change", handleUpload, false);
 
-    chrome.runtime.onMessage.addListener(function (message, _, __) {
+    chrome.runtime.onMessage.addListener(async function (message, _, __) {
       if (message.msg === "SHOW_TUTORIAL") {
-        walkthrough();
-        storage.set(stores.settings, true, 'TUTORIAL_SHOWN')
+        if ("$BROWSER" == 'chrome'){
+          chrome.tabs.reload();
+        } else {
+          await storage.set(stores.settings,true,"TUTORIAL_SHOWN")
+          walkthrough();
+        }
+
         }
       });
     createMessageListeners();
@@ -239,11 +244,12 @@ function loadChangeMode() {
 
 
 
-chrome.runtime.onMessage.addListener(function (message, _, __) {
-  if (message.msg === "SHOW_TUTORIAL") {
-    walkthrough();
-  }
-});
+// chrome.runtime.onMessage.addListener(function (message, _, __) {
+//   if (message.msg === "SHOW_TUTORIAL") {
+//     console.log("got the message")
+//     walkthrough();
+//   }
+// });
 
 // Copy confirmation code 
 function copyToClipboard() {
