@@ -182,7 +182,6 @@ function renderExtenionIsEnabledDisabled(isEnabled, isDomainlisted) {
 
 function turnonoff(isEnabled){
   if ("$BROWSER" == 'chrome'){
-    console.log("turnonoff called. isEnabled is ", isEnabled);
     if (isEnabled){
       chrome.scripting.updateContentScripts([
         {

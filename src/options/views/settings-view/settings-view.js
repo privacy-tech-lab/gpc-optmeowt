@@ -243,14 +243,6 @@ function loadChangeMode() {
 
 
 
-
-// chrome.runtime.onMessage.addListener(function (message, _, __) {
-//   if (message.msg === "SHOW_TUTORIAL") {
-//     console.log("got the message")
-//     walkthrough();
-//   }
-// });
-
 // Copy confirmation code 
 function copyToClipboard() {
   /* Get the text field */
