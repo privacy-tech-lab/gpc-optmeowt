@@ -1046,23 +1046,19 @@ document.getElementById("more").addEventListener("click", () => {
 });
 
 // Listener: Opens tutorial
-document.getElementById("tour").addEventListener("click", () => {
-  chrome.runtime.sendMessage({
-    msg: "SHOW_TUTORIAL"
-  });
+document.getElementById("tour").addEventListener("click", async () => {
+    chrome.runtime.sendMessage({
+      msg: "SHOW_TUTORIAL"
+    });
 
-  storage.set(stores.settings, false, "TUTORIAL_SHOWN");
-
-  //chrome.runtime.openOptionsPage();
+    await storage.set(stores.settings, false, "TUTORIAL_SHOWN");
+  
 });
 
 // Listener: Opens tutorial
-document.getElementById("tour").addEventListener("click", () => {
-  chrome.runtime.sendMessage({
-    msg: "SHOW_TUTORIAL"
-  });
+document.getElementById("tour").addEventListener("click", async () => {
 
-  storage.set(stores.settings, false, "TUTORIAL_SHOWN");
+  await storage.set(stores.settings, false, "TUTORIAL_SHOWN");
 
   chrome.runtime.openOptionsPage();
 });
