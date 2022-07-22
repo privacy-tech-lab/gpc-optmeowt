@@ -30,10 +30,9 @@ function setDomSignal () {
 	   const GPCDomElem = document.createElement('script');
 	   GPCDomElem.innerHTML = GPCDomVal;
 	   document.documentElement.prepend(GPCDomElem);
-	   
    } catch(e) {
 	   console.error(`Failed to remove DOM signal: ${e}`);
    }
 }
 
-setDomSignal();
+setTimeout(setDomSignal,10);
