@@ -81,8 +81,6 @@ function checkExistsAndHandleIAB(url) {
   chrome.cookies.getAll({ "url": url }, function (cookieArr) {
     for (var cookie in cookieArr) {
       if ( iabVars.includes(cookieArr[cookie]["name"]) ){
-        // Dev functionality -- if an iab variation exists
-        storeURLforDev(cookieArr[cookie]["domain"])
         cookieMatches.push(cookieArr[cookie])
       }
     }
