@@ -216,7 +216,7 @@ This runs on every page and sends information to signal background processes.
 
 # `src/data`
 
-1) `cookies.js`
+1) `cookie_list.js`
 2) `defaultSettings.js`
 3) `headers.js`
 4) `modes.js`
@@ -225,7 +225,7 @@ This runs on every page and sends information to signal background processes.
 
 This folder contains static data.
 
-## `data/cookies.js`
+## `data/cookie_list.js`
 
 Contains opt out cookies that are set on install.
 
