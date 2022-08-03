@@ -75,7 +75,7 @@ Analysis Mode is used to investigate the GPC compliance of a given site. While n
 
 **Usage Note:** Analysis Mode **must** be run in a fresh browser without cookies or other user data. Additionally, legal obligations to respect GPC differ by geographic location. Our lab used a VPN pointing to Los Angeles to collect our data.
 
-1. Load the extension, open the popup and click "Protection" to switch to Analysis Mode
+1. Load the extension, open the popup, click "More" (the second icon in the upper right corner) to navigate  to the Settings page and switch to Analysis Mode.
 2. Clear all cookies and all user data
 3. Navigate to a site that you wish to analyze
 4. Wait until 5 seconds pass after the site is fully loaded (i.e., refresh icon does not change back to an X)
