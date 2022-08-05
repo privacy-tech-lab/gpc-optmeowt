@@ -276,7 +276,7 @@ export async function settingsView(scaffoldTemplate) {
   const isEnabled = await storage.get(stores.settings, "IS_ENABLED");
   const isDomainlisted = await storage.get(stores.settings, "IS_DOMAINLISTED");
   let mode = await storage.get(stores.settings, "MODE");
-  console.log(mode)
+  
   if (mode === modes.analysis) {
     console.log("mode")
     document.getElementById("optMode").checked = true;
