@@ -275,8 +275,12 @@ export async function settingsView(scaffoldTemplate) {
   // Render correct extension mode radio button
   const isEnabled = await storage.get(stores.settings, "IS_ENABLED");
   const isDomainlisted = await storage.get(stores.settings, "IS_DOMAINLISTED");
-
-  if (isEnabled) {
+  let mode = await storage.get(stores.settings, "MODE");
+  
+  if (mode === modes.analysis) {
+    document.getElementById("optMode").checked = true;
+  }
+  else if (isEnabled) {
     (isDomainlisted)
       ? document.getElementById("settings-view-radio2").checked = true
       : document.getElementById("settings-view-radio0").checked = true;
