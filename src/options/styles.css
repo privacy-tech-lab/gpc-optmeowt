@@ -380,13 +380,3 @@ https://codepen.io/aaroniker/pen/oaQdQZ
   > .tippy-arrow::before {
   border-right-color: #87cefa;
 }
-
-[readonly] {
-  border: transparent;
-  background-color: transparent;
-}
-.hideme
-{
-    display:none;
-    visibility:hidden;
-}

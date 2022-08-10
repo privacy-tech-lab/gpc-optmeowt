@@ -242,20 +242,6 @@ function loadChangeMode() {
 }
 
 
-
-// Copy confirmation code 
-function copyToClipboard() {
-  /* Get the text field */
-  var copyText = document.getElementById("conf-code");
-
-  /* Select the text field */
-  copyText.select();
-  copyText.setSelectionRange(0, 99999); /* For mobile devices */
-
-   /* Copy the text inside the text field */
-  navigator.clipboard.writeText(copyText.value);
-}
-
 /******************************************************************************/
 
 /**
@@ -293,10 +279,7 @@ export async function settingsView(scaffoldTemplate) {
   }
   storage.set(stores.settings, true, 'TUTORIAL_SHOWN')
 
-  //conf code
-  document.getElementById("conf-code-button").addEventListener("click", () => {
-    copyToClipboard();
-  });
+  
 }
 
  
