@@ -278,7 +278,6 @@ export async function settingsView(scaffoldTemplate) {
   let mode = await storage.get(stores.settings, "MODE");
   
   if (mode === modes.analysis) {
-    console.log("mode")
     document.getElementById("optMode").checked = true;
   }
   else if (isEnabled) {
