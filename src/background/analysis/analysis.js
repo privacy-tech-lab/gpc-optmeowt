@@ -379,7 +379,6 @@ function webRequestResponseFiltering(details) {
 // convert to a spreadsheet for saving as a .csv file
 var analysisUserendSkeleton = () => {
   return {
-    "START_ANALYSIS_TIMESTAMP": null,
     "DO_NOT_SELL_LINK_EXISTS": null,
     "SENT_GPC": false,
     "USPAPI_BEFORE_GPC": [],
@@ -387,8 +386,7 @@ var analysisUserendSkeleton = () => {
     "USPAPI_OPTED_OUT": undefined,
     "USP_COOKIES_BEFORE_GPC": [],
     "USP_COOKIES_AFTER_GPC": [],
-    "USP_COOKIE_OPTED_OUT": undefined,
-    "STOP_ANALYSIS_TIMESTAMP": null,
+    "USP_COOKIE_OPTED_OUT": undefined
   }
 }
 
@@ -456,13 +454,6 @@ function logData(domain, command, data) {
   if (!analysis[domain][callIndex]) {
     analysis[domain][callIndex] = analysisDataSkeletonFirstParties();
     analysis_userend[domain] = analysisUserendSkeleton();
-  }
-
-  let ms = Date.now();
-
-  if (!analysis[domain][callIndex][gpcStatusKey]["START_ANALYSIS_TIMESTAMP"]) {
-    analysis[domain][callIndex][gpcStatusKey]["START_ANALYSIS_TIMESTAMP"] = ms; 
-    analysis_userend[domain]["START_ANALYSIS_TIMESTAMP"] = ms;
   }
 
   if (changingSitesOnAnalysis) {
@@ -549,13 +540,6 @@ function logData(domain, command, data) {
     analysis[domain][callIndex][gpcStatusKey]["DO_NOT_SELL_LINK_EXISTS"] = true;
     analysis_userend[domain]["DO_NOT_SELL_LINK_EXISTS"] = true;
 
-  }
-  
-  if (command === "STOP_ANALYSIS") {
-    if (!analysis[domain][callIndex][gpcStatusKey]["STOP_ANALYSIS_TIMESTAMP"]) {
-      analysis[domain][callIndex][gpcStatusKey]["STOP_ANALYSIS_TIMESTAMP"] = ms; 
-      analysis_userend[domain]["STOP_ANALYSIS_TIMESTAMP"] = ms;
-    }
   }
   storage.set(stores.analysis, analysis_userend[domain], domain);
 }
@@ -666,8 +650,6 @@ function onCommittedCallback(details) {
     }
     if (message.msg === "STOP_ANALYSIS_FROM_BACKGROUND") {
       haltAnalysis();
-      let domain = location.href;
-      logData(domain, "STOP_ANALYSIS", null)
     }
   })
 }
@@ -679,8 +661,6 @@ function commandsHandler(command) {
   }
   if (command === "halt_analysis") {
     haltAnalysis();
-    let domain = location.href;
-    logData(domain, "STOP_ANALYSIS", null)
   }
 }
 
