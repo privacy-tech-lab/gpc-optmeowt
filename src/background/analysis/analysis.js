@@ -379,29 +379,21 @@ function webRequestResponseFiltering(details) {
 // convert to a spreadsheet for saving as a .csv file
 var analysisUserendSkeleton = () => {
   return {
-    "TIMESTAMP": null,
+    "START_ANALYSIS_TIMESTAMP": null,
     "DO_NOT_SELL_LINK_EXISTS": null,
-    "DO_NOT_SELL_LINK_EXISTS_TIMESTAMP": null,
     "SENT_GPC": false,
-    "SENT_GPC_TIMESTAMP": null,
     "USPAPI_BEFORE_GPC": [],
-    "USPAPI_BEFORE_GPC_TIMESTAMP": null,
     "USPAPI_AFTER_GPC": [],
-    "USPAPI_AFTER_GPC_TIMESTAMP": null,
     "USPAPI_OPTED_OUT": undefined,
-    "USPAPI_OPTED_OUT_TIMESTAMP": null,
     "USP_COOKIES_BEFORE_GPC": [],
-    "USP_COOKIES_BEFORE_GPC_TIMESTAMP": null,
     "USP_COOKIES_AFTER_GPC": [],
-    "USP_COOKIES_AFTER_GPC_TIMESTAMP": null,
     "USP_COOKIE_OPTED_OUT": undefined,
-    "USP_COOKIE_OPTED_OUT_TIMESTAMP": null
+    "STOP_ANALYSIS_TIMESTAMP": null,
   }
 }
 
 var analysisDataSkeletonThirdParties = () => {
   return {
-    "TIMESTAMP": null,
     "COOKIES": [],
     "HEADERS": {},
     "URLS": {},
@@ -413,7 +405,6 @@ var analysisDataSkeletonThirdParties = () => {
 var analysisDataSkeletonFirstParties = () => {
   return {
     "BEFORE_GPC": {
-      "TIMESTAMP": null,
       "COOKIES": [],
       "DO_NOT_SELL_LINK": [],
       "DO_NOT_SELL_LINK_EXISTS": null,
@@ -425,7 +416,6 @@ var analysisDataSkeletonFirstParties = () => {
       "THIRD_PARTIES": {}
     },
     "AFTER_GPC": {
-      "TIMESTAMP": null,
       "COOKIES": [],
       "DO_NOT_SELL_LINK": [],
       "DO_NOT_SELL_LINK_EXISTS": null,
@@ -470,15 +460,14 @@ function logData(domain, command, data) {
 
   let ms = Date.now();
 
-  if (!analysis[domain][callIndex][gpcStatusKey]["TIMESTAMP"]) {
-    analysis[domain][callIndex][gpcStatusKey]["TIMESTAMP"] = ms; 
-    analysis_userend[domain]["TIMESTAMP"] = ms;
+  if (!analysis[domain][callIndex][gpcStatusKey]["START_ANALYSIS_TIMESTAMP"]) {
+    analysis[domain][callIndex][gpcStatusKey]["START_ANALYSIS_TIMESTAMP"] = ms; 
+    analysis_userend[domain]["START_ANALYSIS_TIMESTAMP"] = ms;
   }
 
   if (changingSitesOnAnalysis) {
     analysis[domain][callIndex]["SENT_GPC"] = true;
     analysis_userend[domain]["SENT_GPC"] = true;
-    analysis_userend[domain]["SENT_GPC_TIMESTAMP"] = ms;
   }
 
   // Let's assume that data does have a name property as a cookie should
@@ -490,13 +479,11 @@ function logData(domain, command, data) {
     
     // Detailed case for summary object
     if (gpcStatusKey == "BEFORE_GPC") {
-      analysis_userend[domain]["USP_COOKIES_BEFORE_GPC_TIMESTAMP"] = ms;
       for (let i in data) {
         analysis_userend[domain]["USP_COOKIES_BEFORE_GPC"].push(data[i]);
       }
     }
     if (gpcStatusKey == "AFTER_GPC") {
-      analysis_userend[domain]["USP_COOKIES_AFTER_GPC_TIMESTAMP"] = ms;
       for (let i in data) {
         analysis_userend[domain]["USP_COOKIES_AFTER_GPC"].push(data[i]);
         try {
@@ -520,21 +507,19 @@ function logData(domain, command, data) {
           console.error("Parsing USPAPI for analysis_userend failed.", e);
           analysis_userend[domain]["USP_COOKIE_OPTED_OUT"] = "PARSE_FAILED"; 
         }
-        analysis_userend[domain]["USP_COOKIE_OPTED_OUT_TIMESTAMP"] = ms;
       }
     }
   }
+
   if (command === "USPAPI") {
     analysis[domain][callIndex][gpcStatusKey]["USPAPI"].push(data);
     
     // Detailed case for summary object
     if (gpcStatusKey == "BEFORE_GPC") {
       analysis_userend[domain]["USPAPI_BEFORE_GPC"].push(data);
-      analysis_userend[domain]["USPAPI_BEFORE_GPC_TIMESTAMP"] = ms;
     }
     if (gpcStatusKey == "AFTER_GPC") {
       analysis_userend[domain]["USPAPI_AFTER_GPC"].push(data);
-      analysis_userend[domain]["USPAPI_AFTER_GPC_TIMESTAMP"] = ms;
       try {
         let USPrivacyString = data.value || data.uspString;
 
@@ -551,7 +536,6 @@ function logData(domain, command, data) {
         console.error("Parsing USPAPI for analysis_userend failed.", e);
         analysis_userend[domain]["USPAPI_OPTED_OUT"] = "PARSE_FAILED"; 
       }
-      analysis_userend[domain]["USPAPI_OPTED_OUT_TIMESTAMP"] = ms;
     }
 
   }
@@ -559,14 +543,19 @@ function logData(domain, command, data) {
     analysis[domain][callIndex][gpcStatusKey]["DO_NOT_SELL_LINK"].push(data);
     analysis[domain][callIndex][gpcStatusKey]["DO_NOT_SELL_LINK_EXISTS"] = true;
     analysis_userend[domain]["DO_NOT_SELL_LINK_EXISTS"] = true;
-    analysis_userend[domain]["DO_NOT_SELL_LINK_EXISTS_TIMESTAMP"] = ms;
   }
   if (command === "DO_NOT_SELL_LINK_WEB_REQUEST_FILTERING") {
     analysis[domain][callIndex][gpcStatusKey]["DO_NOT_SELL_LINK_WEB_REQUEST_FILTERING"].push(data);
     analysis[domain][callIndex][gpcStatusKey]["DO_NOT_SELL_LINK_EXISTS"] = true;
     analysis_userend[domain]["DO_NOT_SELL_LINK_EXISTS"] = true;
-    analysis_userend[domain]["DO_NOT_SELL_LINK_EXISTS_TIMESTAMP"] = ms;
 
+  }
+  
+  if (command === "STOP_ANALYSIS") {
+    if (!analysis[domain][callIndex][gpcStatusKey]["STOP_ANALYSIS_TIMESTAMP"]) {
+      analysis[domain][callIndex][gpcStatusKey]["STOP_ANALYSIS_TIMESTAMP"] = ms; 
+      analysis_userend[domain]["STOP_ANALYSIS_TIMESTAMP"] = ms;
+    }
   }
   storage.set(stores.analysis, analysis_userend[domain], domain);
 }
@@ -677,6 +666,8 @@ function onCommittedCallback(details) {
     }
     if (message.msg === "STOP_ANALYSIS_FROM_BACKGROUND") {
       haltAnalysis();
+      let domain = location.href;
+      logData(domain, "STOP_ANALYSIS", null)
     }
   })
 }
@@ -688,6 +679,8 @@ function commandsHandler(command) {
   }
   if (command === "halt_analysis") {
     haltAnalysis();
+    let domain = location.href;
+    logData(domain, "STOP_ANALYSIS", null)
   }
 }
 
