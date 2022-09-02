@@ -133,10 +133,11 @@ function eventListeners() {
     createMessageListeners();
 }
 
-function createMessageListeners(){
+async function createMessageListeners(){
+  const csvData = await storage.getStore(stores.analysis)
   chrome.runtime.onMessage.addListener(function (message, _, __) {
     if (message.msg === "CSV_DATA_RESPONSE_TO_SETTINGS") {
-      csvGenerator(message.data.csvData, message.data.titles);
+      csvGenerator(csvData, message.data.titles);
     }
   });
 }
