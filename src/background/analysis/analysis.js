@@ -464,17 +464,20 @@ function logData(domain, command, data) {
   // Let's assume that data does have a name property as a cookie should
   // NOTE: Cookies should be an array of "cookies" objects, not promises, etc. 
   if (command === "COOKIES") {
+    analysis[domain][callIndex][gpcStatusKey]["COOKIES"] = []
     for (let i in data) {
       analysis[domain][callIndex][gpcStatusKey]["COOKIES"].push(data[i]);
     }
     
     // Detailed case for summary object
     if (gpcStatusKey == "BEFORE_GPC") {
+      analysis_userend[domain]["USP_COOKIES_BEFORE_GPC"] = []
       for (let i in data) {
         analysis_userend[domain]["USP_COOKIES_BEFORE_GPC"].push(data[i]);
       }
     }
     if (gpcStatusKey == "AFTER_GPC") {
+      analysis_userend[domain]["USP_COOKIES_AFTER_GPC"] = []
       for (let i in data) {
         analysis_userend[domain]["USP_COOKIES_AFTER_GPC"].push(data[i]);
         try {
@@ -503,13 +506,16 @@ function logData(domain, command, data) {
   }
 
   if (command === "USPAPI") {
+    analysis[domain][callIndex][gpcStatusKey]["USPAPI"] = []
     analysis[domain][callIndex][gpcStatusKey]["USPAPI"].push(data);
     
     // Detailed case for summary object
     if (gpcStatusKey == "BEFORE_GPC") {
+      analysis_userend[domain]["USPAPI_BEFORE_GPC"] = []
       analysis_userend[domain]["USPAPI_BEFORE_GPC"].push(data);
     }
     if (gpcStatusKey == "AFTER_GPC") {
+      analysis_userend[domain]["USPAPI_AFTER_GPC"] = []
       analysis_userend[domain]["USPAPI_AFTER_GPC"].push(data);
       try {
         let USPrivacyString = data.value || data.uspString;
@@ -531,11 +537,13 @@ function logData(domain, command, data) {
 
   }
   if (command === "DO_NOT_SELL_LINK") {
+    analysis[domain][callIndex][gpcStatusKey]["DO_NOT_SELL_LINK"] = []
     analysis[domain][callIndex][gpcStatusKey]["DO_NOT_SELL_LINK"].push(data);
     analysis[domain][callIndex][gpcStatusKey]["DO_NOT_SELL_LINK_EXISTS"] = true;
     analysis_userend[domain]["DO_NOT_SELL_LINK_EXISTS"] = true;
   }
   if (command === "DO_NOT_SELL_LINK_WEB_REQUEST_FILTERING") {
+    analysis[domain][callIndex][gpcStatusKey]["DO_NOT_SELL_LINK_WEB_REQUEST_FILTERING"] = []
     analysis[domain][callIndex][gpcStatusKey]["DO_NOT_SELL_LINK_WEB_REQUEST_FILTERING"].push(data);
     analysis[domain][callIndex][gpcStatusKey]["DO_NOT_SELL_LINK_EXISTS"] = true;
     analysis_userend[domain]["DO_NOT_SELL_LINK_EXISTS"] = true;
