@@ -624,7 +624,6 @@ function onCommittedCallback(details) {
     chrome.runtime.sendMessage({
       msg: "CSV_DATA_RESPONSE",
       data: {
-        csvData: analysis_userend,
         titles: analysisUserendSkeleton()
       }
     });
@@ -633,7 +632,6 @@ function onCommittedCallback(details) {
     chrome.runtime.sendMessage({
       msg: "CSV_DATA_RESPONSE_TO_SETTINGS",
       data: {
-        csvData: analysis_userend,
         titles: analysisUserendSkeleton()
       }
     });
