@@ -14,8 +14,7 @@ If the domainlist is being handled, then cookies are added/removed here too
 
 import { openDB } from "idb"
 import { storageCookies } from "./storageCookies.js"
-import { getFreshId, addDynamicRule, deleteDynamicRule, reloadDynamicRules } from "../common/editRules"
-import { addDomainToDomainlistAndRules, removeDomainFromDomainlistAndRules, updateRemovalScript } from "../common/editDomainlist.js";
+import { reloadDynamicRules } from "../common/editRules"
 import { saveAs } from 'file-saver';
 
 /******************************************************************************/
@@ -149,7 +148,6 @@ async function handleUpload() {
         // hardcode if it is the new version
         if (Number(version[0]) >= 3) {
         reloadDynamicRules();
-        updateRemovalScript();
         } else {
             chrome.runtime.sendMessage({
                 msg: "FORCE_RELOAD"
@@ -159,44 +157,6 @@ async function handleUpload() {
     fr.readAsText(file);
 }
 
-async function adaptDomainlist(){
-    let domain;
-    let domainValue; 
-    const domainlistKeys = await storage.getAllKeys(stores.domainlist);
-    const domainlistValues = await storage.getAll(stores.domainlist);
-    await  storage.clear(stores.domainlist);
-    if ("$BROWSER" == 'chrome'){
-        for (let index in domainlistKeys) {
-            domain = domainlistKeys[index]
-            domainValue = domainlistValues[index]
-            if (domainValue == true){
-                await storage.set(stores.domainlist, null, domain);
-            } else if (domainValue == false){
-                let id = await getFreshId();
-                addDynamicRule(id,domain);
-                await storage.set(stores.domainlist, id, domain);
-            } else if (domainValue == null){
-                await storage.set(stores.domainlist, null, domain);
-            } else {
-                await storage.set(stores.domainlist, domainValue, domain);
-            }
-        }
-    } else {
-        for (let index in domainlistKeys) {
-            domain = domainlistKeys[index]
-            domainValue = domainlistValues[index]
-            if (domainValue == true){
-                await storage.set(stores.domainlist, null, domain);
-            } else if (domainValue == false){
-                await storage.set(stores.domainlist, 1, domain);
-            } else if (domainValue == null){
-                await storage.set(stores.domainlist, null, domain);
-            } else {
-                await storage.set(stores.domainlist, domainValue, domain);
-            }
-        }
-    }
-  }
 
 
 /******************************************************************************/
@@ -207,7 +167,6 @@ export {
     handleDownload,
     startUpload,
     handleUpload,
-    adaptDomainlist,
     stores,
     storage
 }
