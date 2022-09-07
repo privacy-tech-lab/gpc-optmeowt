@@ -36,7 +36,7 @@ OptMeowt is developed and maintained by Kuba Alicki (@kalicki1), Oliver Wang (@O
 
 OptMeowt sends Do Not Sell signals to websites when you browse the web. Such signals must be respected for California consumers per the California Consumer Privacy Act (CCPA), [Regs Section 999.315(d)](https://oag.ca.gov/sites/all/files/agweb/pdfs/privacy/oal-sub-final-text-of-regs.pdf). Some companies also respect them when they are sent from outside of California. OptMeowt also places opt out cookies.
 
-In detail, OptMeowt uses five methods to opt you out:
+In detail, OptMeowt uses the following methods to opt you out:
 
 1. The [GPC header and JS property](https://globalprivacycontrol.github.io/gpc-spec/).
 2. The [DNT header](https://www.w3.org/TR/tracking-dnt/).
@@ -75,7 +75,7 @@ Analysis Mode is used to investigate the GPC compliance of a given site. While n
 
 **Usage Note:** Analysis Mode **must** be run in a fresh browser without cookies or other user data. Additionally, legal obligations to respect GPC differ by geographic location. Our lab used a VPN pointing to Los Angeles to collect our data.
 
-1. Load the extension, open the popup, click "More" (the second icon in the upper right corner) to navigate  to the Settings page and switch to Analysis Mode.
+1. Load the extension, open the popup, click "More" (the second icon in the upper right corner) to navigate to the Settings page and switch to Analysis Mode.
 2. Clear all cookies and all user data
 3. Navigate to a site that you wish to analyze
 4. Wait until 5 seconds pass after the site is fully loaded (i.e., refresh icon does not change back to an X)
