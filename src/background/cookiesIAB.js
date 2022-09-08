@@ -88,11 +88,7 @@ function checkExistsAndHandleIAB(url) {
     // Now we have an array of all the cookie matches
     if (cookieMatches.length === 1) {
       let value = parseIAB(cookieMatches[0]["value"])
-      if (value == '1---') {
-        updateIAB(null, '1YYY', url);
-      } else {
-        updateIAB(cookieMatches[0], value, url);
-      }
+      updateIAB(cookieMatches[0], value, url);
     }
     if (cookieMatches.length === 0) {
         updateIAB(null, '1NYN', url);
