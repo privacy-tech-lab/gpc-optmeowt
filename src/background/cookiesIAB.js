@@ -88,13 +88,8 @@ function checkExistsAndHandleIAB(url) {
     // Now we have an array of all the cookie matches
     if (cookieMatches.length === 1) {
       let value = parseIAB(cookieMatches[0]["value"])
-      if (value == '1---') {
-        // Handle the case when the site says you are outside California
-        // ("This site recognized you are outside of 
-        // the domain of the CCPA.", cookieMatches[0]["domain"])
-      } else {
-        updateIAB(cookieMatches[0], value, url);
-      }
+      updateIAB(cookieMatches[0], value, url);
+      
     }
     if (cookieMatches.length === 0) {
         updateIAB(null, '1NYN', url);
@@ -142,12 +137,8 @@ function parseIAB(signal) {
   if (!isValidSignalIAB(signal)) {
     return '1NYN'
   }
-  if (signal === '1---') {
-    return '1---'
-  } else {
-    signal = signal.substr(0,2) + 'Y' + signal.substr(3, 1)
-    return signal
-  }
+  signal = signal.substr(0,2) + 'Y' + signal.substr(3, 1)
+  return signal
 }
 
 /**
