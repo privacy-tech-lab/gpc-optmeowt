@@ -190,7 +190,7 @@ Reminder: Users **must** "stop analysis" prior to changing sites to prevent reco
   </a>
 </p>
 
-<p align="center">Conclusions reached or positions taken are our own and not necessarily those of our financial supporters, its trustees, officers, or staff.</p>
+<p align="center"><a href="https://builtwith.com/">BuiltWith</a> provided us with a free Pro account. Conclusions reached or positions taken are our own and not necessarily those of our financial supporters, its trustees, officers, or staff.</p>
 
 ##
 
