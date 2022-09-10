@@ -29,7 +29,10 @@ OptMeowt is developed and maintained by Kuba Alicki (@kalicki1), Oliver Wang (@O
 
 ## 1. Research Publications
 
+- Isabella Tassone, Chunyue Ma, Eliza Kuller, Joe Champeau, Sebastian Zimmeck, [Enhancing Online Privacy: The Development of Practical Privacy Choice Mechanisms](https://github.com/privacy-tech-lab/gpc-optmeowt/blob/main/research/tassoneEtAlEnhancingOnlinePrivacy2022Poster.pdf), Summer Research 2022 Poster Session, Wesleyan University, July 2022
 - Sebastian Zimmeck, [Improving Internet Privacy with Global Privacy Control (GPC)](https://sebastianzimmeck.de/SaTC_PI_Meeting_2022_Poster_GPC_Zimmeck.pdf), 5th NSF Secure and Trustworthy Cyberspace Principal Investigator Meeting (2022 SaTC PI Meeting), Arlington, Virginia, USA, June 2022
+- Kuba Alicki, [Don't Sell Our Data: Exploring CCPA Compliance via Automated Privacy Signal Detection](https://doi.org/10.14418/wes01.1.2667), Undergraduate Honors Thesis, Wesleyan University, April 2022
+- Eliza Kuller, Chunyue Ma, Isabella Tassone, Sebastian Zimmeck, [Making Online Privacy Choice Mechanisms Effective and Usable](http://summer21.research.wesleyan.edu/2021/07/22/balancing-usability-and-active-choice-while-developing-privacy-permission-schemes/), Summer Research 2021 Poster Session, Wesleyan University, Online, July 2021
 - Sebastian Zimmeck and Kuba Alicki, [Standardizing and Implementing Do Not Sell (Short Paper)](https://sebastianzimmeck.de/zimmeckAndAlicki2020DoNotSell.pdf), 19th Workshop on Privacy in the Electronic Society (WPES), Online Event, November 2020 [[BibTeX](https://sebastianzimmeck.de/citations.html#zimmeckAndAlicki2020DoNotSellBibtex)]
 
 ## 2. How does OptMeowt work?
