@@ -937,16 +937,15 @@ chrome.runtime.onMessage.addListener(function (message, _, __) {
     let data = analysis_userend[parsedDomain] || {};
     buildAnalysis(data);
   }
-  createMessageListeners()
+  if (message.msg === "CSV_DATA_RESPONSE") {
+    const csvData = fetchcsvData();
+    csvData.then((csvData) => csvGenerator(csvData, message.data.titles));
+  }
 });
 
-async function createMessageListeners(){
+async function fetchcsvData(){
   const csvData = await storage.getStore(stores.analysis)
-  chrome.runtime.onMessage.addListener(function (message, _, __) {
-    if (message.msg === "CSV_DATA_RESPONSE") {
-      csvGenerator(csvData, message.data.titles);
-    }
-  });
+  return csvData
 }
 
 // Initializes the process to add to domainlist, via the background script
