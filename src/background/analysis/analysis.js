@@ -473,13 +473,17 @@ function logData(domain, command, data) {
     if (gpcStatusKey == "BEFORE_GPC") {
       analysis_userend[domain]["USP_COOKIES_BEFORE_GPC"] = []
       for (let i in data) {
-        analysis_userend[domain]["USP_COOKIES_BEFORE_GPC"].push(data[i]);
+        if (data[i]["value"]) {
+          analysis_userend[domain]["USP_COOKIES_BEFORE_GPC"].push({"value":data[i]["value"]});
+        }
       }
     }
     if (gpcStatusKey == "AFTER_GPC") {
       analysis_userend[domain]["USP_COOKIES_AFTER_GPC"] = []
       for (let i in data) {
-        analysis_userend[domain]["USP_COOKIES_AFTER_GPC"].push(data[i]);
+        if (data[i]["value"]) {
+          analysis_userend[domain]["USP_COOKIES_AFTER_GPC"].push({"value":data[i]["value"]});
+        }
         try {
           if (analysis_userend[domain]["USP_COOKIE_OPTED_OUT"] !== true) {
             let USPrivacyString = data[i].value || "";
@@ -512,11 +516,11 @@ function logData(domain, command, data) {
     // Detailed case for summary object
     if (gpcStatusKey == "BEFORE_GPC") {
       analysis_userend[domain]["USPAPI_BEFORE_GPC"] = []
-      analysis_userend[domain]["USPAPI_BEFORE_GPC"].push(data);
+      analysis_userend[domain]["USPAPI_BEFORE_GPC"].push({"uspString":data["uspString"]});
     }
     if (gpcStatusKey == "AFTER_GPC") {
       analysis_userend[domain]["USPAPI_AFTER_GPC"] = []
-      analysis_userend[domain]["USPAPI_AFTER_GPC"].push(data);
+      analysis_userend[domain]["USPAPI_AFTER_GPC"].push({"uspString":data["uspString"]});
       try {
         let USPrivacyString = data.value || data.uspString;
 
