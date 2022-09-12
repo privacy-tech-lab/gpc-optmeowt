@@ -129,18 +129,17 @@ function eventListeners() {
         }
 
         }
+        if (message.msg === "CSV_DATA_RESPONSE_TO_SETTINGS") {
+          const csvData = fetchcsvData();
+          csvData.then((csvData) => csvGenerator(csvData, message.data.titles));
+        }
       });
-    createMessageListeners();
+      
 }
 
-async function createMessageListeners(){
+async function fetchcsvData(){
   const csvData = await storage.getStore(stores.analysis)
-  chrome.runtime.onMessage.addListener(function (message, _, __) {
-    if (message.msg === "CSV_DATA_RESPONSE_TO_SETTINGS") {
-      csvGenerator(csvData, message.data.titles);
-      return
-    }
-  });
+  return csvData
 }
 
 /******************************************************************************/
