@@ -148,6 +148,7 @@ async function handleUpload() {
         // hardcode if it is the new version
         if (Number(version[0]) >= 3) {
         reloadDynamicRules();
+        updateRemovalScript();
         } else {
             chrome.runtime.sendMessage({
                 msg: "FORCE_RELOAD"
