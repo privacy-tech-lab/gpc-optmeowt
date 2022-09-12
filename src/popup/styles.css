@@ -95,18 +95,14 @@ styles.css is the main css page for OptMeowt's popup page
   text-align: center;
   text-decoration-color: none;
   font-size: 20px;
-  box-shadow: 0 6px 12px -1px rgba(190, 190, 190, 0.2);
+  box-shadow: 0 6px 12px -1px rgba(190, 190, 190, 0.2); 
   outline: none;
   transition: all ease 0.25s;  
 }
 
 .optMode:hover {
   color: var(--text-gray) !important;
-  /* box-shadow: 0 6px 12px rgba(110, 110, 110, 0.2) !important; */
-  transition: all ease 0.25s;
 }
-
-
 
 /*
 SVG photo assets style

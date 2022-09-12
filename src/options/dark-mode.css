@@ -135,12 +135,8 @@ Buttons and Switches
 }
 
 .darkmode--activated .optMode:hover {
-  background-color: #d4d4d4 !important;
-  border-color: #d4d4d4 !important;
-  color: #4e4e4d !important;
-  box-shadow: 0 3px 6px #303030 !important;
+  color: var(--text-white) !important;
 }
-
 
 .darkmode--activated .search {
   background-color: #333 !important;
