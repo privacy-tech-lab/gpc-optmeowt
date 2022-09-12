@@ -13,7 +13,7 @@ domainlist simultaneously with the dynamic ruleset
 
 
 import { storage, stores } from '../background/storage';
-import { deleteAllDynamicRules, deleteDynamicRule, addDynamicRule, getFreshId, reloadDynamicRules } from './editRules';
+import { deleteAllDynamicRules, deleteDynamicRule, addDynamicRule, getFreshId } from './editRules';
 
 // TODO: Migrate editRules & editDomainlist to one file
 

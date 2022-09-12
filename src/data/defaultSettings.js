@@ -25,5 +25,4 @@ export const defaultSettings = {
 	'MODE': modes.protection,
 	'TUTORIAL_SHOWN': true,
 	'TUTORIAL_SHOWN_IN_POPUP': true,
-	'DOMAINLIST_ADAPTED': false,
 }
