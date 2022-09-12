@@ -138,6 +138,7 @@ async function createMessageListeners(){
   chrome.runtime.onMessage.addListener(function (message, _, __) {
     if (message.msg === "CSV_DATA_RESPONSE_TO_SETTINGS") {
       csvGenerator(csvData, message.data.titles);
+      return
     }
   });
 }
