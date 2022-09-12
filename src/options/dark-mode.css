@@ -134,11 +134,13 @@ Buttons and Switches
   box-shadow: 0 3px 6px -1px #111111 !important;
 }
 
+
 .darkmode--activated .optMode:hover {
-  background-color: #d4d4d4 !important;
+  color: var(--text-white) !important;
+  /*background-color: #d4d4d4 !important;
   border-color: #d4d4d4 !important;
   color: #4e4e4d !important;
-  box-shadow: 0 3px 6px #303030 !important;
+  box-shadow: 0 3px 6px #303030 !important;*/
 }
 
 
