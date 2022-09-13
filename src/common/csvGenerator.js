@@ -33,6 +33,9 @@ export function csvGenerator(csvData, titles) {
 		let stringifiedProp = JSON.stringify(csvData[property][columnTitles[i]]);
 		if (typeof stringifiedProp === "string") {
 		  stringifiedProp = stringifiedProp.replace(/"/g, "\'");  // handles quotes in csv files
+		  stringifiedProp = stringifiedProp.replaceAll("'", "");
+		  stringifiedProp = stringifiedProp.replaceAll("[{", "");
+		  stringifiedProp = stringifiedProp.replaceAll("}]", "");
 		}
 		csvContent += '\"' + stringifiedProp + "\",";
 	  }
