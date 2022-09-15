@@ -127,15 +127,14 @@ function eventListeners() {
           await storage.set(stores.settings,true,"TUTORIAL_SHOWN")
           walkthrough();
         }
-
-        }
-      });
-    createMessageListeners();
+      }
+    });
+  createMessageListeners();
 }
 
-async function createMessageListeners(){
-  const csvData = await storage.getStore(stores.analysis)
-  chrome.runtime.onMessage.addListener(function (message, _, __) {
+function createMessageListeners(){
+  chrome.runtime.onMessage.addListener(async function (message, _, __) {
+    const csvData = await storage.getStore(stores.analysis)
     if (message.msg === "CSV_DATA_RESPONSE_TO_SETTINGS") {
       csvGenerator(csvData, message.data.titles);
       return
