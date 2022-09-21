@@ -31,6 +31,12 @@
       "suggested_key": {
         "default": "Alt+Shift+C"
       }
+    },
+    "switch_to_analysis": {
+      "description": "Switches to analysis mode",
+      "suggested_key": {
+        "default": "Alt+Shift+T"
+      }
     }
   },
   "icons": {

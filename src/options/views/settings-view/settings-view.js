@@ -242,6 +242,13 @@ function loadChangeMode() {
   }
 }
 
+// Render correct button after switching to analysis mode using keyboard shortcuts
+chrome.commands.onCommand.addListener((command) => {
+  if (command === "switch_to_analysis") {
+    document.getElementById("optMode").checked = true;;
+  }
+});
+
 
 /******************************************************************************/
 

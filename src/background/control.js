@@ -164,3 +164,25 @@ chrome.runtime.onConnect.addListener(function(port) {
     }
   })
 })
+
+
+// Create keyboard shortcuts for switching to analysis mode
+async function switch_to_analysis(){
+  let mode = modes.analysis;
+  let isEnabled = await storage.get(stores.settings, "IS_ENABLED");
+  await storage.set(stores.settings, mode, "MODE");
+  if (isEnabled) {
+    enable();
+  }
+  chrome.runtime.sendMessage({
+    msg: "RELOAD_DUE_TO_MODE_CHANGE",
+    data: mode
+  }); 
+} 
+
+chrome.commands.onCommand.addListener((command) => {
+  if (command === "switch_to_analysis") {
+    switch_to_analysis();
+  }
+});
+
