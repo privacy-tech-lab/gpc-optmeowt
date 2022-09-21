@@ -35,6 +35,7 @@ WARNING:  Content Security Policies are DISABLED while Analysis Mode is ON.
 - See disableCSPPerRequest function for more details
 */
 
+import { csvGenerator } from "../../common/csvGenerator";
 import { modes } from "../../data/modes.js";
 import { defaultSettings } from "../../data/defaultSettings.js";
 import { stores, storage } from "./../storage.js";
@@ -664,6 +665,11 @@ function onCommittedCallback(details) {
   })
 }
 
+async function exportCSV() {
+  const csvData = await storage.getStore(stores.analysis)
+  csvGenerator(csvData, analysisUserendSkeleton());
+  return
+}
 
 function commandsHandler(command) {
   if (command === "run_analysis") {
@@ -671,6 +677,9 @@ function commandsHandler(command) {
   }
   if (command === "halt_analysis") {
     haltAnalysis();
+  }
+  if (command === "export_csv") {
+    exportCSV();
   }
 }
 

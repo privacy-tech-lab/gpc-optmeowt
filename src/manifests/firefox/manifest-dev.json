@@ -25,6 +25,12 @@
       "suggested_key": {
         "default": "Alt+Shift+S"
       }
+    },
+    "export_csv": {
+      "description": "Exports the csv data",
+      "suggested_key": {
+        "default": "Alt+Shift+C"
+      }
     }
   },
   "icons": {
