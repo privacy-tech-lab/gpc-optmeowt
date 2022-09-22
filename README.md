@@ -37,9 +37,7 @@ OptMeowt is developed and maintained by Kuba Alicki (@kalicki1), Oliver Wang (@O
 
 ## 2. Promo Video
 
-<p align="center">
-  <img width="800" alt="Scheme 0 screenshot." src="https://privacytechlab.org/static/images/OptMeowt_Movie.mp4">
-</p>
+[![Watch the Video](https://privacytechlab.org/static/images/OptMeowt_Movie.png)](https://privacytechlab.org/static/images/OptMeowt_Movie.mp4)
 
 ## 3. How does OptMeowt work?
 
