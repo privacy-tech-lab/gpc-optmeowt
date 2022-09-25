@@ -13,7 +13,7 @@
 <br>
 
 <p align="center">
-  <a href="https://www.privacytechlab.org/optmeowt/"><img src="https://github.com/privacy-tech-lab/gpc-optmeowt/blob/issue-19/src/assets/cat-w-text/optmeow-logo-circle.png" width="150px" height="150px" alt="OptMeowt logo"></a>
+  <a href="https://www.privacytechlab.org/"><img src="https://github.com/privacy-tech-lab/gpc-optmeowt/blob/issue-19/src/assets/cat-w-text/optmeow-logo-circle.png" width="150px" height="150px" alt="OptMeowt logo"></a>
 </p>
 
 # OptMeowt 🐾
