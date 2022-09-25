@@ -1,8 +1,7 @@
 /*
 Licensed per https://github.com/privacy-tech-lab/gpc-optmeowt/blob/main/LICENSE.md
-privacy-tech-lab, https://www.privacytechlab.org/
+privacy-tech-lab, https://privacytechlab.org/
 */
-
 
 /*
 contentScripts.js
@@ -11,18 +10,15 @@ contentScripts.js runs on every page and passes data to the background page
 https://developer.chrome.com/extensions/content_scripts
 */
 
-
-// Here is a resource I used to help setup the inject script functionality as 
+// Here is a resource I used to help setup the inject script functionality as
 // well as setup message listeners to pass data back to the background
 // https://www.freecodecamp.org/news/chrome-extension-message-passing-essentials/
-
 
 /******************************************************************************/
 /******************************************************************************/
 /**********              # USPAPI call helper functions              **********/
 /******************************************************************************/
 /******************************************************************************/
-
 
 // To be injected to call the USPAPI function in analysis mode
 const uspapi = `
@@ -32,7 +28,7 @@ const uspapi = `
       window.postMessage({ type: "USPAPI_TO_CONTENT_SCRIPT", result: data, url: currURL });
     });
   }
-`
+`;
 
 const uspapiRequest = `
   try {
@@ -43,7 +39,7 @@ const uspapiRequest = `
   } catch (e) {
     window.postMessage({ type: "USPAPI_TO_CONTENT_SCRIPT_REQUEST", result: "USPAPI_FAILED" });
   }
-`
+`;
 
 const runAnalysisProperty = `
 if (!window.runAnalysis) {
@@ -51,15 +47,13 @@ if (!window.runAnalysis) {
 		  window.postMessage({ type: "RUN_ANALYSIS", result: null });
       return;
     };
-};`
+};`;
 
 function injectScript(script) {
-  const scriptElem = document.createElement('script');
+  const scriptElem = document.createElement("script");
   scriptElem.innerHTML = script;
   document.documentElement.prepend(scriptElem);
 }
-
-
 
 /******************************************************************************/
 /******************************************************************************/
@@ -67,19 +61,18 @@ function injectScript(script) {
 /******************************************************************************/
 /******************************************************************************/
 
-
 async function getWellknown(url) {
   const response = await fetch(`${url.origin}/.well-known/gpc.json`);
-  let wellknownData
+  let wellknownData;
   try {
-	wellknownData = await response.json();
+    wellknownData = await response.json();
   } catch {
-    wellknownData = null
+    wellknownData = null;
   }
-	chrome.runtime.sendMessage({
-		msg: "CONTENT_SCRIPT_WELLKNOWN",
-		data: wellknownData,
-	});
+  chrome.runtime.sendMessage({
+    msg: "CONTENT_SCRIPT_WELLKNOWN",
+    data: wellknownData,
+  });
 }
 
 /**
@@ -89,30 +82,32 @@ async function getWellknown(url) {
  * https://developer.mozilla.org/en-US/docs/Glossary/IIFE
  */
 (() => {
-	/*   MAIN CONTENT SCRIPT PROCESSES GO HERE   */
+  /*   MAIN CONTENT SCRIPT PROCESSES GO HERE   */
 
-	let url = new URL(location); // location object
+  let url = new URL(location); // location object
 
-	/* (1) Gets Frame:0 Tab content */
-	// leave this commented out while debugging ANALYSIS MODE
-	// chrome.runtime.sendMessage({
-	// 	msg: "CONTENT_SCRIPT_TAB",
-	// 	data: Date.now(),
-	// });
+  /* (1) Gets Frame:0 Tab content */
+  // leave this commented out while debugging ANALYSIS MODE
+  // chrome.runtime.sendMessage({
+  // 	msg: "CONTENT_SCRIPT_TAB",
+  // 	data: Date.now(),
+  // });
 
-	/* (2) Injects scripts */
-  if ("$BROWSER" == 'firefox'){
-  window.addEventListener('load', function() {
-    // injectScript(uspapi);
-		injectScript(runAnalysisProperty);
-	}, false);
+  /* (2) Injects scripts */
+  if ("$BROWSER" == "firefox") {
+    window.addEventListener(
+      "load",
+      function () {
+        // injectScript(uspapi);
+        injectScript(runAnalysisProperty);
+      },
+      false
+    );
   }
 
-	/* (3) Fetches .well-known GPC file */
+  /* (3) Fetches .well-known GPC file */
   getWellknown(url);
 })();
-
-
 
 /******************************************************************************/
 /******************************************************************************/
@@ -120,31 +115,38 @@ async function getWellknown(url) {
 /******************************************************************************/
 /******************************************************************************/
 
-
-chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
+chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
   if (message.msg === "USPAPI_FETCH_REQUEST") {
     injectScript(uspapiRequest);
   }
 });
 
-window.addEventListener('message', function(event) {
-  if (event.data.type == "USPAPI_TO_CONTENT_SCRIPT"
-    // && typeof chrome.app.isInstalled !== 'undefined'
-  ) {
-    chrome.runtime.sendMessage({ 
-      msg: "USPAPI_TO_BACKGROUND", 
-      data: event.data.result, 
-      location: this.location.href
-    });
-  }
-  if (event.data.type == "USPAPI_TO_CONTENT_SCRIPT_REQUEST") {
-    chrome.runtime.sendMessage({
-      msg: "USPAPI_TO_BACKGROUND_FROM_FETCH_REQUEST", 
-      data: event.data.result, 
-      location: this.location.href
-    });
-  }
-	if (event.data.type == "RUN_ANALYSIS") {
-		chrome.runtime.sendMessage({ msg: "RUN_ANALYSIS", data: event.data.result });	
-	}
-}, false);
+window.addEventListener(
+  "message",
+  function (event) {
+    if (
+      event.data.type == "USPAPI_TO_CONTENT_SCRIPT"
+      // && typeof chrome.app.isInstalled !== 'undefined'
+    ) {
+      chrome.runtime.sendMessage({
+        msg: "USPAPI_TO_BACKGROUND",
+        data: event.data.result,
+        location: this.location.href,
+      });
+    }
+    if (event.data.type == "USPAPI_TO_CONTENT_SCRIPT_REQUEST") {
+      chrome.runtime.sendMessage({
+        msg: "USPAPI_TO_BACKGROUND_FROM_FETCH_REQUEST",
+        data: event.data.result,
+        location: this.location.href,
+      });
+    }
+    if (event.data.type == "RUN_ANALYSIS") {
+      chrome.runtime.sendMessage({
+        msg: "RUN_ANALYSIS",
+        data: event.data.result,
+      });
+    }
+  },
+  false
+);

@@ -1,8 +1,7 @@
 /*
 Licensed per https://github.com/privacy-tech-lab/gpc-optmeowt/blob/main/LICENSE.md
-privacy-tech-lab, https://www.privacytechlab.org/
+privacy-tech-lab, https://privacytechlab.org/
 */
-
 
 /*
 protection.js
@@ -10,7 +9,6 @@ protection.js
 protection.js (1) Implements our per-site functionality for the background listeners
           (2) Handles cached values & message passing to popup & options page
 */
-
 
 import { stores, storage } from "./../storage.js";
 import { modes } from "../../data/modes.js";
@@ -23,9 +21,12 @@ import { initCookiesOnInstall } from "./cookiesOnInstall.js";
 import psl from "psl";
 
 // TODO: Remove this when done
-import { addDynamicRule, deleteDynamicRule, reloadDynamicRules } from "../../common/editRules"
+import {
+  addDynamicRule,
+  deleteDynamicRule,
+  reloadDynamicRules,
+} from "../../common/editRules";
 import { updateRemovalScript } from "../../common/editDomainlist.js";
-
 
 /******************************************************************************/
 /******************************************************************************/
@@ -33,20 +34,21 @@ import { updateRemovalScript } from "../../common/editDomainlist.js";
 /******************************************************************************/
 /******************************************************************************/
 
-
-var domainlist = {};    // Caches & mirrors domainlist in storage
+var domainlist = {}; // Caches & mirrors domainlist in storage
 var isDomainlisted = defaultSettings["IS_DOMAINLISTED"];
-var tabs = {};          // Caches all tab infomration, i.e. requests, etc. 
-var wellknown = {};     // Caches wellknown info to be sent to popup
-var signalPerTab = {};  // Caches if a signal is sent to render the popup icon
-var activeTabID = 0;    // Caches current active tab id
-var sendSignal = true;  // Caches if the signal can be sent to the curr domain
+var tabs = {}; // Caches all tab infomration, i.e. requests, etc.
+var wellknown = {}; // Caches wellknown info to be sent to popup
+var signalPerTab = {}; // Caches if a signal is sent to render the popup icon
+var activeTabID = 0; // Caches current active tab id
+var sendSignal = true; // Caches if the signal can be sent to the curr domain
 
-var isFirefox = ("$BROWSER" === "firefox");
-
+var isFirefox = "$BROWSER" === "firefox";
 
 async function reloadVars() {
-  let storedDomainlisted = await storage.get(stores.settings, "IS_DOMAINLISTED");
+  let storedDomainlisted = await storage.get(
+    stores.settings,
+    "IS_DOMAINLISTED"
+  );
   if (storedDomainlisted) {
     isDomainlisted = storedDomainlisted;
   }
@@ -60,25 +62,20 @@ reloadVars();
 /******************************************************************************/
 /******************************************************************************/
 
-
 /*
-* The four following functions are all related to the four main listeners in 
-* `background.js`. These four functions implement all the other helper 
-* functions below
-*/
-
+ * The four following functions are all related to the four main listeners in
+ * `background.js`. These four functions implement all the other helper
+ * functions below
+ */
 
 const listenerCallbacks = {
-
   /**
    * Handles all signal processessing prior to sending request headers
    * @param {object} details - retrieved info passed into callback
-   * @returns {array} details.requestHeaders from addHeaders 
+   * @returns {array} details.requestHeaders from addHeaders
    */
   onBeforeSendHeaders: (details) => {
     updateDomainlist(details);
-
-
   },
 
   /**
@@ -101,19 +98,14 @@ const listenerCallbacks = {
    */
   onCommitted: async (details) => {
     updateDomainlist(details);
-
-  }
-
-} // closes listenerCallbacks object
-
-
+  },
+}; // closes listenerCallbacks object
 
 /******************************************************************************/
 /******************************************************************************/
 /**********      # Listener helper fxns - Main functionality         **********/
 /******************************************************************************/
 /******************************************************************************/
-
 
 /**
  * Attaches headers from `headers.js` to details.requestHeaders
@@ -133,7 +125,7 @@ function addHeaders(details) {
  * (1) Parse url to get domain for domainlist
  * (2) Update domains by adding current domain to domainlist in storage.
  * (3) Check to see if we should send signal.
- * 
+ *
  * Currently, it only adds to domainlist store as NULL if it doesnt exist
  * @param {Object} details - callback object according to Chrome API
  */
@@ -149,15 +141,12 @@ async function updateDomainlist(details) {
 }
 
 function updatePopupIcon(tabId) {
-      chrome.action.setIcon(
-        {
-          tabId: tabId,
-          path: "assets/face-icons/optmeow-face-circle-green-ring-128.png",
-        }
-      );
-  
+  chrome.action.setIcon({
+    tabId: tabId,
+    path: "assets/face-icons/optmeow-face-circle-green-ring-128.png",
+  });
 }
-    
+
 function logData(details) {
   let url = new URL(details.url);
   let parsed = psl.parse(url.hostname);
@@ -202,11 +191,10 @@ async function pullToDomainlistCache() {
   }
 }
 
-
 async function syncDomainlists() {
   // (1) Reconstruct a domainlist indexedDB object from storage
   // (2) Iterate through local domainlist
-  // --- If item in cache NOT in domainlistKeys/domainlistDB, add to storage 
+  // --- If item in cache NOT in domainlistKeys/domainlistDB, add to storage
   //     via storage.set()
   // (3) Iterate through all domain keys in indexedDB domainlist
   // --- If key NOT in cached domainlist, add to cached domainlist
@@ -242,25 +230,27 @@ async function syncDomainlists() {
 async function sendPrivacySignal(domain) {
   let sendSignal;
   const extensionEnabled = await storage.get(stores.settings, "IS_ENABLED");
-  const extensionDomainlisted = await storage.get(stores.settings, "IS_DOMAINLISTED");
+  const extensionDomainlisted = await storage.get(
+    stores.settings,
+    "IS_DOMAINLISTED"
+  );
   const domainDomainlisted = await storage.get(stores.domainlist, domain);
 
   if (extensionEnabled) {
     if (extensionDomainlisted) {
       // Recall we must flip the value of the domainlisted domain
       // due to how to how defined domainlisted values, corresponding to MV3
-      // declarativeNetRequest rule exceptions 
+      // declarativeNetRequest rule exceptions
       // (i.e., null => no rule exists, valued => exception rule exists)
-      sendSignal = (!domainDomainlisted) ? true : false;
+      sendSignal = !domainDomainlisted ? true : false;
     } else {
       sendSignal = true;
     }
   } else {
     sendSignal = false;
   }
-  return sendSignal
+  return sendSignal;
 }
-
 
 /******************************************************************************/
 /******************************************************************************/
@@ -268,11 +258,10 @@ async function sendPrivacySignal(domain) {
 /******************************************************************************/
 /******************************************************************************/
 
-
 function handleSendMessageError() {
   const error = chrome.runtime.lastError;
-  if (error){
-    console.warn(error.message)
+  if (error) {
+    console.warn(error.message);
   }
 }
 
@@ -284,17 +273,19 @@ function dataToPopup(wellknownData) {
     requestsData = tabs[activeTabID].REQUEST_DOMAINS;
   }
 
-  chrome.tabs.query({active: true, currentWindow: true}, function(tabs){
-
+  chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
     let popupData = {
       requests: requestsData,
-      wellknown: wellknownData
-    }
+      wellknown: wellknownData,
+    };
 
-    chrome.runtime.sendMessage({
-      msg: "POPUP_PROTECTION_DATA",
-      data: popupData
-    }, handleSendMessageError);
+    chrome.runtime.sendMessage(
+      {
+        msg: "POPUP_PROTECTION_DATA",
+        data: popupData,
+      },
+      handleSendMessageError
+    );
   });
 }
 
@@ -303,19 +294,18 @@ function dataToPopupRequests() {
 
   if (tabs[activeTabID] !== undefined) {
     requestsData = tabs[activeTabID].REQUEST_DOMAINS;
-
   }
 
-  chrome.tabs.query({active: true, currentWindow: true}, function(tabs){
-
-    chrome.runtime.sendMessage({
-      msg: "POPUP_PROTECTION_DATA_REQUESTS",
-      data: requestsData
-    }, handleSendMessageError);
+  chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+    chrome.runtime.sendMessage(
+      {
+        msg: "POPUP_PROTECTION_DATA_REQUESTS",
+        data: requestsData,
+      },
+      handleSendMessageError
+    );
   });
 }
-
-
 
 /******************************************************************************/
 /******************************************************************************/
@@ -323,96 +313,88 @@ function dataToPopupRequests() {
 /******************************************************************************/
 /******************************************************************************/
 
-
 /**
  * Currently only handles syncing domainlists between storage and memory
  * This runs when the popup disconnects from the background page
- * @param {Port} port 
+ * @param {Port} port
  */
 function onConnectHandler(port) {
   if (port.name === "POPUP") {
-    port.onDisconnect.addListener(function() {
+    port.onDisconnect.addListener(function () {
       syncDomainlists();
-    })
+    });
   }
 }
 
-
 /**
- * This is currently only to handle adding the GPC DOM signal. 
- * I'm not sure how to fit it into an async call, it doesn't want to connect. 
- * It would be nice to merge the two onMessage handlers. 
+ * This is currently only to handle adding the GPC DOM signal.
+ * I'm not sure how to fit it into an async call, it doesn't want to connect.
+ * It would be nice to merge the two onMessage handlers.
  * TODO: This method still seems to have a timing issue. Doesn't always show DOM signal as thumbs up on reference site.
  * @returns {Bool} true (lets us send asynchronous responses to senders)
  */
 function onMessageHandlerSynchronous(message, sender, sendResponse) {
-  if (message.msg === "APPEND_GPC_PROP") { 
+  if (message.msg === "APPEND_GPC_PROP") {
     let url = new URL(sender.origin);
     let parsed = psl.parse(url.hostname);
     let domain = parsed.domain;
 
     const r = sendPrivacySignal(domain);
     r.then((r) => {
-      const response = { 
+      const response = {
         msg: "APPEND_GPC_PROP_RESPONSE",
-        sendGPC: r
-      }
+        sendGPC: r,
+      };
       sendResponse(response);
-    })
+    });
   }
   return true;
 }
 
-
 /**
-   * Listeners for information from --POPUP-- or --OPTIONS-- page
-   * This is the main "hub" for message passing between the extension components
-   * https://developer.chrome.com/docs/extensions/mv3/messaging/
-   */
+ * Listeners for information from --POPUP-- or --OPTIONS-- page
+ * This is the main "hub" for message passing between the extension components
+ * https://developer.chrome.com/docs/extensions/mv3/messaging/
+ */
 async function onMessageHandlerAsync(message, sender, sendResponse) {
   if (message.msg === "CHANGE_IS_DOMAINLISTED") {
     let isDomainlisted = message.data.isDomainlisted;
     storage.set(stores.settings, isDomainlisted, "IS_DOMAINLISTED");
-
   }
   if (message.msg === "SET_TO_DOMAINLIST") {
     let { domain, key } = message.data;
-    domainlist[domain] = key;                     // Sets to cache
-    addDynamicRule(id, domain)
-    storage.set(stores.domainlist, key, domain);  // Sets to long term storage
+    domainlist[domain] = key; // Sets to cache
+    addDynamicRule(id, domain);
+    storage.set(stores.domainlist, key, domain); // Sets to long term storage
   }
   if (message.msg === "POPUP_PROTECTION_REQUESTS") {
-    dataToPopupRequests()
+    dataToPopupRequests();
   }
   if (message.msg === "CONTENT_SCRIPT_WELLKNOWN") {
-
     let url = new URL(sender.origin);
     let parsed = psl.parse(url.hostname);
     let domain = parsed.domain;
 
     let tabID = sender.tab.id;
     let wellknown = [];
-    let sendSignal = await storage.get(stores.domainlist,domain)
-    
+    let sendSignal = await storage.get(stores.domainlist, domain);
+
     wellknown[tabID] = message.data;
     let wellknownData = message.data;
-    if (wellknown[tabID] === null && sendSignal == null){
+    if (wellknown[tabID] === null && sendSignal == null) {
       initIAB();
       updatePopupIcon(tabID);
     } else if (wellknown[tabID]["gpc"] === true && sendSignal == null) {
       initIAB();
-        chrome.action.setIcon(
-            {
-              tabId: tabID,
-              path: "assets/face-icons/optmeow-face-circle-green-128.png",
-            }
-          );
+      chrome.action.setIcon({
+        tabId: tabID,
+        path: "assets/face-icons/optmeow-face-circle-green-128.png",
+      });
     }
     chrome.runtime.onMessage.addListener(function (message, _, __) {
       if (message.msg === "POPUP_PROTECTION") {
         dataToPopup(wellknownData);
       }
-
     });
   }
 
@@ -446,11 +428,10 @@ async function onMessageHandlerAsync(message, sender, sendResponse) {
 
     // This is specifically for when cookies are removed when a user turns off
     // do not sell for a particular site, and chooses to re-enable it
-    initCookiesPerDomain(message.data)
+    initCookiesPerDomain(message.data);
   }
-  return true;    // Async callbacks require this
+  return true; // Async callbacks require this
 }
-
 
 function initMessagePassing() {
   chrome.runtime.onConnect.addListener(onConnectHandler);
@@ -464,14 +445,11 @@ function closeMessagePassing() {
   chrome.runtime.onMessage.removeListener(onMessageHandlerSynchronous);
 }
 
-
-
 /******************************************************************************/
 /******************************************************************************/
 /**********       # Other initializers - run once per enable         **********/
 /******************************************************************************/
 /******************************************************************************/
-
 
 /**
  * Listener for tab switch that updates the cached current tab variable
@@ -481,7 +459,7 @@ function onActivatedProtectionMode(info) {
 }
 
 // Handles misc. setup & setup listeners
-function initSetup () {
+function initSetup() {
   pullToDomainlistCache();
 
   // Runs on startup to initialize the cached current tab variable
@@ -492,7 +470,7 @@ function initSetup () {
   });
 
   chrome.tabs.onActivated.addListener(onActivatedProtectionMode);
-} 
+}
 
 function closeSetup() {
   chrome.tabs.onActivated.removeListener(onActivatedProtectionMode);
@@ -501,16 +479,14 @@ function closeSetup() {
 /**
  * Inteded to facilitate transitioning between analysis & protection modes
  */
- function wipeLocalVars() {
-  domainlist = {};    // Caches & mirrors domainlist in storage
-  tabs = {};          // Caches all tab infomration, i.e. requests, etc. 
-  wellknown = {};     // Caches wellknown info to be sent to popup
-  signalPerTab = {};  // Caches if a signal is sent to render the popup icon
-  activeTabID = 0;    // Caches current active tab id
-  sendSignal = false;  // Caches if the signal can be sent to the curr domain
+function wipeLocalVars() {
+  domainlist = {}; // Caches & mirrors domainlist in storage
+  tabs = {}; // Caches all tab infomration, i.e. requests, etc.
+  wellknown = {}; // Caches wellknown info to be sent to popup
+  signalPerTab = {}; // Caches if a signal is sent to render the popup icon
+  activeTabID = 0; // Caches current active tab id
+  sendSignal = false; // Caches if the signal can be sent to the curr domain
 }
-
-
 
 /******************************************************************************/
 /******************************************************************************/
@@ -518,17 +494,16 @@ function closeSetup() {
 /******************************************************************************/
 /******************************************************************************/
 
-
 export function init() {
   reloadVars();
-  initCookiesOnInstall();   // NOTE: This replaces ALL do not sell cookies
-	enableListeners(listenerCallbacks);
+  initCookiesOnInstall(); // NOTE: This replaces ALL do not sell cookies
+  enableListeners(listenerCallbacks);
   initMessagePassing();
   initSetup();
 }
 
 export function halt() {
-	disableListeners(listenerCallbacks);
+  disableListeners(listenerCallbacks);
   closeMessagePassing();
   closeSetup();
   wipeLocalVars();

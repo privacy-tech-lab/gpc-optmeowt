@@ -1,8 +1,7 @@
 /*
 Licensed per https://github.com/privacy-tech-lab/gpc-optmeowt/blob/main/LICENSE.md
-privacy-tech-lab, https://www.privacytechlab.org/
+privacy-tech-lab, https://privacytechlab.org/
 */
-
 
 /*
 popup.js
@@ -10,30 +9,28 @@ popup.js
 popup.js supplements and renders complex elements on popup.html
 */
 
-
 import { stores, storage } from "../background/storage";
 import { initIAB, isValidSignalIAB } from "../background/cookiesIAB";
-import { csvGenerator } from "../common/csvGenerator"
+import { csvGenerator } from "../common/csvGenerator";
 import { modes } from "../data/modes.js";
-import "../../node_modules/uikit/dist/css/uikit.min.css"
-import "../../node_modules/animate.css/animate.min.css"
-import "./styles.css"
-import psl from "psl"
-import "../../node_modules/uikit/dist/js/uikit"
-import "../../node_modules/uikit/dist/js/uikit-icons"
-import "../../node_modules/@popperjs/core/dist/umd/popper"
+import "../../node_modules/uikit/dist/css/uikit.min.css";
+import "../../node_modules/animate.css/animate.min.css";
+import "./styles.css";
+import psl from "psl";
+import "../../node_modules/uikit/dist/js/uikit";
+import "../../node_modules/uikit/dist/js/uikit-icons";
+import "../../node_modules/@popperjs/core/dist/umd/popper";
 import tippy from "../../node_modules/tippy.js/dist/tippy-bundle.umd";
-import UIkit from "uikit"
+import UIkit from "uikit";
 import Darkmode from "../theme/darkmode";
 
 import {
   addDomainToDomainlistAndRules,
   removeDomainFromDomainlistAndRules,
-  updateRemovalScript
+  updateRemovalScript,
 } from "../common/editDomainlist.js";
 
 import { reloadDynamicRules, addDynamicRule } from "../common/editRules.js";
-
 
 // Global scope settings variables
 var isEnabled;
@@ -52,7 +49,6 @@ var analysis_userend;
 // Darkmode
 const darkmode = new Darkmode();
 
-
 // TODO: Update the 3rd party domain listeners to correctly toggle their 3rd- \
 // TODO: --party sites, instead of the 1st party site (they all connect to that)
 
@@ -68,13 +64,11 @@ function changeOptModeIcon() {
 
   let p = document.getElementById("p");
   let a = document.getElementById("a");
-  a.style.display="none";
-  p.style.display="none";
+  a.style.display = "none";
+  p.style.display = "none";
   // optMode badge icon
-  (mode === modes.analysis) ? a.style.display="" : p.style.display=""
-
+  mode === modes.analysis ? (a.style.display = "") : (p.style.display = "");
 }
-
 
 // Changes-the-icon listener
 function changeOptModeIconListenerCallback() {
@@ -82,13 +76,11 @@ function changeOptModeIconListenerCallback() {
 
   let p = document.getElementById("p");
   let a = document.getElementById("a");
-  a.style.display="none";
-  p.style.display="none";
+  a.style.display = "none";
+  p.style.display = "none";
   // optMode badge icon
-  (mode === modes.analysis) ? a.style.display="" : p.style.display=""
-
+  mode === modes.analysis ? (a.style.display = "") : (p.style.display = "");
 }
-
 
 //Init: initialize darkmode button (NOTE: accesses global scope `mode`)
 function generateDarkmodeElement() {
@@ -112,15 +104,14 @@ function generateDarkmodeElement() {
 
   document.getElementById("darkSwitch").addEventListener("click", () => {
     chrome.runtime.sendMessage({
-  	  msg: "DARKSWITCH_PRESSED",
+      msg: "DARKSWITCH_PRESSED",
     });
     changeOptModeIconListenerCallback();
     darkmode.toggle();
   });
 }
 
-
-// Fetches the current domain 
+// Fetches the current domain
 function getCurrentParsedDomain() {
   return new Promise((resolve, reject) => {
     try {
@@ -129,19 +120,18 @@ function getCurrentParsedDomain() {
         let url = new URL(tab.url);
         let parsed = psl.parse(url.hostname);
         let domain = parsed.domain;
-        parsedDomain = domain;  // for global scope variable
+        parsedDomain = domain; // for global scope variable
         resolve(domain);
       });
-    } catch(e) {
+    } catch (e) {
       reject();
     }
-  })
+  });
 }
-
 
 /**
  * In sync with global scope `parsedDomain`
- * @param {String} parsedDomain 
+ * @param {String} parsedDomain
  */
 function renderFirstPartyDomain(parsedDomain) {
   if (parsedDomain) {
@@ -151,7 +141,6 @@ function renderFirstPartyDomain(parsedDomain) {
     document.getElementById("domain-title").style.display = "none";
   }
 }
-
 
 // Extension on/off renderer helper
 
@@ -168,7 +157,8 @@ function renderExtenionIsEnabledDisabled(isEnabled, isDomainlisted) {
       .setAttribute("uk-tooltip", "Disable");
     document.getElementById("content").style.opacity = "1";
     document.getElementById("extension-disabled-message").style.opacity = "0";
-    document.getElementById("extension-disabled-message").style.display = "none";
+    document.getElementById("extension-disabled-message").style.display =
+      "none";
   } else {
     document.getElementById("extension-disabled-message").style.display = "";
     document.getElementById("img").src = "../assets/play-circle-outline.svg";
@@ -180,18 +170,18 @@ function renderExtenionIsEnabledDisabled(isEnabled, isDomainlisted) {
   }
 }
 
-function turnonoff(isEnabled){
-  if ("$BROWSER" == 'chrome'){
-    if (isEnabled){
+function turnonoff(isEnabled) {
+  if ("$BROWSER" == "chrome") {
+    if (isEnabled) {
       chrome.scripting.updateContentScripts([
         {
-        "id": "2",
-        "matches": ["<all_urls>"],
-        "js": ["content-scripts/registration/gpc-remove.js"],
-        "runAt": "document_start"
-        }
-      ])
-      addDynamicRule(4999,"*");
+          id: "2",
+          matches: ["<all_urls>"],
+          js: ["content-scripts/registration/gpc-remove.js"],
+          runAt: "document_start",
+        },
+      ]);
+      addDynamicRule(4999, "*");
     } else {
       updateRemovalScript();
       reloadDynamicRules();
@@ -199,36 +189,50 @@ function turnonoff(isEnabled){
   }
 }
 
-function listenerExtensionIsEnabledDisabledButton(isEnabled, isDomainlisted, mode) {
-  document.getElementById("enable-disable").addEventListener("click", async () => {
+function listenerExtensionIsEnabledDisabledButton(
+  isEnabled,
+  isDomainlisted,
+  mode
+) {
+  document
+    .getElementById("enable-disable")
+    .addEventListener("click", async () => {
+      isEnabled = await storage.get(stores.settings, "IS_ENABLED");
 
-    isEnabled = await storage.get(stores.settings, "IS_ENABLED");
-    
-    if (isEnabled) {
-      document.getElementById("extension-disabled-message").style.display = "";
-      document.getElementById("img").src =
-        "../assets/play-circle-outline.svg";
-      document
-        .getElementById("enable-disable")
-        .setAttribute("uk-tooltip", "Enable");
-      document.getElementById("content").style.opacity = "0.1";
-      document.getElementById("extension-disabled-message").style.opacity = "1";
-      chrome.runtime.sendMessage({ msg: "TURN_ON_OFF", data: { isEnabled: false } });
-    } else {
-      document.getElementById("img").src =
-        "../assets/pause-circle-outline.svg";
-      document
-        .getElementById("enable-disable")
-        .setAttribute("uk-tooltip", "Disable");
-      document.getElementById("content").style.opacity = "1";
-      document.getElementById("extension-disabled-message").style.opacity = "0";
-      document.getElementById("extension-disabled-message").style.display = "none";
-      chrome.runtime.sendMessage({ msg: "TURN_ON_OFF", data: { isEnabled: true } });
-    }
-    turnonoff(isEnabled);
-  });
+      if (isEnabled) {
+        document.getElementById("extension-disabled-message").style.display =
+          "";
+        document.getElementById("img").src =
+          "../assets/play-circle-outline.svg";
+        document
+          .getElementById("enable-disable")
+          .setAttribute("uk-tooltip", "Enable");
+        document.getElementById("content").style.opacity = "0.1";
+        document.getElementById("extension-disabled-message").style.opacity =
+          "1";
+        chrome.runtime.sendMessage({
+          msg: "TURN_ON_OFF",
+          data: { isEnabled: false },
+        });
+      } else {
+        document.getElementById("img").src =
+          "../assets/pause-circle-outline.svg";
+        document
+          .getElementById("enable-disable")
+          .setAttribute("uk-tooltip", "Disable");
+        document.getElementById("content").style.opacity = "1";
+        document.getElementById("extension-disabled-message").style.opacity =
+          "0";
+        document.getElementById("extension-disabled-message").style.display =
+          "none";
+        chrome.runtime.sendMessage({
+          msg: "TURN_ON_OFF",
+          data: { isEnabled: true },
+        });
+      }
+      turnonoff(isEnabled);
+    });
 }
-
 
 // Domain counter for Protection mode helper
 
@@ -243,7 +247,6 @@ async function renderDomainCounter() {
   `;
 }
 
-
 // First party domain and the Do Not Sell listener helper
 
 async function renderFirstPartyDomainDNSToggle() {
@@ -251,7 +254,10 @@ async function renderFirstPartyDomainDNSToggle() {
   let text = "";
   if (parsedDomain) {
     try {
-      const parsedDomainValue = await storage.get(stores.domainlist, parsedDomain);
+      const parsedDomainValue = await storage.get(
+        stores.domainlist,
+        parsedDomain
+      );
       // TODO: Note: we must flip the logic here because of the logical truthiness flip in the domainlist
       if (!parsedDomainValue) {
         checkbox = `<input type="checkbox" id="input" checked/><span></span>`;
@@ -262,7 +268,7 @@ async function renderFirstPartyDomainDNSToggle() {
       }
       document.getElementById("switch-label").innerHTML = checkbox;
       document.getElementById("more-info-text").innerHTML = text;
-    } catch(e) {
+    } catch (e) {
       console.error(e);
       document.getElementById("switch-label").innerHTML = checkbox;
       document.getElementById("more-info-text").innerHTML = text;
@@ -275,7 +281,10 @@ async function renderFirstPartyDomainDNSToggle() {
 
 async function listenerFirstPartyDomainDNSToggleCallback() {
   chrome.runtime.sendMessage({ msg: "TURN_ON_OFF", data: { isEnabled: true } });
-  chrome.runtime.sendMessage({ msg: "CHANGE_IS_DOMAINLISTED", data: { isDomainlisted: true } });
+  chrome.runtime.sendMessage({
+    msg: "CHANGE_IS_DOMAINLISTED",
+    data: { isDomainlisted: true },
+  });
   const parsedDomainValue = await storage.get(stores.domainlist, parsedDomain);
   let elemString = "";
   if (!parsedDomainValue) {
@@ -290,110 +299,130 @@ async function listenerFirstPartyDomainDNSToggleCallback() {
 }
 
 function listenerFirstPartyDomainDNSToggle() {
-  document.getElementById("switch-label").addEventListener(
-    "click", listenerFirstPartyDomainDNSToggleCallback
-  );
+  document
+    .getElementById("switch-label")
+    .addEventListener("click", listenerFirstPartyDomainDNSToggleCallback);
 }
 
 function removeFirstPartyDomainDNSToggle() {
-  document.getElementById("switch-label").removeEventListener(
-    "click", listenerFirstPartyDomainDNSToggleCallback
-  );
+  document
+    .getElementById("switch-label")
+    .removeEventListener("click", listenerFirstPartyDomainDNSToggleCallback);
   document.getElementById("switch-label").innerHTML = "";
   document.getElementById("more-info-text").innerHTML = "";
 }
 
-
 // Dropdown helpers
 
 function renderDropdown1Toggle() {
-  if (document.getElementById("dropdown-1-expandable").style.display === "none") {
-    document.getElementById("dropdown-chevron-1").src = "../assets/chevron-down.svg"
-    document.getElementById("dropdown-1-expandable").style.display = "none"
-    document.getElementById("dropdown-1").classList.remove("dropdown-tab-click")
-    document.getElementById("divider-4").style.display = "none"
+  if (
+    document.getElementById("dropdown-1-expandable").style.display === "none"
+  ) {
+    document.getElementById("dropdown-chevron-1").src =
+      "../assets/chevron-down.svg";
+    document.getElementById("dropdown-1-expandable").style.display = "none";
+    document
+      .getElementById("dropdown-1")
+      .classList.remove("dropdown-tab-click");
+    document.getElementById("divider-4").style.display = "none";
   } else {
-    document.getElementById("dropdown-chevron-1").src = "../assets/chevron-up.svg"
-    document.getElementById("dropdown-1-expandable").style.display = ""
-    document.getElementById("dropdown-1").classList.add("dropdown-tab-click")
-    document.getElementById("divider-4").style.display = ""
+    document.getElementById("dropdown-chevron-1").src =
+      "../assets/chevron-up.svg";
+    document.getElementById("dropdown-1-expandable").style.display = "";
+    document.getElementById("dropdown-1").classList.add("dropdown-tab-click");
+    document.getElementById("divider-4").style.display = "";
   }
 }
 
 function renderDropdown2Toggle() {
-  if (document.getElementById("dropdown-2-expandable").style.display === "none") {
-    document.getElementById("dropdown-chevron-2").src = "../assets/chevron-down.svg"
-    document.getElementById("dropdown-2-expandable").style.display = "none"
-    document.getElementById("dropdown-2").classList.remove("dropdown-tab-click")
-    document.getElementById("divider-6").style.display = "none"
+  if (
+    document.getElementById("dropdown-2-expandable").style.display === "none"
+  ) {
+    document.getElementById("dropdown-chevron-2").src =
+      "../assets/chevron-down.svg";
+    document.getElementById("dropdown-2-expandable").style.display = "none";
+    document
+      .getElementById("dropdown-2")
+      .classList.remove("dropdown-tab-click");
+    document.getElementById("divider-6").style.display = "none";
   } else {
-    document.getElementById("dropdown-chevron-2").src = "../assets/chevron-up.svg"
-    document.getElementById("dropdown-2-expandable").style.display = ""
-    document.getElementById("dropdown-2").classList.add("dropdown-tab-click")
-    document.getElementById("divider-6").style.display = ""
+    document.getElementById("dropdown-chevron-2").src =
+      "../assets/chevron-up.svg";
+    document.getElementById("dropdown-2-expandable").style.display = "";
+    document.getElementById("dropdown-2").classList.add("dropdown-tab-click");
+    document.getElementById("divider-6").style.display = "";
   }
 }
 
 function listenerDropdown1ToggleCallback() {
-  if (document.getElementById("dropdown-1-expandable").style.display === "none") {
-    document.getElementById("dropdown-chevron-1").src = "../assets/chevron-up.svg"
-    document.getElementById("dropdown-1-expandable").style.display = ""
-    document.getElementById("dropdown-1").classList.add("dropdown-tab-click")
-    document.getElementById("divider-4").style.display = ""
+  if (
+    document.getElementById("dropdown-1-expandable").style.display === "none"
+  ) {
+    document.getElementById("dropdown-chevron-1").src =
+      "../assets/chevron-up.svg";
+    document.getElementById("dropdown-1-expandable").style.display = "";
+    document.getElementById("dropdown-1").classList.add("dropdown-tab-click");
+    document.getElementById("divider-4").style.display = "";
   } else {
-    document.getElementById("dropdown-chevron-1").src = "../assets/chevron-down.svg"
-    document.getElementById("dropdown-1-expandable").style.display = "none"
-    document.getElementById("dropdown-1").classList.remove("dropdown-tab-click")
-    document.getElementById("divider-4").style.display = "none"
+    document.getElementById("dropdown-chevron-1").src =
+      "../assets/chevron-down.svg";
+    document.getElementById("dropdown-1-expandable").style.display = "none";
+    document
+      .getElementById("dropdown-1")
+      .classList.remove("dropdown-tab-click");
+    document.getElementById("divider-4").style.display = "none";
   }
 }
 
 function listenerDropdown2ToggleCallback() {
-  if (document.getElementById("dropdown-2-expandable").style.display === "none") {
-    document.getElementById("dropdown-chevron-2").src = "../assets/chevron-up.svg"
-    document.getElementById("dropdown-2-expandable").style.display = ""
-    document.getElementById("dropdown-2").classList.add("dropdown-tab-click")
-    document.getElementById("divider-6").style.display = ""
+  if (
+    document.getElementById("dropdown-2-expandable").style.display === "none"
+  ) {
+    document.getElementById("dropdown-chevron-2").src =
+      "../assets/chevron-up.svg";
+    document.getElementById("dropdown-2-expandable").style.display = "";
+    document.getElementById("dropdown-2").classList.add("dropdown-tab-click");
+    document.getElementById("divider-6").style.display = "";
   } else {
-    document.getElementById("dropdown-chevron-2").src = "../assets/chevron-down.svg"
-    document.getElementById("dropdown-2-expandable").style.display = "none"
-    document.getElementById("dropdown-2").classList.remove("dropdown-tab-click")
-    document.getElementById("divider-6").style.display = "none"
+    document.getElementById("dropdown-chevron-2").src =
+      "../assets/chevron-down.svg";
+    document.getElementById("dropdown-2-expandable").style.display = "none";
+    document
+      .getElementById("dropdown-2")
+      .classList.remove("dropdown-tab-click");
+    document.getElementById("divider-6").style.display = "none";
   }
 }
 
 function listenerDropdown1Toggle() {
-  document.getElementById("dropdown-1").addEventListener("click", 
-    listenerDropdown1ToggleCallback
-  )
+  document
+    .getElementById("dropdown-1")
+    .addEventListener("click", listenerDropdown1ToggleCallback);
 }
 
 function listenerDropdown2Toggle() {
-  document.getElementById("dropdown-2").addEventListener("click", 
-    listenerDropdown2ToggleCallback
-  )
+  document
+    .getElementById("dropdown-2")
+    .addEventListener("click", listenerDropdown2ToggleCallback);
 }
 
 function removeListenerDropdown1Toggle() {
-  document.getElementById("dropdown-1").removeEventListener("click", 
-    listenerDropdown1ToggleCallback
-  )
+  document
+    .getElementById("dropdown-1")
+    .removeEventListener("click", listenerDropdown1ToggleCallback);
 }
 
 function removeListenerDropdown2Toggle() {
-  document.getElementById("dropdown-2").removeEventListener("click", 
-    listenerDropdown2ToggleCallback
-  )
+  document
+    .getElementById("dropdown-2")
+    .removeEventListener("click", listenerDropdown2ToggleCallback);
 }
-
-
 
 /******************************************************************************/
 /******************************************************************************/
 /**********                 # Inflates main content                  **********/
 /******************************************************************************/
 /******************************************************************************/
-
 
 /**
  * Redraws the popup for protection mode
@@ -435,15 +464,14 @@ function showProtectionInfo() {
     msg: "POPUP_PROTECTION",
     data: null,
   });
-  
-  if ("$BROWSER" == 'chrome'){
+
+  if ("$BROWSER" == "chrome") {
     chrome.runtime.sendMessage({
       msg: "POPUP_PROTECTION_REQUESTS",
       data: null,
     });
   }
 }
-
 
 /**
  * Redraws the popup for analysis mode
@@ -473,13 +501,12 @@ function showAnalysisInfo() {
   document.getElementById("domain-list").style.display = "none";
 
   listenerDropdown1Toggle();
-  
+
   chrome.runtime.sendMessage({
     msg: "POPUP_ANALYSIS",
     data: null,
   });
 }
-
 
 /**
  * In sync with global scope `mode`
@@ -494,7 +521,6 @@ async function switchMode(mode) {
   }
 }
 
-
 /**
  * Initializes the popup window after DOM content is loaded
  * @param {Object} event - contains information about the event
@@ -508,13 +534,11 @@ document.addEventListener("DOMContentLoaded", async (event) => {
   renderExtenionIsEnabledDisabled(isEnabled, isDomainlisted); // Render global ENABLED/DISABLED mode
   listenerExtensionIsEnabledDisabledButton(isEnabled);
 
-  renderFirstPartyDomain(parsedDomain); // Render 1P domain 
+  renderFirstPartyDomain(parsedDomain); // Render 1P domain
 
-  generateDarkmodeElement();  // Render darkmode
+  generateDarkmodeElement(); // Render darkmode
   switchMode(mode); // requires global scope mode to be loaded
-})
-
-
+});
 
 /******************************************************************************/
 /******************************************************************************/
@@ -522,30 +546,40 @@ document.addEventListener("DOMContentLoaded", async (event) => {
 /******************************************************************************/
 /******************************************************************************/
 
-
 /**
  * Builds the listener to enable toggling 3rd party domains on/off in domainlist
  * @param {String} requestDomain - the domain related to the element which
  * the listener should be attached
  */
 function addThirdPartyDomainDNSToggleListener(requestDomain) {
-  document.getElementById(`input-${requestDomain}`).addEventListener("click", async () => {
-    chrome.runtime.sendMessage({ msg: "TURN_ON_OFF", data: { isEnabled: true } });
-    chrome.runtime.sendMessage({ msg: "CHANGE_IS_DOMAINLISTED", data: { isDomainlisted: true } });
-    const requestDomainValue = await storage.get(stores.domainlist, requestDomain)
-    let elemString = "";
-    if (!requestDomainValue) {
-      elemString = "Do Not Sell Disabled";
-      addDomainToDomainlistAndRules(requestDomain);
-    } else {
-      elemString = "Do Not Sell Enabled";
-      removeDomainFromDomainlistAndRules(requestDomain);
-
-    }
-    updateRemovalScript();
-    document.getElementById(`dns-enabled-text-${requestDomain}`).innerHTML = elemString;
-  })
-};
+  document
+    .getElementById(`input-${requestDomain}`)
+    .addEventListener("click", async () => {
+      chrome.runtime.sendMessage({
+        msg: "TURN_ON_OFF",
+        data: { isEnabled: true },
+      });
+      chrome.runtime.sendMessage({
+        msg: "CHANGE_IS_DOMAINLISTED",
+        data: { isDomainlisted: true },
+      });
+      const requestDomainValue = await storage.get(
+        stores.domainlist,
+        requestDomain
+      );
+      let elemString = "";
+      if (!requestDomainValue) {
+        elemString = "Do Not Sell Disabled";
+        addDomainToDomainlistAndRules(requestDomain);
+      } else {
+        elemString = "Do Not Sell Enabled";
+        removeDomainFromDomainlistAndRules(requestDomain);
+      }
+      updateRemovalScript();
+      document.getElementById(`dns-enabled-text-${requestDomain}`).innerHTML =
+        elemString;
+    });
+}
 
 /**
  * Builds the requested domains HTML of the popup window
@@ -555,27 +589,25 @@ function addThirdPartyDomainDNSToggleListener(requestDomain) {
 async function buildDomains(requests) {
   let domain = await getCurrentParsedDomain();
   let items = "";
-  const domainlistKeys = await storage.getAllKeys(stores.domainlist)
-  const domainlistValues = await storage.getAll(stores.domainlist)
+  const domainlistKeys = await storage.getAllKeys(stores.domainlist);
+  const domainlistValues = await storage.getAll(stores.domainlist);
 
   // Sets the 3rd party domain elements
   for (let requestDomain in requests) {
-    if (requestDomain != domain){
+    if (requestDomain != domain) {
+      let checkbox = "";
+      let text = "";
+      // Find correct index
+      let index = domainlistKeys.indexOf(requestDomain);
+      if (index > -1 && !domainlistValues[index]) {
+        checkbox = `<input type="checkbox" id="input-${requestDomain}" checked/>`;
+        text = "Do Not Sell Enabled";
+      } else {
+        checkbox = `<input type="checkbox" id="input-${requestDomain}"/>`;
+        text = "Do Not Sell Disabled";
+      }
 
-    let checkbox = ""
-    let text = ""
-    // Find correct index
-    let index = domainlistKeys.indexOf(requestDomain)
-    if (index > -1 && !domainlistValues[index]) {
-      checkbox = `<input type="checkbox" id="input-${requestDomain}" checked/>`
-      text = "Do Not Sell Enabled"
-    } else {
-      checkbox = `<input type="checkbox" id="input-${requestDomain}"/>`
-      text = "Do Not Sell Disabled"
-    }
-
-    items +=
-      `
+      items += `
   <li>
     <div
       class="blue-heading uk-flex-inline uk-width-1-1 uk-flex-center uk-text-center uk-text-bold uk-text-truncate"
@@ -610,19 +642,16 @@ async function buildDomains(requests) {
     </div>
   </li>
   `;
+    }
   }
-}
   document.getElementById("dropdown-1-expandable").innerHTML = items;
 
   // Sets the 3rd party domain toggle listeners
   for (let requestDomain in requests) {
-    if (requestDomain != domain){
-
-    addThirdPartyDomainDNSToggleListener(requestDomain)
+    if (requestDomain != domain) {
+      addThirdPartyDomainDNSToggleListener(requestDomain);
     }
   }
-
-
 }
 
 /**
@@ -631,7 +660,6 @@ async function buildDomains(requests) {
  * (requests passed from contentScript.js page as of v1.1.3)
  */
 async function buildWellKnown(requests) {
-
   let explainer;
 
   /*
@@ -652,7 +680,7 @@ async function buildWellKnown(requests) {
           This website respects GPC signals
         </p>
       </li>
-      `
+      `;
   } else if (requests !== null && requests["gpc"] == false) {
     explainer = `
       <li>
@@ -665,7 +693,7 @@ async function buildWellKnown(requests) {
           This website does not respect GPC signals
         </p>
       </li>
-      `
+      `;
   } else if (requests === null || requests["gpc"] == null) {
     explainer = `
       <li>
@@ -678,33 +706,36 @@ async function buildWellKnown(requests) {
           It seems this website does not have a GPC signal processing policy!
         </p>
       </li>
-      `
+      `;
   }
 
-  let wellknown = (requests !== null && requests["gpc"] != null) ? `
+  let wellknown =
+    requests !== null && requests["gpc"] != null
+      ? `
     <li class="uk-text-center uk-text-small">
       Here is the GPC policy:
     </li>
     <li>
       <pre class="wellknown-bg">
         ${JSON.stringify(requests, null, 4)
-            .replace(/['"\{\}\n]/g, '')
-            .replace(/,/g, "\n")
-          }
+          .replace(/['"\{\}\n]/g, "")
+          .replace(/,/g, "\n")}
       </pre>
     </li>
-  ` : ``;
+  `
+      : ``;
 
-  document.getElementById("dropdown-2-expandable").innerHTML = `${explainer} ${wellknown}`;
+  document.getElementById(
+    "dropdown-2-expandable"
+  ).innerHTML = `${explainer} ${wellknown}`;
 }
-
 
 /**
  * Builds Analysis info dropdown in dropdown-1
  */
 async function buildAnalysis(data) {
   let pos = "../../../assets/cat-w-text/check1.png";
-  let neg = "../../../assets/cat-w-text/cross1.png"
+  let neg = "../../../assets/cat-w-text/cross1.png";
   let specs = `style= "
       margin-right: -20px;
       margin-left: auto;
@@ -712,26 +743,34 @@ async function buildAnalysis(data) {
       margin-bottom: auto;
       padding-right: 5px;
       padding-left: 5px;"
-    `
+    `;
 
-  let items         = "";
-  let dnsLink       = (data.DO_NOT_SELL_LINK_EXISTS) ? pos : neg;
+  let items = "";
+  let dnsLink = data.DO_NOT_SELL_LINK_EXISTS ? pos : neg;
   let stringFound;
-  let gpcSent       = (data.SENT_GPC) ? pos : neg;
-  let beforeGPCUSPAPI     = data.USPAPI_BEFORE_GPC;
-  let afterGPCUSPAPI      = data.USPAPI_AFTER_GPC;
+  let gpcSent = data.SENT_GPC ? pos : neg;
+  let beforeGPCUSPAPI = data.USPAPI_BEFORE_GPC;
+  let afterGPCUSPAPI = data.USPAPI_AFTER_GPC;
   let beforeGPCUSPCookies = data.USP_COOKIES_BEFORE_GPC;
-  let afterGPCUSPCookies  = data.USP_COOKIES_AFTER_GPC;
+  let afterGPCUSPCookies = data.USP_COOKIES_AFTER_GPC;
 
   let uspStringBeforeGPC;
   let uspStringAfterGPC;
 
   // Generate the US Privacy String BEFORE GPC is sent
   // Give priority to the USPAPI over USP Cookie
-  if (beforeGPCUSPAPI && beforeGPCUSPAPI[0] && beforeGPCUSPAPI[0]["uspString"]) {
-    uspStringBeforeGPC = beforeGPCUSPAPI[0]["uspString"];   // USPAPI exists
+  if (
+    beforeGPCUSPAPI &&
+    beforeGPCUSPAPI[0] &&
+    beforeGPCUSPAPI[0]["uspString"]
+  ) {
+    uspStringBeforeGPC = beforeGPCUSPAPI[0]["uspString"]; // USPAPI exists
   } else {
-    if (beforeGPCUSPCookies && beforeGPCUSPCookies[0] && beforeGPCUSPCookies[0]["value"]) {
+    if (
+      beforeGPCUSPCookies &&
+      beforeGPCUSPCookies[0] &&
+      beforeGPCUSPCookies[0]["value"]
+    ) {
       uspStringBeforeGPC = beforeGPCUSPCookies[0]["value"]; // USP Cookie exists
     } else {
       uspStringBeforeGPC = data.USPAPI_OPTED_OUT || data.USP_COOKIE_OPTED_OUT;
@@ -743,7 +782,11 @@ async function buildAnalysis(data) {
   if (afterGPCUSPAPI && afterGPCUSPAPI[0] && afterGPCUSPAPI[0]["uspString"]) {
     uspStringAfterGPC = afterGPCUSPAPI[0]["uspString"];
   } else {
-    if (afterGPCUSPCookies && afterGPCUSPCookies[0] && afterGPCUSPCookies[0]["value"]) {
+    if (
+      afterGPCUSPCookies &&
+      afterGPCUSPCookies[0] &&
+      afterGPCUSPCookies[0]["value"]
+    ) {
       uspStringAfterGPC = afterGPCUSPCookies[0]["value"];
     } else {
       uspStringAfterGPC = data.USPAPI_OPTED_OUT || data.USP_COOKIE_OPTED_OUT;
@@ -753,24 +796,37 @@ async function buildAnalysis(data) {
   if (!beforeGPCUSPAPI && !beforeGPCUSPCookies) {
     stringFound = neg;
   } else {
-    let existsUSP = ((beforeGPCUSPAPI.length!=0) || (beforeGPCUSPCookies.length!=0)) ? true : false;
+    let existsUSP =
+      beforeGPCUSPAPI.length != 0 || beforeGPCUSPCookies.length != 0
+        ? true
+        : false;
     let existsAndIsValidBeforeGPCUSPAPI;
     let existsAndIsValidBeforeGPCUSPCookies;
 
     if (beforeGPCUSPAPI && beforeGPCUSPAPI[0] && beforeGPCUSPAPI[0].uspString) {
-      existsAndIsValidBeforeGPCUSPAPI = isValidSignalIAB(beforeGPCUSPAPI[0].uspString)
+      existsAndIsValidBeforeGPCUSPAPI = isValidSignalIAB(
+        beforeGPCUSPAPI[0].uspString
+      );
     } else {
       existsAndIsValidBeforeGPCUSPAPI = false;
     }
-    if (beforeGPCUSPCookies && beforeGPCUSPCookies[0] && beforeGPCUSPCookies[0].value) {
-      existsAndIsValidBeforeGPCUSPCookies = isValidSignalIAB(beforeGPCUSPCookies[0].value)
+    if (
+      beforeGPCUSPCookies &&
+      beforeGPCUSPCookies[0] &&
+      beforeGPCUSPCookies[0].value
+    ) {
+      existsAndIsValidBeforeGPCUSPCookies = isValidSignalIAB(
+        beforeGPCUSPCookies[0].value
+      );
     } else {
       existsAndIsValidBeforeGPCUSPCookies = false;
     }
 
-    stringFound = (existsUSP && 
-      (existsAndIsValidBeforeGPCUSPAPI || existsAndIsValidBeforeGPCUSPCookies))
-      ? pos : neg;
+    stringFound =
+      existsUSP &&
+      (existsAndIsValidBeforeGPCUSPAPI || existsAndIsValidBeforeGPCUSPCookies)
+        ? pos
+        : neg;
   }
 
   let stringChanged;
@@ -780,7 +836,7 @@ async function buildAnalysis(data) {
   } else {
     optedOut = data.USP_COOKIE_OPTED_OUT;
   }
-  if (typeof optedOut === 'string') {
+  if (typeof optedOut === "string") {
     if (optedOut === "PARSE_FAILED") {
       stringChanged = neg;
     } else if (optedOut === "NOT_IN_CA") {
@@ -791,7 +847,7 @@ async function buildAnalysis(data) {
   }
 
   // Sets the 3rd party domain elements
-    items += `
+  items += `
   <li>
     <div uk-grid class="uk-grid-small uk-width-1-1" style="font-size: medium;">
       <div class="domain uk-width-expand">
@@ -834,16 +890,18 @@ async function buildAnalysis(data) {
  * Builds per-site compliance snippet
  */
 async function buildComplianceInfo(data) {
-  let checkbox = ""
+  let checkbox = "";
   if (parsedDomain) {
     try {
-      if (data.DO_NOT_SELL_LINK_EXISTS 
-          && data.SENT_GPC 
-          && (data.USPAPI_OPTED_OUT || data.USP_COOKIE_OPTED_OUT)
-          && ((data.USPAPI_BEFORE_GPC.length != 0) || (data.USP_COOKIES_BEFORE_GPC.length != 0)) 
-          && ((isValidSignalIAB(data.USPAPI_BEFORE_GPC[0].uspString)) || 
-                (isValidSignalIAB(data.USP_COOKIES_BEFORE_GPC[0].uspString)))
-        ) {
+      if (
+        data.DO_NOT_SELL_LINK_EXISTS &&
+        data.SENT_GPC &&
+        (data.USPAPI_OPTED_OUT || data.USP_COOKIE_OPTED_OUT) &&
+        (data.USPAPI_BEFORE_GPC.length != 0 ||
+          data.USP_COOKIES_BEFORE_GPC.length != 0) &&
+        (isValidSignalIAB(data.USPAPI_BEFORE_GPC[0].uspString) ||
+          isValidSignalIAB(data.USP_COOKIES_BEFORE_GPC[0].uspString))
+      ) {
         checkbox = `<div
         id = "${parsedDomain} compliance"
         class="uk-badge"
@@ -883,17 +941,14 @@ async function buildComplianceInfo(data) {
       </div>`;
       }
       document.getElementById("switch-label").innerHTML = checkbox;
-    } catch(e) {
+    } catch (e) {
       console.error(e);
       document.getElementById("switch-label").innerHTML = checkbox;
     }
   } else {
     document.getElementById("switch-label").innerHTML = checkbox;
   }
-
 }
-
-
 
 /******************************************************************************/
 /******************************************************************************/
@@ -905,12 +960,13 @@ async function buildComplianceInfo(data) {
 let backgroundPort = chrome.runtime.connect({ name: "POPUP" });
 // TODO: THIS IS OUTMODED IN MV3
 // CHANGE THIS TO BE ASYNC NOW
-backgroundPort.postMessage({ msg: "REQUEST_MODE" });  // queries control.js for mode
-backgroundPort.onMessage.addListener(function(message) {
-  if (message.msg === "RESPONSE_MODE") {  // when mode is recieved from control.js
-    mode = message.data;                  // global mode variable
+backgroundPort.postMessage({ msg: "REQUEST_MODE" }); // queries control.js for mode
+backgroundPort.onMessage.addListener(function (message) {
+  if (message.msg === "RESPONSE_MODE") {
+    // when mode is recieved from control.js
+    mode = message.data; // global mode variable
   }
-})
+});
 
 /**
  * Listens for messages from background page that call functions to populate
@@ -929,7 +985,6 @@ chrome.runtime.onMessage.addListener(function (message, _, __) {
   if (message.msg === "POPUP_PROTECTION_DATA_REQUESTS") {
     let requests = message.data;
     buildDomains(requests);
-
   }
   if (message.msg === "POPUP_ANALYSIS_DATA") {
     analysis = message.data.analysis;
@@ -943,9 +998,9 @@ chrome.runtime.onMessage.addListener(function (message, _, __) {
   }
 });
 
-async function fetchcsvData(){
-  const csvData = await storage.getStore(stores.analysis)
-  return csvData
+async function fetchcsvData() {
+  const csvData = await storage.getStore(stores.analysis);
+  return csvData;
 }
 
 // Initializes the process to add to domainlist, via the background script
@@ -953,11 +1008,9 @@ async function fetchcsvData(){
 function setToDomainlist(d, k) {
   chrome.runtime.sendMessage({
     msg: "SET_TO_DOMAINLIST",
-    data: { domain: d, key: k }
-  })
+    data: { domain: d, key: k },
+  });
 }
-
-
 
 /******************************************************************************/
 /******************************************************************************/
@@ -965,40 +1018,37 @@ function setToDomainlist(d, k) {
 /******************************************************************************/
 /******************************************************************************/
 
-
-
-
 // Walkthrough function
 function popUpWalkthrough() {
-  let contentStr = (mode === modes.analysis) ? 
-    "Analysis Mode collects info about the current site's CCPA compliance" 
-    : "Toggle this switch to enable or disable sending Do Not Sell signals to this site in Protection mode";
+  let contentStr =
+    mode === modes.analysis
+      ? "Analysis Mode collects info about the current site's CCPA compliance"
+      : "Toggle this switch to enable or disable sending Do Not Sell signals to this site in Protection mode";
   tippy(".tooltip-1", {
-    content:
-      contentStr,
+    content: contentStr,
     trigger: "manual",
     placement: "bottom",
     duration: 1000,
     theme: "custom-2",
     maxWidth: 250,
   });
-  let tooltip = document.getElementsByClassName("tooltip-1")[0]
-    ._tippy;
+  let tooltip = document.getElementsByClassName("tooltip-1")[0]._tippy;
   tooltip.show();
 }
 
 // Init: Check to see if we should do tutorial
 async function initPopUpWalkthrough() {
-  const tutorialShownInPopup = await storage.get(stores.settings, 'TUTORIAL_SHOWN_IN_POPUP');
+  const tutorialShownInPopup = await storage.get(
+    stores.settings,
+    "TUTORIAL_SHOWN_IN_POPUP"
+  );
   const mode = await storage.get(stores.settings, "MODE"); //copied
 
   if (!tutorialShownInPopup) {
     popUpWalkthrough(mode);
-    storage.set(stores.settings, true, 'TUTORIAL_SHOWN_IN_POPUP');
+    storage.set(stores.settings, true, "TUTORIAL_SHOWN_IN_POPUP");
   }
 }
-
-
 
 /******************************************************************************/
 /******************************************************************************/
@@ -1006,43 +1056,46 @@ async function initPopUpWalkthrough() {
 /******************************************************************************/
 /******************************************************************************/
 
-
 /**
  * Download analysis data button
  */
 function downloadCSVOnClick() {
   chrome.runtime.sendMessage({
-    msg: "CSV_DATA_REQUEST"
-  })
+    msg: "CSV_DATA_REQUEST",
+  });
 }
 
 /**
  * Run analysis button
  */
 function runAnalysisButtonOnClick() {
-  backgroundPort.postMessage({ msg: "RUN_ANALYSIS_FROM_BACKGROUND", data: null });
+  backgroundPort.postMessage({
+    msg: "RUN_ANALYSIS_FROM_BACKGROUND",
+    data: null,
+  });
 }
 
 /**
  * Stop analysis button
  */
 function stopAnalysisButtonOnClick() {
-  backgroundPort.postMessage({ msg: "STOP_ANALYSIS_FROM_BACKGROUND", data: null });
+  backgroundPort.postMessage({
+    msg: "STOP_ANALYSIS_FROM_BACKGROUND",
+    data: null,
+  });
 }
 
 /**
- * Mode switch 
+ * Mode switch
  */
 
 function loadChangeMode() {
-  let newMode = (mode === modes.analysis) ? modes.protection : modes.analysis;
+  let newMode = mode === modes.analysis ? modes.protection : modes.analysis;
   mode = newMode;
   switchMode(mode);
 }
 
 loadChangeMode();
-
-
 
 // Listener: Opens options page
 document.getElementById("more").addEventListener("click", () => {
@@ -1050,38 +1103,31 @@ document.getElementById("more").addEventListener("click", () => {
 });
 
 // Listener: Opens tutorial
-if ("$BROWSER" == 'chrome'){
-document.getElementById("tour").addEventListener("click", async () => {
-
+if ("$BROWSER" == "chrome") {
+  document.getElementById("tour").addEventListener("click", async () => {
     await storage.set(stores.settings, false, "TUTORIAL_SHOWN");
 
     chrome.runtime.sendMessage({
-      msg: "SHOW_TUTORIAL"
+      msg: "SHOW_TUTORIAL",
     });
-  
-});
+  });
 
-document.getElementById("tour").addEventListener("click", async () => {
-
-  await storage.set(stores.settings, false, "TUTORIAL_SHOWN");
-  setTimeout(chrome.runtime.openOptionsPage, 100);
-
-
-});
-
+  document.getElementById("tour").addEventListener("click", async () => {
+    await storage.set(stores.settings, false, "TUTORIAL_SHOWN");
+    setTimeout(chrome.runtime.openOptionsPage, 100);
+  });
 } else {
   document.getElementById("tour").addEventListener("click", () => {
     chrome.runtime.sendMessage({
-      msg: "SHOW_TUTORIAL"
+      msg: "SHOW_TUTORIAL",
     });
 
     storage.set(stores.settings, false, "TUTORIAL_SHOWN");
-
   });
 
   document.getElementById("tour").addEventListener("click", () => {
     chrome.runtime.sendMessage({
-      msg: "SHOW_TUTORIAL"
+      msg: "SHOW_TUTORIAL",
     });
 
     storage.set(stores.settings, false, "TUTORIAL_SHOWN");
@@ -1103,28 +1149,25 @@ document.getElementById("analysis-list").addEventListener("click", async () => {
 });
 
 // Listener: Opens analysislist in options page
-document.getElementById("run-analysis").addEventListener("click", 
-  runAnalysisButtonOnClick
-);
+document
+  .getElementById("run-analysis")
+  .addEventListener("click", runAnalysisButtonOnClick);
 
 // Listener: Opens analysislist in options page
-document.getElementById("stop-analysis").addEventListener("click", 
-  stopAnalysisButtonOnClick
-);
+document
+  .getElementById("stop-analysis")
+  .addEventListener("click", stopAnalysisButtonOnClick);
 
 // Listener: Opens analysislist in options page
-document.getElementById("download-analysis-data").addEventListener("click", 
-  downloadCSVOnClick
-);
-
-
+document
+  .getElementById("download-analysis-data")
+  .addEventListener("click", downloadCSVOnClick);
 
 /******************************************************************************/
 /******************************************************************************/
 /**********             # Mode switching functionality               **********/
 /******************************************************************************/
 /******************************************************************************/
-
 
 /**
  * For Chrome users:

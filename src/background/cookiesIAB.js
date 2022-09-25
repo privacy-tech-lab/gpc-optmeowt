@@ -1,8 +1,7 @@
 /*
 Licensed per https://github.com/privacy-tech-lab/gpc-optmeowt/blob/main/LICENSE.md
-privacy-tech-lab, https://www.privacytechlab.org/
+privacy-tech-lab, https://privacytechlab.org/
 */
-
 
 /*
 cookiesIAB.js
@@ -10,7 +9,6 @@ cookiesIAB.js
 cookiesIAB.js handles the IAB CCPA `usprivacy` proposal cookie
 modification process
 */
-
 
 /*
   ! Handle the case when the site recognizes you are outside of CA
@@ -42,13 +40,14 @@ modification process
   then form a UI response for the user.
 */
 
-let iabVars = [  // Make this not case-sensitive
+let iabVars = [
+  // Make this not case-sensitive
   "usprivacy",
   "us-privacy",
-  "us_privacy"
-]
-let defaultName = 'usprivacy'
-let defaultValue = '1NYN'
+  "us_privacy",
+];
+let defaultName = "usprivacy";
+let defaultValue = "1NYN";
 
 /**
  * Initializes the IAB proposal for CCPA Opt-Out functionality
@@ -63,11 +62,11 @@ export function initIAB() {
       var url = urlObj.href;
 
       // Filter out chrome://* links as they are local
-      if (url.substr(0,9).toLowerCase() !== 'chrome://') {
+      if (url.substr(0, 9).toLowerCase() !== "chrome://") {
         checkExistsAndHandleIAB(url);
       }
     }
-  })
+  });
 }
 
 /**
@@ -76,35 +75,36 @@ export function initIAB() {
  * @param {string} url - url of the current tab
  */
 function checkExistsAndHandleIAB(url) {
-  let cookieMatches = []
+  let cookieMatches = [];
 
-  chrome.cookies.getAll({ "url": url }, function (cookieArr) {
+  chrome.cookies.getAll({ url: url }, function (cookieArr) {
     for (var cookie in cookieArr) {
-      if ( iabVars.includes(cookieArr[cookie]["name"]) ){
-        cookieMatches.push(cookieArr[cookie])
+      if (iabVars.includes(cookieArr[cookie]["name"])) {
+        cookieMatches.push(cookieArr[cookie]);
       }
     }
 
     // Now we have an array of all the cookie matches
     if (cookieMatches.length === 1) {
-      let value = parseIAB(cookieMatches[0]["value"])
+      let value = parseIAB(cookieMatches[0]["value"]);
       updateIAB(cookieMatches[0], value, url);
     }
     if (cookieMatches.length === 0) {
-        updateIAB(null, '1NYN', url);
+      updateIAB(null, "1NYN", url);
     }
     // If there are multiple cookies, handle here.
     // Currently deletes default cookie
     if (cookieMatches.length > 1) {
       for (var c in cookieMatches) {
-        if (cookieMatches[c].name == defaultName &&
-          cookieMatches[c].domain.substr(0,1) !== ".")
-        {
-          deleteCookie(url, cookieMatches[c].name)
+        if (
+          cookieMatches[c].name == defaultName &&
+          cookieMatches[c].domain.substr(0, 1) !== "."
+        ) {
+          deleteCookie(url, cookieMatches[c].name);
         }
       }
     }
-  })
+  });
 }
 
 /**
@@ -116,14 +116,14 @@ function checkExistsAndHandleIAB(url) {
  * @param {string} url - url to be set to new cookie
  */
 function updateIAB(cookie, value, url) {
-  let newCookie = {}
+  let newCookie = {};
 
   if (cookie === null) {
-    newCookie = makeCookieIAB(defaultName, defaultValue, url)
+    newCookie = makeCookieIAB(defaultName, defaultValue, url);
   } else {
-    newCookie = pruneCookieIAB(cookie, value, url)
+    newCookie = pruneCookieIAB(cookie, value, url);
   }
-  chrome.cookies.set( newCookie )
+  chrome.cookies.set(newCookie);
 }
 
 /**
@@ -134,13 +134,13 @@ function updateIAB(cookie, value, url) {
  */
 function parseIAB(signal) {
   if (!isValidSignalIAB(signal)) {
-    return '1NYN'
+    return "1NYN";
   }
-  if (signal === '1---') {
-    return '1YYY'
+  if (signal === "1---") {
+    return "1YYY";
   } else {
-    signal = signal.substr(0,2) + 'Y' + signal.substr(3, 1)
-    return signal
+    signal = signal.substr(0, 2) + "Y" + signal.substr(3, 1);
+    return signal;
   }
 }
 
@@ -154,19 +154,19 @@ function parseIAB(signal) {
  * @return {object} - updated cookie to be returned
  */
 function pruneCookieIAB(cookie, value, url) {
-  cookie.value = value
-  cookie.url = url
+  cookie.value = value;
+  cookie.url = url;
   // Checks if a cookie made by a site is stored per domain/subdomain
-  if (cookie.domain.substr(0,1) !== '.') {
+  if (cookie.domain.substr(0, 1) !== ".") {
     cookie.domain = null;
   }
   if (cookie.hostOnly !== null) {
-    delete cookie.hostOnly
+    delete cookie.hostOnly;
   }
   if (cookie.session !== null) {
-    delete cookie.session
+    delete cookie.session;
   }
-  return cookie
+  return cookie;
 }
 
 /**
@@ -175,15 +175,15 @@ function pruneCookieIAB(cookie, value, url) {
  * @return {Object} - new IAB cookie
  */
 function makeCookieIAB(name, value, url) {
-  var time = new Date()
-  var now = time.getTime()
+  var time = new Date();
+  var now = time.getTime();
 
-  let cookie = {}
-  cookie.expirationDate = now/1000 + 31557600
+  let cookie = {};
+  cookie.expirationDate = now / 1000 + 31557600;
   cookie.url = url;
-  cookie.name = name
-  cookie.value = value
-  return cookie
+  cookie.name = name;
+  cookie.value = value;
+  return cookie;
 }
 
 /**
@@ -193,9 +193,9 @@ function makeCookieIAB(name, value, url) {
  */
 function deleteCookie(url, name) {
   chrome.cookies.remove({
-    "url": url,
-    "name": name
-  })
+    url: url,
+    name: name,
+  });
 }
 
 /**
@@ -205,26 +205,26 @@ function deleteCookie(url, name) {
  * @returns {bool} - Represents if signal is a valid signal
  */
 export function isValidSignalIAB(signal) {
-  var validChars = ['y', 'n', 'Y', 'N', '-']
+  var validChars = ["y", "n", "Y", "N", "-"];
   if (signal.length != 4) {
-    return false
+    return false;
   }
-  if (signal.charAt(0) !== '1') {
-    return false
+  if (signal.charAt(0) !== "1") {
+    return false;
   }
   if (signal === "1---") {
-    return true
+    return true;
   }
   if (!validChars.includes(signal.charAt(1))) {
-    return false
+    return false;
   }
   if (!validChars.includes(signal.charAt(2))) {
-    return false
+    return false;
   }
   if (!validChars.includes(signal.charAt(3))) {
-    return false
+    return false;
   }
-  return true
+  return true;
 }
 
 /******************************************************************************/

@@ -1,8 +1,7 @@
 /*
 Licensed per https://github.com/privacy-tech-lab/gpc-optmeowt/blob/main/LICENSE.md
-privacy-tech-lab, https://www.privacytechlab.org/
+privacy-tech-lab, https://privacytechlab.org/
 */
-
 
 /*
 styles.css
@@ -10,7 +9,7 @@ styles.css
 styles.css is the main css page for OptMeowt's options page
 */
 
- @import "./dark-mode.css";
+@import "./dark-mode.css";
 
 /********************************************************/
 
@@ -33,7 +32,7 @@ Colors
 
   --highlight-light: #f2f2f2;
 
-  --text-gray: rgb(89,98,127);
+  --text-gray: rgb(89, 98, 127);
 }
 
 .text-color-darker {
@@ -58,8 +57,9 @@ body {
   user-select: none;
 }
 
-pre, code{
-  white-space:pre-line;
+pre,
+code {
+  white-space: pre-line;
 }
 
 a {
@@ -193,7 +193,7 @@ input[type="radio"]:hover:not(:checked) {
   background-color: #df3131 !important;
   border: 1px solid #df3131 !important;
   transition: all 0.3s ease;
-  color: #FFF !important;
+  color: #fff !important;
 }
 
 .uspStringElem {
@@ -205,19 +205,19 @@ input[type="radio"]:hover:not(:checked) {
   background-color: white;
   border: 1px solid var(--text-gray);
   color: var(--text-gray);
-  text-align: center; 
+  text-align: center;
 }
 
 .uspStringElem:hover {
   background-color: white;
   border: 1px solid var(--text-gray);
-  color: var(--text-gray); 
+  color: var(--text-gray);
 }
 
 .uspStringElem:active {
   background-color: white;
   border: 1px solid var(--text-gray);
-  color: var(--text-gray); 
+  color: var(--text-gray);
 }
 
 /********************************************************/

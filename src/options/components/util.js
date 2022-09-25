@@ -1,15 +1,13 @@
 /*
 Licensed per https://github.com/privacy-tech-lab/gpc-optmeowt/blob/main/LICENSE.md
-privacy-tech-lab, https://www.privacytechlab.org/
+privacy-tech-lab, https://privacytechlab.org/
 */
-
 
 /*
 util.js
 ================================================================================
 util.js contains global helper functions to help render the options page
 */
-
 
 /**
  * Get local html file as string
@@ -20,9 +18,9 @@ util.js contains global helper functions to help render the options page
 import Mustache from "mustache";
 
 export async function fetchTemplate(path) {
-    let response = await fetch(path)
-    let data = await response.text()
-    return data
+  let response = await fetch(path);
+  let data = await response.text();
+  return data;
 }
 
 /**
@@ -31,9 +29,9 @@ export async function fetchTemplate(path) {
  * @returns {HTMLDocument} - also a Document
  */
 export function parseTemplate(template) {
-    let parser = new DOMParser()
-    let doc = parser.parseFromString(template, "text/html")
-    return doc
+  let parser = new DOMParser();
+  let doc = parser.parseFromString(template, "text/html");
+  return doc;
 }
 
 /**
@@ -44,8 +42,8 @@ export function parseTemplate(template) {
  * @returns {Object} - element object related to the id parameter
  */
 export async function fetchParse(path, id) {
-    let template = await fetchTemplate(path)
-    return parseTemplate(template).getElementById(id)
+  let template = await fetchTemplate(path);
+  return parseTemplate(template).getElementById(id);
 }
 
 /**
@@ -56,7 +54,6 @@ export async function fetchParse(path, id) {
  * @returns {Object} - element object related to the id parameter
  */
 export function renderParse(template, data, id) {
-    let renderedTemplate = Mustache.render(template, data)
-    return parseTemplate(renderedTemplate).getElementById(id)
+  let renderedTemplate = Mustache.render(template, data);
+  return parseTemplate(renderedTemplate).getElementById(id);
 }
-

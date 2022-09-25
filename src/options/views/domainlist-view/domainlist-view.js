@@ -1,8 +1,7 @@
 /*
 Licensed per https://github.com/privacy-tech-lab/gpc-optmeowt/blob/main/LICENSE.md
-privacy-tech-lab, https://www.privacytechlab.org/
+privacy-tech-lab, https://privacytechlab.org/
 */
-
 
 /*
 domainlist-view.js
@@ -10,17 +9,15 @@ domainlist-view.js
 domainlist-view.js loads domainlist-view.html when clicked on the options page
 */
 
-
-import { storage, stores } from '../../../background/storage.js';
-import { renderParse, fetchParse } from '../../components/util.js'
+import { storage, stores } from "../../../background/storage.js";
+import { renderParse, fetchParse } from "../../components/util.js";
 
 import {
   addDomainToDomainlistAndRules,
   removeDomainFromDomainlistAndRules,
-  updateRemovalScript
+  updateRemovalScript,
 } from "../../../common/editDomainlist.js";
-import { reloadDynamicRules } from '../../../common/editRules.js';
-
+import { reloadDynamicRules } from "../../../common/editRules.js";
 
 /******************************************************************************/
 /***************************** Toggle Functions *******************************/
@@ -33,14 +30,14 @@ import { reloadDynamicRules } from '../../../common/editRules.js';
  * @param {(number|null)} id - Dynamic rule ID if domainlisted as "excluded"
  * @return {string} - The stringified checkbox HTML compontent
  */
- export function buildToggle(domain, id) {
+export function buildToggle(domain, id) {
   let toggle;
   if (!id) {
     toggle = `<input type="checkbox" id="${domain}" checked />`;
   } else {
     toggle = `<input type="checkbox" id="${domain}" />`;
   }
-  return toggle
+  return toggle;
 }
 
 /**
@@ -59,16 +56,16 @@ export async function toggleListener(elementId, domain) {
     }
     updateRemovalScript();
     chrome.runtime.sendMessage({
-      msg: "FORCE_RELOAD"
-    }); 
-  })
+      msg: "FORCE_RELOAD",
+    });
+  });
 }
 
 /**
  * Creates the specific Domain List toggles as well as the perm delete
  * buttons for each domain
  */
- async function createToggleListeners() {
+async function createToggleListeners() {
   const domainlistKeys = await storage.getAllKeys(stores.domainlist);
   const domainlistValues = await storage.getAll(stores.domainlist);
   let domain;
@@ -77,8 +74,8 @@ export async function toggleListener(elementId, domain) {
     domain = domainlistKeys[index];
     domainValue = domainlistValues[index];
     // MAKE SURE THE ID MATCHES EXACTLY
-    toggleListener(domain, domain)
-    deleteButtonListener(domain)
+    toggleListener(domain, domain);
+    deleteButtonListener(domain);
   }
 }
 
@@ -86,25 +83,28 @@ export async function toggleListener(elementId, domain) {
  * Delete buttons for each domain
  * @param {string} domain
  */
- function deleteButtonListener (domain) {
-  document.getElementById(`delete ${domain}`).addEventListener("click",
-    (async () => {
-      let deletePrompt = `Are you sure you would like to permanently delete this domain from the Domain List?`
+function deleteButtonListener(domain) {
+  document
+    .getElementById(`delete ${domain}`)
+    .addEventListener("click", async () => {
+      let deletePrompt = `Are you sure you would like to permanently delete this domain from the Domain List?`;
       let successPrompt = `Successfully deleted ${domain} from the Domain List.
-NOTE: It will be automatically added back to the list when the domain is requested again.`
-        if (confirm(deletePrompt)){
-        await storage.delete(stores.domainlist, domain)
-        if ("$BROWSER" == 'firefox'){
-          chrome.runtime.sendMessage({ msg: "REMOVE_FROM_DOMAINLIST", data: domain });
+NOTE: It will be automatically added back to the list when the domain is requested again.`;
+      if (confirm(deletePrompt)) {
+        await storage.delete(stores.domainlist, domain);
+        if ("$BROWSER" == "firefox") {
+          chrome.runtime.sendMessage({
+            msg: "REMOVE_FROM_DOMAINLIST",
+            data: domain,
+          });
         }
-        
+
         reloadDynamicRules();
         updateRemovalScript();
-        alert(successPrompt)
+        alert(successPrompt);
         document.getElementById(`li ${domain}`).remove();
-        }
-      
-  }))
+      }
+    });
 }
 
 /******************************************************************************/
@@ -115,32 +115,33 @@ NOTE: It will be automatically added back to the list when the domain is request
  * @property {string} headings.subtitle - Subtitle of the given page
  */
 const headings = {
-    title: 'Domain List',
-    subtitle: "Toggle which domains you would like to receive Do Not Sell signals in Protection Mode"
-}
-
-
+  title: "Domain List",
+  subtitle:
+    "Toggle which domains you would like to receive Do Not Sell signals in Protection Mode",
+};
 
 /**
  * Creates the event listeners for the `domainlist` page buttons and options
  */
 async function eventListeners() {
-    await createToggleListeners();
+  await createToggleListeners();
 
-    window.onscroll = function() { stickyNavbar() };
-    var nb = document.getElementById("domainlist-navbar");
-    var sticky = nb.offsetTop;
+  window.onscroll = function () {
+    stickyNavbar();
+  };
+  var nb = document.getElementById("domainlist-navbar");
+  var sticky = nb.offsetTop;
 
-    /**
-     * Sticky navbar
-     */
-    function stickyNavbar() {
-      if (window.pageYOffset >= sticky) {
-        nb.classList.add("sticky")
-      } else {
-        nb.classList.remove("sticky")
-      }
+  /**
+   * Sticky navbar
+   */
+  function stickyNavbar() {
+    if (window.pageYOffset >= sticky) {
+      nb.classList.add("sticky");
+    } else {
+      nb.classList.remove("sticky");
     }
+  }
 }
 
 /**
@@ -148,25 +149,23 @@ async function eventListeners() {
  * options, to be displayed
  */
 async function buildList() {
-  let items = ""
+  let items = "";
   let domain;
-  let domainValue; 
-  const domainlistKeys = await storage.getAllKeys(stores.domainlist)
-  const domainlistValues = await storage.getAll(stores.domainlist)
+  let domainValue;
+  const domainlistKeys = await storage.getAllKeys(stores.domainlist);
+  const domainlistValues = await storage.getAll(stores.domainlist);
   for (let index in domainlistKeys) {
-    domain = domainlistKeys[index]
-    domainValue = domainlistValues[index]
+    domain = domainlistKeys[index];
+    domainValue = domainlistValues[index];
     items +=
-          `
+      `
     <li id="li ${domain}">
       <div uk-grid class="uk-grid-small uk-width-1-1" style="font-size: medium;">
         <div>
           <label class="switch">
-          `
-          +
-            buildToggle(domain, domainValue)
-          +
-          `
+          ` +
+      buildToggle(domain, domainValue) +
+      `
             <span></span>
           </label>
         </div>
@@ -204,9 +203,9 @@ async function buildList() {
           </button>
       </div>
     </li>
-          `
+          `;
   }
-  document.getElementById('domainlist-main').innerHTML = items;
+  document.getElementById("domainlist-main").innerHTML = items;
 }
 
 /**
@@ -214,12 +213,16 @@ async function buildList() {
  * @param {string} scaffoldTemplate - stringified HTML template
  */
 export async function domainlistView(scaffoldTemplate) {
-    const body = renderParse(scaffoldTemplate, headings, 'scaffold-component')
-    let content = await fetchParse('./views/domainlist-view/domainlist-view.html', 'domainlist-view')
+  const body = renderParse(scaffoldTemplate, headings, "scaffold-component");
+  let content = await fetchParse(
+    "./views/domainlist-view/domainlist-view.html",
+    "domainlist-view"
+  );
 
-    document.getElementById('content').innerHTML = body.innerHTML
-    document.getElementById('scaffold-component-body').innerHTML = content.innerHTML
+  document.getElementById("content").innerHTML = body.innerHTML;
+  document.getElementById("scaffold-component-body").innerHTML =
+    content.innerHTML;
 
-    await buildList();
-    eventListeners();
+  await buildList();
+  eventListeners();
 }

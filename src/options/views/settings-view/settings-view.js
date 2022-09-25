@@ -1,8 +1,7 @@
 /*
 Licensed per https://github.com/privacy-tech-lab/gpc-optmeowt/blob/main/LICENSE.md
-privacy-tech-lab, https://www.privacytechlab.org/
+privacy-tech-lab, https://privacytechlab.org/
 */
-
 
 /*
 settings-view.js
@@ -26,9 +25,13 @@ import { modes } from "../../../data/modes.js";
 import UIkit from "../../../../node_modules/uikit/dist/js/uikit";
 import tippy from "../../../../node_modules/tippy.js/dist/tippy-bundle.umd";
 
-import "../../../../node_modules/file-saver/src/FileSaver"
-import Darkmode from 'darkmode-js';
-import { addDynamicRule, deleteAllDynamicRules, reloadDynamicRules } from "../../../common/editRules.js";
+import "../../../../node_modules/file-saver/src/FileSaver";
+import Darkmode from "darkmode-js";
+import {
+  addDynamicRule,
+  deleteAllDynamicRules,
+  reloadDynamicRules,
+} from "../../../common/editRules.js";
 import { updateRemovalScript } from "../../../common/editDomainlist.js";
 
 // Global scope settings variable
@@ -46,10 +49,9 @@ const headings = {
 
 function handleDownloadAnalysis() {
   chrome.runtime.sendMessage({
-    msg: "CSV_DATA_REQUEST_FROM_SETTINGS"
-  })
+    msg: "CSV_DATA_REQUEST_FROM_SETTINGS",
+  });
 }
-
 
 /**
  * Creates the event listeners for the `Settings` page buttons and options
@@ -58,45 +60,69 @@ function eventListeners() {
   document
     .getElementById("settings-view-radio0")
     .addEventListener("click", () => {
-      chrome.runtime.sendMessage({ msg: "TURN_ON_OFF", data: { isEnabled: true } });
-      chrome.runtime.sendMessage({ msg: "CHANGE_IS_DOMAINLISTED", data: { isDomainlisted: false } });
-      chrome.runtime.sendMessage({ msg: "CHANGE_MODE", data: modes.protection});
-      if ("$BROWSER" == 'chrome'){
+      chrome.runtime.sendMessage({
+        msg: "TURN_ON_OFF",
+        data: { isEnabled: true },
+      });
+      chrome.runtime.sendMessage({
+        msg: "CHANGE_IS_DOMAINLISTED",
+        data: { isDomainlisted: false },
+      });
+      chrome.runtime.sendMessage({
+        msg: "CHANGE_MODE",
+        data: modes.protection,
+      });
+      if ("$BROWSER" == "chrome") {
         chrome.scripting.updateContentScripts([
           {
-          "id": "2",
-          "matches": ["https://example.org/foo/bar.html"],
-          "js": ["content-scripts/registration/gpc-remove.js"],
-          "runAt": "document_start"
-          }
-        ])
+            id: "2",
+            matches: ["https://example.org/foo/bar.html"],
+            js: ["content-scripts/registration/gpc-remove.js"],
+            runAt: "document_start",
+          },
+        ]);
         deleteAllDynamicRules();
-    }
+      }
     });
   document
     .getElementById("settings-view-radio1")
     .addEventListener("click", () => {
-      chrome.runtime.sendMessage({ msg: "TURN_ON_OFF", data: { isEnabled: false } });
-      chrome.runtime.sendMessage({ msg: "CHANGE_IS_DOMAINLISTED", data: { isDomainlisted: false } });
-      if ("$BROWSER" == 'chrome'){
+      chrome.runtime.sendMessage({
+        msg: "TURN_ON_OFF",
+        data: { isEnabled: false },
+      });
+      chrome.runtime.sendMessage({
+        msg: "CHANGE_IS_DOMAINLISTED",
+        data: { isDomainlisted: false },
+      });
+      if ("$BROWSER" == "chrome") {
         chrome.scripting.updateContentScripts([
           {
-          "id": "2",
-          "matches": ["<all_urls>"],
-          "js": ["content-scripts/registration/gpc-remove.js"],
-          "runAt": "document_start"
-          }
-        ])
-        addDynamicRule(4999,"*");
-    }
+            id: "2",
+            matches: ["<all_urls>"],
+            js: ["content-scripts/registration/gpc-remove.js"],
+            runAt: "document_start",
+          },
+        ]);
+        addDynamicRule(4999, "*");
+      }
     });
   document
     .getElementById("settings-view-radio2")
     .addEventListener("click", () => {
-      chrome.runtime.sendMessage({ msg: "TURN_ON_OFF", data: { isEnabled: true } });
-      chrome.runtime.sendMessage({ msg: "CHANGE_IS_DOMAINLISTED", data: { isDomainlisted: true } });
-      chrome.runtime.sendMessage({ msg: "CHANGE_MODE", data: modes.protection});
-      if ("$BROWSER" == 'chrome'){
+      chrome.runtime.sendMessage({
+        msg: "TURN_ON_OFF",
+        data: { isEnabled: true },
+      });
+      chrome.runtime.sendMessage({
+        msg: "CHANGE_IS_DOMAINLISTED",
+        data: { isDomainlisted: true },
+      });
+      chrome.runtime.sendMessage({
+        msg: "CHANGE_MODE",
+        data: modes.protection,
+      });
+      if ("$BROWSER" == "chrome") {
         updateRemovalScript();
         reloadDynamicRules();
       }
@@ -106,7 +132,7 @@ function eventListeners() {
     .addEventListener("click", handleDownload);
   document
     .getElementById("download-analysis-button")
-    .addEventListener("click", handleDownloadAnalysis)
+    .addEventListener("click", handleDownloadAnalysis);
   document.getElementById("upload-button").addEventListener("click", () => {
     const verify = confirm(
       `This option will load a list of domains from a file, clearing all domains currently in the list.\n Do you wish to continue?`
@@ -119,25 +145,25 @@ function eventListeners() {
     .getElementById("upload-domainlist")
     .addEventListener("change", handleUpload, false);
 
-    chrome.runtime.onMessage.addListener(async function (message, _, __) {
-      if (message.msg === "SHOW_TUTORIAL") {
-        if ("$BROWSER" == 'chrome'){
-          chrome.tabs.reload();
-        } else {
-          await storage.set(stores.settings,true,"TUTORIAL_SHOWN")
-          walkthrough();
-        }
+  chrome.runtime.onMessage.addListener(async function (message, _, __) {
+    if (message.msg === "SHOW_TUTORIAL") {
+      if ("$BROWSER" == "chrome") {
+        chrome.tabs.reload();
+      } else {
+        await storage.set(stores.settings, true, "TUTORIAL_SHOWN");
+        walkthrough();
       }
-    });
+    }
+  });
   createMessageListeners();
 }
 
-function createMessageListeners(){
+function createMessageListeners() {
   chrome.runtime.onMessage.addListener(async function (message, _, __) {
-    const csvData = await storage.getStore(stores.analysis)
+    const csvData = await storage.getStore(stores.analysis);
     if (message.msg === "CSV_DATA_RESPONSE_TO_SETTINGS") {
       csvGenerator(csvData, message.data.titles);
-      return
+      return;
     }
   });
 }
@@ -148,13 +174,12 @@ function createMessageListeners(){
  * Gives user a walkthrough of install page on first install
  */
 
-
 function analysisWarning() {
   let modal = UIkit.modal("#analysis-modal");
   modal.show();
   document.getElementById("modal-button-5").onclick = function () {
     modal.hide();
-  }
+  };
 }
 
 function walkthrough() {
@@ -163,7 +188,7 @@ function walkthrough() {
 
   document.getElementById("modal-button-1").onclick = function () {
     modal.hide();
-  }
+  };
 
   document.getElementById("modal-button-2").onclick = function () {
     modal.hide();
@@ -180,8 +205,8 @@ function walkthrough() {
         trigger2();
       },
     });
-    let tooltip = document.getElementsByClassName("tutorial-tooltip1")[0]
-      ._tippy;
+    let tooltip =
+      document.getElementsByClassName("tutorial-tooltip1")[0]._tippy;
     tooltip.show();
   };
 
@@ -199,33 +224,35 @@ function walkthrough() {
         trigger4();
       },
     });
-    let tooltip = document.getElementsByClassName("tutorial-tooltip2")[0]
-      ._tippy;
+    let tooltip =
+      document.getElementsByClassName("tutorial-tooltip2")[0]._tippy;
     tooltip.show();
   }
 
   function trigger4() {
-    let modal = UIkit.modal("#thank-you-modal")
-    modal.show()
+    let modal = UIkit.modal("#thank-you-modal");
+    modal.show();
     document.getElementById("modal-button-3").onclick = () => {
       chrome.tabs.create(
         { url: "https://privacytechlab.org/optmeowt" },
         function (tab) {}
       );
-    }
+    };
   }
 }
 
 // Show Analysis Warning
 async function initPopUpWalkthrough() {
-  const analysisWarningShown = await storage.get(stores.settings, 'ANALYSIS_WARNING_SHOWN');
-  
-    if (!analysisWarningShown && mode === modes.analysis) {
-      analysisWarning();
-      storage.set(stores.settings, true, 'ANALYSIS_WARNING_SHOWN');
-    }
-  }
+  const analysisWarningShown = await storage.get(
+    stores.settings,
+    "ANALYSIS_WARNING_SHOWN"
+  );
 
+  if (!analysisWarningShown && mode === modes.analysis) {
+    analysisWarning();
+    storage.set(stores.settings, true, "ANALYSIS_WARNING_SHOWN");
+  }
+}
 
 // Button to change to Analysis Mode
 function loadChangeMode() {
@@ -233,15 +260,17 @@ function loadChangeMode() {
     document.getElementById("optMode-parent").style.display = "none";
     document.getElementById("analysis-export").style.display = "none";
   } else {
-    document.getElementById("optMode").addEventListener('click', function() {
+    document.getElementById("optMode").addEventListener("click", function () {
       mode = modes.analysis;
-      chrome.runtime.sendMessage({ msg: "CHANGE_MODE", data: mode});
-      chrome.runtime.sendMessage({ msg: "TURN_ON_OFF", data: { isEnabled: true } });
+      chrome.runtime.sendMessage({ msg: "CHANGE_MODE", data: mode });
+      chrome.runtime.sendMessage({
+        msg: "TURN_ON_OFF",
+        data: { isEnabled: true },
+      });
       initPopUpWalkthrough();
-    })
+    });
   }
 }
-
 
 /******************************************************************************/
 
@@ -257,20 +286,20 @@ export async function settingsView(scaffoldTemplate) {
   );
 
   document.getElementById("content").innerHTML = body.innerHTML;
-  document.getElementById("scaffold-component-body").innerHTML = content.innerHTML;
+  document.getElementById("scaffold-component-body").innerHTML =
+    content.innerHTML;
 
   // Render correct extension mode radio button
   const isEnabled = await storage.get(stores.settings, "IS_ENABLED");
   const isDomainlisted = await storage.get(stores.settings, "IS_DOMAINLISTED");
   let mode = await storage.get(stores.settings, "MODE");
-  
+
   if (mode === modes.analysis) {
     document.getElementById("optMode").checked = true;
-  }
-  else if (isEnabled) {
-    (isDomainlisted)
-      ? document.getElementById("settings-view-radio2").checked = true
-      : document.getElementById("settings-view-radio0").checked = true;
+  } else if (isEnabled) {
+    isDomainlisted
+      ? (document.getElementById("settings-view-radio2").checked = true)
+      : (document.getElementById("settings-view-radio0").checked = true);
   } else {
     document.getElementById("settings-view-radio1").checked = true;
   }
@@ -278,16 +307,9 @@ export async function settingsView(scaffoldTemplate) {
   eventListeners();
   loadChangeMode();
 
-  const tutorialShown = await storage.get(stores.settings, 'TUTORIAL_SHOWN');
+  const tutorialShown = await storage.get(stores.settings, "TUTORIAL_SHOWN");
   if (!tutorialShown) {
     walkthrough();
   }
-  storage.set(stores.settings, true, 'TUTORIAL_SHOWN')
-
-  
+  storage.set(stores.settings, true, "TUTORIAL_SHOWN");
 }
-
- 
- 
- 
- 
