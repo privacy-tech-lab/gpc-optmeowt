@@ -1,16 +1,18 @@
 {
-  "type": "module", 
+  "type": "module",
   "name": "optmeowt",
   "version": "2.0.1",
   "description": "A privacy extension that allows users to exercise rights under GPC",
   "main": "index.js",
   "jest": {
     "setupFiles": [
-        "fake-indexeddb/auto"
+      "fake-indexeddb/auto"
     ],
     "verbose": true,
     "transformIgnorePatterns": [
-      ["node_modules"]
+      [
+        "node_modules"
+      ]
     ]
   },
   "scripts": {
@@ -53,8 +55,6 @@
     "uikit": "3.6.9"
   },
   "devDependencies": {
-    "@babel/core": "^7.15.0",
-    "@babel/preset-env": "^7.15.0",
     "babel-loader": "^8.2.2",
     "clean-webpack-plugin": "^4.0.0",
     "concurrently": "^6.2.1",
