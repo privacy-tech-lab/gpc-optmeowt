@@ -1,8 +1,18 @@
 {
+  "type": "module", 
   "name": "optmeowt",
   "version": "2.0.1",
   "description": "A privacy extension that allows users to exercise rights under GPC",
   "main": "index.js",
+  "jest": {
+    "setupFiles": [
+        "fake-indexeddb/auto"
+    ],
+    "verbose": true,
+    "transformIgnorePatterns": [
+      ["node_modules"]
+    ]
+  },
   "scripts": {
     "prestart": "rimraf dev",
     "start": "concurrently -k npm:start:firefox  npm:start:chrome",
@@ -13,7 +23,8 @@
     "build:firefox": "webpack --mode production --env firefox",
     "build:chrome": "webpack --mode production --env chrome",
     "postbuild:firefox": "cd dist/firefox && zip -rFSX ../packages/ff-optmeowt-$npm_package_version.zip * -x '*.git*' -x '*.DS_Store*' -x '*.txt*'",
-    "postbuild:chrome": "cd dist/chrome && zip -rFSX ../packages/chrome-optmeowt-$npm_package_version.zip * -x '*.git*' -x '*.DS_Store*' -x '*.txt*'"
+    "postbuild:chrome": "cd dist/chrome && zip -rFSX ../packages/chrome-optmeowt-$npm_package_version.zip * -x '*.git*' -x '*.DS_Store*' -x '*.txt*'",
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -49,8 +60,10 @@
     "concurrently": "^6.2.1",
     "copy-webpack-plugin": "^9.0.1",
     "css-loader": "^5.2.7",
+    "fake-indexeddb": "^4.0.0",
     "file-loader": "^6.2.0",
     "html-webpack-plugin": "^5.3.2",
+    "jest": "^29.0.3",
     "prettier": "^2.3.2",
     "string-replace-loader": "^3.0.3",
     "style-loader": "^2.0.0",

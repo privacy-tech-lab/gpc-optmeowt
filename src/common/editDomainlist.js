@@ -12,7 +12,7 @@ domainlist simultaneously with the dynamic ruleset
 */
 
 
-import { storage, stores } from '../background/storage';
+import { storage, stores } from '../background/storage'; //
 import { deleteAllDynamicRules, deleteDynamicRule, addDynamicRule, getFreshId, reloadDynamicRules } from './editRules';
 
 // TODO: Migrate editRules & editDomainlist to one file
@@ -105,7 +105,7 @@ async function deleteDomainlistAndDynamicRules() {
 	}
 }
   
-async function addDomainToDomainlistAndRules(domain) {
+async function addDomainToDomainlistAndRules(domain) { //
 	let id = 1;
 	if ("$BROWSER" == 'chrome'){
 	id = await getFreshId();
