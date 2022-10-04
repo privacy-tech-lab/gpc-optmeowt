@@ -1,8 +1,7 @@
 /*
 Licensed per https://github.com/privacy-tech-lab/gpc-optmeowt/blob/main/LICENSE.md
-privacy-tech-lab, https://www.privacytechlab.org/
+privacy-tech-lab, https://privacytechlab.org/
 */
-
 
 /*
 cookiesOnInstall.js
@@ -11,16 +10,14 @@ cookiesOnInstall.js fetches all files mentioned in cookieJSONS, retrieves
 their respective cookies (3rd party), and places them.
 */
 
-
-import { cookie_list } from "../../data/cookie_list.js"
-
+import { cookie_list } from "../../data/cookie_list.js";
 
 function initCookiesOnInstall() {
-  setAllCookies(cookie_list)
+  setAllCookies(cookie_list);
 }
 
 function initCookiesPerDomain(domainFilter) {
-  setFilteredCookies(cookie_list, domainFilter)
+  setFilteredCookies(cookie_list, domainFilter);
 }
 
 /**
@@ -32,27 +29,27 @@ function initCookiesPerDomain(domainFilter) {
  */
 function setAllCookies(cookies) {
   // Updates the time once for all new cookies
-  let date = new Date()
-  let now = date.getTime()
-  let cookieTime = now/1000 + 31557600
-  let path = '/'
+  let date = new Date();
+  let now = date.getTime();
+  let cookieTime = now / 1000 + 31557600;
+  let path = "/";
 
   for (let cookieKey in cookies) {
     // Updates cookie url based on its domain, checks for domain/subdomain spec
-    let cookieUrl = cookies[cookieKey].domain
-    let allDomainsFlag = false
+    let cookieUrl = cookies[cookieKey].domain;
+    let allDomainsFlag = false;
 
-    if (cookieUrl.substr(0,1) === '.') {
-      cookieUrl = cookieUrl.substr(1)
-      allDomainsFlag = true
+    if (cookieUrl.substr(0, 1) === ".") {
+      cookieUrl = cookieUrl.substr(1);
+      allDomainsFlag = true;
     }
-    cookieUrl = `https://${cookieUrl}/`
+    cookieUrl = `https://${cookieUrl}/`;
 
     // Updates cookie path
     if (cookies[cookieKey].path !== null) {
-      path = cookies[cookieKey].path
+      path = cookies[cookieKey].path;
     } else {
-      path = '/'
+      path = "/";
     }
 
     // Sets new cookie properties
@@ -61,15 +58,15 @@ function setAllCookies(cookies) {
       name: cookies[cookieKey].name,
       value: cookies[cookieKey].value,
       expirationDate: cookieTime,
-      path: path
-    }
+      path: path,
+    };
 
     if (allDomainsFlag) {
-      newCookie["domain"] = cookies[cookieKey].domain
+      newCookie["domain"] = cookies[cookieKey].domain;
     }
 
     // Sets cookie
-    chrome.cookies.set(newCookie, (result) => {})
+    chrome.cookies.set(newCookie, (result) => {});
   }
 }
 
@@ -80,33 +77,33 @@ function setAllCookies(cookies) {
  *                           party cookie to be set
  * Each item in `cookies` must contain a 'name', 'value', and 'domain'
  */
- function setFilteredCookies(cookies, domainFilter) {
+function setFilteredCookies(cookies, domainFilter) {
   // Updates time once
-  let date = new Date()
-  let now = date.getTime()
-  let cookieTime = now/1000 + 31557600
-  let path = '/'
+  let date = new Date();
+  let now = date.getTime();
+  let cookieTime = now / 1000 + 31557600;
+  let path = "/";
 
   for (let item in cookies) {
     for (let domain in domainFilter) {
-      // Notice that this `if` will trigger only for sites mentioned in our 
+      // Notice that this `if` will trigger only for sites mentioned in our
       // cookies, i.e. primarily only adtech websites since all our cookies
       // are adtech opt outs
       if (domainFilter[domain] == cookies[item].domain) {
         // Updates cookie url based on domain, checks for domain/subdomain spec
-        let cookieUrl = cookies[item].domain
-        let allDomains = false
+        let cookieUrl = cookies[item].domain;
+        let allDomains = false;
 
-        if (cookieUrl.substr(0,1) === '.') {
-          cookieUrl = cookieUrl.substr(1)
-          allDomains = true
+        if (cookieUrl.substr(0, 1) === ".") {
+          cookieUrl = cookieUrl.substr(1);
+          allDomains = true;
         }
-        cookieUrl = `https://${cookieUrl}/`
+        cookieUrl = `https://${cookieUrl}/`;
 
         if (cookies[item].path !== null) {
-          path = cookies[item].path
+          path = cookies[item].path;
         } else {
-          path = '/'
+          path = "/";
         }
 
         // Sets cookie parameters
@@ -115,15 +112,15 @@ function setAllCookies(cookies) {
           name: cookies[item].name,
           value: cookies[item].value,
           expirationDate: cookieTime,
-          path: path
-        }
+          path: path,
+        };
 
         if (allDomains) {
-          newCookie["domain"] = cookies[item].domain
+          newCookie["domain"] = cookies[item].domain;
         }
 
         // Sets cookie
-        chrome.cookies.set(newCookie, (result) => {} )
+        chrome.cookies.set(newCookie, (result) => {});
       }
     }
   }
@@ -133,5 +130,5 @@ export {
   initCookiesOnInstall,
   initCookiesPerDomain,
   setAllCookies,
-  setFilteredCookies
-}
+  setFilteredCookies,
+};

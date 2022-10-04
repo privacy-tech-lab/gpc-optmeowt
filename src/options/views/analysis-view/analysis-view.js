@@ -1,10 +1,7 @@
 /*
-OptMeowt is licensed under the MIT License
-Copyright (c) 2021 Kuba Alicki, Stanley Markman, Oliver Wang, Sebastian Zimmeck
-Previous contributors: Kiryl Beliauski, Daniel Knopf, Abdallah Salia
+Licensed per https://github.com/privacy-tech-lab/gpc-optmeowt/blob/main/LICENSE.md
 privacy-tech-lab, https://privacytechlab.org/
 */
-
 
 /*
 analysis-view.js
@@ -12,27 +9,28 @@ analysis-view.js
 analysis-view.js loads analysis-view.html when clicked on the options page
 */
 
-
-import { storage, stores } from '../../../background/storage.js';
-import { renderParse, fetchParse } from '../../components/util.js';
-import { isValidSignalIAB } from '../../../background/cookiesIAB.js'
-
+import { storage, stores } from "../../../background/storage.js";
+import { renderParse, fetchParse } from "../../components/util.js";
+import { isValidSignalIAB } from "../../../background/cookiesIAB.js";
 
 /******************************************************************************/
 /***************************** Dropdown Functions *****************************/
 /******************************************************************************/
 
-
 export async function dropListener(domain) {
   document.getElementById("li " + domain).addEventListener("click", () => {
-    if (document.getElementById(domain + " analysis").style.display === "none") {
-      document.getElementById("dropdown " + domain).src = "../assets/chevron-up.svg"
-      document.getElementById(domain + " analysis").style.display = ""
-      document.getElementById("li " + domain + " info").style.display = ""
+    if (
+      document.getElementById(domain + " analysis").style.display === "none"
+    ) {
+      document.getElementById("dropdown " + domain).src =
+        "../assets/chevron-up.svg";
+      document.getElementById(domain + " analysis").style.display = "";
+      document.getElementById("li " + domain + " info").style.display = "";
     } else {
-      document.getElementById("dropdown " + domain).src = "../assets/chevron-down.svg"
-      document.getElementById(domain + " analysis").style.display = "none"
-      document.getElementById("li " + domain + " info").style.display = "none"
+      document.getElementById("dropdown " + domain).src =
+        "../assets/chevron-down.svg";
+      document.getElementById(domain + " analysis").style.display = "none";
+      document.getElementById("li " + domain + " info").style.display = "none";
     }
   });
 }
@@ -41,20 +39,19 @@ export async function dropListener(domain) {
  * Creates the specific Dropdown toggles as well as the perm delete
  * buttons for each domain
  */
- async function createDropListeners(){
+async function createDropListeners() {
   let verdict;
-  const analysisKeys = await storage.getAllKeys(stores.analysis)
-  const analysisValues = await storage.getAll(stores.analysis)
+  const analysisKeys = await storage.getAllKeys(stores.analysis);
+  const analysisValues = await storage.getAll(stores.analysis);
   let domain;
   let data;
   for (let index in analysisKeys) {
     domain = analysisKeys[index];
     data = analysisValues[index];
 
-    dropListener(domain)
+    dropListener(domain);
   }
 }
-
 
 /******************************************************************************/
 
@@ -64,10 +61,10 @@ export async function dropListener(domain) {
  * @property {string} headings.subtitle - Subtitle of the given page
  */
 const headings = {
-    title: 'Analyzed Domains',
-    subtitle: `A breakdown of the CCPA compliance of sites you have visited in Analysis Mode. 
-      \n  Note: If you are not in California, websites may not honor your CCPA request.`
-}
+  title: "Analyzed Domains",
+  subtitle: `A breakdown of the CCPA compliance of sites you have visited in Analysis Mode. 
+      \n  Note: If you are not in California, websites may not honor your CCPA request.`,
+};
 
 /**
  * Filtered lists code heavily inspired by
@@ -75,46 +72,48 @@ const headings = {
  *
  * Enables live filtering of domains via the search bar
  */
- function filterList() {
-  let input, list, li, count
-  input = document.getElementById('searchbar').value.toLowerCase();
-  list = document.getElementById('analysis-main')
-  li = list.getElementsByTagName('li')
-  count = li.length
+function filterList() {
+  let input, list, li, count;
+  input = document.getElementById("searchbar").value.toLowerCase();
+  list = document.getElementById("analysis-main");
+  li = list.getElementsByTagName("li");
+  count = li.length;
 
   for (let i = 0; i < count; i++) {
-      let d = li[i].getElementsByClassName('domain')[0];
-      let txtValue = d.innerText;
-      if (txtValue.toLowerCase().indexOf(input) > -1) {
+    let d = li[i].getElementsByClassName("domain")[0];
+    let txtValue = d.innerText;
+    if (txtValue.toLowerCase().indexOf(input) > -1) {
       li[i].style.display = "";
     } else {
       li[i].style.display = "none";
     }
-  };
+  }
 }
 
 /**
  * Creates the event listeners for the `domainlist` page buttons and options
  */
 async function eventListeners() {
-    document.getElementById('searchbar').addEventListener('keyup', filterList )
-    await createDropListeners();
+  document.getElementById("searchbar").addEventListener("keyup", filterList);
+  await createDropListeners();
 
-    window.onscroll = function() { stickyNavbar() };
-    var nb = document.getElementById("analysis-navbar");
-    var sb = document.getElementById("searchbar")
-    var sticky = nb.offsetTop;
+  window.onscroll = function () {
+    stickyNavbar();
+  };
+  var nb = document.getElementById("analysis-navbar");
+  var sb = document.getElementById("searchbar");
+  var sticky = nb.offsetTop;
 
-    /**
-     * Sticky navbar
-     */
-    function stickyNavbar() {
-      if (window.pageYOffset >= sticky) {
-        nb.classList.add("sticky")
-      } else {
-        nb.classList.remove("sticky")
-      }
+  /**
+   * Sticky navbar
+   */
+  function stickyNavbar() {
+    if (window.pageYOffset >= sticky) {
+      nb.classList.add("sticky");
+    } else {
+      nb.classList.remove("sticky");
     }
+  }
 }
 
 /**
@@ -123,7 +122,7 @@ async function eventListeners() {
  */
 async function buildList() {
   let pos = "../../../../assets/cat-w-text/check1.png";
-  let neg = "../../../../assets/cat-w-text/cross1.png"
+  let neg = "../../../../assets/cat-w-text/cross1.png";
   let specs = `style= "
     margin-right: 5px;
     margin-left: 5px;
@@ -131,12 +130,12 @@ async function buildList() {
     margin-bottom: auto;
     padding-right: 5px;
     padding-left: 5px;"
-    `
-  let items = ""
+    `;
+  let items = "";
   let domain;
 
   const analysisKeys = await storage.getAllKeys(stores.analysis);
-  const analysisValues = await storage.getAll(stores.analysis)
+  const analysisValues = await storage.getAll(stores.analysis);
 
   for (let index in analysisKeys) {
     domain = analysisKeys[index];
@@ -146,10 +145,10 @@ async function buildList() {
     let gpcSent;
     let stringChanged;
     let data = analysisValues[index];
-    let beforeGPCUSPAPI     = data.USPAPI_BEFORE_GPC;
-    let afterGPCUSPAPI      = data.USPAPI_AFTER_GPC;
+    let beforeGPCUSPAPI = data.USPAPI_BEFORE_GPC;
+    let afterGPCUSPAPI = data.USPAPI_AFTER_GPC;
     let beforeGPCUSPCookies = data.USP_COOKIES_BEFORE_GPC;
-    let afterGPCUSPCookies  = data.USP_COOKIES_AFTER_GPC;
+    let afterGPCUSPCookies = data.USP_COOKIES_AFTER_GPC;
     let optedOut;
 
     if (data.USPAPI_OPTED_OUT) {
@@ -163,10 +162,18 @@ async function buildList() {
 
     // Generate the US Privacy String BEFORE GPC is sent
     // Give priority to the USPAPI over USP Cookie
-    if (beforeGPCUSPAPI && beforeGPCUSPAPI[0] && beforeGPCUSPAPI[0]["uspString"]) {
+    if (
+      beforeGPCUSPAPI &&
+      beforeGPCUSPAPI[0] &&
+      beforeGPCUSPAPI[0]["uspString"]
+    ) {
       uspStringBeforeGPC = beforeGPCUSPAPI[0]["uspString"];
     } else {
-      if (beforeGPCUSPCookies && beforeGPCUSPCookies[0] && beforeGPCUSPCookies[0]["value"]) {
+      if (
+        beforeGPCUSPCookies &&
+        beforeGPCUSPCookies[0] &&
+        beforeGPCUSPCookies[0]["value"]
+      ) {
         uspStringBeforeGPC = beforeGPCUSPCookies[0]["value"];
       } else {
         uspStringBeforeGPC = data.USPAPI_OPTED_OUT || data.USP_COOKIE_OPTED_OUT;
@@ -178,40 +185,61 @@ async function buildList() {
     if (afterGPCUSPAPI && afterGPCUSPAPI[0] && afterGPCUSPAPI[0]["uspString"]) {
       uspStringAfterGPC = afterGPCUSPAPI[0]["uspString"];
     } else {
-      if (afterGPCUSPCookies && afterGPCUSPCookies[0] && afterGPCUSPCookies[0]["value"]) {
+      if (
+        afterGPCUSPCookies &&
+        afterGPCUSPCookies[0] &&
+        afterGPCUSPCookies[0]["value"]
+      ) {
         uspStringAfterGPC = afterGPCUSPCookies[0]["value"];
       } else {
         uspStringAfterGPC = data.USPAPI_OPTED_OUT || data.USP_COOKIE_OPTED_OUT;
       }
     }
 
-    dnsLink = (data.DO_NOT_SELL_LINK_EXISTS) ? pos : neg;
-    gpcSent = (data.SENT_GPC) ? pos : neg;
+    dnsLink = data.DO_NOT_SELL_LINK_EXISTS ? pos : neg;
+    gpcSent = data.SENT_GPC ? pos : neg;
 
     if (!beforeGPCUSPAPI && !beforeGPCUSPCookies) {
       stringFound = neg;
     } else {
-      let existsUSP = ((beforeGPCUSPAPI.length != 0) || (beforeGPCUSPCookies.length != 0)) ? true : false;
+      let existsUSP =
+        beforeGPCUSPAPI.length != 0 || beforeGPCUSPCookies.length != 0
+          ? true
+          : false;
       let existsAndIsValidBeforeGPCUSPAPI;
       let existsAndIsValidBeforeGPCUSPCookies;
-  
-      if (beforeGPCUSPAPI && beforeGPCUSPAPI[0] && beforeGPCUSPAPI[0].uspString) {
-        existsAndIsValidBeforeGPCUSPAPI = isValidSignalIAB(beforeGPCUSPAPI[0].uspString)
+
+      if (
+        beforeGPCUSPAPI &&
+        beforeGPCUSPAPI[0] &&
+        beforeGPCUSPAPI[0].uspString
+      ) {
+        existsAndIsValidBeforeGPCUSPAPI = isValidSignalIAB(
+          beforeGPCUSPAPI[0].uspString
+        );
       } else {
         existsAndIsValidBeforeGPCUSPAPI = false;
       }
-      if (beforeGPCUSPCookies && beforeGPCUSPCookies[0] && beforeGPCUSPCookies[0].value) {
-        existsAndIsValidBeforeGPCUSPCookies = isValidSignalIAB(beforeGPCUSPCookies[0].value)
+      if (
+        beforeGPCUSPCookies &&
+        beforeGPCUSPCookies[0] &&
+        beforeGPCUSPCookies[0].value
+      ) {
+        existsAndIsValidBeforeGPCUSPCookies = isValidSignalIAB(
+          beforeGPCUSPCookies[0].value
+        );
       } else {
         existsAndIsValidBeforeGPCUSPCookies = false;
       }
-  
-      stringFound = (existsUSP && 
-        (existsAndIsValidBeforeGPCUSPAPI || existsAndIsValidBeforeGPCUSPCookies))
-        ? pos : neg;
+
+      stringFound =
+        existsUSP &&
+        (existsAndIsValidBeforeGPCUSPAPI || existsAndIsValidBeforeGPCUSPCookies)
+          ? pos
+          : neg;
     }
 
-    if (typeof optedOut === 'string') {
+    if (typeof optedOut === "string") {
       if (optedOut === "PARSE_FAILED") {
         stringChanged = neg;
       } else if (optedOut === "NOT_IN_CA") {
@@ -221,9 +249,8 @@ async function buildList() {
       stringChanged = optedOut ? pos : neg;
     }
 
-
     items +=
-          `
+      `
     <li id="li ${domain}">
       <div id = "div ${domain}" uk-grid class="uk-grid-small uk-width-1-1" style="font-size: medium;">
         <div>
@@ -256,10 +283,8 @@ async function buildList() {
           "
         >
           <label class="switch" >
-          `
-
-          +
-          `
+          ` +
+      `
             <span></span>
           </label>
     </li>
@@ -302,9 +327,9 @@ async function buildList() {
             </li>
         </ul>
     </li>
-          `
+          `;
   }
-  document.getElementById('analysis-main').innerHTML = items;
+  document.getElementById("analysis-main").innerHTML = items;
 }
 
 /**
@@ -312,13 +337,17 @@ async function buildList() {
  * @param {string} scaffoldTemplate - stringified HTML template
  */
 export async function analysisView(scaffoldTemplate) {
-    const body = renderParse(scaffoldTemplate, headings, 'scaffold-component')
-    let content = await fetchParse('./views/analysis-view/analysis-view.html', 'analysis-view')
+  const body = renderParse(scaffoldTemplate, headings, "scaffold-component");
+  let content = await fetchParse(
+    "./views/analysis-view/analysis-view.html",
+    "analysis-view"
+  );
 
-    document.getElementById('content').innerHTML = body.innerHTML
-    document.getElementById('scaffold-component-body').innerHTML = content.innerHTML
+  document.getElementById("content").innerHTML = body.innerHTML;
+  document.getElementById("scaffold-component-body").innerHTML =
+    content.innerHTML;
 
-    await buildList();
+  await buildList();
 
-    eventListeners();
+  eventListeners();
 }

@@ -13,7 +13,7 @@
 <br>
 
 <p align="center">
-  <a href="https://www.privacytechlab.org/optmeowt/"><img src="https://github.com/privacy-tech-lab/gpc-optmeowt/blob/issue-19/src/assets/cat-w-text/optmeow-logo-circle.png" width="150px" height="150px" alt="OptMeowt logo"></a>
+  <a href="https://privacytechlab.org/"><img src="https://github.com/privacy-tech-lab/gpc-optmeowt/blob/issue-19/src/assets/cat-w-text/optmeow-logo-circle.png" width="150px" height="150px" alt="OptMeowt logo"></a>
 </p>
 
 # OptMeowt 🐾
@@ -25,7 +25,7 @@ OptMeowt ("Opt Me Out") is a browser extension for opting you out from web track
   <a href="https://chrome.google.com/webstore/detail/optmeowt/hdbnkdbhglahihjdbodmfefogcjbpgbo"><img src="https://github.com/privacy-tech-lab/gpc-optmeowt/blob/main/chrome-web-store-badge.png" width="200px" alt="Chrome Web Store badge"></a>
 <p>
 
-OptMeowt is developed and maintained by Kuba Alicki (@kalicki1), Oliver Wang (@OliverWang13), Sophie Eng (@sophieeng), Jocelyn Wang (@Jocelyn0830), and Sebastian Zimmeck (@SebastianZimmeck) of the [privacy-tech-lab](https://www.privacytechlab.org/). Stanley Markman (@stanleymarkman), Kiryl Beliauski (@kbeliauski), Daniel Knopf (@dknopf), and Abdallah Salia (@asalia-1) contributed earlier. Learn more [here](https://privacytechlab.org/optmeowt).
+OptMeowt is developed and maintained by Oliver Wang (@OliverWang13), Sophie Eng (@sophieeng), Jocelyn Wang (@Jocelyn0830), Kate Hausladen (@katehausladen), and Sebastian Zimmeck (@SebastianZimmeck) of the [privacy-tech-lab](https://privacytechlab.org/). Kuba Alicki (@kalicki1), Stanley Markman (@stanleymarkman), Kiryl Beliauski (@kbeliauski), Daniel Knopf (@dknopf), and Abdallah Salia (@asalia-1) contributed earlier. Learn more [here](https://privacytechlab.org/).
 
 ## 1. Research Publications
 
@@ -35,7 +35,11 @@ OptMeowt is developed and maintained by Kuba Alicki (@kalicki1), Oliver Wang (@O
 - Eliza Kuller, Chunyue Ma, Isabella Tassone, Sebastian Zimmeck, [Making Online Privacy Choice Mechanisms Effective and Usable](http://summer21.research.wesleyan.edu/2021/07/22/balancing-usability-and-active-choice-while-developing-privacy-permission-schemes/), Summer Research 2021 Poster Session, Wesleyan University, Online, July 2021
 - Sebastian Zimmeck and Kuba Alicki, [Standardizing and Implementing Do Not Sell (Short Paper)](https://sebastianzimmeck.de/zimmeckAndAlicki2020DoNotSell.pdf), 19th Workshop on Privacy in the Electronic Society (WPES), Online Event, November 2020 [[BibTeX](https://sebastianzimmeck.de/citations.html#zimmeckAndAlicki2020DoNotSellBibtex)]
 
-## 2. How does OptMeowt work?
+## 2. Promo Video
+
+[![Watch the Video](https://privacytechlab.org/static/images/OptMeowt_Movie.png)](https://privacytechlab.org/static/images/OptMeowt_Movie.mp4)
+
+## 3. How does OptMeowt work?
 
 OptMeowt sends Do Not Sell signals to websites when you browse the web. Such signals must be respected for California consumers per the California Consumer Privacy Act (CCPA), [Regs Section 999.315(d)](https://oag.ca.gov/sites/all/files/agweb/pdfs/privacy/oal-sub-final-text-of-regs.pdf). Some companies also respect them when they are sent from outside of California. OptMeowt also places opt out cookies.
 
@@ -48,7 +52,7 @@ In detail, OptMeowt uses the following methods to opt you out:
 
 **Customizing which sites receive Do Not Sell signals:** For every site you visit OptMeowt will automatically add its domain to the `domain list`. Each newly added domain will receive Do Not Sell signals by default. However, you can exclude domains that should not receive Do Not Sell signals. This functionality is available on OptMeowt's settings page, which you can access from OptMeowt's popup window.
 
-## 3. Installing OptMeowt from Source
+## 4. Installing OptMeowt from Source
 
 1. Clone this repo locally or download a zipped copy and unzip it.
 2. Install [npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm).
@@ -70,7 +74,7 @@ In detail, OptMeowt uses the following methods to opt you out:
 
 **Note:** OptMeowt is in active development and new features are frequently added, some of which may cause errors. You can always get the stable release version on the [Chrome Web Store](https://chrome.google.com/webstore/detail/optmeowt/hdbnkdbhglahihjdbodmfefogcjbpgbo) and on [Firefox Add-Ons](https://addons.mozilla.org/en-US/firefox/addon/optmeowt/).
 
-## 4. Analysis Mode (Firefox only)
+## 5. Analysis Mode (Firefox only)
 
 Analysis Mode is used to investigate the GPC compliance of a given site. While not every site is required to respect GPC, this function of OptMeowt checks whether a site is compliant by searching for a DNS link (implying compliance), checking the US Privacy String, sending a GPC signal, and rechecking the US Privacy String. If the GPC signal is received, the US Privacy string should change the third character to a Y (i.e. 1YNN to 1YYN). If not, the site is not properly respecting GPC.
 
@@ -87,7 +91,7 @@ Analysis Mode is used to investigate the GPC compliance of a given site. While n
 7. Open the popup and hit `stop analysis` (alternatively, `ALt+Shift+S`). If this step is done correctly the optmeowt popup logo will return to green.
 8. Open the popup to see the results of analysis
 
-## 5. Installing OptMeowt for Developers
+## 6. Installing OptMeowt for Developers
 
 To build the development versions of OptMeowt follow the directions above but replace `npm run build` with `npm run start`. This command will run the npm script (referenced in `package.json`) that will call Webpack in development mode (Webpack settings in `webpack.config.js`). `npm run start` will also initiate Webpack servers for both the Firefox and Chrome versions, which will listen for changes as you work and rebuild as necessary.
 
@@ -107,7 +111,7 @@ Note that we have built most of our codebase in MacOS, so path variables and sim
 
 We also like to use [Debugger for Firefox](https://marketplace.visualstudio.com/items?itemName=firefox-devtools.vscode-firefox-debug) from within VSCode when in development to help automate loading the built extension package. The default behavior is `F5` to launch and load the extension in browser. There is a similar extension for Chrome, [Debugger for Chrome](https://marketplace.visualstudio.com/items?itemName=msjsdiag.debugger-for-chrome). Make sure to follow the online documentation on writing the correct `.vscode/launch.json` file, or other necessary settings files, in order to properly load OptMeowt with the debugger.
 
-## 6. OptMeowt's Permission Use
+## 7. OptMeowt's Permission Use
 
 **Note:** We do not collect any data from you. Third parties will also not receive your data. The permissions OptMeowt is using are required for opting you out. To that end, OptMeowt uses the following permissions:
 
@@ -133,11 +137,11 @@ We also like to use [Debugger for Firefox](https://marketplace.visualstudio.com/
 - `cookies`: Allows OptMeowt to place opt out cookies in your browser
 - `tabs`: Allows OptMeowt to keep track of HTTP headers per tab to show you the opt out status of the current site in a popup
 
-## 7. OptMeowt's Architecture
+## 8. OptMeowt's Architecture
 
 Detailed information on OptMeowt's architecture is available in a [separate readme](https://github.com/privacy-tech-lab/gpc-optmeowt/blob/main/README_ARCHITECTURE.md).
 
-## 8. Directories in this Repo
+## 9. Directories in this Repo
 
 - `src/`: Main contents of the OptMeowt browser extension.
 - `src/assets`: Graphical elements of the extension, including logos and button images.
@@ -148,11 +152,11 @@ Detailed information on OptMeowt's architecture is available in a [separate read
 - `src/theme`: Dark and light mode themes.
 - `ui-mockup`: Contains PDF and XD files demonstrating the preliminary mockup and analysis of OptMeowt.
 
-## 9. Third Party Libraries
+## 10. Third Party Libraries
 
 OptMeowt uses various [third party libraries](https://github.com/privacy-tech-lab/gpc-optmeowt/blob/main/package.json). We thank the developers.
 
-## 10. Developer Guide
+## 11. Developer Guide
 
 ### Keyboard Shortcuts
 
@@ -167,7 +171,7 @@ Reminder: Users **must** "stop analysis" prior to changing sites to prevent reco
 - If you have questions about OptMeowt's functionality or have found a bug, please check out our [FAQ \ Known quirks](https://github.com/privacy-tech-lab/gpc-optmeowt/wiki/FAQ-%5C-Known-quirks) page on the [Wiki](https://github.com/privacy-tech-lab/gpc-optmeowt/wiki) first. If you cannot find what you are looking for, feel free to open an issue, and we will address it.
 - Note: When viewing your browser's console on a site, a 404 error regarding the domain's GPC status file (`/.well-known/gpc.json`) may be shown. Note that this is normal and will occur (1) on domains that do not support GPC and (2) on domains that support GPC but do not host a `/.well-known/gpc.json` file.
 
-## 11. Thank You!
+## 12. Thank You!
 
 <p align="center"><strong>We would like to thank our financial supporters!</strong></p><br>
 
@@ -197,5 +201,5 @@ Reminder: Users **must** "stop analysis" prior to changing sites to prevent reco
 ##
 
 <p align="center">
-  <a href="https://www.privacytechlab.org/"><img src="./plt_logo.png" width="200px" height="200px" alt="privacy-tech-lab logo"></a>
+  <a href="https://privacytechlab.org/"><img src="./plt_logo.png" width="200px" height="200px" alt="privacy-tech-lab logo"></a>
 <p>

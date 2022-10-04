@@ -1,8 +1,7 @@
 /*
 Licensed per https://github.com/privacy-tech-lab/gpc-optmeowt/blob/main/LICENSE.md
-privacy-tech-lab, https://www.privacytechlab.org/
+privacy-tech-lab, https://privacytechlab.org/
 */
-
 
 .darkmode--activated {
   background-color: #252522 !important;
@@ -46,12 +45,12 @@ privacy-tech-lab, https://www.privacytechlab.org/
 }
 
 .darkmode--activated .blue-heading {
-  color: #93CAF2 !important;
+  color: #93caf2 !important;
 }
 
 .darkmode--activated a {
   text-decoration: underline;
-  color: #FFF !important;
+  color: #fff !important;
 }
 
 .darkmode--activated .uk-modal-body,
@@ -80,7 +79,7 @@ Radio buttons style settings page
 .darkmode--activated input[type="radio"]:hover:not(:checked) {
   transition: all ease 0.25s;
   box-shadow: 0 6px 12px #222221;
-  background-color: #CBCBCB;
+  background-color: #cbcbcb;
   /* border-color: transparent; */
 }
 
@@ -88,7 +87,7 @@ Radio buttons style settings page
 Settings page
 */
 .darkmode--activated .navbar-item.active {
-  color: #3D87E9;
+  color: #3d87e9;
 }
 
 /*
@@ -96,8 +95,8 @@ Settings page
 */
 .darkmode--activated .importexport-button {
   background-color: #252522 !important;
-  border-color: #CBCBCB !important;
-  color: #CBCBCB !important;
+  border-color: #cbcbcb !important;
+  color: #cbcbcb !important;
   box-shadow: 0 8px 16px -1px #111111 !important;
 }
 .darkmode--activated .importexport-button:hover {
@@ -109,12 +108,12 @@ Settings page
 
 .darkmode--activated .domainlist-navbar {
   background-color: #252522 !important;
-  color: #CBCBCB !important;
+  color: #cbcbcb !important;
 }
 
 .darkmode--activated .analysis-navbar {
   background-color: #252522 !important;
-  color: #CBCBCB !important;
+  color: #cbcbcb !important;
 }
 
 .darkmode--activated .sticky {
@@ -123,14 +122,13 @@ Settings page
 
 /********************************************************/
 
-
 /*
 Buttons and Switches
 */
 
 .darkmode--activated .optMode {
-  border: 1px solid rgb(238,238,238);
-  color: rgb(238,238,238);
+  border: 1px solid rgb(238, 238, 238);
+  color: rgb(238, 238, 238);
   box-shadow: 0 3px 6px -1px #111111 !important;
 }
 
@@ -141,7 +139,7 @@ Buttons and Switches
 .darkmode--activated .search {
   background-color: #333 !important;
   border-color: #333 !important;
-  color: #CBCBCB;
+  color: #cbcbcb;
 }
 
 .darkmode--activated .button {
@@ -153,12 +151,11 @@ Buttons and Switches
 
 .darkmode--activated .uk-badge {
   background-color: rgb(37, 37, 34) !important;
-
 }
 
 .darkmode--activated .button:hover {
   background-color: rgb(143, 17, 17) !important;
-  border: 1px solid  rgb(143, 17, 17) !important;
+  border: 1px solid rgb(143, 17, 17) !important;
   transition: all 0.3s ease;
   color: #eee !important;
 }

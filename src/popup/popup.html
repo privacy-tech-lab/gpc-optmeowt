@@ -1,8 +1,7 @@
 <!--
 Licensed per https://github.com/privacy-tech-lab/gpc-optmeowt/blob/main/LICENSE.md
-privacy-tech-lab, https://www.privacytechlab.org/
+privacy-tech-lab, https://privacytechlab.org/
 -->
-
 
 <!--
 popup.html
@@ -20,15 +19,10 @@ popup.html is the html scaffolding for OptMeowt's popup page
 
   <!-- This is the entry point to 'Popup' -->
   <body class="uk-padding-large" style="width: 320px">
-
-    
-
     <!-- Header -->
-    <div id="header"
-      uk-grid class="uk-grid-small"
-    >
+    <div id="header" uk-grid class="uk-grid-small">
       <div>
-        <a href="https://www.privacytechlab.org/optmeowt/" target="_blank">
+        <a href="https://privacytechlab.org/" target="_blank">
           <img
             src="./assets/cat-w-text/optmeow-logo-circle.png"
             height="32"
@@ -61,7 +55,7 @@ popup.html is the html scaffolding for OptMeowt's popup page
       </div>
       <div
         class="uk-container"
-        style="margin: auto; padding: 0; padding-right: 8px;"
+        style="margin: auto; padding: 0; padding-right: 8px"
         uk-tooltip="More"
         id="more"
       >
@@ -74,10 +68,10 @@ popup.html is the html scaffolding for OptMeowt's popup page
         />
       </div>
       <div
-      class="uk-container"
-      style="margin: auto; padding: 0;"
-      uk-tooltip="Tutorial"
-      id="tour"
+        class="uk-container"
+        style="margin: auto; padding: 0"
+        uk-tooltip="Tutorial"
+        id="tour"
       >
         <img
           src="../assets/question-mark.svg"
@@ -89,47 +83,65 @@ popup.html is the html scaffolding for OptMeowt's popup page
         />
       </div>
     </div>
-    <hr id= "divider-1" class="divide" class="uk-margin-small-top" />
-    
+    <hr id="divider-1" class="divide" class="uk-margin-small-top" />
+
     <!-- Popup body content -->
     <div class="uk-inline uk-width-expand">
-
       <!-- Content -->
       <div id="content">
-
-
         <!-- Domain List UI elements here -->
 
-        <div 
+        <div
           id="optMode-parent"
-          class = ".uk-width-auto"
-          style="font-weight: bold;
-                 font-size: large;
-                 text-align: center;">
-          <div
-            id = "optMode"
-            class="uk-badge optMode"
-          >
+          class=".uk-width-auto"
+          style="font-weight: bold; font-size: large; text-align: center"
+        >
+          <div id="optMode" class="uk-badge optMode">
             <div id="optMode-text"></div>
-            <img id="p" src="../../../assets/shield-outline.svg" width="20px" height="20px" style="display: none;" uk-svg>
-            <img id="a" src="../../../assets/flash-outline.svg" width="20px" height="20px" style="display: none;" uk-svg>
+            <img
+              id="p"
+              src="../../../assets/shield-outline.svg"
+              width="20px"
+              height="20px"
+              style="display: none"
+              uk-svg
+            />
+            <img
+              id="a"
+              src="../../../assets/flash-outline.svg"
+              width="20px"
+              height="20px"
+              style="display: none"
+              uk-svg
+            />
           </div>
-          <hr id = "divider-1.5" class="divide" style="margin:15px;">
+          <hr id="divider-1.5" class="divide" style="margin: 15px" />
         </div>
 
-        <div id="domain-title"
-        style="overflow-wrap: break-word; display: inline-block;"
-        class="blue-heading uk-flex-inline uk-width-1-1 uk-flex-center uk-text-center uk-text-large uk-text-bold uk-text-truncate"
+        <div
+          id="domain-title"
+          style="overflow-wrap: break-word; display: inline-block"
+          class="
+            blue-heading
+            uk-flex-inline
+            uk-width-1-1
+            uk-flex-center
+            uk-text-center
+            uk-text-large
+            uk-text-bold
+            uk-text-truncate
+          "
         >
-        <!-- Active tab domain inflated here -->
+          <!-- Active tab domain inflated here -->
         </div>
 
         <!-- Use this to inflate 
             (1) DNS status in protection mode 
             (2) CCPA compliance info in analysis mode -->
         <div id="more-info-body">
-          <div uk-grid style="margin-top: 4%; margin-bottom: 4%;">
-            <div id="more-info-text"
+          <div uk-grid style="margin-top: 4%; margin-bottom: 4%">
+            <div
+              id="more-info-text"
               class="uk-width-expand uk-margin-auto-vertical"
               style="font-weight: bold; font-size: medium"
             >
@@ -147,24 +159,28 @@ popup.html is the html scaffolding for OptMeowt's popup page
           </div>
         </div>
 
-        <hr id = "divider-2" class="divide" style="margin:0px;">
+        <hr id="divider-2" class="divide" style="margin: 0px" />
 
         <!-- stats about visited domains -->
-        <div uk-grid class="uk-width-expand uk-text-center" style="font-size: medium; padding: 10px; margin-left:0px;">
-          <div id="visited-domains-stats"  class="uk-text-center">
-          </div>
+        <div
+          uk-grid
+          class="uk-width-expand uk-text-center"
+          style="font-size: medium; padding: 10px; margin-left: 0px"
+        >
+          <div id="visited-domains-stats" class="uk-text-center"></div>
         </div>
-        <hr id = "divider-3" class="divide" style="margin:0px;">
+        <hr id="divider-3" class="divide" style="margin: 0px" />
 
         <!-- Dropdown 1 -->
-        <div id="dropdown-1"
+        <div
+          id="dropdown-1"
           uk-grid
-          class="dropdown-tab" 
-          style="padding:15px; margin-right:-30px;"
+          class="dropdown-tab"
+          style="padding: 15px; margin-right: -30px"
         >
           <div
             class="uk-container"
-            style="margin: auto; padding: 0; padding-left: 30px;"
+            style="margin: auto; padding: 0; padding-left: 30px"
             uk-tooltip="Dropdown"
           >
             <img
@@ -176,29 +192,31 @@ popup.html is the html scaffolding for OptMeowt's popup page
               uk-svg
             />
           </div>
-          <div id="dropdown-1-text"
-            class="uk-width-expand uk-text-left" 
-            style="font-weight: bold; font-size: medium; margin-right:20px;"
+          <div
+            id="dropdown-1-text"
+            class="uk-width-expand uk-text-left"
+            style="font-weight: bold; font-size: medium; margin-right: 20px"
           >
             <!-- Inflate dropdown 1 text info here -->
           </div>
         </div>
-        <hr class="divide" id="divider-4" style="margin:0px; display: none">
+        <hr class="divide" id="divider-4" style="margin: 0px; display: none" />
 
-        <ul id="dropdown-1-expandable" class="uk-list" style="display:none">
+        <ul id="dropdown-1-expandable" class="uk-list" style="display: none">
           <!-- Inflate dropdown 1 info here -->
         </ul>
-        <hr id="divider-5" class="divide" style="margin:0px;display:none;">
+        <hr id="divider-5" class="divide" style="margin: 0px; display: none" />
 
         <!-- Dropdown 2 -->
-        <div id="dropdown-2"
-          uk-grid 
-          class="dropdown-tab" 
-          style="padding:15px; margin-right:-30px;"
+        <div
+          id="dropdown-2"
+          uk-grid
+          class="dropdown-tab"
+          style="padding: 15px; margin-right: -30px"
         >
           <div
             class="uk-container"
-            style="margin: auto; padding: 0; padding-left: 30px;"
+            style="margin: auto; padding: 0; padding-left: 30px"
             uk-tooltip="Dropdown"
           >
             <img
@@ -210,87 +228,95 @@ popup.html is the html scaffolding for OptMeowt's popup page
               uk-svg
             />
           </div>
-          <div id="dropdown-2-text" 
-            class="uk-width-expand uk-text-left" 
-            style="font-weight: bold; font-size: medium; margin-right:20px;"
+          <div
+            id="dropdown-2-text"
+            class="uk-width-expand uk-text-left"
+            style="font-weight: bold; font-size: medium; margin-right: 20px"
           >
             <!-- Inflate dropdown 2 text info here -->
           </div>
         </div>
-        <hr class="divide" id="divider-6" style="margin:0px; display: none">
+        <hr class="divide" id="divider-6" style="margin: 0px; display: none" />
 
-        <ul id="dropdown-2-expandable" class="uk-list" style="display:none">
+        <ul id="dropdown-2-expandable" class="uk-list" style="display: none">
           <!-- Inflate dropdown 2 info here -->
         </ul>
-        <hr id="divider-7" class="divide" style="margin:0px;display:none;">
+        <hr id="divider-7" class="divide" style="margin: 0px; display: none" />
 
         <!-- Domain List link (Protection mode only) -->
-        <div id="domain-list" 
-          uk-grid 
-          class="domain-list" 
-          style="padding:15px; margin-right:-30px;"
+        <div
+          id="domain-list"
+          uk-grid
+          class="domain-list"
+          style="padding: 15px; margin-right: -30px"
         >
-          <div id="domain-list-text"
-            class="uk-width-expand uk-text-center" 
-            style="font-weight: bold; font-size: medium; margin-right:20px;"
+          <div
+            id="domain-list-text"
+            class="uk-width-expand uk-text-center"
+            style="font-weight: bold; font-size: medium; margin-right: 20px"
           >
             Domain List
           </div>
         </div>
 
         <!--  -->
-        <div id="run-analysis" 
-        class="analysis-list" 
-        style="padding:15px;margin-left:-30px;margin-right:-30px;"
+        <div
+          id="run-analysis"
+          class="analysis-list"
+          style="padding: 15px; margin-left: -30px; margin-right: -30px"
         >
-          <div id="run-analysis-text"
-            class="uk-width-expand uk-text-center" 
-            style="font-weight: bold; font-size: medium; margin-right:20px;"
+          <div
+            id="run-analysis-text"
+            class="uk-width-expand uk-text-center"
+            style="font-weight: bold; font-size: medium; margin-right: 20px"
           >
             Run Analysis
           </div>
         </div>
-        <hr id="divider-8" class="divide" style="margin:0px;" >
+        <hr id="divider-8" class="divide" style="margin: 0px" />
 
-        <div id="stop-analysis" 
-        class="analysis-list" 
-        style="padding:15px;margin-left:-30px;margin-right:-30px;"
+        <div
+          id="stop-analysis"
+          class="analysis-list"
+          style="padding: 15px; margin-left: -30px; margin-right: -30px"
         >
-          <div id="stop-analysis-text"
-            class="uk-width-expand uk-text-center" 
-            style="font-weight: bold; font-size: medium; margin-right:20px;"
+          <div
+            id="stop-analysis-text"
+            class="uk-width-expand uk-text-center"
+            style="font-weight: bold; font-size: medium; margin-right: 20px"
           >
             Stop Analysis
           </div>
         </div>
-        <hr id="divider-8.5" class="divide" style="margin:0px;" >
+        <hr id="divider-8.5" class="divide" style="margin: 0px" />
 
         <!-- View all analyzed sites link (Analysis mode only) -->
-        <div id="misc-options" uk-grid style="margin-right:-30px;">
-          <div id="analysis-list"
-            class="uk-width-expand uk-text-center analysis-list" 
-            style="font-weight: bold; font-size: medium; padding:15px;"
+        <div id="misc-options" uk-grid style="margin-right: -30px">
+          <div
+            id="analysis-list"
+            class="uk-width-expand uk-text-center analysis-list"
+            style="font-weight: bold; font-size: medium; padding: 15px"
           >
             View All
           </div>
-          <div id="download-analysis-data"
-            class="uk-width-expand uk-text-center analysis-list" 
-            style="font-weight: bold; font-size: medium; padding:15px;"
+          <div
+            id="download-analysis-data"
+            class="uk-width-expand uk-text-center analysis-list"
+            style="font-weight: bold; font-size: medium; padding: 15px"
           >
             Download
           </div>
         </div>
-          
-      
-        <hr id="divider-10" class="divide" style="margin:0px;" >
+
+        <hr id="divider-10" class="divide" style="margin: 0px" />
 
         <!-- Dark Mode -->
-        <div uk-grid class="uk-margin-top" style="margin-bottom: 4%;">
+        <div uk-grid class="uk-margin-top" style="margin-bottom: 4%">
           <div
             class="uk-width-expand uk-margin-auto-vertical"
             style="font-weight: bold; font-size: medium"
           >
-             Dark Mode
+            Dark Mode
           </div>
           <div uk-grid>
             <div class="uk-width-auto">
@@ -306,14 +332,12 @@ popup.html is the html scaffolding for OptMeowt's popup page
           </div>
         </div>
 
-        <br>
-        <div
-          id="gpc-branding"
-        >
+        <br />
+        <div id="gpc-branding">
           <a href="https://globalprivacycontrol.org/" target="_blank">
             <img
               src="./assets/gpc-logo.svg"
-              style="width: 60%;"
+              style="width: 60%"
               alt="gpc-logo"
               uk-svg
               id="gpc-logo"
@@ -322,7 +346,8 @@ popup.html is the html scaffolding for OptMeowt's popup page
         </div>
       </div>
       <!-- Extension is disabled message (when content is hidden) -->
-      <div id="extension-disabled-message"
+      <div
+        id="extension-disabled-message"
         class="uk-position-cover uk-flex uk-flex-center uk-flex-middle"
         style="transition: all ease 0.25s; opacity: 0"
       >
@@ -335,8 +360,6 @@ popup.html is the html scaffolding for OptMeowt's popup page
           </div>
         </div>
       </div>
-
-
     </div>
   </body>
 </html>
