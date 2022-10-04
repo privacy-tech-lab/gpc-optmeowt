@@ -589,9 +589,9 @@ function addThirdPartyDomainDNSToggleListener(requestDomain) {
 async function buildDomains(requests) {
   let domain = await getCurrentParsedDomain();
   let items = "";
-  const domainlistKeys = await storage.getAllKeys(stores.domainlist);
-  const domainlistValues = await storage.getAll(stores.domainlist);
-
+  const domainlistKeys = await storage.getAllKeys(stores.domainlist)
+  const domainlistValues = await storage.getAll(stores.domainlist)
+  
   // Sets the 3rd party domain elements
   for (let requestDomain in requests) {
     if (requestDomain != domain) {

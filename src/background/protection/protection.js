@@ -18,7 +18,7 @@ import { enableListeners, disableListeners } from "./listeners-$BROWSER.js";
 import { initIAB } from "../cookiesIAB.js";
 import { initCookiesPerDomain } from "./cookiesOnInstall.js";
 import { initCookiesOnInstall } from "./cookiesOnInstall.js";
-import psl from "psl";
+import psl, { parse } from "psl";
 
 // TODO: Remove this when done
 import {
@@ -36,11 +36,14 @@ import { updateRemovalScript } from "../../common/editDomainlist.js";
 
 var domainlist = {}; // Caches & mirrors domainlist in storage
 var isDomainlisted = defaultSettings["IS_DOMAINLISTED"];
-var tabs = {}; // Caches all tab infomration, i.e. requests, etc.
-var wellknown = {}; // Caches wellknown info to be sent to popup
-var signalPerTab = {}; // Caches if a signal is sent to render the popup icon
-var activeTabID = 0; // Caches current active tab id
-var sendSignal = true; // Caches if the signal can be sent to the curr domain
+var tabs = {};          // Caches all tab infomration, i.e. requests, etc. 
+var wellknown = {};     // Caches wellknown info to be sent to popup
+var signalPerTab = {};  // Caches if a signal is sent to render the popup icon
+var activeTabID = 0;    // Caches current active tab id
+var sendSignal = true;  // Caches if the signal can be sent to the curr domain
+var domPrev3rdParties = {}; //stores all the 3rd parties by domain (resets when you quit chrome)
+var isFirefox = ("$BROWSER" === "firefox");
+var globalParsedDomain;
 
 var isFirefox = "$BROWSER" === "firefox";
 
@@ -83,6 +86,7 @@ const listenerCallbacks = {
    */
   onHeadersReceived: (details) => {
     logData(details);
+
   },
 
   /**
@@ -120,12 +124,32 @@ function addHeaders(details) {
   return { requestHeaders: details.requestHeaders };
 }
 
+
+function getCurrentParsedDomain() {
+  return new Promise((resolve, reject) => {
+    try {
+      chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+        let tab = tabs[0];
+        let url = new URL(tab.url);
+        let parsed = psl.parse(url.hostname);
+        let domain = parsed.domain;
+        globalParsedDomain = domain;  // for global scope variable
+        resolve(domain);
+      });
+    } catch(e) {
+      reject();
+    }
+  })
+}
+
+
 /**
  * Checks whether a particular domain should receive a DNS signal
  * (1) Parse url to get domain for domainlist
  * (2) Update domains by adding current domain to domainlist in storage.
- * (3) Check to see if we should send signal.
- *
+ * (3) Updates the 3rd party list for the currentDomain
+ * (4) Check to see if we should send signal.
+ * 
  * Currently, it only adds to domainlist store as NULL if it doesnt exist
  * @param {Object} details - callback object according to Chrome API
  */
@@ -135,9 +159,23 @@ async function updateDomainlist(details) {
   let parsedDomain = parsedUrl.domain;
   let currDomainValue = await storage.get(stores.domainlist, parsedDomain);
 
+  console.log(parsedDomain);
   if (currDomainValue === undefined) {
     storage.set(stores.domainlist, null, parsedDomain); // Sets to storage async
   }
+  
+  //get the current parsed domain--this is used to store 3rd parties (using globalParsedDomain variable)
+ 
+  let currentDomain = await getCurrentParsedDomain(); 
+  //initialize the objects
+  if (!(activeTabID in domPrev3rdParties)){
+    domPrev3rdParties[activeTabID] = {};
+  }
+  if (!(currentDomain in domPrev3rdParties[activeTabID]) ){
+    domPrev3rdParties[activeTabID][currentDomain] = {};
+  }
+  //as they come in, add the parsedDomain to the object with null value (just a placeholder)
+  domPrev3rdParties[activeTabID][currentDomain][parsedDomain] = null;
 }
 
 function updatePopupIcon(tabId) {
@@ -178,6 +216,7 @@ function logData(details) {
       };
     }
   }
+
 }
 
 async function pullToDomainlistCache() {
@@ -264,16 +303,24 @@ function handleSendMessageError() {
     console.warn(error.message);
   }
 }
+function dataToPopupHelper(){
+  //data gets sent back every time the popup is clicked
+  let requestsData = {};  
+  
+  if (tabs[activeTabID] !== undefined) {
+
+    requestsData = domPrev3rdParties[activeTabID][globalParsedDomain];
+    console.log("requests by tabID:", domPrev3rdParties);
+  }
+  return requestsData
+}
 
 // Info back to popup
 function dataToPopup(wellknownData) {
-  let requestsData = {};
-
-  if (tabs[activeTabID] !== undefined) {
-    requestsData = tabs[activeTabID].REQUEST_DOMAINS;
-  }
-
-  chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+  
+  let requestsData = dataToPopupHelper(); //get requests from the helper
+  console.log("req data",requestsData);
+  chrome.tabs.query({active: true, currentWindow: true}, function(tabs){
     let popupData = {
       requests: requestsData,
       wellknown: wellknownData,
@@ -290,11 +337,8 @@ function dataToPopup(wellknownData) {
 }
 
 function dataToPopupRequests() {
-  let requestsData = {};
-
-  if (tabs[activeTabID] !== undefined) {
-    requestsData = tabs[activeTabID].REQUEST_DOMAINS;
-  }
+ 
+  let requestsData = dataToPopupHelper(); //get requests from the helper
 
   chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
     chrome.runtime.sendMessage(
