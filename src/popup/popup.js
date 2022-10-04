@@ -121,7 +121,7 @@ function generateDarkmodeElement() {
 
 
 // Fetches the current domain 
-function getCurrentParsedDomain() {
+export function getCurrentParsedDomain() {
   return new Promise((resolve, reject) => {
     try {
       chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
@@ -557,7 +557,7 @@ async function buildDomains(requests) {
   let items = "";
   const domainlistKeys = await storage.getAllKeys(stores.domainlist)
   const domainlistValues = await storage.getAll(stores.domainlist)
-
+  
   // Sets the 3rd party domain elements
   for (let requestDomain in requests) {
     if (requestDomain != domain){
@@ -621,6 +621,7 @@ async function buildDomains(requests) {
     addThirdPartyDomainDNSToggleListener(requestDomain)
     }
   }
+
 
 
 }
