@@ -28,7 +28,8 @@ import { saveAs } from 'file-saver';
 const stores = Object.freeze({
     settings: 'SETTINGS',
     domainlist: 'DOMAINLIST',
-    analysis:'ANALYSIS'
+    analysis:'ANALYSIS',
+    analysis_domains:'ANALYSIS_DOMAINS'
 });
 
 
@@ -41,6 +42,7 @@ const dbPromise = openDB("extensionDB", 1, {
         db.createObjectStore(stores.domainlist)
         db.createObjectStore(stores.settings)
         db.createObjectStore(stores.analysis)
+        db.createObjectStore(stores.analysis_domains)
     }
 });
 

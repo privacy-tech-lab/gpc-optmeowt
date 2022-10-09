@@ -148,3 +148,5 @@ window.addEventListener('message', function(event) {
 		chrome.runtime.sendMessage({ msg: "RUN_ANALYSIS", data: event.data.result });	
 	}
 }, false);
+
+chrome.runtime.sendMessage({ msg: "QUERY_ANALYSIS", location: this.location.href});

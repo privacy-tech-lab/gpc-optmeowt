@@ -19,6 +19,7 @@ export const defaultSettings = {
 	'BROWSER': '$BROWSER',
 	'DOMAINLIST_PRESSED': false,
 	'ANALYSIS_PRESSED' : false,
+	'ANALYSIS_STARTED' : false,
 	'ANALYSIS_WARNING_SHOWN': false,
 	'IS_DOMAINLISTED': false,
 	'IS_ENABLED': true,

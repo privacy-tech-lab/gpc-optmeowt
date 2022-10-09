@@ -235,7 +235,6 @@ async function fetchUSPStringData() {
  * (3) Attach DOM property to page after reload
  */
 async function runAnalysis() {
-
   async function afterFetchingFirstPartyDomain() {
     const uspapiData = await fetchUSPStringData();
     let url = new URL(uspapiData.location);
@@ -261,6 +260,11 @@ async function runAnalysis() {
 
     afterFetchingFirstPartyDomain();
   });
+
+  await new Promise(resolve => setTimeout(resolve, 5000));
+
+  await haltAnalysis();
+
 }
 
 /**
@@ -607,10 +611,32 @@ function onCommittedCallback(details) {
   }
 }
 
+// Used for crawling
+async function runAnalysisonce(location) {
+  await new Promise(resolve => setTimeout(resolve, 1000));
+  let analysis_started = await storage.get(stores.settings, "ANALYSIS_STARTED");
+  let url = new URL(location);
+  let domain = parseURL(url);
+  let analysis_domains = await storage.getAllKeys(stores.analysis);
+  if ((!analysis_domains.includes(domain)) &&  (analysis_started === false)) {
+    runAnalysis();
+    await storage.set(stores.settings, true, "ANALYSIS_STARTED");
+  }
+  
+  if (analysis_started === true){
+    await new Promise(resolve => setTimeout(resolve, 3000));
+    haltAnalysis();
+    await storage.set(stores.settings, false, "ANALYSIS_STARTED");
+  }
+}
+
 /**
  * Message passing listener - for collecting USPAPI call data from the window
  */
  function onMessageHandler(message, sender, sendResponse) {
+  if (message.msg === "QUERY_ANALYSIS") {
+    runAnalysisonce(message.location);
+  }
   if (message.msg === "USPAPI_TO_BACKGROUND") {
     let url = new URL(message.location);
     let domain = parseURL(url);
