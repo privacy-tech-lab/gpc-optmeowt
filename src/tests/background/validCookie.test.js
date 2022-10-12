@@ -1,6 +1,6 @@
 
 
-import { isValidSignalIAB } from "./cookiesIAB"; 
+import { isValidSignalIAB } from '../background/cookiesIAB';
 
 /* Test mocking
 jest.mock("../../background/cookiesIAB", () => jest.fn());

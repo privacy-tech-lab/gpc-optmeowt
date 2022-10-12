@@ -8,12 +8,7 @@
     "setupFiles": [
       "fake-indexeddb/auto"
     ],
-    "verbose": true,
-    "transformIgnorePatterns": [
-      [
-        "node_modules"
-      ]
-    ]
+    "verbose": true
   },
   "scripts": {
     "prestart": "rimraf dev",
