@@ -54,7 +54,7 @@ let defaultValue = "1NYN";
  * via a `us_privacy` first-party cookie
  * Pulls data about the current tab and intializes the cookie-set process
  */
-export function initIAB() {
+module.exports = function initIAB() {
   chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
     if (tabs[0] != undefined && tabs[0].url != undefined) {
       var tab = tabs[0];
@@ -204,7 +204,7 @@ function deleteCookie(url, name) {
  * @param {string} signal - `us_privacy` string
  * @returns {bool} - Represents if signal is a valid signal
  */
-export function isValidSignalIAB(signal) {
+module.exports = function isValidSignalIAB(signal) {
   var validChars = ["y", "n", "Y", "N", "-"];
   if (signal.length != 4) {
     return false;
