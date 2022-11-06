@@ -1,17 +1,6 @@
-var isValidSignalIAB = require('../src/background/cookiesIAB.js');
-const expect = require('chai').expect;
+import assert from 'assert';
+import {isValidSignalIAB} from '../src/background/cookiesIAB.js';
 
-describe('Valid Cookie String test', function(){
-
-    context('valid string', function(){
-        it('should return true', function(){
-            expect(isValidSignalIAB("1---")).to.equal(true);
-        })
-    })
-
-    context('invalid string', function(){
-        it('should return false', function(){
-            expect(isValidSignalIAB("abcd")).to.equal(false);
-        })
-    })
-})
+it('should accept 1--- as true string', () => {
+    assert.equal(isValidSignalIAB("1---"), true);
+});
