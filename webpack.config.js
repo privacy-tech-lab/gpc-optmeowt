@@ -15,7 +15,7 @@ const path = require("path")
 // ! Implement file loader for assets
 
 module.exports = (env, argv) => {
-	const browser = env.chrome ? "chrome" : "firefox"	// default to firefox build
+	const browser = "firefox"	// default to firefox build
 	const isProduction = argv.mode == "production"	// sets bool depending on build
 
 	return {
@@ -23,8 +23,6 @@ module.exports = (env, argv) => {
 		// This is useful, plus we need it b/c otherwise we get an "unsafe eval" problem
 		entry: {
 			background: "./src/background/control.js",
-			popup: "./src/popup/popup.js",
-			options: "./src/options/options.js"
 		},
 		output: {
 			filename: "[name].bundle.js",
@@ -94,22 +92,6 @@ module.exports = (env, argv) => {
 			}),
 			new CopyPlugin({
 				patterns: [{ context: path.resolve(__dirname, "src"), from: "rules", to: "rules" }],
-			}),
-			new CopyPlugin({
-				patterns: [{ context: path.resolve(__dirname, "src/options"), from: "views", to: "views" }],
-			}),
-			new CopyPlugin({
-				patterns: [{ context: path.resolve(__dirname, "src/options"), from: "components", to: "components" }],
-			}),
-			new HtmlWebpackPlugin({
-				filename: "options.html",
-				template: "src/options/options.html",
-				chunks: ["options"],
-			}),
-			new HtmlWebpackPlugin({
-				filename: "popup.html",
-				template: "src/popup/popup.html",
-				chunks: ["popup"],
 			}),
 		]
 	}

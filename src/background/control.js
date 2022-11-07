@@ -12,55 +12,19 @@ to manage the state & functionality mode of the extension
 */
 
 
-import { init as initProtection_ff, halt as haltProtection_ff} from "./protection/protection-ff.js";
-import { init as initProtection_cr, halt as haltProtection_cr} from "./protection/protection.js";
 import { init as initAnalysis, halt as haltAnalysis } from "./analysis/analysis.js";
 import { defaultSettings } from "../data/defaultSettings.js";
 import { modes } from "../data/modes.js";
 import { stores, storage} from "./storage.js";
-import { reloadDynamicRules } from '../common/editRules';
 
-// TODO: Remove
-import { debug_domainlist_and_dynamicrules, updateRemovalScript} from '../common/editDomainlist';
 
 async function enable() {
-  let mode = await storage.get(stores.settings, "MODE");
-
-  if ("$BROWSER" == 'firefox'){
-    var initProtection = initProtection_ff;
-    var haltProtection = haltProtection_ff;
-  } else {
-    var initProtection = initProtection_cr;
-    var haltProtection = haltProtection_cr;
-  }
-  
-  switch (mode) {
-    case modes.analysis:
-      initAnalysis();
-      haltProtection();
-      break;
-    case modes.protection:
-			initProtection();
-      haltAnalysis();
-			break;
-		default:
-			initProtection();
-      haltAnalysis();
-      await storage.set(stores.settings, modes.protection, "MODE")
-      break;
-	}
+  initAnalysis();
 }
 
 function disable() {
 
-  if ("$BROWSER" == 'firefox'){
-    var haltProtection = haltProtection_ff;
-  } else if ("$BROWSER" == 'chrome') {
-    var haltProtection = haltProtection_cr;
-  }
-
   haltAnalysis();
-  haltProtection();
 }
 
 
@@ -70,23 +34,6 @@ function disable() {
 // This is the very first thing the extension runs
 (async () => {
 
-  // TODO: Temporarily register content script
-  if ("$BROWSER" == "chrome"){
-    chrome.scripting.registerContentScripts([
-      {
-        "id": "1",
-        "matches": ["<all_urls>"],
-        "js": ["content-scripts/registration/gpc-dom.js"],
-        "runAt": "document_start"
-      },
-      {
-        "id": "2",
-        "matches": ["https://example.org/foo/bar.html"],
-        "js": ["content-scripts/registration/gpc-remove.js"],
-        "runAt": "document_start"
-        }
-    ])
-  } 
   // Initializes the default settings
   let settingsDB = await storage.getStore(stores.settings);
   for (let setting in defaultSettings) {
@@ -101,10 +48,6 @@ function disable() {
     enable();
   }
   
-  if ("$BROWSER" == 'chrome'){
-    updateRemovalScript();
-    reloadDynamicRules();
-    } 
 })();
 
 
