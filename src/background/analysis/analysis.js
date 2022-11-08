@@ -36,6 +36,8 @@ WARNING:  Content Security Policies are DISABLED while Analysis Mode is ON.
 */
 
 import { csvGenerator } from "../../common/csvGenerator";
+import { modes } from "../../data/modes.js";
+import { defaultSettings } from "../../data/defaultSettings.js";
 import { stores, storage } from "./../storage.js";
 import { 
   cookiesPhrasing, 
@@ -74,6 +76,7 @@ var changingSitesOnAnalysis = false;
 
 // Listener parameters for webRequest & webNavigation
 const MOZ_REQUEST_SPEC = ["requestHeaders", "blocking"];
+const MOZ_RESPONSE_SPEC = ["responseHeaders", "blocking"];
 const FILTER = { urls: ["<all_urls>"] };
 
 
@@ -648,6 +651,12 @@ async function runAnalysisonce(location) {
   }
   if (message.msg === "HALT_ANALYSIS") {
     haltAnalysis();
+  }
+  if (message.msg === "POPUP_ANALYSIS") {
+    chrome.runtime.sendMessage({
+      msg: "POPUP_ANALYSIS_DATA",
+      data: { analysis, analysis_userend }
+    }); 
   }
   if (message.msg === "CSV_DATA_REQUEST") {
     chrome.runtime.sendMessage({

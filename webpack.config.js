@@ -15,14 +15,14 @@ const path = require("path")
 // ! Implement file loader for assets
 
 module.exports = (env, argv) => {
-	const browser = "firefox"	// default to firefox build
+	const browser = env.chrome ? "chrome" : "firefox"	// default to firefox build
 	const isProduction = argv.mode == "production"	// sets bool depending on build
 
 	return {
 		name: "background",
 		// This is useful, plus we need it b/c otherwise we get an "unsafe eval" problem
 		entry: {
-			background: "./src/background/control.js",
+			background: "./src/background/control.js"
 		},
 		output: {
 			filename: "[name].bundle.js",

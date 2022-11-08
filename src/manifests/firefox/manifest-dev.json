@@ -43,7 +43,8 @@
     "128": "assets/face-icons/icon128-face-circle.png"
   },
   "browser_action": {
-    "default_title": "OptMeowt"
+    "default_title": "OptMeowt",
+    "default_popup": "popup.html"
   },
   "content_scripts": [
     {

@@ -16,15 +16,17 @@ import { init as initAnalysis, halt as haltAnalysis } from "./analysis/analysis.
 import { defaultSettings } from "../data/defaultSettings.js";
 import { modes } from "../data/modes.js";
 import { stores, storage} from "./storage.js";
+import { reloadDynamicRules } from '../common/editRules';
 
+// TODO: Remove
+import { debug_domainlist_and_dynamicrules, updateRemovalScript} from '../common/editDomainlist';
 
 async function enable() {
   initAnalysis();
 }
 
 function disable() {
-
-  haltAnalysis();
+  haltProtection();
 }
 
 
@@ -34,6 +36,23 @@ function disable() {
 // This is the very first thing the extension runs
 (async () => {
 
+  // TODO: Temporarily register content script
+  if ("$BROWSER" == "chrome"){
+    chrome.scripting.registerContentScripts([
+      {
+        "id": "1",
+        "matches": ["<all_urls>"],
+        "js": ["content-scripts/registration/gpc-dom.js"],
+        "runAt": "document_start"
+      },
+      {
+        "id": "2",
+        "matches": ["https://example.org/foo/bar.html"],
+        "js": ["content-scripts/registration/gpc-remove.js"],
+        "runAt": "document_start"
+        }
+    ])
+  } 
   // Initializes the default settings
   let settingsDB = await storage.getStore(stores.settings);
   for (let setting in defaultSettings) {
@@ -48,6 +67,10 @@ function disable() {
     enable();
   }
   
+  if ("$BROWSER" == 'chrome'){
+    updateRemovalScript();
+    reloadDynamicRules();
+    } 
 })();
 
 

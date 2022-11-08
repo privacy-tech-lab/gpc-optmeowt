@@ -17,6 +17,13 @@ import { modes } from "./modes"
 // it will be easier to catch a mistake here than mistyping and `enable` string
 export const defaultSettings = {
 	'BROWSER': '$BROWSER',
+	'DOMAINLIST_PRESSED': false,
 	'ANALYSIS_PRESSED' : false,
 	'ANALYSIS_STARTED' : false,
+	'ANALYSIS_WARNING_SHOWN': false,
+	'IS_DOMAINLISTED': false,
+	'IS_ENABLED': true,
+	'MODE': modes.protection,
+	'TUTORIAL_SHOWN': true,
+	'TUTORIAL_SHOWN_IN_POPUP': true,
 }
