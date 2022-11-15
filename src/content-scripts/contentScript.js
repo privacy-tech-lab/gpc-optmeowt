@@ -41,14 +41,6 @@ const uspapiRequest = `
   }
 `;
 
-const runAnalysisProperty = `
-if (!window.runAnalysis) {
-    window.runAnalysis = function() {
-		  window.postMessage({ type: "RUN_ANALYSIS", result: null });
-      return;
-    };
-};`;
-
 function injectScript(script) {
   const scriptElem = document.createElement("script");
   scriptElem.innerHTML = script;
@@ -85,7 +77,7 @@ async function getWellknown(url) {
   /*   MAIN CONTENT SCRIPT PROCESSES GO HERE   */
 
   let url = new URL(location); // location object
-
+  ////not sure if this stuff needs to stay or go
   /* (1) Gets Frame:0 Tab content */
   // leave this commented out while debugging ANALYSIS MODE
   // chrome.runtime.sendMessage({
@@ -94,16 +86,16 @@ async function getWellknown(url) {
   // });
 
   /* (2) Injects scripts */
-  if ("$BROWSER" == "firefox") {
-    window.addEventListener(
-      "load",
-      function () {
-        // injectScript(uspapi);
-        injectScript(runAnalysisProperty);
-      },
-      false
-    );
-  }
+  // if ("$BROWSER" == "firefox") {
+  //   window.addEventListener(
+  //     "load",
+  //     function () {
+  //       // injectScript(uspapi); //already commented
+  //       injectScript(runAnalysisProperty);
+  //     },
+  //     false
+  //   );
+  // }
 
   /* (3) Fetches .well-known GPC file */
   getWellknown(url);
@@ -139,12 +131,6 @@ window.addEventListener(
         msg: "USPAPI_TO_BACKGROUND_FROM_FETCH_REQUEST",
         data: event.data.result,
         location: this.location.href,
-      });
-    }
-    if (event.data.type == "RUN_ANALYSIS") {
-      chrome.runtime.sendMessage({
-        msg: "RUN_ANALYSIS",
-        data: event.data.result,
       });
     }
   },

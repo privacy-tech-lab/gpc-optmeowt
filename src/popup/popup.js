@@ -11,8 +11,6 @@ popup.js supplements and renders complex elements on popup.html
 
 import { stores, storage } from "../background/storage";
 import { initIAB, isValidSignalIAB } from "../background/cookiesIAB";
-import { csvGenerator } from "../common/csvGenerator";
-import { modes } from "../data/modes.js";
 import "../../node_modules/uikit/dist/css/uikit.min.css";
 import "../../node_modules/animate.css/animate.min.css";
 import "./styles.css";
@@ -35,16 +33,11 @@ import { reloadDynamicRules, addDynamicRule } from "../common/editRules.js";
 // Global scope settings variables
 var isEnabled;
 var isDomainlisted;
-var mode;
 var parsedDomain;
 
 // Protection mode data
 var domainsInfo;
 var wellknownInfo;
-
-// Analysis mode data
-var analysis;
-var analysis_userend;
 
 // Darkmode
 const darkmode = new Darkmode();
@@ -63,23 +56,8 @@ function changeOptModeIcon() {
   let optMode = document.getElementById("optMode");
 
   let p = document.getElementById("p");
-  let a = document.getElementById("a");
-  a.style.display = "none";
   p.style.display = "none";
-  // optMode badge icon
-  mode === modes.analysis ? (a.style.display = "") : (p.style.display = "");
-}
-
-// Changes-the-icon listener
-function changeOptModeIconListenerCallback() {
-  let optMode = document.getElementById("optMode");
-
-  let p = document.getElementById("p");
-  let a = document.getElementById("a");
-  a.style.display = "none";
-  p.style.display = "none";
-  // optMode badge icon
-  mode === modes.analysis ? (a.style.display = "") : (p.style.display = "");
+  p.style.display = "";
 }
 
 //Init: initialize darkmode button (NOTE: accesses global scope `mode`)
@@ -106,7 +84,6 @@ function generateDarkmodeElement() {
     chrome.runtime.sendMessage({
       msg: "DARKSWITCH_PRESSED",
     });
-    changeOptModeIconListenerCallback();
     darkmode.toggle();
   });
 }
@@ -444,11 +421,6 @@ function showProtectionInfo() {
   document.getElementById("dropdown-1-expandable").style.display = "none";
   document.getElementById("dropdown-2-expandable").style.display = "none";
   document.getElementById("visited-domains-stats").style.display = "";
-  document.getElementById("run-analysis").style.display = "none";
-  document.getElementById("stop-analysis").style.display = "none";
-  document.getElementById("misc-options").style.display = "none";
-  document.getElementById("download-analysis-data").style.display = "none";
-  document.getElementById("analysis-list").style.display = "none";
   document.getElementById("domain-list").style.display = "";
 
   // Generate `Do Not Sell Enabled` elem
@@ -474,52 +446,9 @@ function showProtectionInfo() {
 }
 
 /**
- * Redraws the popup for analysis mode
- */
-function showAnalysisInfo() {
-  removeFirstPartyDomainDNSToggle();
-  removeListenerDropdown1Toggle();
-  removeListenerDropdown2Toggle();
-  document.getElementById("optMode-text").innerText = "Analysis Mode";
-  document.getElementById("switch-label").innerHTML = "";
-  document.getElementById("more-info-body").style.display = "none";
-  document.getElementById("more-info-text").innerHTML = "none";
-  document.getElementById("dropdown-1").style.display = "";
-  document.getElementById("dropdown-2").style.display = "none";
-  document.getElementById("dropdown-1-text").innerHTML = "Analysis Breakdown";
-  document.getElementById("dropdown-2-text").innerHTML = "";
-  document.getElementById("dropdown-1-expandable").innerHTML = "";
-  document.getElementById("dropdown-2-expandable").innerHTML = "";
-  document.getElementById("dropdown-1-expandable").style.display = "none";
-  document.getElementById("dropdown-2-expandable").style.display = "none";
-  document.getElementById("visited-domains-stats").style.display = "none";
-  document.getElementById("run-analysis").style.display = "";
-  document.getElementById("stop-analysis").style.display = "";
-  document.getElementById("misc-options").style.display = "";
-  document.getElementById("download-analysis-data").style.display = "";
-  document.getElementById("analysis-list").style.display = "";
-  document.getElementById("domain-list").style.display = "none";
-
-  listenerDropdown1Toggle();
-
-  chrome.runtime.sendMessage({
-    msg: "POPUP_ANALYSIS",
-    data: null,
-  });
-}
-
-/**
  * In sync with global scope `mode`
  * @param {Modes} mode - from modes.js
  */
-async function switchMode(mode) {
-  changeOptModeIcon();
-  if (mode === modes.protection) {
-    showProtectionInfo();
-  } else {
-    showAnalysisInfo();
-  }
-}
 
 /**
  * Initializes the popup window after DOM content is loaded
@@ -528,7 +457,6 @@ async function switchMode(mode) {
 document.addEventListener("DOMContentLoaded", async (event) => {
   isEnabled = await storage.get(stores.settings, "IS_ENABLED");
   isDomainlisted = await storage.get(stores.settings, "IS_DOMAINLISTED");
-  mode = await storage.get(stores.settings, "MODE");
   parsedDomain = await getCurrentParsedDomain(); // This must happen first
 
   renderExtenionIsEnabledDisabled(isEnabled, isDomainlisted); // Render global ENABLED/DISABLED mode
@@ -537,7 +465,8 @@ document.addEventListener("DOMContentLoaded", async (event) => {
   renderFirstPartyDomain(parsedDomain); // Render 1P domain
 
   generateDarkmodeElement(); // Render darkmode
-  switchMode(mode); // requires global scope mode to be loaded
+  changeOptModeIcon();
+  showProtectionInfo();
 });
 
 /******************************************************************************/
@@ -589,9 +518,9 @@ function addThirdPartyDomainDNSToggleListener(requestDomain) {
 async function buildDomains(requests) {
   let domain = await getCurrentParsedDomain();
   let items = "";
-  const domainlistKeys = await storage.getAllKeys(stores.domainlist)
-  const domainlistValues = await storage.getAll(stores.domainlist)
-  
+  const domainlistKeys = await storage.getAllKeys(stores.domainlist);
+  const domainlistValues = await storage.getAll(stores.domainlist);
+
   // Sets the 3rd party domain elements
   for (let requestDomain in requests) {
     if (requestDomain != domain) {
@@ -730,251 +659,17 @@ async function buildWellKnown(requests) {
   ).innerHTML = `${explainer} ${wellknown}`;
 }
 
-/**
- * Builds Analysis info dropdown in dropdown-1
- */
-async function buildAnalysis(data) {
-  let pos = "../../../assets/cat-w-text/check1.png";
-  let neg = "../../../assets/cat-w-text/cross1.png";
-  let specs = `style= "
-      margin-right: -20px;
-      margin-left: auto;
-      margin-top: auto;
-      margin-bottom: auto;
-      padding-right: 5px;
-      padding-left: 5px;"
-    `;
-
-  let items = "";
-  let dnsLink = data.DO_NOT_SELL_LINK_EXISTS ? pos : neg;
-  let stringFound;
-  let gpcSent = data.SENT_GPC ? pos : neg;
-  let beforeGPCUSPAPI = data.USPAPI_BEFORE_GPC;
-  let afterGPCUSPAPI = data.USPAPI_AFTER_GPC;
-  let beforeGPCUSPCookies = data.USP_COOKIES_BEFORE_GPC;
-  let afterGPCUSPCookies = data.USP_COOKIES_AFTER_GPC;
-
-  let uspStringBeforeGPC;
-  let uspStringAfterGPC;
-
-  // Generate the US Privacy String BEFORE GPC is sent
-  // Give priority to the USPAPI over USP Cookie
-  if (
-    beforeGPCUSPAPI &&
-    beforeGPCUSPAPI[0] &&
-    beforeGPCUSPAPI[0]["uspString"]
-  ) {
-    uspStringBeforeGPC = beforeGPCUSPAPI[0]["uspString"]; // USPAPI exists
-  } else {
-    if (
-      beforeGPCUSPCookies &&
-      beforeGPCUSPCookies[0] &&
-      beforeGPCUSPCookies[0]["value"]
-    ) {
-      uspStringBeforeGPC = beforeGPCUSPCookies[0]["value"]; // USP Cookie exists
-    } else {
-      uspStringBeforeGPC = data.USPAPI_OPTED_OUT || data.USP_COOKIE_OPTED_OUT;
-    }
-  }
-
-  // Generate the US Privacy String AFTER GPC is sent
-  // Give priority to the USPAPI over USP Cookie
-  if (afterGPCUSPAPI && afterGPCUSPAPI[0] && afterGPCUSPAPI[0]["uspString"]) {
-    uspStringAfterGPC = afterGPCUSPAPI[0]["uspString"];
-  } else {
-    if (
-      afterGPCUSPCookies &&
-      afterGPCUSPCookies[0] &&
-      afterGPCUSPCookies[0]["value"]
-    ) {
-      uspStringAfterGPC = afterGPCUSPCookies[0]["value"];
-    } else {
-      uspStringAfterGPC = data.USPAPI_OPTED_OUT || data.USP_COOKIE_OPTED_OUT;
-    }
-  }
-
-  if (!beforeGPCUSPAPI && !beforeGPCUSPCookies) {
-    stringFound = neg;
-  } else {
-    let existsUSP =
-      beforeGPCUSPAPI.length != 0 || beforeGPCUSPCookies.length != 0
-        ? true
-        : false;
-    let existsAndIsValidBeforeGPCUSPAPI;
-    let existsAndIsValidBeforeGPCUSPCookies;
-
-    if (beforeGPCUSPAPI && beforeGPCUSPAPI[0] && beforeGPCUSPAPI[0].uspString) {
-      existsAndIsValidBeforeGPCUSPAPI = isValidSignalIAB(
-        beforeGPCUSPAPI[0].uspString
-      );
-    } else {
-      existsAndIsValidBeforeGPCUSPAPI = false;
-    }
-    if (
-      beforeGPCUSPCookies &&
-      beforeGPCUSPCookies[0] &&
-      beforeGPCUSPCookies[0].value
-    ) {
-      existsAndIsValidBeforeGPCUSPCookies = isValidSignalIAB(
-        beforeGPCUSPCookies[0].value
-      );
-    } else {
-      existsAndIsValidBeforeGPCUSPCookies = false;
-    }
-
-    stringFound =
-      existsUSP &&
-      (existsAndIsValidBeforeGPCUSPAPI || existsAndIsValidBeforeGPCUSPCookies)
-        ? pos
-        : neg;
-  }
-
-  let stringChanged;
-  let optedOut;
-  if (data.USPAPI_OPTED_OUT) {
-    optedOut = data.USPAPI_OPTED_OUT;
-  } else {
-    optedOut = data.USP_COOKIE_OPTED_OUT;
-  }
-  if (typeof optedOut === "string") {
-    if (optedOut === "PARSE_FAILED") {
-      stringChanged = neg;
-    } else if (optedOut === "NOT_IN_CA") {
-      stringChanged = neg;
-    }
-  } else {
-    stringChanged = optedOut ? pos : neg;
-  }
-
-  // Sets the 3rd party domain elements
-  items += `
-  <li>
-    <div uk-grid class="uk-grid-small uk-width-1-1" style="font-size: medium;">
-      <div class="domain uk-width-expand">
-        Do Not Sell Link 
-      </div>
-      <img src = ${dnsLink} width = "40px" height = "40px" ${specs}>
-    </div>
-  </li>
-  <li>
-    <div uk-grid class="uk-grid-small uk-width-1-1" style="font-size: medium;">
-      <div class="domain uk-width-expand">
-        US Privacy String 
-      </div>
-      <button class="uk-badge uspStringElem">${uspStringBeforeGPC}</button>
-      <img src = ${stringFound} width = "40px" height = "40px" ${specs}>
-    </div>
-  </li>
-  <li>
-    <div uk-grid class="uk-grid-small uk-width-1-1" style="font-size: medium;">
-      <div class="domain uk-width-expand">
-        GPC Signal Sent
-      </div>
-      <img src = ${gpcSent} width = "40px" height = "40px" ${specs}>
-    </div>
-  </li>
-  <li>
-    <div uk-grid class="uk-grid-small uk-width-1-1" style="font-size: medium;">
-      <div class="domain uk-width-expand">
-        US Privacy String Updated 
-      </div>
-      <button class="uk-badge uspStringElem">${uspStringAfterGPC}</button>
-      <img src = ${stringChanged} width = "40px" height = "40px" ${specs}>
-    </div> 
-  </li>`;
-
-  document.getElementById("dropdown-1-expandable").innerHTML = items;
-}
-
-/**
- * Builds per-site compliance snippet
- */
-async function buildComplianceInfo(data) {
-  let checkbox = "";
-  if (parsedDomain) {
-    try {
-      if (
-        data.DO_NOT_SELL_LINK_EXISTS &&
-        data.SENT_GPC &&
-        (data.USPAPI_OPTED_OUT || data.USP_COOKIE_OPTED_OUT) &&
-        (data.USPAPI_BEFORE_GPC.length != 0 ||
-          data.USP_COOKIES_BEFORE_GPC.length != 0) &&
-        (isValidSignalIAB(data.USPAPI_BEFORE_GPC[0].uspString) ||
-          isValidSignalIAB(data.USP_COOKIES_BEFORE_GPC[0].uspString))
-      ) {
-        checkbox = `<div
-        id = "${parsedDomain} compliance"
-        class="uk-badge"
-        style="
-          margin-right: auto;
-          margin-left: auto;
-          margin-top: auto;
-          margin-bottom: auto;
-          padding-right: auto;
-          padding-left: auto;
-          background-color: white;
-          border: 1px solid rgb(64,107,202);
-          color: rgb(64,107,202);
-          font-size: 12px;
-        "
-      >
-        Compliant
-      </div>`;
-      } else {
-        checkbox = `<div
-        id = "${parsedDomain} compliance"
-        class="uk-badge"
-        style="
-          margin-right: auto;
-          margin-left: auto;
-          margin-top: auto;
-          margin-bottom: auto;
-          padding-right: auto;
-          padding-left: auto;
-          background-color: white;
-          border: 1px solid rgb(222,107,20);
-          color: rgb(222,107,20);
-          font-size: 12px;
-        "
-      >
-        Not Compliant
-      </div>`;
-      }
-      document.getElementById("switch-label").innerHTML = checkbox;
-    } catch (e) {
-      console.error(e);
-      document.getElementById("switch-label").innerHTML = checkbox;
-    }
-  } else {
-    document.getElementById("switch-label").innerHTML = checkbox;
-  }
-}
-
 /******************************************************************************/
 /******************************************************************************/
 /**********                   # Message handling                     **********/
 /******************************************************************************/
 /******************************************************************************/
 
-// Initializng a longterm port with the top-level background for the onDisconnect event
-let backgroundPort = chrome.runtime.connect({ name: "POPUP" });
-// TODO: THIS IS OUTMODED IN MV3
-// CHANGE THIS TO BE ASYNC NOW
-backgroundPort.postMessage({ msg: "REQUEST_MODE" }); // queries control.js for mode
-backgroundPort.onMessage.addListener(function (message) {
-  if (message.msg === "RESPONSE_MODE") {
-    // when mode is recieved from control.js
-    mode = message.data; // global mode variable
-  }
-});
-
 /**
  * Listens for messages from background page that call functions to populate
  * the popup badge counter and build the popup domain list HTML, respectively
  */
 chrome.runtime.onMessage.addListener(function (message, _, __) {
-  if (message.msg === "RELOAD_DUE_TO_MODE_CHANGE") {
-  }
   if (message.msg === "POPUP_PROTECTION_DATA") {
     let { requests, wellknown } = message.data;
     domainsInfo = requests;
@@ -986,22 +681,7 @@ chrome.runtime.onMessage.addListener(function (message, _, __) {
     let requests = message.data;
     buildDomains(requests);
   }
-  if (message.msg === "POPUP_ANALYSIS_DATA") {
-    analysis = message.data.analysis;
-    analysis_userend = message.data.analysis_userend;
-    let data = analysis_userend[parsedDomain] || {};
-    buildAnalysis(data);
-  }
-  if (message.msg === "CSV_DATA_RESPONSE") {
-    const csvData = fetchcsvData();
-    csvData.then((csvData) => csvGenerator(csvData, message.data.titles));
-  }
 });
-
-async function fetchcsvData() {
-  const csvData = await storage.getStore(stores.analysis);
-  return csvData;
-}
 
 // Initializes the process to add to domainlist, via the background script
 // This is to ensure all processes happen correctly
@@ -1021,9 +701,7 @@ function setToDomainlist(d, k) {
 // Walkthrough function
 function popUpWalkthrough() {
   let contentStr =
-    mode === modes.analysis
-      ? "Analysis Mode collects info about the current site's CCPA compliance"
-      : "Toggle this switch to enable or disable sending Do Not Sell signals to this site in Protection mode";
+    "Toggle this switch to enable or disable sending Do Not Sell signals to this site in Protection mode";
   tippy(".tooltip-1", {
     content: contentStr,
     trigger: "manual",
@@ -1042,10 +720,10 @@ async function initPopUpWalkthrough() {
     stores.settings,
     "TUTORIAL_SHOWN_IN_POPUP"
   );
-  const mode = await storage.get(stores.settings, "MODE"); //copied
 
   if (!tutorialShownInPopup) {
-    popUpWalkthrough(mode);
+    popUpWalkthrough();
+
     storage.set(stores.settings, true, "TUTORIAL_SHOWN_IN_POPUP");
   }
 }
@@ -1055,47 +733,6 @@ async function initPopUpWalkthrough() {
 /**********           # Misc. initializers and listeners             **********/
 /******************************************************************************/
 /******************************************************************************/
-
-/**
- * Download analysis data button
- */
-function downloadCSVOnClick() {
-  chrome.runtime.sendMessage({
-    msg: "CSV_DATA_REQUEST",
-  });
-}
-
-/**
- * Run analysis button
- */
-function runAnalysisButtonOnClick() {
-  backgroundPort.postMessage({
-    msg: "RUN_ANALYSIS_FROM_BACKGROUND",
-    data: null,
-  });
-}
-
-/**
- * Stop analysis button
- */
-function stopAnalysisButtonOnClick() {
-  backgroundPort.postMessage({
-    msg: "STOP_ANALYSIS_FROM_BACKGROUND",
-    data: null,
-  });
-}
-
-/**
- * Mode switch
- */
-
-function loadChangeMode() {
-  let newMode = mode === modes.analysis ? modes.protection : modes.analysis;
-  mode = newMode;
-  switchMode(mode);
-}
-
-loadChangeMode();
 
 // Listener: Opens options page
 document.getElementById("more").addEventListener("click", () => {
@@ -1141,38 +778,3 @@ document.getElementById("domain-list").addEventListener("click", async () => {
   await storage.set(stores.settings, true, "DOMAINLIST_PRESSED");
   chrome.runtime.openOptionsPage();
 });
-
-// Listener: Opens analysislist in options page
-document.getElementById("analysis-list").addEventListener("click", async () => {
-  await storage.set(stores.settings, true, "ANALYSIS_PRESSED");
-  chrome.runtime.openOptionsPage();
-});
-
-// Listener: Opens analysislist in options page
-document
-  .getElementById("run-analysis")
-  .addEventListener("click", runAnalysisButtonOnClick);
-
-// Listener: Opens analysislist in options page
-document
-  .getElementById("stop-analysis")
-  .addEventListener("click", stopAnalysisButtonOnClick);
-
-// Listener: Opens analysislist in options page
-document
-  .getElementById("download-analysis-data")
-  .addEventListener("click", downloadCSVOnClick);
-
-/******************************************************************************/
-/******************************************************************************/
-/**********             # Mode switching functionality               **********/
-/******************************************************************************/
-/******************************************************************************/
-
-/**
- * For Chrome users:
- * We don't want to expose analysis mode to chrome users
- */
-if ("$BROWSER" != "firefox") {
-  document.getElementById("optMode-parent").style.display = "none";
-}

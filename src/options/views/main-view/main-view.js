@@ -16,7 +16,6 @@ and loads them when called through the navigation bar
 import { fetchTemplate, parseTemplate } from "../../components/util.js";
 import { settingsView } from "../settings-view/settings-view.js";
 import { domainlistView } from "../domainlist-view/domainlist-view.js";
-import { analysisView } from "../analysis-view/analysis-view.js";
 import { aboutView } from "../about-view/about-view.js";
 import { storage, stores } from "../../../background/storage.js";
 import Darkmode from "../../../theme/darkmode";
@@ -39,12 +38,6 @@ function displayDomainlist(bodyTemplate) {
   domainlistView(bodyTemplate);
   document.querySelector(".navbar-item.active").classList.remove("active");
   document.querySelector("#main-view-domainlist").classList.add("active");
-}
-
-function displayAnalysis(bodyTemplate) {
-  analysisView(bodyTemplate);
-  document.querySelector(".navbar-item.active").classList.remove("active");
-  document.querySelector("#main-view-analysis").classList.add("active");
 }
 
 /**
@@ -72,20 +65,14 @@ export async function mainView() {
     stores.settings,
     "DOMAINLIST_PRESSED"
   );
-  let analysisPressed = await storage.get(stores.settings, "ANALYSIS_PRESSED");
 
-  if (!domainlistPressed && !analysisPressed) {
+  if (!domainlistPressed) {
     settingsView(bodyTemplate); // First page
     document.querySelector("#main-view-settings").classList.add("active");
   } else if (domainlistPressed) {
     domainlistView(bodyTemplate); // First page
     await storage.set(stores.settings, false, "DOMAINLIST_PRESSED");
-    document.querySelector("#main-view-domainlist").classList.add("active");
-  } else if (analysisPressed) {
-    analysisView(bodyTemplate); // First page
-    await storage.set(stores.settings, false, "ANALYSIS_PRESSED");
-    document.querySelector("#main-view-analysis").classList.add("active");
-  }
+    document.querySelector("#main-view-domainlist").classList.add("active");}
 
   document
     .getElementById("main-view-settings")
@@ -97,13 +84,6 @@ export async function mainView() {
     .getElementById("main-view-about")
     .addEventListener("click", () => displayAbout(bodyTemplate));
 
-  if ("$BROWSER" != "firefox") {
-    document.getElementById("main-view-analysis").style.display = "none";
-  } else {
-    document
-      .getElementById("main-view-analysis")
-      .addEventListener("click", () => displayAnalysis(bodyTemplate));
-  }
   // DARK MODE
   const darkmode = new Darkmode();
 

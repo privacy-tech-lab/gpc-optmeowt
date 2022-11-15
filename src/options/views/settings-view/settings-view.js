@@ -18,8 +18,6 @@ import {
   storage,
   // extensionMode
 } from "../../../background/storage.js";
-import { csvGenerator } from "../../../common/csvGenerator";
-import { modes } from "../../../data/modes.js";
 
 // Used in tutorial
 import UIkit from "../../../../node_modules/uikit/dist/js/uikit";
@@ -34,8 +32,7 @@ import {
 } from "../../../common/editRules.js";
 import { updateRemovalScript } from "../../../common/editDomainlist.js";
 
-// Global scope settings variable
-var mode;
+
 
 /**
  * @typedef headings
@@ -47,11 +44,6 @@ const headings = {
   subtitle: "Adjust extension settings",
 };
 
-function handleDownloadAnalysis() {
-  chrome.runtime.sendMessage({
-    msg: "CSV_DATA_REQUEST_FROM_SETTINGS",
-  });
-}
 
 /**
  * Creates the event listeners for the `Settings` page buttons and options
@@ -67,10 +59,6 @@ function eventListeners() {
       chrome.runtime.sendMessage({
         msg: "CHANGE_IS_DOMAINLISTED",
         data: { isDomainlisted: false },
-      });
-      chrome.runtime.sendMessage({
-        msg: "CHANGE_MODE",
-        data: modes.protection,
       });
       if ("$BROWSER" == "chrome") {
         chrome.scripting.updateContentScripts([
@@ -118,10 +106,6 @@ function eventListeners() {
         msg: "CHANGE_IS_DOMAINLISTED",
         data: { isDomainlisted: true },
       });
-      chrome.runtime.sendMessage({
-        msg: "CHANGE_MODE",
-        data: modes.protection,
-      });
       if ("$BROWSER" == "chrome") {
         updateRemovalScript();
         reloadDynamicRules();
@@ -130,9 +114,6 @@ function eventListeners() {
   document
     .getElementById("download-button")
     .addEventListener("click", handleDownload);
-  document
-    .getElementById("download-analysis-button")
-    .addEventListener("click", handleDownloadAnalysis);
   document.getElementById("upload-button").addEventListener("click", () => {
     const verify = confirm(
       `This option will load a list of domains from a file, clearing all domains currently in the list.\n Do you wish to continue?`
@@ -155,18 +136,8 @@ function eventListeners() {
       }
     }
   });
-  createMessageListeners();
 }
 
-function createMessageListeners() {
-  chrome.runtime.onMessage.addListener(async function (message, _, __) {
-    const csvData = await storage.getStore(stores.analysis);
-    if (message.msg === "CSV_DATA_RESPONSE_TO_SETTINGS") {
-      csvGenerator(csvData, message.data.titles);
-      return;
-    }
-  });
-}
 
 /******************************************************************************/
 
@@ -174,13 +145,6 @@ function createMessageListeners() {
  * Gives user a walkthrough of install page on first install
  */
 
-function analysisWarning() {
-  let modal = UIkit.modal("#analysis-modal");
-  modal.show();
-  document.getElementById("modal-button-5").onclick = function () {
-    modal.hide();
-  };
-}
 
 function walkthrough() {
   let modal = UIkit.modal("#welcome-modal");
@@ -241,36 +205,6 @@ function walkthrough() {
   }
 }
 
-// Show Analysis Warning
-async function initPopUpWalkthrough() {
-  const analysisWarningShown = await storage.get(
-    stores.settings,
-    "ANALYSIS_WARNING_SHOWN"
-  );
-
-  if (!analysisWarningShown && mode === modes.analysis) {
-    analysisWarning();
-    storage.set(stores.settings, true, "ANALYSIS_WARNING_SHOWN");
-  }
-}
-
-// Button to change to Analysis Mode
-function loadChangeMode() {
-  if ("$BROWSER" != "firefox") {
-    document.getElementById("optMode-parent").style.display = "none";
-    document.getElementById("analysis-export").style.display = "none";
-  } else {
-    document.getElementById("optMode").addEventListener("click", function () {
-      mode = modes.analysis;
-      chrome.runtime.sendMessage({ msg: "CHANGE_MODE", data: mode });
-      chrome.runtime.sendMessage({
-        msg: "TURN_ON_OFF",
-        data: { isEnabled: true },
-      });
-      initPopUpWalkthrough();
-    });
-  }
-}
 
 /******************************************************************************/
 
@@ -292,11 +226,8 @@ export async function settingsView(scaffoldTemplate) {
   // Render correct extension mode radio button
   const isEnabled = await storage.get(stores.settings, "IS_ENABLED");
   const isDomainlisted = await storage.get(stores.settings, "IS_DOMAINLISTED");
-  let mode = await storage.get(stores.settings, "MODE");
 
-  if (mode === modes.analysis) {
-    document.getElementById("optMode").checked = true;
-  } else if (isEnabled) {
+  if (isEnabled) {
     isDomainlisted
       ? (document.getElementById("settings-view-radio2").checked = true)
       : (document.getElementById("settings-view-radio0").checked = true);
@@ -305,7 +236,6 @@ export async function settingsView(scaffoldTemplate) {
   }
 
   eventListeners();
-  loadChangeMode();
 
   const tutorialShown = await storage.get(stores.settings, "TUTORIAL_SHOWN");
   if (!tutorialShown) {
