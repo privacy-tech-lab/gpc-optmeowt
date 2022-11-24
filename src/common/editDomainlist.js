@@ -10,13 +10,13 @@ editDomainlist.js is an internal API modifying the domainlist / modifying the
 domainlist simultaneously with the dynamic ruleset
 */
 
-import { storage, stores } from "../background/storage";
+import { storage, stores } from "../background/storage.js";
 import {
   deleteAllDynamicRules,
   deleteDynamicRule,
   addDynamicRule,
   getFreshId,
-} from "./editRules";
+} from "./editRules.js";
 
 // TODO: Migrate editRules & editDomainlist to one file
 

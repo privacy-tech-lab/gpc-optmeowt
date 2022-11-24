@@ -3,7 +3,7 @@ Licensed per https://github.com/privacy-tech-lab/gpc-optmeowt/blob/main/LICENSE.
 privacy-tech-lab, https://privacytechlab.org/
 */
 
-import { storage, stores } from "../background/storage";
+import { storage, stores } from "../background/storage.js";
 
 /*
 editRules.js

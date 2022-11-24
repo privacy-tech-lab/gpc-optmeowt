@@ -25,7 +25,7 @@ import {
   addDynamicRule,
   deleteDynamicRule,
   reloadDynamicRules,
-} from "../../common/editRules";
+} from "../../common/editRules.js";
 import { updateRemovalScript } from "../../common/editDomainlist.js";
 
 /******************************************************************************/

@@ -9,7 +9,7 @@ defaultSettings.js
 defaultSettings.js exports the default global extension settings
 */
 
-import { modes } from "./modes";
+import { modes } from "./modes.js";
 
 // We could also make the keys here the values of an enumerated object, but
 // there is less incentive to do so since it complicates the code and

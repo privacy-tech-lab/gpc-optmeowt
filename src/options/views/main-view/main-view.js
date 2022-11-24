@@ -19,7 +19,7 @@ import { domainlistView } from "../domainlist-view/domainlist-view.js";
 import { analysisView } from "../analysis-view/analysis-view.js";
 import { aboutView } from "../about-view/about-view.js";
 import { storage, stores } from "../../../background/storage.js";
-import Darkmode from "../../../theme/darkmode";
+import Darkmode from "../../../theme/darkmode.js";
 
 /**
  * Opens the `Settings` page

@@ -42,10 +42,10 @@ import {
   uspPhrasing,
   uspCookiePhrasingList,
   doNotSellPhrasing,
-} from "../../data/regex";
+} from "../../data/regex.js";
 import psl from "psl";
 import { IS_BROWSER } from "../../theme/darkmode.js";
-import { headers } from "../../data/headers";
+import { headers } from "../../data/headers.js";
 
 /******************************************************************************/
 /******************************************************************************/

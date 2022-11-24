@@ -25,13 +25,13 @@ import {
 import { defaultSettings } from "../data/defaultSettings.js";
 import { modes } from "../data/modes.js";
 import { stores, storage } from "./storage.js";
-import { reloadDynamicRules } from "../common/editRules";
+import { reloadDynamicRules } from "../common/editRules.js";
 
 // TODO: Remove
 import {
   debug_domainlist_and_dynamicrules,
   updateRemovalScript,
-} from "../common/editDomainlist";
+} from "../common/editDomainlist.js";
 
 async function enable() {
   let mode = await storage.get(stores.settings, "MODE");

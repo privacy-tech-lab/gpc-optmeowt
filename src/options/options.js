@@ -17,11 +17,11 @@ import "../../node_modules/animate.css/animate.min.css";
 import "./styles.css";
 
 // HTML TO JS IMPORTS - TOP OF `popup.html`
-import "../../node_modules/uikit/dist/js/uikit";
-import "../../node_modules/uikit/dist/js/uikit-icons";
-import "../../node_modules/mustache/mustache";
-import "../../node_modules/@popperjs/core/dist/umd/popper";
-import "../../node_modules/tippy.js/dist/tippy-bundle.umd";
+import "../../node_modules/uikit/dist/js/uikit.js";
+import "../../node_modules/uikit/dist/js/uikit-icons.js";
+import "../../node_modules/mustache/mustache.js";
+import "../../node_modules/@popperjs/core/dist/umd/popper.js";
+import "../../node_modules/tippy.js/dist/tippy-bundle.umd.js";
 
 /**
  * Intializes scripts that build the options page
