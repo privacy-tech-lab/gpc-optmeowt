@@ -34,28 +34,6 @@ options page when clicked
     </div>
   </div>
 
-  <div id="analysis-modal" uk-modal>
-    <div class="uk-modal-dialog">
-        <button class="uk-modal-close-default" type="button" uk-close></button>
-        <div class="uk-modal-header uk-flex uk-flex-column uk-flex-middle">
-            <h2 class="uk-align-center text-color-darker">Using Analysis Mode</h2>
-        </div>
-        <div class="uk-modal-body" style="font-size: 15px; text-align: left;">
-          <div class="small-warning-box">
-            <div style="font-weight:bold;">Warning</div>
-            <div>Content security policy disabled. Do not browse normally in Analysis Mode.</div>
-          </div>
-          <br>
-          <div style="font-weight:bold;">Instructions</div>
-          <div>We recommend using a clean browser (cleared cookies) to prevent inaccuracies from possible conflicts with saved data</div>
-          <div>If you would prefer to keep your cookies, feel free to create a new Firefox profile for using Analysis Mode</div>
-        </div>
-        <div class="uk-modal-footer">
-          <button id="modal-button-5" class="text-color uk-button uk-button-default uk-align-right" style="margin: 0px 5px;">OK</button>
-        </div>
-    </div>
-  </div>
-
   <div>
     <label>
       <div uk-grid class="uk-grid-column-small" style="margin-left: 0px;">
@@ -131,39 +109,10 @@ options page when clicked
       </div>
     </label>
   </div>
-  <br />
-  <div 
-    id="optMode-parent"
-    class = "margin: auto;"
-    style="text-align: left;">
-    <label>
-      <div uk-grid class="uk-grid-column-small" style="margin-left: 0px;">
-        <div class="uk-container" style="margin: auto;">
-          <input
-            class="uk-radio"
-            type="radio"
-            name="radio"
-            id="optMode"
-          />
-        </div>
-        <div uk-grid class="uk-grid-row-collapse uk-width-expand">
-          <div
-            class="uk-first-column uk-width-1-1 uk-text-bold"
-            style="font-size: large;"
-            id="settings-view-radio1-text"
-          >
-            Analysis Mode
-          </div>
-          <div class="uk-first-column uk-width-1-1" style="font-size: small;">
-            Enable investigation of GPC compliance
-          </div>
-        </div>
-        </label>
-    </div>
   </div>
   <hr>
   <div style="font-weight: bold; font-size: medium; padding-bottom: 10px;">
-    Protection Mode Options
+    Options
   </div>
   <div uk-grid>
     <div>
@@ -188,40 +137,8 @@ options page when clicked
       </input>
     </div>
   </div>
-  <hr>
-  <div id= "analysis-export">
-  <div style="font-weight: bold; font-size: medium; padding-bottom: 10px;">
-    Analysis Mode Options
-  </div>
-  <div uk-grid>
-    <div>
-      <button
-        id="download-analysis-button" class="importexport-button"
-      >
-        Export Analysis Data
-      </a>
-    </div>
-  </div>
-</div>
-  <br>
 
-  <!-- <hr>
-  <div uk-grid class="uk-margin-top" style="margin-bottom: 4%;">
-    <div
-      class="uk-width-expand uk-margin-auto-vertical "
-      style="font-weight: bold; font-size: medium;"
-    >
-      Dark Mode
-    </div>
-    <div uk-grid>
-      <div class="uk-width-auto">
-        <label class="custom-control-label switch" for="darkSwitch">
-          <input type="checkbox" class="custom-control-input" id="darkSwitch" />
-          <span class="tutorial-tooltip3"></span>
-        </label>
-      </div>
-    </div>
-  </div> -->
+  <br>
 
   <div id="thank-you-modal" uk-modal>
     <div class="uk-modal-dialog">

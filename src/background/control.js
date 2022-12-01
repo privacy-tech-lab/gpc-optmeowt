@@ -18,47 +18,23 @@ import {
   init as initProtection_cr,
   halt as haltProtection_cr,
 } from "./protection/protection.js";
-import {
-  init as initAnalysis,
-  halt as haltAnalysis,
-} from "./analysis/analysis.js";
 import { defaultSettings } from "../data/defaultSettings.js";
-import { modes } from "../data/modes.js";
 import { stores, storage } from "./storage.js";
-import { reloadDynamicRules } from "../common/editRules";
+import { reloadDynamicRules } from "../common/editRules.js";
 
 // TODO: Remove
 import {
   debug_domainlist_and_dynamicrules,
   updateRemovalScript,
-} from "../common/editDomainlist";
+} from "../common/editDomainlist.js";
 
 async function enable() {
-  let mode = await storage.get(stores.settings, "MODE");
-
   if ("$BROWSER" == "firefox") {
     var initProtection = initProtection_ff;
-    var haltProtection = haltProtection_ff;
   } else {
     var initProtection = initProtection_cr;
-    var haltProtection = haltProtection_cr;
   }
-
-  switch (mode) {
-    case modes.analysis:
-      initAnalysis();
-      haltProtection();
-      break;
-    case modes.protection:
-      initProtection();
-      haltAnalysis();
-      break;
-    default:
-      initProtection();
-      haltAnalysis();
-      await storage.set(stores.settings, modes.protection, "MODE");
-      break;
-  }
+  initProtection();
 }
 
 function disable() {
@@ -67,8 +43,6 @@ function disable() {
   } else if ("$BROWSER" == "chrome") {
     var haltProtection = haltProtection_cr;
   }
-
-  haltAnalysis();
   haltProtection();
 }
 
@@ -143,33 +117,8 @@ chrome.runtime.onMessage.addListener(async function (
       disable();
     }
   }
-  if (message.msg === "CHANGE_MODE") {
-    let mode = message.data;
-    let isEnabled = await storage.get(stores.settings, "IS_ENABLED");
-    await storage.set(stores.settings, mode, "MODE");
-    if (isEnabled) {
-      enable();
-    }
-    chrome.runtime.sendMessage({
-      msg: "RELOAD_DUE_TO_MODE_CHANGE",
-      data: mode,
-    });
-  }
+
   if (message.msg === "CHANGE_IS_DOMAINLISTED") {
     let isDomainlisted = message.data.isDomainlisted; // can be undefined
   }
-});
-
-// Handles requests for global mode
-/**
- * IF YOU EVER NEED TO DEBUG THIS:
- * This is outmoded in manifest V3. We cannot maintain global variables anymore.
- */
-chrome.runtime.onConnect.addListener(function (port) {
-  port.onMessage.addListener(async function (message) {
-    let mode = await storage.get(stores.settings, "MODE");
-    if (message.msg === "REQUEST_MODE") {
-      port.postMessage({ msg: "RESPONSE_MODE", data: mode });
-    }
-  });
 });

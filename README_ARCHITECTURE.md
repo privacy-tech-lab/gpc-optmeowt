@@ -4,9 +4,6 @@
 src
 ├── assets       # Static images & files
 ├── background      # Manages the background script processes
-│   ├── analysis
-│   │   ├── analysis-listeners.js
-│   │   └── analysis.js
 │   ├── protection
 │   │   ├── background.js
 │   │   ├── cookiesOnInstall.js
@@ -19,7 +16,6 @@ src
 │   ├── storage.js
 │   └── storageCookies.js
 ├── common       # Manages header sending and rules
-│   ├── csvGenerator.js
 │   ├── editDomainlist.js
 │   └── editRules.js
 ├── content-scripts     # Runs processes on site on adds DOM signal
@@ -34,8 +30,6 @@ src
 │   ├── cookie_list.js
 │   ├── defaultSettings.js
 │   ├── headers.js
-│   ├── modes.js
-│   ├── privacyFlags.js
 │   └── regex.js
 ├── manifests      # Stores manifests
 │   ├── chrome
@@ -52,9 +46,6 @@ src
 │   │   ├── about-view
 │   │   │   ├── about-view.html
 │   │   │   └── about-view.js
-│   │   ├── analysis-view
-│   │   │   ├── analysis-view.html
-│   │   │   └── analysis-view.js
 │   │   ├── domainlist-view
 │   │   │   ├── domainlist-view.html
 │   │   │   └── domainlist-view.js
@@ -93,27 +84,11 @@ The following source folders have detailed descriptions further in the document.
 
 ## background
 
-1. `analysis`
-2. `protection`
-3. `control.js`
-4. `cookiesIAB.js`
-5. `storage.js`
-6. `storageCookies.js`
-
-The background folder splits into the `analysis` and `protection` folders that build the respective modes.
-
-### `src/background/analysis`
-
-1. `analysis-listeners.js`
-2. `analysis.js`
-
-#### `analysis/analysis-listeners.js`
-
-Initializes the listeners for analysis mode using `webRequest` and `webNavigation` (links found below). This file only needs to deal with Firefox listeners as analysis mode is not available on Chrome.
-
-#### `analysis/analysis.js`
-
-Contains all the logic and processes for running analysis mode. `FetchUSPCookies();` is used to identify and save US Privacy cookies and `fetchUSPAPIData();` uses the USPAPI query to check the US Privacy string. `runAnalysis();` collects the US Privacy values and sends the GPC signal. `haltAnalysis();` then rechecks the US Privacy values and removes the GPC signal, then allowing the US Privacy Values from before and after to be compared. `logData();` then records the found data to local storage.
+1. `protection`
+2. `control.js`
+3. `cookiesIAB.js`
+4. `storage.js`
+5. `storageCookies.js`
 
 ### `src/background/protection`
 
@@ -146,7 +121,7 @@ Manages the domain list for Firefox.
 
 ### `background/control.js`
 
-Uses `analysis.js` and `protection.js` to switch between modes.
+Uses `protection.js` to turn the extension on and off.
 
 ### `background/cookiesIAB.js`
 
@@ -162,15 +137,10 @@ Handles cookie creation and deletion.
 
 ## common
 
-1. `csvGenerator.js`
-2. `editDomainlist.js`
-3. `editRules.js`
+1. `editDomainlist.js`
+2. `editRules.js`
 
 This folder holds common internal API's to be used throughout the extension.
-
-### `common/csvGenerator.js`
-
-Creates a CSV file of the users local collected data.
 
 ### `common/editDomainlist.js`
 
@@ -211,9 +181,7 @@ This runs on every page and sends information to signal background processes.
 1. `cookie_list.js`
 2. `defaultSettings.js`
 3. `headers.js`
-4. `modes.js`
-5. `privacyFlags.js`
-6. `regex.js`
+4. `regex.js`
 
 This folder contains static data.
 
@@ -228,14 +196,6 @@ Contains the default OptMeowt settings.
 ### `data/headers.js`
 
 Contains the default headers to be attached to online requests.
-
-### `data/modes.js`
-
-Contains the modes for OptMeowt.
-
-### `data/privacyFlags.js`
-
-Contains all privacy flags for analysis
 
 ### `data/regex.js`
 
@@ -281,10 +241,9 @@ This folder contains the basic layout of every options page and helper functions
 ### `options/views`
 
 1. `about-view`
-2. `analysis-view`
-3. `domainlist-view`
-4. `main-view`
-5. `settings-view`
+2. `domainlist-view`
+3. `main-view`
+4. `settings-view`
 
 Contains all frontend and implementation of the settings pages.
 
@@ -294,13 +253,6 @@ Contains all frontend and implementation of the settings pages.
 2. `about-view.js`
 
 Builds the "about" page
-
-#### `views/analysis-view`
-
-1. `analysis-view.html`
-2. `analysis-view.js`
-
-Builds the analysis list page
 
 #### `views/domainlist-view`
 
