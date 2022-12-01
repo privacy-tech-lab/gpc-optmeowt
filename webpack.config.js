@@ -3,17 +3,30 @@ Licensed per https://github.com/privacy-tech-lab/gpc-optmeowt/blob/main/LICENSE.
 privacy-tech-lab, https://privacytechlab.org/
 */
 
+/*
 const CopyPlugin = require("copy-webpack-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const path = require("path");
+*/
+
+
+import CopyPlugin from "copy-webpack-plugin";
+import TerserPlugin from "terser-webpack-plugin";
+import HtmlWebpackPlugin from "html-webpack-plugin";
+import { CleanWebpackPlugin } from "clean-webpack-plugin";
+import path from "path";
+import { fileURLToPath } from "url";
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 
 // ! Implement a "frontend" export in order to use a dev serve
 // ! Implement terser for production
 // ! Implement file loader for assets
 
-module.exports = (env, argv) => {
+export default (env, argv) => {
   const browser = env.chrome ? "chrome" : "firefox"; // default to firefox build
   const isProduction = argv.mode == "production"; // sets bool depending on build
 
