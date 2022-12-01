@@ -20,10 +20,10 @@ import {
 } from "../../../background/storage.js";
 
 // Used in tutorial
-import UIkit from "../../../../node_modules/uikit/dist/js/uikit";
-import tippy from "../../../../node_modules/tippy.js/dist/tippy-bundle.umd";
+import UIkit from "../../../../node_modules/uikit/dist/js/uikit.js";
+import tippy from "../../../../node_modules/tippy.js/dist/tippy-bundle.umd.js";
 
-import "../../../../node_modules/file-saver/src/FileSaver";
+import "../../../../node_modules/file-saver/src/FileSaver.js";
 import Darkmode from "darkmode-js";
 import {
   addDynamicRule,

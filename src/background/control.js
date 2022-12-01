@@ -20,13 +20,13 @@ import {
 } from "./protection/protection.js";
 import { defaultSettings } from "../data/defaultSettings.js";
 import { stores, storage } from "./storage.js";
-import { reloadDynamicRules } from "../common/editRules";
+import { reloadDynamicRules } from "../common/editRules.js";
 
 // TODO: Remove
 import {
   debug_domainlist_and_dynamicrules,
   updateRemovalScript,
-} from "../common/editDomainlist";
+} from "../common/editDomainlist.js";
 
 async function enable() {
   if ("$BROWSER" == "firefox") {

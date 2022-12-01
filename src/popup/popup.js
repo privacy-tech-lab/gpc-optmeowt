@@ -9,18 +9,18 @@ popup.js
 popup.js supplements and renders complex elements on popup.html
 */
 
-import { stores, storage } from "../background/storage";
-import { initIAB, isValidSignalIAB } from "../background/cookiesIAB";
+import { stores, storage } from "../background/storage.js";
+import { initIAB, isValidSignalIAB } from "../background/cookiesIAB.js";
 import "../../node_modules/uikit/dist/css/uikit.min.css";
 import "../../node_modules/animate.css/animate.min.css";
 import "./styles.css";
 import psl from "psl";
-import "../../node_modules/uikit/dist/js/uikit";
-import "../../node_modules/uikit/dist/js/uikit-icons";
-import "../../node_modules/@popperjs/core/dist/umd/popper";
-import tippy from "../../node_modules/tippy.js/dist/tippy-bundle.umd";
+import "../../node_modules/uikit/dist/js/uikit.js";
+import "../../node_modules/uikit/dist/js/uikit-icons.js";
+import "../../node_modules/@popperjs/core/dist/umd/popper.js";
+import tippy from "../../node_modules/tippy.js/dist/tippy-bundle.umd.js";
 import UIkit from "uikit";
-import Darkmode from "../theme/darkmode";
+import Darkmode from "../theme/darkmode.js";
 
 import {
   addDomainToDomainlistAndRules,
