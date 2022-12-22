@@ -25,5 +25,5 @@ it("checks whether a new cookie is constructed per the IAB spec", () => {
   assert.equal(ex_cookie.name, "test_cookie");
   assert.equal(ex_cookie.value, "test_value");
   assert.equal(ex_cookie.url, "http://test_url.com");
-  assert.equal(ex_cookie.expirationDate, now / 1000 + 31557600);
+  assert.equal(ex_cookie.expirationDate, expirationDate);
 });
