@@ -11,7 +11,6 @@ protection.js (1) Implements our per-site functionality for the background liste
 */
 
 import { stores, storage } from "./../storage.js";
-import { modes } from "../../data/modes.js";
 import { defaultSettings } from "../../data/defaultSettings.js";
 import { headers } from "../../data/headers.js";
 import { enableListeners, disableListeners } from "./listeners-$BROWSER.js";

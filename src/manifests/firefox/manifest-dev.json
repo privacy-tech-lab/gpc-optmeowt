@@ -13,20 +13,6 @@
     "cookies",
     "tabs"
   ],
-  "commands": {
-    "run_analysis": {
-      "description": "Starts an analysis on the current site",
-      "suggested_key": {
-        "default": "Alt+Shift+A"
-      }
-    },
-    "halt_analysis": {
-      "description": "Halts the started analysis",
-      "suggested_key": {
-        "default": "Alt+Shift+S"
-      }
-    }
-  },
   "icons": {
     "128": "assets/face-icons/icon128-face-circle.png"
   },

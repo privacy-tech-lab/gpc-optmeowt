@@ -26,7 +26,6 @@ import { saveAs } from "file-saver";
 const stores = Object.freeze({
   settings: "SETTINGS",
   domainlist: "DOMAINLIST",
-  analysis: "ANALYSIS",
 });
 
 /******************************************************************************/
@@ -37,7 +36,6 @@ const dbPromise = openDB("extensionDB", 1, {
   upgrade: function dbPromiseInternal(db) {
     db.createObjectStore(stores.domainlist);
     db.createObjectStore(stores.settings);
-    db.createObjectStore(stores.analysis);
   },
 });
 
