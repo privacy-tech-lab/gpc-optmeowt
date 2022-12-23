@@ -1,5 +1,5 @@
 import assert from "assert";
-import { makeCookieIAB } from "../src/background/cookiesIAB.js";
+import { makeCookieIAB } from "../../src/background/cookiesIAB.js";
 
 // function makeCookieIAB(name, value, url) {
 //   var time = new Date();
