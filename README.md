@@ -96,7 +96,27 @@ Note that we have built most of our codebase in MacOS, so path variables and sim
 
 We also like to use [Debugger for Firefox](https://marketplace.visualstudio.com/items?itemName=firefox-devtools.vscode-firefox-debug) from within VSCode when in development to help automate loading the built extension package. The default behavior is `F5` to launch and load the extension in browser. There is a similar extension for Chrome, [Debugger for Chrome](https://marketplace.visualstudio.com/items?itemName=msjsdiag.debugger-for-chrome). Make sure to follow the online documentation on writing the correct `.vscode/launch.json` file, or other necessary settings files, in order to properly load OptMeowt with the debugger.
 
-## 6. OptMeowt's Permission Use
+## 6. Using OptMeowt Testing
+
+OptMeowt uses the [Mocha](https://mochajs.org/) framework to execute its testing and continuous integration. 
+
+### Running unit tests:
+**Locally:**
+1. Clone this repo locally or download a zipped copy and unzip it.
+2. Make sure npm is up to date by running <npm -v> to check the version and updating follow the instructions [here](https://docs.npmjs.com/try-the-latest-stable-version-of-npm), depending on the operating system. 
+3. Run tests with ‘npm test’
+  No other installations are needed. 
+
+**Continuous Integration:**
+The continuous integration is built into the OptMeowt repo with Github Actions, therefore no changes to the extension environment are needed to run new tests. 
+
+### Creating a new test:
+1. Navigate to ‘.../gpc-optmeowt/test/’. Then navigate to the folder in the test directory that corresponds to the tested function’s location in the extension source code. 
+2. Create a new file in the matching folder. Name the file with the format `FUNCTION_NAME.test.js`. 
+  For example, if testing a function named `sum` located in the folder `.../src/math`, create the test called `sum.test.js` in the folder `.../test/math`
+3. Write test using [ECMAscript formatting](https://nodejs.org/api/esm.html).
+
+## 7. OptMeowt's Permission Use
 
 **Note:** We do not collect any data from you. Third parties will also not receive your data. The permissions OptMeowt is using are required for opting you out. To that end, OptMeowt uses the following permissions:
 
@@ -122,11 +142,11 @@ We also like to use [Debugger for Firefox](https://marketplace.visualstudio.com/
 - `cookies`: Allows OptMeowt to place opt out cookies in your browser
 - `tabs`: Allows OptMeowt to keep track of HTTP headers per tab to show you the opt out status of the current site in a popup
 
-## 7. OptMeowt's Architecture
+## 8. OptMeowt's Architecture
 
 Detailed information on OptMeowt's architecture is available in a [separate readme](https://github.com/privacy-tech-lab/gpc-optmeowt/blob/main/README_ARCHITECTURE.md).
 
-## 8. Directories in this Repo
+## 9. Directories in this Repo
 
 - `src/`: Main contents of the OptMeowt browser extension.
 - `src/assets`: Graphical elements of the extension, including logos and button images.
@@ -137,11 +157,18 @@ Detailed information on OptMeowt's architecture is available in a [separate read
 - `src/theme`: Dark and light mode themes.
 - `ui-mockup`: Contains PDF and XD files demonstrating the preliminary mockup of OptMeowt.
 
-## 9. Third Party Libraries
+## 10. Third Party Libraries
 
 OptMeowt uses various [third party libraries](https://github.com/privacy-tech-lab/gpc-optmeowt/blob/main/package.json). We thank the developers.
 
-## 10. Developer Guide
+## 11. Developer Guide
+
+### Keyboard Shortcuts
+
+- `Alt+Shift+A` — runs `a`nalysis (eq. to clicking `Run Analysis` in popup)
+- `Alt+Shift+S` — `s`tops analysis (eq. to clicking `Stop Analysis` in popup)
+
+Reminder: Users **must** "stop analysis" prior to changing sites to prevent recording incorrect data
 
 ### Contributing
 
@@ -149,7 +176,7 @@ OptMeowt uses various [third party libraries](https://github.com/privacy-tech-la
 - If you have questions about OptMeowt's functionality or have found a bug, please check out our [FAQ \ Known quirks](https://github.com/privacy-tech-lab/gpc-optmeowt/wiki/FAQ-%5C-Known-quirks) page on the [Wiki](https://github.com/privacy-tech-lab/gpc-optmeowt/wiki) first. If you cannot find what you are looking for, feel free to open an issue, and we will address it.
 - Note: When viewing your browser's console on a site, a 404 error regarding the domain's GPC status file (`/.well-known/gpc.json`) may be shown. Note that this is normal and will occur (1) on domains that do not support GPC and (2) on domains that support GPC but do not host a `/.well-known/gpc.json` file.
 
-## 11. Thank You!
+## 12. Thank You!
 
 <p align="center"><strong>We would like to thank our financial supporters!</strong></p><br>
 
