@@ -174,7 +174,7 @@ function pruneCookieIAB(cookie, value, url) {
  * @param {string} url - The url the cookie should be assigned
  * @return {Object} - new IAB cookie
  */
-function makeCookieIAB(name, value, url) {
+export function makeCookieIAB(name, value, url) {
   var time = new Date();
   var now = time.getTime();
 
