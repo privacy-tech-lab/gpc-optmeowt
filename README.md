@@ -2,6 +2,7 @@
   <a href="https://github.com/privacy-tech-lab/gpc-optmeowt/releases"><img alt="GitHub release (latest by date)" src="https://img.shields.io/github/v/release/privacy-tech-lab/gpc-optmeowt"></a>
   <a href="https://github.com/privacy-tech-lab/gpc-optmeowt/releases"><img alt="GitHub Release Date" src="https://img.shields.io/github/release-date/privacy-tech-lab/gpc-optmeowt"></a>
   <a href="https://github.com/privacy-tech-lab/gpc-optmeowt/commits/main"><img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/privacy-tech-lab/gpc-optmeowt"></a>
+  <a href="https://github.com/privacy-tech-lab/gpc-optmeowt/actions/workflows/node.js.yml"><img alt="GitHub Actions" src="https://github.com/privacy-tech-lab/gpc-optmeowt/actions/workflows/node.js.yml/badge.svg?branch=main"></a>
   <a href="https://github.com/privacy-tech-lab/gpc-optmeowt/issues"><img alt="GitHub issues" src="https://img.shields.io/github/issues-raw/privacy-tech-lab/gpc-optmeowt"></a>
   <a href="https://github.com/privacy-tech-lab/gpc-optmeowt/issues?q=is%3Aissue+is%3Aclosed"><img alt="GitHub closed issues" src="https://img.shields.io/github/issues-closed-raw/privacy-tech-lab/gpc-optmeowt"></a>
   <a href="https://github.com/privacy-tech-lab/gpc-optmeowt/blob/main/LICENSE.md"><img alt="GitHub" src="https://img.shields.io/github/license/privacy-tech-lab/gpc-optmeowt"></a>
