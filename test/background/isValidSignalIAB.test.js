@@ -5,17 +5,19 @@ describe('Check different IAB signals for validity', () => {
     it('should accept 1--- as true string', () => {
         assert.equal(isValidSignalIAB("1---"), true);
     });
-    it('should accept 1YNY as true string', () => {
+    it('should accept string with all valid chars', () => {
         assert.equal(isValidSignalIAB("1YNY"), true);
+        assert.equal(isValidSignalIAB("1YYY"), true);
+        assert.equal(isValidSignalIAB("1NNN"), true);
     });
-    it('should reject 1-- as false string', () => {
+    it('should reject too short string', () => {
         assert.equal(isValidSignalIAB("1--"), false);
     });
-    it('should reject 2YYY as false string', () => {
+    it('should reject string with invalid chars', () => {
         assert.equal(isValidSignalIAB("2YYY"), false);
-    });
-    it('should reject 1WWW as false string', () => {
-        assert.equal(isValidSignalIAB("1WWW"), false);
+        assert.equal(isValidSignalIAB("1YWY"), false);
+        assert.equal(isValidSignalIAB("1WWY"), false);
+        assert.equal(isValidSignalIAB("1YYW"), false);
     });
 
 });
