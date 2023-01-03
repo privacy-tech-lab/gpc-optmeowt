@@ -93,6 +93,10 @@ To include new dependencies you can run `npm install` instead of `npm ci`. `npm 
 
 Note that we have built most of our codebase in MacOS, so path variables and similar code may cause the build to break in other OSs, in particular Windows. We recommend installing a Linux OS if you will be working with the codebase in any significant manner.
 
+**For PoPETs 2023 readers:**
+
+The version of OptMeowt used in our PoPETs 2023 submission, "Opting Out from Web Tracking with Global Privacy Control", can be found in our [v3.0.0 release](https://github.com/privacy-tech-lab/gpc-optmeowt/releases/tag/v3.0.0-paper). To view the v3.0.0 code, you can look at the repo [here](https://github.com/privacy-tech-lab/gpc-optmeowt/tree/v3.0.0-paper). Instructions for building the extension locally is the same as stated above, as seen in our [Firefox instructions](https://github.com/privacy-tech-lab/gpc-optmeowt/tree/main#firefox). For detailed information on how to use analysis mode, please refer to [our methodology](https://github.com/privacy-tech-lab/gpc-optmeowt/tree/v4.0.1/#4-analysis-mode-firefox-only).
+
 ### Optional
 
 We also like to use [Debugger for Firefox](https://marketplace.visualstudio.com/items?itemName=firefox-devtools.vscode-firefox-debug) from within VSCode when in development to help automate loading the built extension package. The default behavior is `F5` to launch and load the extension in browser. There is a similar extension for Chrome, [Debugger for Chrome](https://marketplace.visualstudio.com/items?itemName=msjsdiag.debugger-for-chrome). Make sure to follow the online documentation on writing the correct `.vscode/launch.json` file, or other necessary settings files, in order to properly load OptMeowt with the debugger.
