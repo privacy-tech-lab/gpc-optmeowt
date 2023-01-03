@@ -132,7 +132,7 @@ function updateIAB(cookie, value, url) {
  * @param {string} signal - the value of an IAB cookie. Example: `1YNN`.
  * @return {string} - Updated IAB value to be set
  */
-function parseIAB(signal) {
+export function parseIAB(signal) {
   if (!isValidSignalIAB(signal)) {
     return "1NYN";
   }
