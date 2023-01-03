@@ -153,7 +153,7 @@ function parseIAB(signal) {
  * @param {string} url - url the updated cookie should have
  * @return {object} - updated cookie to be returned
  */
-function pruneCookieIAB(cookie, value, url) {
+export function pruneCookieIAB(cookie, value, url) {
   cookie.value = value;
   cookie.url = url;
   // Checks if a cookie made by a site is stored per domain/subdomain
