@@ -2,41 +2,43 @@
  *  Tests for testing GPC signals
  */
 
- import harness from 'harness/harness.js';
- import backgroundWait from '../../node_modules/helpers/backgroundWait';
- import pageWait from '../../node_modules/helpers/pageWait';
+ import harness from '../background/helpers/harness.js';
+ import backgroundWait from '../background/helpers/backgroundWait.js';
+ import pageWait from '../background/helpers/pageWait.js';
+ import assert from 'assert';
+
 
  import http from 'http';
  import fs from 'fs';
  import path from 'path';
-import { assert } from 'joi';
  
  let browser
  let bgPage
  let teardown
  
- describe('GPC test', () => {
-     beforeAll(async () => {
+ describe('GPC test', function () {
+   this.timeout(20000);
+     before(async () => {
          ({ browser, bgPage, teardown } = await harness.setup())
          await backgroundWait.forAllConfiguration(bgPage)
 
-         chrome.scripting.registerContentScripts([
-            {
-              id: "1",
-              matches: ["<all_urls>"],
-              js: ["content-scripts/registration/gpc-dom.js"],
-              runAt: "document_start",
-            },
-            {
-              id: "2",
-              matches: ["https://example.org/foo/bar.html"],
-              js: ["content-scripts/registration/gpc-remove.js"],
-              runAt: "document_start",
-            },
-          ]);
+        //  chrome.scripting.registerContentScripts([
+        //     {
+        //       id: "1",
+        //       matches: ["<all_urls>"],
+        //       js: ["content-scripts/registration/gpc-dom.js"],
+        //       runAt: "document_start",
+        //     },
+        //     {
+        //       id: "2",
+        //       matches: ["https://example.org/foo/bar.html"],
+        //       js: ["content-scripts/registration/gpc-remove.js"],
+        //       runAt: "document_start",
+        //     },
+        //   ]);
 
      })
-     afterAll(async () => {
+     after(async () => {
          await teardown()
      })
  
