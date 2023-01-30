@@ -2,14 +2,13 @@
  *  Tests for testing GPC signals
  */
 
- import harness from 'harness/harness.js';
- import backgroundWait from '../../node_modules/helpers/backgroundWait';
- import pageWait from '../../node_modules/helpers/pageWait';
+ import harness from '../test/helpers/harness.js';
+ import backgroundWait from '../test/helpers/backgroundWait.js';
+ import pageWait from '../test/helpers/pageWait.js';
 
  import http from 'http';
  import fs from 'fs';
  import path from 'path';
-import { assert } from 'joi';
  
  let browser
  let bgPage
