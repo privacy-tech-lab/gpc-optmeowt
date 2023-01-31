@@ -7,7 +7,7 @@ import { spawnSync } from 'child_process'
 import backgroundWait from '../helpers/backgroundWait.js'
 
 
-const DATA_DIR_PREFIX = 'ddg-temp-'
+const DATA_DIR_PREFIX = 'opmt-temp-'
 
 const setup = async (ops) => {
     ops = ops || {}
@@ -23,13 +23,10 @@ const setup = async (ops) => {
         `--user-data-dir=${dataDir}`
     ]
 
-    const manifestVersion = getManifestVersion()
 
     if (loadExtension) {
-        let extensionPath = 'build/chrome/dev'
-        if (manifestVersion === 3) {
-            extensionPath = extensionPath.replace('chrome', 'chrome-mv3')
-        }
+        let extensionPath = 'desktop/optmeowt/optmeowt-browser-extension/dev/chrome'
+
         args.push('--disable-extensions-except=' + extensionPath)
         args.push('--load-extension=' + extensionPath)
     }
@@ -102,11 +99,7 @@ const setup = async (ops) => {
     return { browser, bgPage, requests, teardown }
 }
 
-function getManifestVersion () {
-    return process.env.npm_lifecycle_event === 'test-int-mv3' ? 3 : 2
-}
 
 export default {
     setup,
-    getManifestVersion
 }
