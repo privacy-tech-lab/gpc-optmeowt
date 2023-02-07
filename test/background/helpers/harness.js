@@ -25,7 +25,7 @@ const setup = async (ops) => {
 
 
     if (loadExtension) {
-        let extensionPath = 'desktop/optmeowt/optmeowt-browser-extension/dev/chrome'
+        let extensionPath = 'dev/chrome'
 
         args.push('--disable-extensions-except=' + extensionPath)
         args.push('--load-extension=' + extensionPath)
@@ -46,17 +46,13 @@ const setup = async (ops) => {
         // Grab a handle on the background page for the extension.
         try {
             const backgroundPageTarget = await browser.waitForTarget(
-                target => (
-                    target.type() === 'background_page' ||
-                    target.type() === 'service_worker'
-                ),
+                target => target.type() === 'service_worker'
+                ,
                 { timeout: 4000 }
             )
-            bgPage = backgroundPageTarget.type() === 'background_page'
-                ? await backgroundPageTarget.page()
-                : await backgroundPageTarget.worker()
+            bgPage = await backgroundPageTarget.worker()
         } catch (e) {
-            throw new Error(`Couldn't find background page. ${e}`)
+            throw new Error(`Couldn't find background page or service worker. ${e}`)
         }
 
         if (!bgPage) {
