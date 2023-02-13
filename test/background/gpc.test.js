@@ -4,22 +4,16 @@
 
  import assert from 'assert';
  import puppeteer from 'puppeteer';
-
-
- import http from 'http';
- import fs from 'fs';
- import path from 'path';
  
  let browser
- let bgPage
- let teardown
+
  
  describe('GPC test', function () {
-   this.timeout(20000000);
+   this.timeout(20000);
      before(async () => {
 
         const puppeteerOps = {
-            headless: 'chrome',
+            headless: false,
         }
         const args = []
 
@@ -31,48 +25,45 @@
         puppeteerOps.args = args
         browser = await puppeteer.launch(puppeteerOps)
         await new Promise(resolve => setTimeout(resolve, 2000));
-
+        
 
      })
      after(async () => {
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        //await new Promise(resolve => setTimeout(resolve, 1000));
          await browser.close()
      })
  
-     it('Tests whether the GPC signal is properly set', async () => {         
+     it('Tests whether the GPC and header signal are properly set', async () => {         
              const page = await browser.newPage()
-             let top_frame_header;
-             let top_frame_api;
+             let rules;
              //let gpc;
-             await page.goto(`https://example.com`)
+             await page.goto(`https://global-privacy-control.glitch.me/`)
 
-             await new Promise(resolve => setTimeout(resolve, 2000));
-             //await page.reload();
+             //await new Promise(resolve => setTimeout(resolve, 2000));
+             await page.reload();
              //await new Promise(resolve => setTimeout(resolve, 1000));
 
-             const gpc = await page.evaluate(() => {
+             const gpc = await page.evaluate(async () => {
+                await new Promise(resolve => setTimeout(resolve, 2000));
+
                     return (async () => {
                         return navigator.globalPrivacyControl
                     })()
                 })
+
+            const header = await page.evaluate(async () => {
+
+                function getElementByXpath(path) {
+                    return document.evaluate(path, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+                  }
+
+                return getElementByXpath("/html/body/section[2]/div/div[1]/div/h3").innerText;
+                
+            })
             
-            //  await page.evaluate(async () => {
-            //     gpc = await document.window.navigator.globalPrivacyControl;
-            //     // await new Promise(resolve => setTimeout(resolve, 3000));
 
-            //     // document.getElementById('start').click()
-             
-            //     // await new Promise(resolve => setTimeout(resolve, 3000));
-
-            //     // document.getElementById('tests').click()
-
-            //     // await new Promise(resolve => setTimeout(resolve, 3000));
-            //     // top_frame_header = document.getElementById('test-top-frame header').innerHTML;
-            //     // top_frame_api = document.getElementById('test-top-frame JS API').innerHTML;
-            //  })
-
+            
+            assert.equal(header, 'Header present \nSec-GPC: "1"');
             assert.equal(gpc, true);
-            //  assert.equal(top_frame_header, 1);
-            //  assert.equal(top_frame_api, "true");
      })
  })
