@@ -41,7 +41,7 @@ const uspapiRequest = `
   }
 `;
 
-function injectScript(script) {
+export function injectScript(script) {
   const scriptElem = document.createElement("script");
   scriptElem.innerHTML = script;
   document.documentElement.prepend(scriptElem);
