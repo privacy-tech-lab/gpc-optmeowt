@@ -13,7 +13,8 @@ If the domainlist is being handled, then cookies are added/removed here too
 import { openDB } from "idb";
 import { storageCookies } from "./storageCookies.js";
 import { reloadDynamicRules } from "../common/editRules.js";
-import { saveAs } from "file-saver";
+import pkg from 'file-saver';
+const { saveAs } = pkg;
 
 /******************************************************************************/
 /**************************  Enumerated settings  *****************************/

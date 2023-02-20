@@ -132,7 +132,7 @@ function updateIAB(cookie, value, url) {
  * @param {string} signal - the value of an IAB cookie. Example: `1YNN`.
  * @return {string} - Updated IAB value to be set
  */
-function parseIAB(signal) {
+export function parseIAB(signal) {
   if (!isValidSignalIAB(signal)) {
     return "1NYN";
   }
@@ -153,7 +153,7 @@ function parseIAB(signal) {
  * @param {string} url - url the updated cookie should have
  * @return {object} - updated cookie to be returned
  */
-function pruneCookieIAB(cookie, value, url) {
+export function pruneCookieIAB(cookie, value, url) {
   cookie.value = value;
   cookie.url = url;
   // Checks if a cookie made by a site is stored per domain/subdomain
