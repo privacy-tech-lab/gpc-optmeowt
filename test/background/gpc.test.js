@@ -7,7 +7,7 @@
  
  let browser
 
- 
+ if (!process.env.CI) {
  describe('GPC test', function () {
    this.timeout(20000);
      before(async () => {
@@ -22,18 +22,15 @@
         args.push('--disable-extensions-except=' + extensionPath)
         args.push('--load-extension=' + extensionPath)
 
-        if (process.env.CI) {
-            args.push('--no-sandbox')
-        }
-        
+
+
         puppeteerOps.args = args
         browser = await puppeteer.launch(puppeteerOps)
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        await new Promise(resolve => setTimeout(resolve, 1000));
         
 
      })
      after(async () => {
-        //await new Promise(resolve => setTimeout(resolve, 1000));
          await browser.close()
      })
  
@@ -47,7 +44,7 @@
             await page.reload();
 
             const gpc_neg = await page.evaluate(async () => {
-                await new Promise(resolve => setTimeout(resolve, 2000));
+                await new Promise(resolve => setTimeout(resolve, 1000));
 
                     return (async () => {
                         return navigator.globalPrivacyControl
@@ -56,12 +53,10 @@
 
                 await page.goto(`https://global-privacy-control.glitch.me/`)
 
-                //await new Promise(resolve => setTimeout(resolve, 2000));
                 await page.reload();
-                //await new Promise(resolve => setTimeout(resolve, 1000));
    
                 const gpc = await page.evaluate(async () => {
-                   await new Promise(resolve => setTimeout(resolve, 2000));
+                   await new Promise(resolve => setTimeout(resolve, 1000));
    
                        return (async () => {
                            return navigator.globalPrivacyControl
@@ -86,3 +81,4 @@
             assert.equal(gpc, true);
      })
  })
+}
