@@ -77,9 +77,8 @@
 
             
 
-            
+            assert.equal(gpc_neg, undefined);
             assert.equal(header, 'Header present \nSec-GPC: "1"');
             assert.equal(gpc, true);
-            assert.equal(gpc_neg, undefined);
      })
  })
