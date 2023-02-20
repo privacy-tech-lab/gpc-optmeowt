@@ -22,6 +22,10 @@
         args.push('--disable-extensions-except=' + extensionPath)
         args.push('--load-extension=' + extensionPath)
 
+        if (process.env.CI) {
+            args.push('--no-sandbox')
+        }
+        
         puppeteerOps.args = args
         browser = await puppeteer.launch(puppeteerOps)
         await new Promise(resolve => setTimeout(resolve, 2000));
