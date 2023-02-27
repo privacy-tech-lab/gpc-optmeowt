@@ -103,17 +103,40 @@ The version of OptMeowt used in our PoPETs 2023 submission, "Usability and Enfor
 
 ## 7. Using OptMeowt Testing
 
-OptMeowt uses the [Mocha](https://mochajs.org/) framework to execute its testing and continuous integration. 
+OptMeowt uses the [Mocha](https://mochajs.org/) framework and [Puppeteer](https://pptr.dev/) to execute its testing and continuous integration. The continuous integration is built into the OptMeowt repo with Github Actions. See the [Actions tab](https://github.com/privacy-tech-lab/gpc-optmeowt/actions) to see all workflows and past unit testing for previous PRs.  
 
-### Running unit tests:
+### Running automated unit tests:
 **Locally:**
 1. Clone this repo locally or download a zipped copy and unzip it.
-2. Make sure npm is up to date by running <npm -v> to check the version and updating follow the instructions [here](https://docs.npmjs.com/try-the-latest-stable-version-of-npm), depending on the operating system. 
-3. Run tests with ‘npm test’
-  No other installations are needed. 
+2. Make sure npm is up to date by running `npm -v` to check the version and updating follow the instructions [here](https://docs.npmjs.com/try-the-latest-stable-version-of-npm), depending on the operating system. 
+3. Run tests with `npm test`. If Puppeteer is uninstalled, run `npm install`.
 
 **Continuous Integration:**
-The continuous integration is built into the OptMeowt repo with Github Actions, therefore no changes to the extension environment are needed to run new tests. 
+The continuous integration is built into the OptMeowt repo, therefore no changes to the extension environment are needed to run new tests. 
+
+### Manual UI testing
+
+The following procedure is for testing the OptMeowt extension UI, which cannot be automated. They are recommeded to be performed manually as follows: 
+
+1. Download the version of the extension you want to test through `npm run start` and then download the unpacked dev version for your browser.
+2. Navigate to a site with the well-known file, like “https://global-privacy-control.glitch.me/”
+3. Click on the OptMeowt symbol in the top right of your browser.
+  [ ] TEST 1: The symbol for the cat should be solid green.
+  [ ] TEST 2: The URL of the website should be written under the “Protection Mode” banner.
+  [ ] TEST 3: Do Not Sell should be enabled.
+  [ ] TEST 4: There should be a blue number detailing the number of domains receiving signals.
+4. Click on the drop down for “3rd Party Domains”.
+  [ ] TEST 5: There should be sites that show up with Do Not Sell Enabled switched on.
+5. Navigate out of the “3rd Party Domains” drop down and click on the “Website Response” drop down
+  [ ] TEST 6: There should be text showing that GPC Signals were accepted.
+  [ ] TEST 7: Switch “Dark Mode” on and off and ensure the popup is correctly changing colors. 
+6. Navigate to the top of the popup and click on the “More” symbol (image: Sliders) to go to the Settings page.
+7. In the main settings page, click on “Disable” and open the popup.
+  [ ] TEST 8: The popup should be fully grayed out and showing the popup disabled. 
+8. In the website, move to the “Domainlist” page.
+  [ ] TEST 9: There should be multiple domains showing in the domainlist tab.
+9. Go back to the main settings page and export domainlist.
+  [ ] TEST 10: Check the exported domainlist and the domainlist in the settings page to make sure the websites match up. 
 
 ### Creating a new test:
 1. Navigate to ‘.../gpc-optmeowt/test/’. Then navigate to the folder in the test directory that corresponds to the tested function’s location in the extension source code. 

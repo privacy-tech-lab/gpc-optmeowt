@@ -69,22 +69,12 @@ src
 └── theme       # Contains darkmode
     └── darkmode.js
 test
-├── background
-│   └── protection
-├── common
-├── content-scripts
-│   ├── injection
-│   └── registration
-├── data
-├── manifests
-│   ├── chrome
-│   └── firefox
-├── options
-│   ├── components
-│   └── views
-├── popup
-├── rules
-└── theme
+└── background
+    ├── gpc.test.js
+    ├── isValidSignalIAB.test.js
+    ├── makeCookieIAB.test.js
+    ├── pruneCookieIAB.test.js
+    └── pruneIABtest.js
 ```
 
 The following source folders have detailed descriptions further in the document.
