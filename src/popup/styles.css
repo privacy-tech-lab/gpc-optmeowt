@@ -78,26 +78,7 @@ styles.css is the main css page for OptMeowt's popup page
   color: var(--text-gray);
 }
 
-.optMode {
-  margin: auto;
-  padding-top: 12px;
-  padding-bottom: 12px;
-  padding-right: 10px;
-  padding-left: 10px;
-  background-color: white;
-  border: 1px solid var(--text-gray);
-  color: var(--text-gray);
-  text-align: center;
-  text-decoration-color: none;
-  font-size: 20px;
-  box-shadow: 0 6px 12px -1px rgba(190, 190, 190, 0.2);
-  outline: none;
-  transition: all ease 0.25s;
-}
 
-.optMode:hover {
-  color: var(--text-gray) !important;
-}
 
 /*
 SVG photo assets style

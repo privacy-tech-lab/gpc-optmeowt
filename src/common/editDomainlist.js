@@ -94,6 +94,53 @@ async function updateRemovalScript() {
   }
 }
 
+function createCS(domain){
+  if ("$BROWSER" == "chrome") {
+    new_matches = chrome.scripting.getRegisteredContentScripts(2).matches;
+    new_matches.push("https://" + domain + "/*");
+    new_matches.push("https://www." + domain + "/*");
+
+    chrome.scripting
+    .updateContentScripts([
+      {
+        id: "2",
+        matches: new_matches,
+        js: ["content-scripts/registration/gpc-remove.js"],
+        runAt: "document_start",
+      },
+    ])
+    .then(() => {});
+  }
+}
+
+function deleteCS(domain){
+  if ("$BROWSER" == "chrome") {
+    new_matches = chrome.scripting.getRegisteredContentScripts(2).matches;
+
+    function removeItemOnce(arr, value) {
+      var index = arr.indexOf(value);
+      if (index > -1) {
+        arr.splice(index, 1);
+      }
+      return arr;
+    }
+
+    new_matches = removeItemOnce(new_matches,"https://" + domain + "/*");
+    new_matches = removeItemOnce(new_matches,"https://www." + domain + "/*");
+
+    chrome.scripting
+    .updateContentScripts([
+      {
+        id: "2",
+        matches: new_matches,
+        js: ["content-scripts/registration/gpc-remove.js"],
+        runAt: "document_start",
+      },
+    ])
+    .then(() => {});
+  }
+}
+
 async function deleteDomainlistAndDynamicRules() {
   await storage.clear(stores.domainlist);
   if ("$BROWSER" == "chrome") {
@@ -106,6 +153,7 @@ async function addDomainToDomainlistAndRules(domain) {
   if ("$BROWSER" == "chrome") {
     id = await getFreshId();
     addDynamicRule(id, domain); // add the rule for the chosen domain
+    createCS(domain);
   }
   await storage.set(stores.domainlist, id, domain); // record what rule the domain is associated to
 }
@@ -114,6 +162,7 @@ async function removeDomainFromDomainlistAndRules(domain) {
   if ("$BROWSER" == "chrome") {
     let id = await storage.get(stores.domainlist, domain);
     deleteDynamicRule(id);
+    deleteCS(domain);
   }
   await storage.set(stores.domainlist, null, domain);
 }
@@ -178,4 +227,6 @@ export {
   updateRemovalScript,
   debug_domainlist_and_dynamicrules,
   print_rules_and_domainlist,
+  deleteCS,
+  createCS
 };
