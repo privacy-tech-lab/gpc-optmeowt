@@ -105,6 +105,8 @@ The version of OptMeowt used in our PoPETs 2023 submission, "Usability and Enfor
 
 OptMeowt uses the [Mocha](https://mochajs.org/) framework and [Puppeteer](https://pptr.dev/) to execute its testing and continuous integration. The continuous integration is built into the OptMeowt repo with Github Actions. The [Actions tab](https://github.com/privacy-tech-lab/gpc-optmeowt/actions) shows all workflows and past unit test checks for previous PRs.  
 
+The test responsible for checking OptMeowt’s ability to set the GPC signal can not be run with GitHub Actions and can only be run locally when running `npm test`. Using Puppeteer, this will launch an automated headful browser on Chromium, testing the Chrome GPC signal against the [GPC reference server](https://global-privacy-control.glitch.me/). 
+
 ### Running automated unit tests:
 **Locally:**
 1. Clone this repo locally or download a zipped copy and unzip it.
