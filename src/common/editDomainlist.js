@@ -67,7 +67,7 @@ import {
 
 async function updateRemovalScript() {
   if ("$BROWSER" == "chrome") {
-    let matches = ["https://example.org/foo/bar.html"];
+    let ex_matches = ["https://example.org/foo/bar.html"];
     let domain;
     let domainValue;
     const domainlistKeys = await storage.getAllKeys(stores.domainlist);
@@ -76,17 +76,18 @@ async function updateRemovalScript() {
       domain = domainlistKeys[index];
       domainValue = domainlistValues[index];
       if (domainValue != null) {
-        matches.push("https://" + domain + "/*");
-        matches.push("https://www." + domain + "/*");
+        ex_matches.push("https://" + domain + "/*");
+        ex_matches.push("https://www." + domain + "/*");
       }
     }
 
     chrome.scripting
       .updateContentScripts([
         {
-          id: "2",
-          matches: matches,
-          js: ["content-scripts/registration/gpc-remove.js"],
+          id: "1",
+          matches: ["<all_urls>"],
+          excludeMatches: [ex_matches],
+          js: ["content-scripts/registration/gpc-dom.js"],
           runAt: "document_start",
         },
       ])
@@ -94,18 +95,22 @@ async function updateRemovalScript() {
   }
 }
 
-function createCS(domain){
+async function createCS(domain){
   if ("$BROWSER" == "chrome") {
-    new_matches = chrome.scripting.getRegisteredContentScripts(2).matches;
-    new_matches.push("https://" + domain + "/*");
-    new_matches.push("https://www." + domain + "/*");
+    let script = await chrome.scripting.getRegisteredContentScripts({
+    });
 
-    chrome.scripting
-    .updateContentScripts([
+    let ex_matches = script[0].excludeMatches;
+
+    ex_matches.push("https://" + domain + "/*");
+    ex_matches.push("https://www." + domain + "/*");
+
+    await chrome.scripting.updateContentScripts([
       {
-        id: "2",
-        matches: new_matches,
-        js: ["content-scripts/registration/gpc-remove.js"],
+        id: "1",
+        matches: ["<all_urls>"],
+        excludeMatches: ex_matches,
+        js: ["content-scripts/registration/gpc-dom.js"],
         runAt: "document_start",
       },
     ])
@@ -113,10 +118,11 @@ function createCS(domain){
   }
 }
 
-function deleteCS(domain){
+async function deleteCS(domain){
   if ("$BROWSER" == "chrome") {
-    new_matches = chrome.scripting.getRegisteredContentScripts(2).matches;
-
+    let script = await chrome.scripting.getRegisteredContentScripts({
+    });
+    let ex_matches = script[0].excludeMatches;
     function removeItemOnce(arr, value) {
       var index = arr.indexOf(value);
       if (index > -1) {
@@ -125,15 +131,14 @@ function deleteCS(domain){
       return arr;
     }
 
-    new_matches = removeItemOnce(new_matches,"https://" + domain + "/*");
-    new_matches = removeItemOnce(new_matches,"https://www." + domain + "/*");
-
-    chrome.scripting
-    .updateContentScripts([
+    ex_matches = removeItemOnce(ex_matches,"https://" + domain + "/*");
+    ex_matches = removeItemOnce(ex_matches,"https://www." + domain + "/*");
+    await chrome.scripting.updateContentScripts([
       {
-        id: "2",
-        matches: new_matches,
-        js: ["content-scripts/registration/gpc-remove.js"],
+        id: "1",
+        matches: ["<all_urls>"],
+        excludeMatches: ex_matches,
+        js: ["content-scripts/registration/gpc-dom.js"],
         runAt: "document_start",
       },
     ])

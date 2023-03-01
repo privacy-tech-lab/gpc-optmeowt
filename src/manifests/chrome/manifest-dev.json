@@ -52,7 +52,7 @@
     "service_worker": "background.bundle.js"
   },
   "web_accessible_resources": [{
-	  "resources": ["content-scripts/injection/gpc-dom.js", "content-scripts/injection/gpc-remove.js"],
+	  "resources": ["content-scripts/injection/gpc-dom.js"],
 	  "matches": ["<all_urls>"]
 	}],
   "manifest_version": 3,

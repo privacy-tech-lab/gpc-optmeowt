@@ -144,9 +144,9 @@ function turnonoff(isEnabled) {
     if (isEnabled) {
       chrome.scripting.updateContentScripts([
         {
-          id: "2",
-          matches: ["<all_urls>"],
-          js: ["content-scripts/registration/gpc-remove.js"],
+          id: "1",
+          matches: ["https://example.com"],
+          js: ["content-scripts/registration/gpc-dom.js"],
           runAt: "document_start",
         },
       ]);
