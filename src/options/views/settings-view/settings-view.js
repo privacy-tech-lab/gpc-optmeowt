@@ -65,7 +65,7 @@ function eventListeners() {
           {
             id: "1",
             matches: ["<all_urls>"],
-            excludeMatches: ["https://example.com"],
+            excludeMatches: [],
             js: ["content-scripts/registration/gpc-dom.js"],
             runAt: "document_start",
           },
@@ -88,7 +88,8 @@ function eventListeners() {
         chrome.scripting.updateContentScripts([
           {
             id: "1",
-            matches: ["https://example.com"],
+            matches: ["https://example.com/foo/bar.html"],
+            excludeMatches: [],
             js: ["content-scripts/registration/gpc-dom.js"],
             runAt: "document_start",
           },

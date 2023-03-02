@@ -80,13 +80,12 @@ async function updateRemovalScript() {
         ex_matches.push("https://www." + domain + "/*");
       }
     }
-
     chrome.scripting
       .updateContentScripts([
         {
           id: "1",
           matches: ["<all_urls>"],
-          excludeMatches: [ex_matches],
+          excludeMatches: ex_matches,
           js: ["content-scripts/registration/gpc-dom.js"],
           runAt: "document_start",
         },
