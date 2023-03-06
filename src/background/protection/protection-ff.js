@@ -70,7 +70,7 @@ const listenerCallbacks = {
   onBeforeSendHeaders: (details) => {
     updateDomainlist(details);
 
-    if (sendSignal) {
+    if (!sendSignal) {
       signalPerTab[details.tabId] = true;
       return addHeaders(details);
     }
@@ -197,9 +197,8 @@ function getCurrentParsedDomain() {
   domPrev3rdParties[activeTabID][currentDomain][parsedDomain] = null;
   
 
-  (isDomainlisted) 
-    ? ((parsedDomainVal === null) ? sendSignal = true : sendSignal = false)
-    : sendSignal = true;
+  return sendPrivacySignal(currentDomain);
+
 }
 
 function updatePopupIcon(details) {
@@ -294,7 +293,6 @@ async function syncDomainlists() {
  * @returns {bool} sendSignal
  */
 async function sendPrivacySignal(domain) {
-  let sendSignal;
   const extensionEnabled = await storage.get(stores.settings, "IS_ENABLED");
   const extensionDomainlisted = await storage.get(
     stores.settings,
