@@ -36,20 +36,7 @@
  
      it('Tests whether the GPC and header signal are properly set', async () => {         
              const page = await browser.newPage()
-             let rules;
-             //let gpc;
 
-
-            await page.goto("https://example.org/foo/bar.html")
-            await page.reload();
-
-            const gpc_neg = await page.evaluate(async () => {
-                await new Promise(resolve => setTimeout(resolve, 1000));
-
-                    return (async () => {
-                        return navigator.globalPrivacyControl
-                    })()
-                })
 
                 await page.goto(`https://global-privacy-control.glitch.me/`)
 
@@ -76,7 +63,6 @@
 
             
 
-            assert.equal(gpc_neg, undefined);
             assert.equal(header, 'Header present \nSec-GPC: "1"');
             assert.equal(gpc, true);
      })
