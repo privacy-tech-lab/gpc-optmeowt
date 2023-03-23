@@ -67,10 +67,10 @@ const listenerCallbacks = {
    * @param {object} details - retrieved info passed into callback
    * @returns {array} details.requestHeaders from addHeaders
    */
-  onBeforeSendHeaders: (details) => {
-    updateDomainlist(details);
+  onBeforeSendHeaders: async (details) => {
+    await updateDomainlist(details);
 
-    if (!sendSignal) {
+    if (sendSignal) {
       signalPerTab[details.tabId] = true;
       return addHeaders(details);
     }
@@ -100,7 +100,6 @@ const listenerCallbacks = {
    * @param {object} details - retrieved info passed into callback
    */
   onCommitted: async (details) => {
-    updateDomainlist(details);
     if (sendSignal) {
       initIAB();
       addDomSignal(details);
@@ -197,8 +196,9 @@ function getCurrentParsedDomain() {
   domPrev3rdParties[activeTabID][currentDomain][parsedDomain] = null;
   
 
-  return sendPrivacySignal(currentDomain);
-
+  (isDomainlisted) 
+    ? ((parsedDomainVal === null) ? sendSignal = true : sendSignal = false)
+    : sendSignal = true;
 }
 
 function updatePopupIcon(details) {
@@ -293,6 +293,7 @@ async function syncDomainlists() {
  * @returns {bool} sendSignal
  */
 async function sendPrivacySignal(domain) {
+  let sendSignal;
   const extensionEnabled = await storage.get(stores.settings, "IS_ENABLED");
   const extensionDomainlisted = await storage.get(
     stores.settings,
