@@ -10,7 +10,7 @@
 		  ]
 		},
 		"condition": { 
-		  "urlFilter": "nytimes.com",
+		  "urlFilter": "https://example.com",
 		  "resourceTypes": [
         "main_frame", 
         "sub_frame",

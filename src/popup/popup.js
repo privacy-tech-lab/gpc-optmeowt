@@ -51,14 +51,6 @@ const darkmode = new Darkmode();
 /******************************************************************************/
 /******************************************************************************/
 
-// Sets the current mode icon
-function changeOptModeIcon() {
-  let optMode = document.getElementById("optMode");
-
-  let p = document.getElementById("p");
-  p.style.display = "none";
-  p.style.display = "";
-}
 
 //Init: initialize darkmode button (NOTE: accesses global scope `mode`)
 function generateDarkmodeElement() {
@@ -152,9 +144,10 @@ function turnonoff(isEnabled) {
     if (isEnabled) {
       chrome.scripting.updateContentScripts([
         {
-          id: "2",
-          matches: ["<all_urls>"],
-          js: ["content-scripts/registration/gpc-remove.js"],
+          id: "1",
+          matches: ["https://example.com/foo/bar.html"],
+          excludeMatches: [],
+          js: ["content-scripts/registration/gpc-dom.js"],
           runAt: "document_start",
         },
       ]);
@@ -266,12 +259,12 @@ async function listenerFirstPartyDomainDNSToggleCallback() {
   let elemString = "";
   if (!parsedDomainValue) {
     elemString = "Do Not Sell Disabled";
-    addDomainToDomainlistAndRules(parsedDomain);
+    await addDomainToDomainlistAndRules(parsedDomain);
   } else {
     elemString = "Do Not Sell Enabled";
-    removeDomainFromDomainlistAndRules(parsedDomain);
+    await removeDomainFromDomainlistAndRules(parsedDomain);
   }
-  updateRemovalScript();
+  //updateRemovalScript();
   document.getElementById("more-info-text").innerHTML = elemString;
 }
 
@@ -408,7 +401,6 @@ function showProtectionInfo() {
   removeFirstPartyDomainDNSToggle();
   removeListenerDropdown1Toggle();
   removeListenerDropdown2Toggle();
-  document.getElementById("optMode-text").innerText = "Protection Mode";
   document.getElementById("switch-label").innerHTML = "";
   document.getElementById("more-info-body").style.display = "";
   document.getElementById("more-info-text").innerHTML = "Do Not Sell Enabled!";
@@ -465,7 +457,6 @@ document.addEventListener("DOMContentLoaded", async (event) => {
   renderFirstPartyDomain(parsedDomain); // Render 1P domain
 
   generateDarkmodeElement(); // Render darkmode
-  changeOptModeIcon();
   showProtectionInfo();
 });
 
@@ -504,7 +495,7 @@ function addThirdPartyDomainDNSToggleListener(requestDomain) {
         elemString = "Do Not Sell Enabled";
         removeDomainFromDomainlistAndRules(requestDomain);
       }
-      updateRemovalScript();
+      //updateRemovalScript();
       document.getElementById(`dns-enabled-text-${requestDomain}`).innerHTML =
         elemString;
     });

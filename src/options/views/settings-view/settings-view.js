@@ -63,9 +63,10 @@ function eventListeners() {
       if ("$BROWSER" == "chrome") {
         chrome.scripting.updateContentScripts([
           {
-            id: "2",
-            matches: ["https://example.org/foo/bar.html"],
-            js: ["content-scripts/registration/gpc-remove.js"],
+            id: "1",
+            matches: ["<all_urls>"],
+            excludeMatches: [],
+            js: ["content-scripts/registration/gpc-dom.js"],
             runAt: "document_start",
           },
         ]);
@@ -86,9 +87,10 @@ function eventListeners() {
       if ("$BROWSER" == "chrome") {
         chrome.scripting.updateContentScripts([
           {
-            id: "2",
-            matches: ["<all_urls>"],
-            js: ["content-scripts/registration/gpc-remove.js"],
+            id: "1",
+            matches: ["https://example.com/foo/bar.html"],
+            excludeMatches: [],
+            js: ["content-scripts/registration/gpc-dom.js"],
             runAt: "document_start",
           },
         ]);

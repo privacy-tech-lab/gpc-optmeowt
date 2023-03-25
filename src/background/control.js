@@ -51,21 +51,15 @@ function disable() {
 
 // This is the very first thing the extension runs
 (async () => {
-  // TODO: Temporarily register content script
   if ("$BROWSER" == "chrome") {
     chrome.scripting.registerContentScripts([
       {
         id: "1",
         matches: ["<all_urls>"],
+        excludeMatches:["https://example.com/"],
         js: ["content-scripts/registration/gpc-dom.js"],
         runAt: "document_start",
-      },
-      {
-        id: "2",
-        matches: ["https://example.org/foo/bar.html"],
-        js: ["content-scripts/registration/gpc-remove.js"],
-        runAt: "document_start",
-      },
+      }
     ]);
   }
   // Initializes the default settings
@@ -81,12 +75,12 @@ function disable() {
   if (isEnabled) {
     // Turns on the extension
     enable();
+    if ("$BROWSER" == "chrome") {
+      updateRemovalScript();
+      reloadDynamicRules();
+    }
   }
 
-  if ("$BROWSER" == "chrome") {
-    updateRemovalScript();
-    reloadDynamicRules();
-  }
 })();
 
 /******************************************************************************/

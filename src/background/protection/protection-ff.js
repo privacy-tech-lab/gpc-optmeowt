@@ -67,8 +67,8 @@ const listenerCallbacks = {
    * @param {object} details - retrieved info passed into callback
    * @returns {array} details.requestHeaders from addHeaders
    */
-  onBeforeSendHeaders: (details) => {
-    updateDomainlist(details);
+  onBeforeSendHeaders: async (details) => {
+    await updateDomainlist(details);
 
     if (sendSignal) {
       signalPerTab[details.tabId] = true;
@@ -100,7 +100,6 @@ const listenerCallbacks = {
    * @param {object} details - retrieved info passed into callback
    */
   onCommitted: async (details) => {
-    updateDomainlist(details);
     if (sendSignal) {
       initIAB();
       addDomSignal(details);

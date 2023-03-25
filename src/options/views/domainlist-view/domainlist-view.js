@@ -16,6 +16,7 @@ import {
   addDomainToDomainlistAndRules,
   removeDomainFromDomainlistAndRules,
   updateRemovalScript,
+  deleteCS
 } from "../../../common/editDomainlist.js";
 import { reloadDynamicRules } from "../../../common/editRules.js";
 
@@ -54,7 +55,7 @@ export async function toggleListener(elementId, domain) {
     } else {
       await removeDomainFromDomainlistAndRules(domain);
     }
-    updateRemovalScript();
+    //updateRemovalScript();
     chrome.runtime.sendMessage({
       msg: "FORCE_RELOAD",
     });
@@ -100,7 +101,7 @@ NOTE: It will be automatically added back to the list when the domain is request
         }
 
         reloadDynamicRules();
-        updateRemovalScript();
+        deleteCS();
         alert(successPrompt);
         document.getElementById(`li ${domain}`).remove();
       }
