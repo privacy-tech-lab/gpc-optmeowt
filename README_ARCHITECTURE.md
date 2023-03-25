@@ -20,11 +20,9 @@ src
 │   └── editRules.js
 ├── content-scripts     # Runs processes on site on adds DOM signal
 │   ├── injection
-│   │   ├── gpc-dom.js
-│   │   └── gpc-remove.js
+│   │   └── gpc-dom.js
 │   ├── registration
-│   │   ├── gpc-dom.js
-│   │   └── gpc-remove.js
+│   │   └── gpc-dom.js
 │   └── contentScript.js
 ├── data       # Stores constant data (DNS signals, settings, etc.)
 │   ├── cookie_list.js
@@ -58,7 +56,7 @@ src
 │   ├── dark-mode.css
 │   ├── options.html
 │   ├── options.js
-│   └──styles.css
+│   └── styles.css
 ├── popup       # Popup page frontend
 │   ├── popup.html
 │   ├── popup.js
@@ -168,16 +166,14 @@ This folder contains our main content script and methods for injecting the GPC s
 ### `src/content-scripts/injection`
 
 1. `gpc-dom.js`
-2. `gpc-remove.js`
 
-`gpc-dom.js` the GPC DOM signal and `gpc-remove.js` removes it.
+`gpc-dom.js` injects the DOM signal.
 
 ### `src/content-scripts/registration`
 
 1. `gpc-dom.js`
-2. `gpc-remove.js`
 
-These files inject `injection/gpc-dom.js` and `injection/gpc-remove.js` into the page using a static script. (Based on [this stack overflow thread](https://stackoverflow.com/questions/9515704/use-a-content-script-to-access-the-page-context-variables-and-functions))
+This file injects `injection/gpc-dom.js` into the page using a static script. (Based on [this stack overflow thread](https://stackoverflow.com/questions/9515704/use-a-content-script-to-access-the-page-context-variables-and-functions))
 
 ### `content-scripts/contentScript.js`
 
