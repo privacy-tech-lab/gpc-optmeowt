@@ -9,8 +9,8 @@ src
 │   │   ├── cookiesOnInstall.js
 │   │   ├── listeners-chrome.js
 │   │   ├── listeners-firefox.js
-│   │   ├── protection.js
-│   │   └── protection-ff.js
+│   │   ├── protection-ff.js
+│   │   └── protection.js
 │   ├── control.js
 │   ├── cookiesIAB.js
 │   ├── storage.js
