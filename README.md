@@ -101,6 +101,8 @@ We also like to use [Debugger for Firefox](https://marketplace.visualstudio.com/
 
 The version of OptMeowt used in our PoPETs 2023 submission, "Usability and Enforceability of Global Privacy Control", can be found in our [v3.0.0-paper release](https://github.com/privacy-tech-lab/gpc-optmeowt/releases/tag/v3.0.0-paper). To view the v3.0.0-paper code, you can look at the repo [here](https://github.com/privacy-tech-lab/gpc-optmeowt/tree/v3.0.0-paper). Instructions for building the extension locally is the same as stated above, as seen in our [Firefox instructions](https://github.com/privacy-tech-lab/gpc-optmeowt/tree/main#firefox). To activate Analysis mode in v3.0.0-paper, press the `Protection Mode` label in the popup. In addition, Analysis mode requires other privacy extensions or browsers to be disabled. For further detailed information on how to use analysis mode, please refer to [our methodology](https://github.com/privacy-tech-lab/gpc-optmeowt/tree/v4.0.1/#4-analysis-mode-firefox-only).
 
+Analysis mode used to be incorporated with the OptMeowt extension but can now be found in a [seperate repo](https://github.com/privacy-tech-lab/gpc-web-crawler), specialized for crawling the internet while using analysis mode.
+
 ## 7. Using OptMeowt Testing
 
 OptMeowt uses the [Mocha](https://mochajs.org/) framework and [Puppeteer](https://pptr.dev/) to execute its testing and continuous integration. The continuous integration is built into the OptMeowt repo with Github Actions. The [Actions tab](https://github.com/privacy-tech-lab/gpc-optmeowt/actions) shows all workflows and past unit test checks for previous PRs.
@@ -155,25 +157,25 @@ The following procedure is for testing the OptMeowt extension UI, which cannot b
 
 ```json
 "permissions": [
+    "declarativeNetRequest",
     "webRequest",
-    "<all_urls>",
-    "webRequestBlocking",
     "webNavigation",
     "storage",
     "activeTab",
     "cookies",
-    "tabs"
+    "tabs",
+    "scripting"
   ]
 ```
 
+- `declarativeNetRequest`: Allows OptMeowt to modify rules, allowing us to send the GPC header
 - `webRequest`: Pauses outgoing HTTP requests to append opt out headers
-- `<all_urls>`: Allows modification of outgoing HTTP requests
-- `webRequestBlocking`: Necessary for pausing outgoing HTTP requests
 - `webNavigation`: Similar to `webRequest`, allows OptMeowt to check when navigation requests are made to reset processes
 - `storage`: Allows OptMeowt to save your opt out preferences in your browser
 - `activeTab`: Allows OptMeowt to set opt out signals on your active browser tab
 - `cookies`: Allows OptMeowt to place opt out cookies in your browser
 - `tabs`: Allows OptMeowt to keep track of HTTP headers per tab to show you the opt out status of the current site in a popup
+- `scripting`: Allows OptMeowt to declare content scripts and send the GPC DOM signal
 
 ## 9. OptMeowt's Architecture
 
@@ -195,13 +197,6 @@ Detailed information on OptMeowt's architecture is available in a [separate read
 OptMeowt uses various [third party libraries](https://github.com/privacy-tech-lab/gpc-optmeowt/blob/main/package.json). We thank the developers.
 
 ## 12. Developer Guide
-
-### Keyboard Shortcuts
-
-- `Alt+Shift+A` — runs `a`nalysis (eq. to clicking `Run Analysis` in popup)
-- `Alt+Shift+S` — `s`tops analysis (eq. to clicking `Stop Analysis` in popup)
-
-Reminder: Users **must** "stop analysis" prior to changing sites to prevent recording incorrect data
 
 ### Contributing
 
