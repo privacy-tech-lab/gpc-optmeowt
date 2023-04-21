@@ -1,3 +1,14 @@
+/*
+Licensed per https://github.com/privacy-tech-lab/gpc-optmeowt/blob/main/LICENSE.md
+privacy-tech-lab, https://privacytechlab.org/
+*/
+
+/*
+isValidSignalIAB.test.js
+================================================================================
+isValidSignalIAB.test.js tests the IAB signals by checking valid inputs for the isValidSignalIAB function
+*/
+
 import assert from 'assert';
 import {isValidSignalIAB} from '../../src/background/cookiesIAB.js';
 

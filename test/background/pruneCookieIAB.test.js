@@ -1,3 +1,15 @@
+/*
+Licensed per https://github.com/privacy-tech-lab/gpc-optmeowt/blob/main/LICENSE.md
+privacy-tech-lab, https://privacytechlab.org/
+*/
+
+/*
+pruneCookieIAB.test.js
+================================================================================
+pruneCookieIAB.test.js makes a cookie and checks various properties of the new cookie
+*/
+
+
 import assert from "assert";
 import { pruneCookieIAB } from "../../src/background/cookiesIAB.js";
 import { makeCookieIAB } from "../../src/background/cookiesIAB.js";
@@ -8,21 +20,6 @@ import { makeCookieIAB } from "../../src/background/cookiesIAB.js";
  * to the passed in values.
  * @param {object} cookie
  
- function pruneCookieIAB(cookie, value, url) {
-    cookie.value = value;
-    cookie.url = url;
-    // Checks if a cookie made by a site is stored per domain/subdomain
-    if (cookie.domain.substr(0, 1) !== ".") {
-      cookie.domain = null;
-    }
-    if (cookie.hostOnly !== null) {
-      delete cookie.hostOnly;
-    }
-    if (cookie.session !== null) {
-      delete cookie.session;
-    }
-    return cookie;
-  }
 */
 
 describe("Checks if cookie is stored per domain/subdomain", () => {

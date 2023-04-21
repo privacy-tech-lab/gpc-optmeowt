@@ -544,7 +544,6 @@ export function init() {
   initSetup();
 }
 
-// export function postinit() {}
 
 export function halt() {
   disableListeners(listenerCallbacks);
