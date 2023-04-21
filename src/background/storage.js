@@ -23,7 +23,7 @@ const { saveAs } = pkg;
 // In general, these functions should be use with async / await for
 // syntactic sweetness & synchronous data handling
 // i.e., await storage.set(stores.settings, extensionMode.enabled, 'MODE')
-// TODO: Make this an enum
+// TODO: Make this an enum // need t ocheck
 const stores = Object.freeze({
   settings: "SETTINGS",
   domainlist: "DOMAINLIST",
@@ -142,7 +142,7 @@ async function handleUpload() {
         alert("Error loading list");
       }
     }
-    // hardcode if it is the new version
+    // hardcode if it is the new version // check
     if (Number(version[0]) >= 3) {
       reloadDynamicRules();
       updateRemovalScript();

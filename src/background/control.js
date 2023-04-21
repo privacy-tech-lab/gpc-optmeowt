@@ -24,7 +24,7 @@ import { reloadDynamicRules } from "../common/editRules.js";
 
 // TODO: Remove
 import {
-  debug_domainlist_and_dynamicrules,
+  debug_domainlist_and_dynamicrules, // this isn't used
   updateRemovalScript,
 } from "../common/editDomainlist.js";
 
@@ -97,8 +97,8 @@ function disable() {
  */
 chrome.runtime.onMessage.addListener(async function (
   message,
-  sender,
-  sendResponse
+  sender, // not used
+  sendResponse // not used
 ) {
   if (message.msg === "TURN_ON_OFF") {
     let isEnabled = message.data.isEnabled; // can be undefined
@@ -113,6 +113,6 @@ chrome.runtime.onMessage.addListener(async function (
   }
 
   if (message.msg === "CHANGE_IS_DOMAINLISTED") {
-    let isDomainlisted = message.data.isDomainlisted; // can be undefined
+    let isDomainlisted = message.data.isDomainlisted; // can be undefined // not used
   }
 });

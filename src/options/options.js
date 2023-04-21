@@ -27,5 +27,5 @@ import "../../node_modules/tippy.js/dist/tippy-bundle.umd.js";
  * Intializes scripts that build the options page
  */
 document.addEventListener("DOMContentLoaded", (event) => {
-  mainView();
+  mainView(); // check event
 });

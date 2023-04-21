@@ -19,7 +19,7 @@
 
 # OptMeowt 🐾
 
-OptMeowt ("Opt Me Out") is a browser extension for opting you out from web tracking. OptMeowt works by sending Do Not Sell signals to visited websites per the [Global Privacy Control (GPC) spec](https://globalprivacycontrol.github.io/gpc-spec/) that we are developing [at the W3C](https://github.com/privacycg/proposals/issues/10) and placing opt out cookies.
+OptMeowt ("Opt Me Out") is a browser extension for opting you out from web tracking. OptMeowt works by sending Global Privacy Control (GPC) signals to visited websites per the [GPC spec](https://globalprivacycontrol.github.io/gpc-spec/) that we are developing [at the W3C](https://github.com/privacycg/proposals/issues/10) and placing opt out cookies.
 
 <p align="center">
   <a href="https://addons.mozilla.org/en-US/firefox/addon/optmeowt/"><img src="https://github.com/privacy-tech-lab/optmeowt/blob/main/firefox-add-ons-badge.png" width="172px" alt="Firefox Add Ons badge"></a>
@@ -101,49 +101,54 @@ We also like to use [Debugger for Firefox](https://marketplace.visualstudio.com/
 
 The version of OptMeowt used in our PoPETs 2023 submission, "Usability and Enforceability of Global Privacy Control", can be found in our [v3.0.0-paper release](https://github.com/privacy-tech-lab/gpc-optmeowt/releases/tag/v3.0.0-paper). To view the v3.0.0-paper code, you can look at the repo [here](https://github.com/privacy-tech-lab/gpc-optmeowt/tree/v3.0.0-paper). Instructions for building the extension locally is the same as stated above, as seen in our [Firefox instructions](https://github.com/privacy-tech-lab/gpc-optmeowt/tree/main#firefox). To activate Analysis mode in v3.0.0-paper, press the `Protection Mode` label in the popup. In addition, Analysis mode requires other privacy extensions or browsers to be disabled. For further detailed information on how to use analysis mode, please refer to [our methodology](https://github.com/privacy-tech-lab/gpc-optmeowt/tree/v4.0.1/#4-analysis-mode-firefox-only).
 
+Analysis mode used to be incorporated with the OptMeowt extension but can now be found in a [seperate repo](https://github.com/privacy-tech-lab/gpc-web-crawler), specialized for crawling the internet while using analysis mode.
+
 ## 7. Using OptMeowt Testing
 
-OptMeowt uses the [Mocha](https://mochajs.org/) framework and [Puppeteer](https://pptr.dev/) to execute its testing and continuous integration. The continuous integration is built into the OptMeowt repo with Github Actions. The [Actions tab](https://github.com/privacy-tech-lab/gpc-optmeowt/actions) shows all workflows and past unit test checks for previous PRs.  
+OptMeowt uses the [Mocha](https://mochajs.org/) framework and [Puppeteer](https://pptr.dev/) to execute its testing and continuous integration. The continuous integration is built into the OptMeowt repo with Github Actions. The [Actions tab](https://github.com/privacy-tech-lab/gpc-optmeowt/actions) shows all workflows and past unit test checks for previous PRs.
 
-The test responsible for checking OptMeowt’s ability to set the GPC signal can not be run with GitHub Actions and can only be run locally when running `npm test`. Using Puppeteer, this will launch an automated headful browser on Chromium, testing the Chrome GPC signal against the [GPC reference server](https://global-privacy-control.glitch.me/). 
+The test responsible for checking OptMeowt’s ability to set the GPC signal can not be run with GitHub Actions and can only be run locally when running `npm test`. Using Puppeteer, this will launch an automated headful browser on Chromium, testing the Chrome GPC signal against the [GPC reference server](https://global-privacy-control.glitch.me/).
 
 ### Running automated unit tests:
+
 **Locally:**
+
 1. Clone this repo locally or download a zipped copy and unzip it.
-2. Make sure npm is up to date by running `npm -v` to check the version and updating follow the instructions [here](https://docs.npmjs.com/try-the-latest-stable-version-of-npm), depending on the operating system. 
+2. Make sure npm is up to date by running `npm -v` to check the version and updating follow the instructions [here](https://docs.npmjs.com/try-the-latest-stable-version-of-npm), depending on the operating system.
 3. Run tests with `npm test`. If Puppeteer is uninstalled, run `npm install`.
 
 **Continuous Integration:**
-The continuous integration is built into the OptMeowt repo, therefore no changes to the extension environment are needed to run new tests. 
+The continuous integration is built into the OptMeowt repo, therefore no changes to the extension environment are needed to run new tests.
 
 ### Manual UI testing
 
-The following procedure is for testing the OptMeowt extension UI, which cannot be automated. They are recommeded to be performed manually as follows: 
+The following procedure is for testing the OptMeowt extension UI, which cannot be automated. They are recommeded to be performed manually as follows:
 
 1. Download the version of the extension you want to test through `npm run start` and then download the unpacked dev version for your browser.
 2. Navigate to a site with the well-known file, like “https://global-privacy-control.glitch.me/”
 3. Click on the OptMeowt symbol in the top right of your browser.
-    - [ ] TEST 1: The symbol for the cat should be solid green.
-    - [ ] TEST 2: The URL of the website should be written under the “Protection Mode” banner.
-    - [ ] TEST 3: Do Not Sell should be enabled.
-    - [ ] TEST 4: There should be a blue number detailing the number of domains receiving signals.
+   - [ ] TEST 1: The symbol for the cat should be solid green.
+   - [ ] TEST 2: The URL of the website should be written under the “Protection Mode” banner.
+   - [ ] TEST 3: Do Not Sell should be enabled.
+   - [ ] TEST 4: There should be a blue number detailing the number of domains receiving signals.
 4. Click on the drop down for “3rd Party Domains”.
-    - [ ] TEST 5: There should be sites that show up with Do Not Sell Enabled switched on.
+   - [ ] TEST 5: There should be sites that show up with Do Not Sell Enabled switched on.
 5. Navigate out of the “3rd Party Domains” drop down and click on the “Website Response” drop down
-    - [ ] TEST 6: There should be text showing that GPC Signals were accepted.
-    - [ ] TEST 7: Switch “Dark Mode” on and off and ensure the popup is correctly changing colors. 
+   - [ ] TEST 6: There should be text showing that GPC Signals were accepted.
+   - [ ] TEST 7: Switch “Dark Mode” on and off and ensure the popup is correctly changing colors.
 6. Navigate to the top of the popup and click on the “More” symbol (image: Sliders) to go to the Settings page.
 7. In the main settings page, click on “Disable” and open the popup.
-    - [ ] TEST 8: The popup should be fully grayed out and showing the popup disabled. 
+   - [ ] TEST 8: The popup should be fully grayed out and showing the popup disabled.
 8. In the website, move to the “Domainlist” page.
-    - [ ] TEST 9: There should be multiple domains showing in the domainlist tab.
+   - [ ] TEST 9: There should be multiple domains showing in the domainlist tab.
 9. Go back to the main settings page and export domainlist.
-    - [ ] TEST 10: Check the exported domainlist and the domainlist in the settings page to make sure the websites match up. 
+   - [ ] TEST 10: Check the exported domainlist and the domainlist in the settings page to make sure the websites match up.
 
 ### Creating a new test:
-1. Navigate to ‘.../gpc-optmeowt/test/’. Then navigate to the folder in the test directory that corresponds to the tested function’s location in the extension source code. 
-2. Create a new file in the matching folder. Name the file with the format `FUNCTION_NAME.test.js`. 
-  For example, if testing a function named `sum` located in the folder `.../src/math`, create the test called `sum.test.js` in the folder `.../test/math`
+
+1. Navigate to ‘.../gpc-optmeowt/test/’. Then navigate to the folder in the test directory that corresponds to the tested function’s location in the extension source code.
+2. Create a new file in the matching folder. Name the file with the format `FUNCTION_NAME.test.js`.
+   For example, if testing a function named `sum` located in the folder `.../src/math`, create the test called `sum.test.js` in the folder `.../test/math`
 3. Write test using [ECMAscript formatting](https://nodejs.org/api/esm.html).
 
 ## 8. OptMeowt's Permission Use
@@ -152,25 +157,25 @@ The following procedure is for testing the OptMeowt extension UI, which cannot b
 
 ```json
 "permissions": [
+    "declarativeNetRequest",
     "webRequest",
-    "<all_urls>",
-    "webRequestBlocking",
     "webNavigation",
     "storage",
     "activeTab",
     "cookies",
-    "tabs"
+    "tabs",
+    "scripting"
   ]
 ```
 
+- `declarativeNetRequest`: Allows OptMeowt to modify rules, allowing us to send the GPC header
 - `webRequest`: Pauses outgoing HTTP requests to append opt out headers
-- `<all_urls>`: Allows modification of outgoing HTTP requests
-- `webRequestBlocking`: Necessary for pausing outgoing HTTP requests
 - `webNavigation`: Similar to `webRequest`, allows OptMeowt to check when navigation requests are made to reset processes
 - `storage`: Allows OptMeowt to save your opt out preferences in your browser
 - `activeTab`: Allows OptMeowt to set opt out signals on your active browser tab
 - `cookies`: Allows OptMeowt to place opt out cookies in your browser
 - `tabs`: Allows OptMeowt to keep track of HTTP headers per tab to show you the opt out status of the current site in a popup
+- `scripting`: Allows OptMeowt to declare content scripts and send the GPC DOM signal
 
 ## 9. OptMeowt's Architecture
 
@@ -192,13 +197,6 @@ Detailed information on OptMeowt's architecture is available in a [separate read
 OptMeowt uses various [third party libraries](https://github.com/privacy-tech-lab/gpc-optmeowt/blob/main/package.json). We thank the developers.
 
 ## 12. Developer Guide
-
-### Keyboard Shortcuts
-
-- `Alt+Shift+A` — runs `a`nalysis (eq. to clicking `Run Analysis` in popup)
-- `Alt+Shift+S` — `s`tops analysis (eq. to clicking `Stop Analysis` in popup)
-
-Reminder: Users **must** "stop analysis" prior to changing sites to prevent recording incorrect data
 
 ### Contributing
 
