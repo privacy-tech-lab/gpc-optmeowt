@@ -19,7 +19,6 @@ import { initCookiesPerDomain } from "./cookiesOnInstall.js";
 import { initCookiesOnInstall } from "./cookiesOnInstall.js";
 import psl, { parse } from "psl";
 
-// TODO: Remove this when done
 import {
   addDynamicRule,
   deleteDynamicRule,
@@ -73,7 +72,7 @@ const listenerCallbacks = {
   /**
    * Handles all signal processessing prior to sending request headers
    * @param {object} details - retrieved info passed into callback
-   * @returns {array} details.requestHeaders from addHeaders
+   * @returns {array}
    */
   onBeforeSendHeaders: (details) => {
     updateDomainlist(details);
@@ -108,19 +107,6 @@ const listenerCallbacks = {
 /**********      # Listener helper fxns - Main functionality         **********/
 /******************************************************************************/
 /******************************************************************************/
-
-/**
- * Attaches headers from `headers.js` to details.requestHeaders
- * @param {object} details - retrieved info passed into callback
- * @returns {array} details.requestHeaders
- */
-function addHeaders(details) {
-  for (let signal in headers) {
-    let s = headers[signal];
-    details.requestHeaders.push({ name: s.name, value: s.value });
-  }
-  return { requestHeaders: details.requestHeaders };
-}
 
 
 function getCurrentParsedDomain() {
