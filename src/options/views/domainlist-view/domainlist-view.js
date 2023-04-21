@@ -101,6 +101,7 @@ NOTE: It will be automatically added back to the list when the domain is request
         }
 
         reloadDynamicRules();
+        updateRemovalScript();
         deleteCS();
         alert(successPrompt);
         document.getElementById(`li ${domain}`).remove();
