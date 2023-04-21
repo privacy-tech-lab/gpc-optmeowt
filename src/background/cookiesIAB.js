@@ -16,7 +16,7 @@ modification process
   is the boolean for checking multipel cookies correct?
 
 
-                    ----- To-Do -----
+                    ----- To-Do ----- // need to check
 - Add some kind of check to stop the cookie from being updated
   more than once per site refresh.
 - Think about how we will disable the feature if a certain site is

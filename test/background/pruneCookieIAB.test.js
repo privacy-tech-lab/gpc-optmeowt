@@ -1,3 +1,15 @@
+/*
+Licensed per https://github.com/privacy-tech-lab/gpc-optmeowt/blob/main/LICENSE.md
+privacy-tech-lab, https://privacytechlab.org/
+*/
+
+/*
+pruneCookieIAB.test.js
+================================================================================
+pruneCookieIAB.test.js makes a cookie and checks various properties of the new cookie
+*/
+
+
 import assert from "assert";
 import { pruneCookieIAB } from "../../src/background/cookiesIAB.js";
 import { makeCookieIAB } from "../../src/background/cookiesIAB.js";

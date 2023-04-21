@@ -21,7 +21,7 @@ import {
 // TODO: Migrate editRules & editDomainlist to one file
 
 /***************************     FILE ROADMAP    ******************************/
-
+  // check
 /*
 	Here are a few functions that are either implemented already or might be
 	worthwhile to implement down the road (for adding things to the lists 
@@ -178,7 +178,7 @@ async function removeDomainFromDomainlistAndRules(domain) {
 /******************************************************************************/
 
 async function debug_domainlist_and_dynamicrules() {
-  let sampleSites = [
+  let sampleSites = [ // not called
     "a.com",
     "b.com",
     "c.com",

@@ -1,3 +1,14 @@
+/*
+Licensed per https://github.com/privacy-tech-lab/gpc-optmeowt/blob/main/LICENSE.md
+privacy-tech-lab, https://privacytechlab.org/
+*/
+
+/*
+gpc.test.js
+================================================================================
+gpc.test.js tests the GPC signal head-fully using Puppeteer and Chromium
+*/
+
 /**
  *  Tests for testing GPC signals
  */

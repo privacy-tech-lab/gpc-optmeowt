@@ -77,7 +77,7 @@ async function getWellknown(url) {
   /*   MAIN CONTENT SCRIPT PROCESSES GO HERE   */
 
   let url = new URL(location); // location object
-  ////not sure if this stuff needs to stay or go
+  ////not sure if this stuff needs to stay or go // check
   /* (1) Gets Frame:0 Tab content */
   // leave this commented out while debugging ANALYSIS MODE
   // chrome.runtime.sendMessage({
@@ -107,7 +107,7 @@ async function getWellknown(url) {
 /******************************************************************************/
 /******************************************************************************/
 
-chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
+chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) { // check unused arguments
   if (message.msg === "USPAPI_FETCH_REQUEST") {
     injectScript(uspapiRequest);
   }
@@ -118,7 +118,7 @@ window.addEventListener(
   function (event) {
     if (
       event.data.type == "USPAPI_TO_CONTENT_SCRIPT"
-      // && typeof chrome.app.isInstalled !== 'undefined'
+      // && typeof chrome.app.isInstalled !== 'undefined' // delete
     ) {
       chrome.runtime.sendMessage({
         msg: "USPAPI_TO_BACKGROUND",

@@ -90,8 +90,8 @@ export async function mainView() {
   //Listener: Listens for a message sent by popup.js
   chrome.runtime.onMessage.addListener(function (
     message,
-    sender,
-    sendResponse
+    sender, // seem to not be used
+    sendResponse // seem to not be used
   ) {
     if (message.msg === "DARKSWITCH_PRESSED") {
       darkmode.toggle();

@@ -1,17 +1,16 @@
+/*
+Licensed per https://github.com/privacy-tech-lab/gpc-optmeowt/blob/main/LICENSE.md
+privacy-tech-lab, https://privacytechlab.org/
+*/
+
+/*
+makeCookieIAB.test.js
+================================================================================
+makeCookieIAB.test.js makes a new cookie and checks against expected cookie values
+*/
+
 import assert from "assert";
 import { makeCookieIAB } from "../../src/background/cookiesIAB.js";
-
-// function makeCookieIAB(name, value, url) {
-//   var time = new Date();
-//   var now = time.getTime();
-
-//   let cookie = {};
-//   cookie.expirationDate = now / 1000 + 31557600;
-//   cookie.url = url;
-//   cookie.name = name;
-//   cookie.value = value;
-//   return cookie;
-// }
 
 it("checks whether a new cookie is constructed per the IAB spec", () => {
   var name = "test_cookie";
