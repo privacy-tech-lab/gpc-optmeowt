@@ -10,8 +10,6 @@ main-view.js handles the navigation between different parts of the options page
 and loads them when called through the navigation bar
 */
 
-// ! We will probably have to "import" our html docs in order for Webpack to catch them
-// ! This means removing the await "docs.html" lines in all of the options page views
 
 import { fetchTemplate, parseTemplate } from "../../components/util.js";
 import { settingsView } from "../settings-view/settings-view.js";
@@ -90,8 +88,8 @@ export async function mainView() {
   //Listener: Listens for a message sent by popup.js
   chrome.runtime.onMessage.addListener(function (
     message,
-    sender, // seem to not be used
-    sendResponse // seem to not be used
+    sender,
+    sendResponse
   ) {
     if (message.msg === "DARKSWITCH_PRESSED") {
       darkmode.toggle();

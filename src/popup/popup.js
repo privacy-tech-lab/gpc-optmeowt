@@ -42,8 +42,6 @@ var wellknownInfo;
 // Darkmode
 const darkmode = new Darkmode();
 
-// TODO: Update the 3rd party domain listeners to correctly toggle their 3rd- \
-// TODO: --party sites, instead of the 1st party site (they all connect to that)
 
 /******************************************************************************/
 /******************************************************************************/
@@ -228,7 +226,7 @@ async function renderFirstPartyDomainDNSToggle() {
         stores.domainlist,
         parsedDomain
       );
-      // TODO: Note: we must flip the logic here because of the logical truthiness flip in the domainlist
+
       if (!parsedDomainValue) {
         checkbox = `<input type="checkbox" id="input" checked/><span></span>`;
         text = "Do Not Sell Enabled";
@@ -264,7 +262,7 @@ async function listenerFirstPartyDomainDNSToggleCallback() {
     elemString = "Do Not Sell Enabled";
     await removeDomainFromDomainlistAndRules(parsedDomain);
   }
-  //updateRemovalScript();
+
   document.getElementById("more-info-text").innerHTML = elemString;
 }
 
@@ -495,7 +493,7 @@ function addThirdPartyDomainDNSToggleListener(requestDomain) {
         elemString = "Do Not Sell Enabled";
         removeDomainFromDomainlistAndRules(requestDomain);
       }
-      //updateRemovalScript();
+      
       document.getElementById(`dns-enabled-text-${requestDomain}`).innerHTML =
         elemString;
     });

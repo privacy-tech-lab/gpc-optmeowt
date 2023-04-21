@@ -16,7 +16,6 @@ import {
   handleUpload,
   stores,
   storage,
-  // extensionMode
 } from "../../../background/storage.js";
 
 // Used in tutorial

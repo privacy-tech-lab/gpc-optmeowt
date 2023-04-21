@@ -20,21 +20,6 @@ import { makeCookieIAB } from "../../src/background/cookiesIAB.js";
  * to the passed in values.
  * @param {object} cookie
  
- function pruneCookieIAB(cookie, value, url) {
-    cookie.value = value;
-    cookie.url = url;
-    // Checks if a cookie made by a site is stored per domain/subdomain
-    if (cookie.domain.substr(0, 1) !== ".") {
-      cookie.domain = null;
-    }
-    if (cookie.hostOnly !== null) {
-      delete cookie.hostOnly;
-    }
-    if (cookie.session !== null) {
-      delete cookie.session;
-    }
-    return cookie;
-  }
 */
 
 describe("Checks if cookie is stored per domain/subdomain", () => {

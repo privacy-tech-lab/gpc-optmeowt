@@ -18,44 +18,7 @@ import {
   getFreshId,
 } from "./editRules.js";
 
-// TODO: Migrate editRules & editDomainlist to one file
-
-/***************************     FILE ROADMAP    ******************************/
-  // check
-/*
-	Here are a few functions that are either implemented already or might be
-	worthwhile to implement down the road (for adding things to the lists 
-	individually, for clearing them on extension changes for reload, etc.)
-
-	Go ahead and implement as needed. 
-*/
-
-/* # Standard Operation -- functions during domainlist lifetime */
-
-// addDomainToDLDR
-// removeDomainFromDLDR
-// deleteDomainFromDLDR
-
-/* # Big Operations -- generally for changing modes */
-
-// deleteAllDynamicRules
-// deleteAllFromDomainlist
-// syncDynamicRulesFromDomainlist	// for domainlist uploads
-// syncDomainlistFromDynamicRules
-
-/* ~~Maybe~~ */
-
-// getDomainFromId or queryDomain
-// getIdFromDomain or queryId
-// removeRule(id)
-// removeDOmain(domain)	// implicitly remove rule if it exists
-// addDomain(domain)	// No ID
-// removeDomainRule(domain)	// only remove domain rule
-// removerule(id)	// (don't really need id...)
-// addRule(domain, id)	// implicitly fresh id
-
 /* # Debugging */
-
 // debug_domainlist_and_dynamicrules
 // print_rules_and_domainlist
 

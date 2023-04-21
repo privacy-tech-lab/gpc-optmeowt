@@ -10,38 +10,8 @@ cookiesIAB.js handles the IAB CCPA `usprivacy` proposal cookie
 modification process
 */
 
-/*
-  ! Handle the case when the site recognizes you are outside of CA
-  ! Handle the case of trying to add cookies on a chrome:// page  or browser://
-  is the boolean for checking multipel cookies correct?
-
-
-                    ----- To-Do ----- // need to check
-- Add some kind of check to stop the cookie from being updated
-  more than once per site refresh.
-- Think about how we will disable the feature if a certain site is
-  "not in the domainlist" specifically
-- Make sure that if a cookie exists, you are updating the specific version
-  that the site has
-- Create a check that checks for mulitiple copies of the cookie,
-  say if `usprivacy` and `us_privacy` exists, you want to keep the one
-  that we did NOT add in, i.e. keep `usprivacy`.
-- Implement a UI feature to note if a site says youre 'outside of California'
-- We have the issue of cookies being sent to sites that don't really
-  need them, i.e. 'chrome://...' sites and our background/'options.html'
-  pages, so we need to filter this out.
-  (Unchecked runtime.lastError: No host permissions for cookies at url:
-    "chrome://extensions/".)
-- Error: (Unchecked runtime.lastError: Failed to parse or set cookie named
-    "us_privacy".)
-- Once you set a cookie, create a listener that checks
-  if the cookie is modified, and check it agains the last
-  version sent for a "server response" (ie. is it '1---'),
-  then form a UI response for the user.
-*/
 
 let iabVars = [
-  // Make this not case-sensitive
   "usprivacy",
   "us-privacy",
   "us_privacy",

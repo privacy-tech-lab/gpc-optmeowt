@@ -55,7 +55,7 @@ export async function toggleListener(elementId, domain) {
     } else {
       await removeDomainFromDomainlistAndRules(domain);
     }
-    //updateRemovalScript();
+
     chrome.runtime.sendMessage({
       msg: "FORCE_RELOAD",
     });

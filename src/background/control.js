@@ -22,9 +22,8 @@ import { defaultSettings } from "../data/defaultSettings.js";
 import { stores, storage } from "./storage.js";
 import { reloadDynamicRules } from "../common/editRules.js";
 
-// TODO: Remove
 import {
-  debug_domainlist_and_dynamicrules, // this isn't used
+  debug_domainlist_and_dynamicrules,
   updateRemovalScript,
 } from "../common/editDomainlist.js";
 
@@ -96,9 +95,7 @@ function disable() {
  * https://developer.chrome.com/docs/extensions/mv3/messaging/
  */
 chrome.runtime.onMessage.addListener(async function (
-  message,
-  sender, // not used
-  sendResponse // not used
+  message
 ) {
   if (message.msg === "TURN_ON_OFF") {
     let isEnabled = message.data.isEnabled; // can be undefined

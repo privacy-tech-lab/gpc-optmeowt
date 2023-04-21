@@ -29,7 +29,7 @@ var userAgent =
  * The actual listeners are located in `listeners-(chosen browser).js`
  * The functions called on event occurance are located in `events.js`
  *
- * HIERARCHY:   manifest.json --> background.js --> listeners-$BROWSER.js --> events.js
+ * HIERARCHY:   manifest.json --> protection --> background.js --> listeners-$BROWSER.js --> events.js
  */
 
 /******************************************************************************/
