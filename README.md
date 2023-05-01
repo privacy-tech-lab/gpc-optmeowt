@@ -40,7 +40,7 @@ OptMeowt is developed and maintained by Oliver Wang (@OliverWang13), Sophie Eng 
 
 ## 2. Promo Video
 
-[![Watch the Video](https://privacytechlab.org/static/images/OptMeowt_Movie.png)](https://privacytechlab.org/static/images/OptMeowt_Movie.mp4)
+[![Watch the Video](https://privacytechlab.org/static/images/OptMeowt_Movie.png)](https://drive.google.com/file/d/1eto77EV13WazpJN1hGXiKKsP2l7oMEu1/view?usp=share_link)
 
 ## 3. How does OptMeowt work?
 
