@@ -194,7 +194,7 @@ The following procedure is for testing the OptMeowt extension UI, which cannot b
 
 ## 9. OptMeowt's Architecture
 
-Detailed information on OptMeowt's architecture is available in a [separate readme](https://github.com/privacy-tech-lab/gpc-optmeowt/blob/main/README_ARCHITECTURE.md).
+Detailed information on OptMeowt's architecture is available in a [separate readme](https://github.com/privacy-tech-lab/gpc-optmeowt/blob/main/README_ARCHITECTURE.md). Please note that the architecture readme is current as of its commit date. We try to update it as soon as possible after any architectural changes. However, it may lag behind.
 
 ## 10. Directories in this Repo
 
