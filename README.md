@@ -28,6 +28,20 @@ OptMeowt ("Opt Me Out") is a browser extension for opting you out from web track
 
 OptMeowt is developed and maintained by Oliver Wang (@OliverWang13), Sophie Eng (@sophieeng), Jocelyn Wang (@Jocelyn0830), Kate Hausladen (@katehausladen), and Sebastian Zimmeck (@SebastianZimmeck) of the [privacy-tech-lab](https://privacytechlab.org/). Kuba Alicki (@kalicki1), Stanley Markman (@stanleymarkman), Kiryl Beliauski (@kbeliauski), Daniel Knopf (@dknopf), and Abdallah Salia (@asalia-1) contributed earlier. Learn more [here](https://privacytechlab.org/).
 
+[1. Research Publications](#1-research-publications)  
+[2. Promo Video](#2-promo-video)  
+[3. How Does OptMeowt Work?](#3-how-does-optmeowt-work)  
+[4. Installing OptMeowt from Source](#4-installing-optmeowt-from-source)  
+[5. Installing OptMeowt for Developers](#5-installing-optmeowt-for-developers)  
+[6. Installing the OptMeowt PETS 2023 Version](#6-installing-the-optmeowt-pets-2023-version)  
+[7. Testing](#7-testing)  
+[8. OptMeowt's Permission Use](#8-optmeowts-permission-use)  
+[9. OptMeowt's Architecture](#9-optmeowts-architecture)  
+[10. Directories in this Repo](#10-directories-in-this-repo)  
+[11. Third Party Libraries](#11-third-party-libraries)  
+[12. Developer Guide](#12-developer-guide)  
+[13. Thank You!](#13-thank-you)
+
 ## 1. Research Publications
 
 - Sebastian Zimmeck, Oliver Wang, Kuba Alicki, Jocelyn Wang and Sophie Eng, [Usability and Enforceability of Global Privacy Control](https://sebastianzimmeck.de/zimmeckEtAlGPC2023.pdf), 23rd Privacy Enhancing Technologies Symposium (PETS)
@@ -42,7 +56,7 @@ OptMeowt is developed and maintained by Oliver Wang (@OliverWang13), Sophie Eng 
 
 [![Watch the Video](https://privacytechlab.org/static/images/OptMeowt_Movie.png)](https://drive.google.com/file/d/1eto77EV13WazpJN1hGXiKKsP2l7oMEu1/view?usp=share_link)
 
-## 3. How does OptMeowt work?
+## 3. How Does OptMeowt Work?
 
 OptMeowt sends Do Not Sell signals to websites when you browse the web. Such signals must be respected for California consumers per the California Consumer Privacy Act (CCPA), [Regs Section 999.315(d)](https://oag.ca.gov/sites/all/files/agweb/pdfs/privacy/oal-sub-final-text-of-regs.pdf). Some companies also respect them when they are sent from outside of California. OptMeowt also places opt out cookies.
 
@@ -89,11 +103,11 @@ Also, when you build for development, the development manifest (in `src/manifest
 
 To include new dependencies you can run `npm install` instead of `npm ci`. `npm install` will include new dependencies in the `package-lock.json`, which is generated from the `package.json`.
 
-**For Windows users:**
+**For Windows Users:**
 
 Note that we have built most of our codebase in MacOS, so path variables and similar code may cause the build to break in other OSs, in particular Windows. We recommend installing a Linux OS if you will be working with the codebase in any significant manner.
 
-### Optional
+**Optional:**
 
 We also like to use [Debugger for Firefox](https://marketplace.visualstudio.com/items?itemName=firefox-devtools.vscode-firefox-debug) from within VSCode when in development to help automate loading the built extension package. The default behavior is `F5` to launch and load the extension in browser. There is a similar extension for Chrome, [Debugger for Chrome](https://marketplace.visualstudio.com/items?itemName=msjsdiag.debugger-for-chrome). Make sure to follow the online documentation on writing the correct `.vscode/launch.json` file, or other necessary settings files, in order to properly load OptMeowt with the debugger.
 
@@ -101,17 +115,18 @@ We also like to use [Debugger for Firefox](https://marketplace.visualstudio.com/
 
 The version of OptMeowt used in our PoPETs 2023 submission, "Usability and Enforceability of Global Privacy Control", can be found in our [v3.0.0-paper release](https://github.com/privacy-tech-lab/gpc-optmeowt/releases/tag/v3.0.0-paper). To view the v3.0.0-paper code, you can look at the repo [here](https://github.com/privacy-tech-lab/gpc-optmeowt/tree/v3.0.0-paper). Instructions for building the extension locally is the same as stated above, as seen in our [Firefox instructions](https://github.com/privacy-tech-lab/gpc-optmeowt/tree/main#firefox). To activate Analysis mode in v3.0.0-paper, press the `Protection Mode` label in the popup. In addition, Analysis mode requires other privacy extensions or browsers to be disabled. For further detailed information on how to use analysis mode, please refer to [our methodology](https://github.com/privacy-tech-lab/gpc-optmeowt/tree/v4.0.1/#4-analysis-mode-firefox-only).
 
-Analysis mode used to be incorporated with the OptMeowt extension but can now be found in a [seperate repo](https://github.com/privacy-tech-lab/gpc-web-crawler), specialized for crawling the internet while using analysis mode.
+Analysis mode used to be incorporated with the OptMeowt extension but can now be found in a [separate repo](https://github.com/privacy-tech-lab/gpc-web-crawler), specialized for crawling the internet while using analysis mode.
 
-## 7. Using OptMeowt Testing
+## 7. Testing
 
 OptMeowt uses the [Mocha](https://mochajs.org/) framework and [Puppeteer](https://pptr.dev/) to execute its testing and continuous integration. The continuous integration is built into the OptMeowt repo with Github Actions. The [Actions tab](https://github.com/privacy-tech-lab/gpc-optmeowt/actions) shows all workflows and past unit test checks for previous PRs.
 
 The test responsible for checking OptMeowt’s ability to set the GPC signal can not be run with GitHub Actions and can only be run locally when running `npm test`. Using Puppeteer, this will launch an automated headful browser on Chromium, testing the Chrome GPC signal against the [GPC reference server](https://global-privacy-control.glitch.me/).
 
-### Running automated unit tests:
+### Running Automated Unit Tests
 
 **Locally:**
+You can run unit tests locally.
 
 1. Clone this repo locally or download a zipped copy and unzip it.
 2. Make sure npm is up to date by running `npm -v` to check the version and updating follow the instructions [here](https://docs.npmjs.com/try-the-latest-stable-version-of-npm), depending on the operating system.
@@ -122,34 +137,34 @@ The continuous integration is built into the OptMeowt repo, therefore no changes
 
 ### Manual UI testing
 
-The following procedure is for testing the OptMeowt extension UI, which cannot be automated. They are recommeded to be performed manually as follows:
+The following procedure is for testing the OptMeowt extension UI, which cannot be automated. They are recommended to be performed manually as follows:
 
 1. Download the version of the extension you want to test through `npm run start` and then download the unpacked dev version for your browser.
-2. Navigate to a site with the well-known file, like “https://global-privacy-control.glitch.me/”
+2. Navigate to a site with the well-known file, like "https://global-privacy-control.glitch.me/"
 3. Click on the OptMeowt symbol in the top right of your browser.
    - [ ] TEST 1: The symbol for the cat should be solid green.
-   - [ ] TEST 2: The URL of the website should be written under the “Protection Mode” banner.
+   - [ ] TEST 2: The URL of the website should be written under the "Protection Mode" banner.
    - [ ] TEST 3: Do Not Sell should be enabled.
    - [ ] TEST 4: There should be a blue number detailing the number of domains receiving signals.
-4. Click on the drop down for “3rd Party Domains”.
+4. Click on the drop down for "3rd Party Domains".
    - [ ] TEST 5: There should be sites that show up with Do Not Sell Enabled switched on.
-5. Navigate out of the “3rd Party Domains” drop down and click on the “Website Response” drop down
+5. Navigate out of the "3rd Party Domains" drop down and click on the "Website Response" drop down
    - [ ] TEST 6: There should be text showing that GPC Signals were accepted.
-   - [ ] TEST 7: Switch “Dark Mode” on and off and ensure the popup is correctly changing colors.
-6. Navigate to the top of the popup and click on the “More” symbol (image: Sliders) to go to the Settings page.
-7. In the main settings page, click on “Disable” and open the popup.
+   - [ ] TEST 7: Switch "Dark Mode" on and off and ensure the popup is correctly changing colors.
+6. Navigate to the top of the popup and click on the "More" symbol (image: Sliders) to go to the Settings page.
+7. In the main settings page, click on "Disable" and open the popup.
    - [ ] TEST 8: The popup should be fully grayed out and showing the popup disabled.
-8. In the website, move to the “Domainlist” page.
-   - [ ] TEST 9: There should be multiple domains showing in the domainlist tab.
-9. Go back to the main settings page and export domainlist.
-   - [ ] TEST 10: Check the exported domainlist and the domainlist in the settings page to make sure the websites match up.
+8. In the website, move to the Domainlist page.
+   - [ ] TEST 9: There should be multiple domains showing in the Domainlist tab.
+9. Go back to the main settings page and export Domainlist.
+   - [ ] TEST 10: Check the exported Domainlist and the Domainlist in the settings page to make sure the websites match up.
 
-### Creating a new test:
+### Creating a New Test
 
 1. Navigate to ‘.../gpc-optmeowt/test/’. Then navigate to the folder in the test directory that corresponds to the tested function’s location in the extension source code.
 2. Create a new file in the matching folder. Name the file with the format `FUNCTION_NAME.test.js`.
    For example, if testing a function named `sum` located in the folder `.../src/math`, create the test called `sum.test.js` in the folder `.../test/math`
-3. Write test using [ECMAscript formatting](https://nodejs.org/api/esm.html).
+3. Write test using [ECMAScript formatting](https://nodejs.org/api/esm.html).
 
 ## 8. OptMeowt's Permission Use
 
@@ -216,7 +231,7 @@ OptMeowt uses various [third party libraries](https://github.com/privacy-tech-la
   </a>
 </p>
 
-<p align="center">Additional financial support provided by the Anil Fernando Endowment, the Alfred P. Sloan Foundation, and Wesleyan University.</p>
+<p align="center">Additional financial support provided by the Alfred P. Sloan Foundation, Wesleyan University, and the Anil Fernando Endowment.</p>
 
 <p align="center">
   <a href="https://sloan.org/grant-detail/9631">
