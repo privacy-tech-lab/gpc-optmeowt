@@ -376,7 +376,7 @@ function onMessageHandlerSynchronous(message, sender, sendResponse) {
       sendResponse(response);
     });
   }
-  return true;
+  //return true;
 }
 
 /**
