@@ -16,17 +16,25 @@ content script (registered from the extension service worker) for full DOM acces
 function setDomSignal() {
   try {
     var GPCVal = true;
-    const GPCDomVal = `Object.defineProperty(Navigator.prototype, "globalPrivacyControl", {
+    var DNTVal = true;
+    const GPCDomVal = `Object.defineProperties(Navigator.prototype, 
+      { "globalPrivacyControl": {
 		   get: () => ${GPCVal},
 		   configurable: true,
 		   enumerable: true
-	   });
-	   document.currentScript.parentElement.removeChild(document.currentScript);
+	   },
+      "doNotTrack": {
+      get: () => ${DNTVal},
+      configurable: true,
+      enumerable: true
+    }});
+    document.currentScript.parentElement.removeChild(document.currentScript);
 	   `;
 
     const GPCDomElem = document.createElement("script");
     GPCDomElem.innerHTML = GPCDomVal;
     document.documentElement.prepend(GPCDomElem);
+
   } catch (e) {
     console.error(`Failed to set DOM signal: ${e}`);
   }
