@@ -44,7 +44,7 @@ OptMeowt is developed and maintained by Oliver Wang (@OliverWang13), Sophie Eng 
 
 ## 1. Research Publications
 
-- Nishant Aggarwal, Wesley Tan, Konrad Kollnig, Sebastian Zimmeck, [The Invisible Threat: Exploring Mobile Privacy Concerns](), Summer Research 2023 Poster Session, Wesleyan University, July 2023
+- Nishant Aggarwal, Wesley Tan, Konrad Kollnig, Sebastian Zimmeck, [The Invisible Threat: Exploring Mobile Privacy Concerns](https://github.com/privacy-tech-lab/gpc-optmeowt/blob/main/research/aggarwalEtAlInvisibleThreat2023Poster.pdf), Summer Research 2023 Poster Session, Wesleyan University, July 2023
 - Sebastian Zimmeck, Oliver Wang, Kuba Alicki, Jocelyn Wang and Sophie Eng, [Usability and Enforceability of Global Privacy Control](https://sebastianzimmeck.de/zimmeckEtAlGPC2023.pdf), 23rd Privacy Enhancing Technologies Symposium (PETS)
   Lausanne, Switzerland and Online Event, July 2023. For installing the OptMeowt version used in this paper, see [here](https://github.com/privacy-tech-lab/gpc-optmeowt#6-installing-the-optmeowt-pets-2023-version).
 - Isabella Tassone, Chunyue Ma, Eliza Kuller, Joe Champeau and Sebastian Zimmeck, [Enhancing Online Privacy: The Development of Practical Privacy Choice Mechanisms](https://github.com/privacy-tech-lab/gpc-optmeowt/blob/main/research/tassoneEtAlEnhancingOnlinePrivacy2022Poster.pdf), Summer Research 2022 Poster Session, Wesleyan University, July 2022
