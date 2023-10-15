@@ -44,6 +44,7 @@ function enableListeners(callbacks) {
     FILTER,
     CHROME_RESPONSE_SPEC
   );
+  console.log(onHeadersReceived)
   chrome.webNavigation.onBeforeNavigate.addListener(onBeforeNavigate, FILTER);
   chrome.webNavigation.onCommitted.addListener(onCommitted, FILTER);
 }
