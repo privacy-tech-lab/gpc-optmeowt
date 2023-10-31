@@ -18,7 +18,6 @@ import { initIAB } from "../cookiesIAB.js";
 import { initCookiesPerDomain } from "./cookiesOnInstall.js";
 import { initCookiesOnInstall } from "./cookiesOnInstall.js";
 import psl from "psl";
-import { addDynamicRule, deleteDynamicRule } from "../../common/editRules.js";
 
 /******************************************************************************/
 /******************************************************************************/
