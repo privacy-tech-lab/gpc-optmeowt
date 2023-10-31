@@ -19,4 +19,8 @@ export const headers = {
     name: "DNT",
     value: "1",
   },
+  "Disable-Topics": {
+    name: 'permissions-policy',
+    value: 'interest-cohort=()'
+  }
 };
