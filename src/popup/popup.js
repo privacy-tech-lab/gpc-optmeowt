@@ -111,7 +111,7 @@ function renderFirstPartyDomain(parsedDomain) {
 
 // Extension on/off renderer helper
 
-function renderExtenionIsEnabledDisabled(isEnabled, isDomainlisted) {
+function renderExtensionIsEnabledDisabled(isEnabled, isDomainlisted) {
   if (isEnabled === undefined || isDomainlisted === undefined) {
     document.getElementById("img").src = "../assets/play-circle-outline.svg";
     document
@@ -449,7 +449,7 @@ document.addEventListener("DOMContentLoaded", async (event) => {
   isDomainlisted = await storage.get(stores.settings, "IS_DOMAINLISTED");
   parsedDomain = await getCurrentParsedDomain(); // This must happen first
 
-  renderExtenionIsEnabledDisabled(isEnabled, isDomainlisted); // Render global ENABLED/DISABLED mode
+  renderExtensionIsEnabledDisabled(isEnabled, isDomainlisted); // Render global ENABLED/DISABLED mode
   listenerExtensionIsEnabledDisabledButton(isEnabled);
 
   renderFirstPartyDomain(parsedDomain); // Render 1P domain
