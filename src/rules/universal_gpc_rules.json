@@ -6,7 +6,8 @@
       "type": "modifyHeaders",
       "requestHeaders": [
         { "header": "Sec-GPC", "operation": "set", "value": "1" },
-        { "header": "DNT", "operation": "set", "value": "1" }
+        { "header": "DNT", "operation": "set", "value": "1" },
+        { "header": "Permissions-Policy", "operation": "set", "value": "browsing-topics=()"}
       ]
     },
     "condition": { 
