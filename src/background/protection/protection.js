@@ -142,7 +142,6 @@ async function updateDomainlist(details) {
   let parsedDomain = parsedUrl.domain;
   let currDomainValue = await storage.get(stores.domainlist, parsedDomain);
 
-  console.log(parsedDomain);
   if (currDomainValue === undefined) {
     storage.set(stores.domainlist, null, parsedDomain); // Sets to storage async
   }
@@ -293,7 +292,6 @@ function dataToPopupHelper(){
   if (tabs[activeTabID] !== undefined) {
 
     requestsData = domPrev3rdParties[activeTabID][globalParsedDomain];
-    console.log("requests by tabID:", domPrev3rdParties);
   }
   return requestsData
 }
@@ -302,7 +300,6 @@ function dataToPopupHelper(){
 function dataToPopup(wellknownData) {
   
   let requestsData = dataToPopupHelper(); //get requests from the helper
-  console.log("req data",requestsData);
   chrome.tabs.query({active: true, currentWindow: true}, function(tabs){
     let popupData = {
       requests: requestsData,
