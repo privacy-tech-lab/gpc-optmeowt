@@ -72,6 +72,8 @@ In detail, OptMeowt uses the following methods to opt you out:
 
 **Customizing which sites receive Do Not Sell signals:** For every site you visit OptMeowt will automatically add its domain to the `domain list`. Each newly added domain will receive Do Not Sell signals by default. However, you can exclude domains that should not receive Do Not Sell signals. This functionality is available on OptMeowt's settings page, which you can access from OptMeowt's popup window.
 
+**Opting Out of the Topics API:** Google is phasing out the use of third-party cookies, and replacing them with the Topics API. The Topics API will identify users' general areas of interest which can be used for personalized advertising. These topics are generated through observing and recording a user's browser activity. To opt you out of the Topics API, a header is placed called `Permissions-Policy` on all the sites you browse. This is following [Google's documentation](https://developer.chrome.com/en/docs/privacy-sandbox/topics/#site-opt-out) of how to opt a site out of the Topics API. Please keep in mind this functionality is only available for Chrome browsers.
+
 ## 4. Installing OptMeowt from Source
 
 1. Clone this repo locally or download a zipped copy and unzip it.
