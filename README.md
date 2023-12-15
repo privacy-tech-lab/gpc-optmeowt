@@ -20,7 +20,7 @@
 
 # OptMeowt 🐾
 
-OptMeowt ("Opt Me Out") is a browser extension for opting you out from web tracking. OptMeowt works by sending Global Privacy Control (GPC) signals to visited websites per the [GPC spec](https://globalprivacycontrol.github.io/gpc-spec/) that we are developing [at the W3C](https://github.com/privacycg/proposals/issues/10) and placing opt out cookies.
+OptMeowt ("Opt Me Out") is a browser extension for opting you out from web tracking. OptMeowt works by sending Global Privacy Control (GPC) signals to visited websites per the [GPC spec](https://privacycg.github.io/gpc-spec/) that we are developing [at the W3C](https://github.com/privacycg/proposals/issues/10) and placing opt out cookies.
 
 <p align="center">
   <a href="https://addons.mozilla.org/en-US/firefox/addon/optmeowt/"><img src="https://github.com/privacy-tech-lab/optmeowt/blob/main/firefox-add-ons-badge.png" width="172px" alt="Firefox Add Ons badge"></a>
