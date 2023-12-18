@@ -29,9 +29,9 @@ describe("Check parsing of IAB signal", () => {
     });
 
     it('Should change third char in valid signal to N', () => {
-        assert.equal(parseIAB("1NYN", true), '1NNN');
-        assert.equal(parseIAB("1YYN", true), '1YNN');
-        assert.equal(parseIAB("1YYY", true), '1YNY');
+        assert.equal(parseIAB("1NYN", false), '1NNN');
+        assert.equal(parseIAB("1YYN", false), '1YNN');
+        assert.equal(parseIAB("1YYY", false), '1YNY');
     });
     
 }) 
