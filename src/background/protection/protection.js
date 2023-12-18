@@ -454,6 +454,7 @@ async function onMessageHandlerAsync(message, sender, sendResponse) {
     initCookiesPerDomain(message.data);
   }
   if (message.msg === "DELETE_OPTOUT_COOKIES") {
+    console.log("Msg received. Info; ", message.data);
     deleteCookiesPerDomain(message.data);
   }
 

@@ -22,6 +22,7 @@ function initCookiesPerDomain(domainFilter) {
 
 function deleteCookiesPerDomain(domainFilter) {
   deleteFilteredCookies(cookie_list, domainFilter);
+  console.log("Deletecookiesperdomain called. DF:  ", domainFilter);
 }
 
 /**
@@ -148,6 +149,12 @@ function setFilteredCookies(cookies, domainFilter) {
         // Deletes cookie url based on domain, checks for domain/subdomain spec
         let cookieUrl = cookies[item].domain;
         let name = cookies[item].name;
+
+        if (cookieUrl.substr(0, 1) === ".") {
+          cookieUrl = cookieUrl.substr(1);
+        }
+        
+        cookieUrl = `https://${cookieUrl}/`;
 
         chrome.cookies.remove({
           url: cookieUrl,

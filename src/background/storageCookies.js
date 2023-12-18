@@ -52,5 +52,6 @@ export const storageCookies = {
       msg: "DELETE_OPTOUT_COOKIES",
       data: domainFilter,
     });
+    console.log("Delete message sent");
   }
 };
