@@ -99,8 +99,8 @@ const listenerCallbacks = {
    * @param {object} details - retrieved info passed into callback
    */
   onCommitted: async (details) => {
+    initIAB(sendSignal);
     if (sendSignal) {
-      initIAB();
       addDomSignal(details);
       updatePopupIcon(details);
     }
@@ -463,9 +463,12 @@ async function onMessageHandlerAsync(message, sender, sendResponse) {
       tabs[tabID]["TIMESTAMP"] = message.data;
     }
   }
-  if (message.msg === "SET_OPTOUT_COOKEIS") {
+  if (message.msg === "SET_OPTOUT_COOKIES") {
     // This is specifically for when cookies are removed when a user turns off
     // do not sell for a particular site, and chooses to re-enable it
+    initCookiesPerDomain(message.data);
+  }
+  if (message.msg === "DELETE_OPTOUT_COOKIES") {
     initCookiesPerDomain(message.data);
   }
   if (message.msg === "FORCE_RELOAD") {

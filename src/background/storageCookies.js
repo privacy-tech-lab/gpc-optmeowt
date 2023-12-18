@@ -27,26 +27,30 @@ export const storageCookies = {
     // Since this can run anywhere (popup, settings, background),
     // we must tell the background to set our correct optout cookies
     chrome.runtime.sendMessage({
-      msg: "SET_OPTOUT_COOKEIS",
+      msg: "SET_OPTOUT_COOKIES",
       data: domainFilter,
     });
   },
 
   async deleteCookiesForGivenDomain(domainKey) {
-    let cookieArr = [];
-    chrome.cookies.getAll({ domain: `${domainKey}` }, function (cookies) {
-      cookieArr = cookies;
+    let domainFilter;
+    if (domainKey.substr(0, 1) === ".") {
+      domainFilter = [
+        domainKey.substr(1),
+        domainKey,
+        `www${domainKey.substr(1)}`,
+      ];
+    } else if (domainKey.substr(0, 1) === "w") {
+      domainFilter = [domainKey.substr(3), domainKey.substr(4), domainKey];
+    } else {
+      domainFilter = [domainKey, `.${domainKey}`, `www.${domainKey}`];
+    }
 
-      for (let i in cookieArr) {
-        chrome.cookies.remove({
-          url: `https://${domainKey}/`,
-          name: cookieArr[i].name,
-        });
-        chrome.cookies.remove({
-          url: `https://www.${domainKey}/`,
-          name: cookieArr[i].name,
-        });
-      }
+    // Since this can run anywhere (popup, settings, background),
+    // we must tell the background to set our correct optout cookies
+    chrome.runtime.sendMessage({
+      msg: "DELETE_OPTOUT_COOKIES",
+      data: domainFilter,
     });
-  },
+  }
 };

@@ -24,7 +24,7 @@ let defaultValue = "1NYN";
  * via a `us_privacy` first-party cookie
  * Pulls data about the current tab and intializes the cookie-set process
  */
-export function initIAB() {
+export function initIAB(optStatus) {
   chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
     if (tabs[0] != undefined && tabs[0].url != undefined) {
       var tab = tabs[0];
@@ -33,7 +33,7 @@ export function initIAB() {
 
       // Filter out chrome://* links as they are local
       if (url.substr(0, 9).toLowerCase() !== "chrome://") {
-        checkExistsAndHandleIAB(url);
+        checkExistsAndHandleIAB(url,optStatus);
       }
     }
   });
@@ -44,7 +44,7 @@ export function initIAB() {
  * cookie, and handles them according to how many exist
  * @param {string} url - url of the current tab
  */
-function checkExistsAndHandleIAB(url) {
+function checkExistsAndHandleIAB(url, optStatus) {
   let cookieMatches = [];
 
   chrome.cookies.getAll({ url: url }, function (cookieArr) {
@@ -56,11 +56,15 @@ function checkExistsAndHandleIAB(url) {
 
     // Now we have an array of all the cookie matches
     if (cookieMatches.length === 1) {
-      let value = parseIAB(cookieMatches[0]["value"]);
+      let value = parseIAB(cookieMatches[0]["value"], optStatus);
       updateIAB(cookieMatches[0], value, url);
     }
     if (cookieMatches.length === 0) {
-      updateIAB(null, "1NYN", url);
+      if (optStatus){
+        updateIAB(null, "1NYN", url);
+      } else {
+        updateIAB(null, "1NNN", url);
+      }
     }
     // If there are multiple cookies, handle here.
     // Currently deletes default cookie
@@ -102,15 +106,27 @@ function updateIAB(cookie, value, url) {
  * @param {string} signal - the value of an IAB cookie. Example: `1YNN`.
  * @return {string} - Updated IAB value to be set
  */
-export function parseIAB(signal) {
-  if (!isValidSignalIAB(signal)) {
-    return "1NYN";
-  }
-  if (signal === "1---") {
-    return "1YYY";
+export function parseIAB(signal, optStatus) {
+  if (optStatus){
+    if (!isValidSignalIAB(signal)) {
+      return "1NYN";
+    }
+    if (signal === "1---") {
+      return "1YYY";
+    } else {
+      signal = signal.substr(0, 2) + "Y" + signal.substr(3, 1);
+      return signal;
+    }
   } else {
-    signal = signal.substr(0, 2) + "Y" + signal.substr(3, 1);
-    return signal;
+    if (!isValidSignalIAB(signal)) {
+      return "1NNN";
+    }
+    if (signal === "1---") {
+      return "1YNY";
+    } else {
+      signal = signal.substr(0, 2) + "N" + signal.substr(3, 1);
+      return signal;
+    }
   }
 }
 
