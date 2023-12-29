@@ -20,6 +20,11 @@ function initCookiesPerDomain(domainFilter) {
   setFilteredCookies(cookie_list, domainFilter);
 }
 
+function deleteCookiesPerDomain(domainFilter) {
+  deleteFilteredCookies(cookie_list, domainFilter);
+  console.log("Deletecookiesperdomain called. DF:  ", domainFilter);
+}
+
 /**
  * Sets a cookie at the given domain for each cookie in the passed in
  * cookies object. Currently updates cookie url info based on domain.
@@ -126,9 +131,44 @@ function setFilteredCookies(cookies, domainFilter) {
   }
 }
 
+/**
+ * Sets a cookie at the given domain for each item in the passed in
+ * cookies object. Currently updates cookie url info based on domain.
+ * @param {Object} cookies - Collection of info regarding each 3rd
+ *                           party cookie to be set
+ * Each item in `cookies` must contain a 'name', 'value', and 'domain'
+ */
+ function deleteFilteredCookies(cookies, domainFilter) {
+
+  for (let item in cookies) {
+    for (let domain in domainFilter) {
+      // Notice that this `if` will trigger only for sites mentioned in our
+      // cookies, i.e. primarily only adtech websites since all our cookies
+      // are adtech opt outs
+      if (domainFilter[domain] == cookies[item].domain) {
+        // Deletes cookie url based on domain, checks for domain/subdomain spec
+        let cookieUrl = cookies[item].domain;
+        let name = cookies[item].name;
+
+        if (cookieUrl.substr(0, 1) === ".") {
+          cookieUrl = cookieUrl.substr(1);
+        }
+        
+        cookieUrl = `https://${cookieUrl}/`;
+
+        chrome.cookies.remove({
+          url: cookieUrl,
+          name: name,
+        });
+      }
+    }
+  }
+}
+
 export {
   initCookiesOnInstall,
   initCookiesPerDomain,
+  deleteCookiesPerDomain,
   setAllCookies,
   setFilteredCookies,
 };

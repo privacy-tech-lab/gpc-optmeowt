@@ -14,7 +14,7 @@ import { stores, storage } from "./../storage.js";
 import { defaultSettings } from "../../data/defaultSettings.js";
 import { enableListeners, disableListeners } from "./listeners-$BROWSER.js";
 import { initIAB } from "../cookiesIAB.js";
-import { initCookiesPerDomain } from "./cookiesOnInstall.js";
+import { initCookiesPerDomain, deleteCookiesPerDomain } from "./cookiesOnInstall.js";
 import { initCookiesOnInstall } from "./cookiesOnInstall.js";
 import psl, { parse } from "psl";
 
@@ -405,11 +405,10 @@ async function onMessageHandlerAsync(message, sender, sendResponse) {
 
     wellknown[tabID] = message.data;
     let wellknownData = message.data;
+    initIAB(!sendSignal);
     if (wellknown[tabID] === null && sendSignal == null) {
-      initIAB();
       updatePopupIcon(tabID);
     } else if (wellknown[tabID]["gpc"] === true && sendSignal == null) {
-      initIAB();
       chrome.action.setIcon({
         tabId: tabID,
         path: "assets/face-icons/optmeow-face-circle-green-128.png",
@@ -446,7 +445,7 @@ async function onMessageHandlerAsync(message, sender, sendResponse) {
       tabs[tabID]["TIMESTAMP"] = message.data;
     }
   }
-  if (message.msg === "SET_OPTOUT_COOKEIS") {
+  if (message.msg === "SET_OPTOUT_COOKIES") {
     // This is initialized when cookies are to be reset to a page after
     // do not sell is turned back on (e.g., when its turned on from the popup).
 
@@ -454,6 +453,11 @@ async function onMessageHandlerAsync(message, sender, sendResponse) {
     // do not sell for a particular site, and chooses to re-enable it
     initCookiesPerDomain(message.data);
   }
+  if (message.msg === "DELETE_OPTOUT_COOKIES") {
+    console.log("Msg received. Info; ", message.data);
+    deleteCookiesPerDomain(message.data);
+  }
+
   return true; // Async callbacks require this
 }
 
