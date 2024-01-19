@@ -1,7 +1,7 @@
 {
   "name": "OptMeowt",
   "author": "privacy-tech-lab",
-  "version": "4.3.0",
+  "version": "4.3.1",
   "description": "OptMeowt allows Web users to make use of their rights to opt out from the sale and sharing of personal data",
   "permissions": [
     "webRequest",
