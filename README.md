@@ -65,7 +65,7 @@ OptMeowt sends Do Not Sell signals to websites when you browse the web. Such sig
 
 In detail, OptMeowt uses the following methods to opt you out:
 
-1. The [GPC header and JS property](https://globalprivacycontrol.github.io/gpc-spec/).
+1. The [GPC header and JS property](https://privacycg.github.io/gpc-spec/).
 2. The [DNT header](https://www.w3.org/TR/tracking-dnt/).
 3. First party cookies of ad networks participating in the [IAB CCPA Compliance Framework for Publishers & Technology Companies](https://iabtechlab.com/standards/ccpa/).
 4. Third party cookies of ad networks participating in the [DAA's CCPA Opt Out Tool for the Web](https://digitaladvertisingalliance.org/integrate-webchoices-ccpa).
