@@ -81,8 +81,9 @@ export async function addDynamicRule(id, domain) {
         action: {
           type: "modifyHeaders",
           requestHeaders: [
-            { header: "Sec-GPC", operation: "remove" },
-            { header: "DNT", operation: "remove" },
+            { "header": "Sec-GPC", "operation": "remove" },
+            { "header": "DNT", "operation": "remove" },
+            { "header": "Permissions-Policy", "operation": "remove"}
           ],
         },
         condition: {
