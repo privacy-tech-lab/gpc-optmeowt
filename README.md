@@ -74,6 +74,8 @@ In detail, OptMeowt uses the following methods to opt you out:
 
 **Opting Out of the Topics API:** Google is phasing out the use of third-party cookies, and replacing them with the Topics API. The Topics API will identify users' general areas of interest which can be used for personalized advertising. These topics are generated through observing and recording a user's browser activity. To opt you out of the Topics API, a header is placed called `Permissions-Policy` on all the sites you browse. This is following [Google's documentation](https://developer.chrome.com/en/docs/privacy-sandbox/topics/#site-opt-out) of how to opt a site out of the Topics API. Please keep in mind this functionality is only available for Chrome browsers.
 
+For a more in-depth look at how OptMeowt works, check out our [beginner developer's guide](https://docs.google.com/document/d/1H0sA6hK0Q0OLT4Tz_Yp-byHi0U4Ue5DO8k7K-NXnY2Q/edit?usp=sharing).
+
 ## 4. Installing OptMeowt from Source
 
 1. Clone this repo locally or download a zipped copy and unzip it.
