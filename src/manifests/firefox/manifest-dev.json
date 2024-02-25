@@ -4,19 +4,22 @@
   "version": "4.3.1",
   "description": "OptMeowt allows Web users to make use of their rights to opt out from the sale and sharing of personal data",
   "permissions": [
-    "<all_urls>",
     "webRequestBlocking",
     "webRequest",
     "webNavigation",
     "storage",
     "activeTab",
     "cookies",
-    "tabs"
+    "tabs",
+    "scripting"
+  ],
+  "host_permissions": [
+    "<all_urls>"
   ],
   "icons": {
     "128": "assets/face-icons/icon128-face-circle.png"
   },
-  "browser_action": {
+  "action": {
     "default_title": "OptMeowt",
     "default_popup": "popup.html"
   },
@@ -35,9 +38,15 @@
     "scripts": ["background.bundle.js"]
   },
   "web_accessible_resources": [
-    "json/*.json"
   ],
-  "manifest_version": 2,
+  "manifest_version": 3,
   "incognito": "spanning",
-  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'"
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
+  },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "{7f22397f-fb61-47e2-9e4b-4ddd98faa275}"
+    }
+  }
 }
