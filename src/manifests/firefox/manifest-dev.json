@@ -6,6 +6,7 @@
   "permissions": [
     "declarativeNetRequest",
     "webRequest",
+    "webRequestBlocking",
     "webNavigation",
     "storage",
     "activeTab",
@@ -49,8 +50,7 @@
     "open_in_tab": true
   },
   "background": {
-    "scripts": ["background.bundle.js"],
-    "persistent": false
+    "scripts": ["background.bundle.js"]
   },
   "web_accessible_resources": [{
     "resources": ["content-scripts/injection/gpc-dom.js"],

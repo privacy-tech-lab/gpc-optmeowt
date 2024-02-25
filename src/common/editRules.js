@@ -101,8 +101,6 @@ export async function addDynamicRule(id, domain) {
             "csp_report",
             "media",
             "websocket",
-            "webtransport",
-            "webbundle",
             "other",
           ],
         },
