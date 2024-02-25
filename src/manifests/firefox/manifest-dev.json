@@ -4,19 +4,36 @@
   "version": "4.3.1",
   "description": "OptMeowt allows Web users to make use of their rights to opt out from the sale and sharing of personal data",
   "permissions": [
-    "<all_urls>",
-    "webRequestBlocking",
+    "declarativeNetRequest",
     "webRequest",
     "webNavigation",
     "storage",
     "activeTab",
     "cookies",
-    "tabs"
+    "tabs",
+    "scripting"
   ],
   "icons": {
     "128": "assets/face-icons/icon128-face-circle.png"
   },
-  "browser_action": {
+  "declarative_net_request": {
+    "rule_resources": [
+      {
+        "id": "universal_GPC",
+        "enabled": true,
+        "path": "rules/universal_gpc_rules.json"
+      },
+      {
+        "id": "GPC_exceptions",
+        "enabled": true,
+        "path": "rules/gpc_exceptions_rules.json"
+      }
+    ]
+  },
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "action": {
     "default_title": "OptMeowt",
     "default_popup": "popup.html"
   },
@@ -32,12 +49,21 @@
     "open_in_tab": true
   },
   "background": {
-    "scripts": ["background.bundle.js"]
+    "scripts": ["background.bundle.js"],
+    "persistent": false
   },
-  "web_accessible_resources": [
-    "json/*.json"
-  ],
-  "manifest_version": 2,
+  "web_accessible_resources": [{
+    "resources": ["content-scripts/injection/gpc-dom.js"],
+	  "matches": ["<all_urls>"]
+  }],
+  "manifest_version": 3,
   "incognito": "spanning",
-  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'"
-}
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
+  },
+    "browser_specific_settings": {
+      "gecko": {
+        "id": "{7f22397f-fb61-47e2-9e4b-4ddd98faa275}"
+      }
+    }
+  }

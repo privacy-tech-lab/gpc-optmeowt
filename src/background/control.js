@@ -28,20 +28,15 @@ import {
 } from "../common/editDomainlist.js";
 
 async function enable() {
-  if ("$BROWSER" == "firefox") {
-    var initProtection = initProtection_ff;
-  } else {
-    var initProtection = initProtection_cr;
-  }
+
+  var initProtection = initProtection_cr;
+  
   initProtection();
 }
 
 function disable() {
-  if ("$BROWSER" == "firefox") {
-    var haltProtection = haltProtection_ff;
-  } else if ("$BROWSER" == "chrome") {
-    var haltProtection = haltProtection_cr;
-  }
+
+  var haltProtection = haltProtection_cr;
   haltProtection();
 }
 
@@ -50,7 +45,7 @@ function disable() {
 
 // This is the very first thing the extension runs
 (async () => {
-  if ("$BROWSER" == "chrome") {
+
     chrome.scripting.registerContentScripts([
       {
         id: "1",
@@ -60,7 +55,7 @@ function disable() {
         runAt: "document_start",
       }
     ]);
-  }
+  
   // Initializes the default settings
   let settingsDB = await storage.getStore(stores.settings);
   for (let setting in defaultSettings) {
@@ -74,10 +69,10 @@ function disable() {
   if (isEnabled) {
     // Turns on the extension
     enable();
-    if ("$BROWSER" == "chrome") {
+
       updateRemovalScript();
       reloadDynamicRules();
-    }
+    
   }
 
 })();

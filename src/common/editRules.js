@@ -121,7 +121,6 @@ export async function addDynamicRule(id, domain) {
  *   receiving GPC or other opt-outs.
  */
 export async function reloadDynamicRules() {
-  if ("$BROWSER" == "chrome") {
     deleteAllDynamicRules();
     let domainlist = await storage.getStore(stores.domainlist);
 
@@ -137,5 +136,5 @@ export async function reloadDynamicRules() {
         })
       );
     });
-  }
+  
 }

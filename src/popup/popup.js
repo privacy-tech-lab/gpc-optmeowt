@@ -138,7 +138,6 @@ function renderExtensionIsEnabledDisabled(isEnabled, isDomainlisted) {
 }
 
 function turnonoff(isEnabled) {
-  if ("$BROWSER" == "chrome") {
     if (isEnabled) {
       chrome.scripting.updateContentScripts([
         {
@@ -154,7 +153,7 @@ function turnonoff(isEnabled) {
       updateRemovalScript();
       reloadDynamicRules();
     }
-  }
+
 }
 
 function listenerExtensionIsEnabledDisabledButton(
@@ -427,12 +426,11 @@ function showProtectionInfo() {
     data: null,
   });
 
-  if ("$BROWSER" == "chrome") {
     chrome.runtime.sendMessage({
       msg: "POPUP_PROTECTION_REQUESTS",
       data: null,
     });
-  }
+  
 }
 
 /**
