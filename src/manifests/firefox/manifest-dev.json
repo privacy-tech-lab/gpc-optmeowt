@@ -5,6 +5,7 @@
   "description": "OptMeowt allows Web users to make use of their rights to opt out from the sale and sharing of personal data",
   "permissions": [
     "webRequestBlocking",
+    "declarativeNetRequest",
     "webRequest",
     "webNavigation",
     "storage",
@@ -13,6 +14,20 @@
     "tabs",
     "scripting"
   ],
+  "declarative_net_request": {
+    "rule_resources": [
+      {
+        "id": "universal_GPC",
+        "enabled": true,
+        "path": "rules/universal_gpc_rules.json"
+      },
+      {
+        "id": "GPC_exceptions",
+        "enabled": true,
+        "path": "rules/gpc_exceptions_rules.json"
+      }
+    ]
+  },
   "host_permissions": [
     "<all_urls>"
   ],
@@ -37,8 +52,10 @@
   "background": {
     "scripts": ["background.bundle.js"]
   },
-  "web_accessible_resources": [
-  ],
+  "web_accessible_resources": [{
+	  "resources": ["content-scripts/injection/gpc-dom.js"],
+	  "matches": ["<all_urls>"]
+	}],
   "manifest_version": 3,
   "incognito": "spanning",
   "content_security_policy": {

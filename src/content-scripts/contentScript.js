@@ -20,6 +20,8 @@ https://developer.chrome.com/extensions/content_scripts
 /******************************************************************************/
 /******************************************************************************/
 
+console.log("contentScript.js ran");
+
 // To be injected to call the USPAPI function in analysis mode
 const uspapi = `
   try {
