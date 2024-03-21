@@ -249,8 +249,6 @@ OptMeowt uses various [third party libraries](https://github.com/privacy-tech-la
   </a>
 </p>
 
-<p align="center"><a href="https://builtwith.com/">BuiltWith</a> provided us with a free Pro account.</p>
-
 <p align="center">Conclusions reached or positions taken are our own and not necessarily those of our financial supporters, its trustees, officers, or staff.</p>
 
 ##
