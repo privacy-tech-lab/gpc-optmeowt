@@ -277,9 +277,10 @@ export async function settingsView(scaffoldTemplate) {
   }
   storage.set(stores.settings, true, "TUTORIAL_SHOWN");
 
-  const requestShown = await storage.get(stores.settings, "REQUEST_PERMISSIONS_SHOWN");
-  if (!requestShown) {
-    requestPermissions();
-  }
-  storage.set(stores.settings, true, "REQUEST_PERMISSIONS_SHOWN");
-}
+  if ("$BROWSER" == "firefox") {
+    const requestShown = await storage.get(stores.settings, "REQUEST_PERMISSIONS_SHOWN");
+    if (!requestShown) {
+      requestPermissions();
+    }
+    storage.set(stores.settings, true, "REQUEST_PERMISSIONS_SHOWN");
+  }}
