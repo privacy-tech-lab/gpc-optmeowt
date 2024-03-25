@@ -15,5 +15,6 @@ export const defaultSettings = {
   IS_DOMAINLISTED: false,
   IS_ENABLED: true,
   TUTORIAL_SHOWN: true,
+  REQUEST_PERMISSIONS_SHOWN: false,
   TUTORIAL_SHOWN_IN_POPUP: true,
 };

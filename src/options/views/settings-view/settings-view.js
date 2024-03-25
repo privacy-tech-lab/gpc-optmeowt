@@ -206,6 +206,39 @@ function walkthrough() {
   }
 }
 
+/*
+ * Request host permissions upon install
+ */
+
+async function requestPermissionsButton() {
+  try {
+    // Request permissions
+    const response = await browser.permissions.request({
+      origins: ["<all_urls>"] // Allows host permissions
+    });
+
+    // Check if permissions were granted or refused
+    if (response) {
+      console.log("Permissions were granted");
+    } else {
+      console.log("Permissions were refused");
+    }
+
+    // Retrieve current permissions after the request
+    const currentPermissions = await browser.permissions.getAll();
+    console.log(`Current permissions:`, currentPermissions);
+  } catch (error) {
+    console.error('Error requesting permissions:', error);
+  }
+}
+
+function requestPermissions() {
+  let modal = UIkit.modal('#permission-modal');
+  modal.show();
+  document.getElementById("modal-button-4").onclick = () => {
+    requestPermissionsButton();
+  }
+}
 
 /******************************************************************************/
 
@@ -243,4 +276,10 @@ export async function settingsView(scaffoldTemplate) {
     walkthrough();
   }
   storage.set(stores.settings, true, "TUTORIAL_SHOWN");
+
+  const requestShown = await storage.get(stores.settings, "REQUEST_PERMISSIONS_SHOWN");
+  if (!requestShown) {
+    requestPermissions();
+  }
+  storage.set(stores.settings, true, "REQUEST_PERMISSIONS_SHOWN");
 }

@@ -767,30 +767,3 @@ document.getElementById("domain-list").addEventListener("click", async () => {
   await storage.set(stores.settings, true, "DOMAINLIST_PRESSED");
   chrome.runtime.openOptionsPage();
 });
-
-document.addEventListener('DOMContentLoaded', function () {
-  const requestPermissionsButton = document.getElementById('requestPermissionsButton');
-  requestPermissionsButton.addEventListener('click', requestPermissions);
-});
-
-async function requestPermissions() {
-  try {
-    // Request permissions
-    const response = await browser.permissions.request({
-      origins: ["<all_urls>"] // Allows host permissions
-    });
-
-    // Check if permissions were granted or refused
-    if (response) {
-      console.log("Permissions were granted");
-    } else {
-      console.log("Permissions were refused");
-    }
-
-    // Retrieve current permissions after the request
-    const currentPermissions = await browser.permissions.getAll();
-    console.log(`Current permissions:`, currentPermissions);
-  } catch (error) {
-    console.error('Error requesting permissions:', error);
-  }
-}
