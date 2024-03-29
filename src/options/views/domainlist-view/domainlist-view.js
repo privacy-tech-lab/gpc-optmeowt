@@ -93,12 +93,6 @@ function deleteButtonListener(domain) {
 NOTE: It will be automatically added back to the list when the domain is requested again.`;
       if (confirm(deletePrompt)) {
         await storage.delete(stores.domainlist, domain);
-        if ("$BROWSER" == "firefox") {
-          chrome.runtime.sendMessage({
-            msg: "REMOVE_FROM_DOMAINLIST",
-            data: domain,
-          });
-        }
 
         reloadDynamicRules();
         updateRemovalScript();

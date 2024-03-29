@@ -29,7 +29,6 @@ import {
 /******************************************************************************/
 
 async function updateRemovalScript() {
-  if ("$BROWSER" == "chrome") {
     let ex_matches = ["https://example.org/foo/bar.html"];
     let domain;
     let domainValue;
@@ -55,10 +54,8 @@ async function updateRemovalScript() {
       ])
       .then(() => {});
   }
-}
 
 async function createCS(domain){
-  if ("$BROWSER" == "chrome") {
     let script = await chrome.scripting.getRegisteredContentScripts({
     });
 
@@ -78,10 +75,8 @@ async function createCS(domain){
     ])
     .then(() => {});
   }
-}
 
 async function deleteCS(domain){
-  if ("$BROWSER" == "chrome") {
     let script = await chrome.scripting.getRegisteredContentScripts({
     });
     let ex_matches = script[0].excludeMatches;
@@ -106,33 +101,26 @@ async function deleteCS(domain){
     ])
     .then(() => {});
   }
-}
 
 async function deleteDomainlistAndDynamicRules() {
   await storage.clear(stores.domainlist);
-  if ("$BROWSER" == "chrome") {
     deleteAllDynamicRules();
   }
-}
 
 async function addDomainToDomainlistAndRules(domain) {
   let id = 1;
-  if ("$BROWSER" == "chrome") {
     id = await getFreshId();
     addDynamicRule(id, domain); // add the rule for the chosen domain
     createCS(domain);
-  }
-  await storage.set(stores.domainlist, id, domain); // record what rule the domain is associated to
+    await storage.set(stores.domainlist, id, domain); // record what rule the domain is associated to
 }
 
 async function removeDomainFromDomainlistAndRules(domain) {
-  if ("$BROWSER" == "chrome") {
     let id = await storage.get(stores.domainlist, domain);
     deleteDynamicRule(id);
     deleteCS(domain);
+    await storage.set(stores.domainlist, null, domain);
   }
-  await storage.set(stores.domainlist, null, domain);
-}
 
 /******************************************************************************/
 /******************************************************************************/

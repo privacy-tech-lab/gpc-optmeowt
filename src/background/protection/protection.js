@@ -38,10 +38,7 @@ var signalPerTab = {};  // Caches if a signal is sent to render the popup icon
 var activeTabID = 0;    // Caches current active tab id
 var sendSignal = true;  // Caches if the signal can be sent to the curr domain
 var domPrev3rdParties = {}; //stores all the 3rd parties by domain (resets when you quit chrome)
-var isFirefox = ("$BROWSER" === "firefox");
 var globalParsedDomain;
-
-var isFirefox = "$BROWSER" === "firefox";
 
 async function reloadVars() {
   let storedDomainlisted = await storage.get(

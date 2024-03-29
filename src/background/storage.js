@@ -97,9 +97,6 @@ const storage = {
 async function handleDownload() {
   const DOMAINLIST = await storage.getStore(stores.domainlist);
   let MANIFEST = chrome.runtime.getManifest();
-  if ("$BROWSER" == "firefox") {
-    MANIFEST.version = "2.0";
-  }
   let data = {
     VERSION: MANIFEST.version,
     DOMAINLIST: DOMAINLIST,

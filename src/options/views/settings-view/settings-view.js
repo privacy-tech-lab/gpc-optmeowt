@@ -59,7 +59,6 @@ function eventListeners() {
         msg: "CHANGE_IS_DOMAINLISTED",
         data: { isDomainlisted: false },
       });
-      if ("$BROWSER" == "chrome") {
         chrome.scripting.updateContentScripts([
           {
             id: "1",
@@ -70,7 +69,6 @@ function eventListeners() {
           },
         ]);
         deleteAllDynamicRules();
-      }
     });
   document
     .getElementById("settings-view-radio1")
@@ -83,7 +81,6 @@ function eventListeners() {
         msg: "CHANGE_IS_DOMAINLISTED",
         data: { isDomainlisted: false },
       });
-      if ("$BROWSER" == "chrome") {
         chrome.scripting.updateContentScripts([
           {
             id: "1",
@@ -94,7 +91,6 @@ function eventListeners() {
           },
         ]);
         addDynamicRule(4999, "*");
-      }
     });
   document
     .getElementById("settings-view-radio2")
@@ -107,10 +103,8 @@ function eventListeners() {
         msg: "CHANGE_IS_DOMAINLISTED",
         data: { isDomainlisted: true },
       });
-      if ("$BROWSER" == "chrome") {
         updateRemovalScript();
         reloadDynamicRules();
-      }
     });
   document
     .getElementById("download-button")
