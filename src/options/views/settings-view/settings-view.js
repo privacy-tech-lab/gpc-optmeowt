@@ -220,6 +220,7 @@ async function requestPermissionsButton() {
     // Check if permissions were granted or refused
     if (response) {
       console.log("Permissions were granted");
+      storage.set(stores.settings, true, "REQUEST_PERMISSIONS_SHOWN");
     } else {
       console.log("Permissions were refused");
     }
@@ -237,6 +238,7 @@ function requestPermissions() {
   modal.show();
   document.getElementById("modal-button-4").onclick = () => {
     requestPermissionsButton();
+    modal.hide();
   }
 }
 
@@ -282,5 +284,4 @@ export async function settingsView(scaffoldTemplate) {
     if (!requestShown) {
       requestPermissions();
     }
-    storage.set(stores.settings, true, "REQUEST_PERMISSIONS_SHOWN");
   }}
