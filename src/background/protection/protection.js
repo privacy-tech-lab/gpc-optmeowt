@@ -295,7 +295,6 @@ function dataToPopupHelper(){
 
 // Info back to popup
 function dataToPopup(wellknownData) {
-  
   let requestsData = dataToPopupHelper(); //get requests from the helper
   chrome.tabs.query({active: true, currentWindow: true}, function(tabs){
     let popupData = {
@@ -392,7 +391,9 @@ async function onMessageHandlerAsync(message, sender, sendResponse) {
     dataToPopupRequests();
   }
   if (message.msg === "CONTENT_SCRIPT_WELLKNOWN") {
-    let url = new URL(sender.origin);
+    // sender.origin not working for Firefox MV3, instead added a new message argument, message.origin_url
+    //let url = new URL(sender.origin);
+    let url = new URL(message.origin_url);
     let parsed = psl.parse(url.hostname);
     let domain = parsed.domain;
 
@@ -402,7 +403,9 @@ async function onMessageHandlerAsync(message, sender, sendResponse) {
 
     wellknown[tabID] = message.data;
     let wellknownData = message.data;
+
     initIAB(!sendSignal);
+
     if (wellknown[tabID] === null && sendSignal == null) {
       updatePopupIcon(tabID);
     } else if (wellknown[tabID]["gpc"] === true && sendSignal == null) {
@@ -451,7 +454,6 @@ async function onMessageHandlerAsync(message, sender, sendResponse) {
     initCookiesPerDomain(message.data);
   }
   if (message.msg === "DELETE_OPTOUT_COOKIES") {
-    console.log("Msg received. Info; ", message.data);
     deleteCookiesPerDomain(message.data);
   }
 
