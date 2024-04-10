@@ -26,6 +26,7 @@ const { saveAs } = pkg;
 const stores = Object.freeze({
   settings: "SETTINGS",
   domainlist: "DOMAINLIST",
+  thirdParties: "THIRDPARTIES",
 });
 
 /******************************************************************************/
@@ -36,6 +37,7 @@ const dbPromise = openDB("extensionDB", 1, {
   upgrade: function dbPromiseInternal(db) {
     db.createObjectStore(stores.domainlist);
     db.createObjectStore(stores.settings);
+    db.createObjectStore(stores.thirdParties);
   },
 });
 

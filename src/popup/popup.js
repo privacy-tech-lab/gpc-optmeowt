@@ -657,6 +657,7 @@ async function buildWellKnown(requests) {
 chrome.runtime.onMessage.addListener(function (message, _, __) {
   if (message.msg === "POPUP_PROTECTION_DATA") {
     let { requests, wellknown } = message.data;
+    console.log("info received");
     domainsInfo = requests;
     wellknownInfo = wellknown;
     buildDomains(requests);

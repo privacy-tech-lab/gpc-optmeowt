@@ -140,7 +140,7 @@ async function updateDomainlist(details) {
   let currDomainValue = await storage.get(stores.domainlist, parsedDomain);
 
   if (currDomainValue === undefined) {
-    storage.set(stores.domainlist, null, parsedDomain); // Sets to storage async
+    await storage.set(stores.domainlist, null, parsedDomain); // Sets to storage async
   }
   
   //get the current parsed domain--this is used to store 3rd parties (using globalParsedDomain variable)
@@ -155,6 +155,11 @@ async function updateDomainlist(details) {
   }
   //as they come in, add the parsedDomain to the object with null value (just a placeholder)
   domPrev3rdParties[activeTabID][currentDomain][parsedDomain] = null;
+
+  let data = JSON.stringify(domPrev3rdParties);
+  console.log("setting to storage: ", data);
+  await storage.set(stores.thirdParties, data, "parties");
+  
 }
 
 function updatePopupIcon(tabId) {
@@ -282,20 +287,25 @@ function handleSendMessageError() {
     console.warn(error.message);
   }
 }
-function dataToPopupHelper(){
+async function dataToPopupHelper(){
   //data gets sent back every time the popup is clicked
   let requestsData = {};  
   
   if (tabs[activeTabID] !== undefined) {
-
-    requestsData = domPrev3rdParties[activeTabID][globalParsedDomain];
+    let domain = await getCurrentParsedDomain();
+    let parties = await storage.get(stores.thirdParties, "parties");
+    parties = JSON.parse(parties);
+    console.log("parties: ", parties[activeTabID][domain]);
+    
+    requestsData = parties[activeTabID][domain];
+    console.log("request data: ", requestsData);
   }
   return requestsData
 }
 
 // Info back to popup
-function dataToPopup(wellknownData) {
-  let requestsData = dataToPopupHelper(); //get requests from the helper
+async function dataToPopup(wellknownData) {
+  let requestsData = await dataToPopupHelper(); //get requests from the helper
   chrome.tabs.query({active: true, currentWindow: true}, function(tabs){
     let popupData = {
       requests: requestsData,
@@ -312,9 +322,9 @@ function dataToPopup(wellknownData) {
   });
 }
 
-function dataToPopupRequests() {
+async function dataToPopupRequests() {
  
-  let requestsData = dataToPopupHelper(); //get requests from the helper
+  let requestsData = await dataToPopupHelper(); //get requests from the helper
 
   chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
     chrome.runtime.sendMessage(
@@ -388,6 +398,7 @@ async function onMessageHandlerAsync(message, sender, sendResponse) {
     storage.set(stores.domainlist, key, domain); // Sets to long term storage
   }
   if (message.msg === "POPUP_PROTECTION_REQUESTS") {
+    console.log("info queried");
     dataToPopupRequests();
   }
   if (message.msg === "CONTENT_SCRIPT_WELLKNOWN") {
