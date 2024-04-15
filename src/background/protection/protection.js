@@ -156,7 +156,7 @@ async function updateDomainlist(details) {
   //as they come in, add the parsedDomain to the object with null value (just a placeholder)
   domPrev3rdParties[activeTabID][currentDomain][parsedDomain] = null;
 
-  let data = JSON.stringify(domPrev3rdParties);
+  let data = JSON.stringify(domPrev3rdParties[activeTabID]);
   console.log("setting to storage: ", data);
   await storage.set(stores.thirdParties, data, "parties");
   
@@ -289,22 +289,25 @@ function handleSendMessageError() {
 }
 async function dataToPopupHelper(){
   //data gets sent back every time the popup is clicked
-  let requestsData = {};  
+  let requestsData = {};
+
+  console.log("data to popup helper called");
   
-  if (tabs[activeTabID] !== undefined) {
+  //if (tabs[activeTabID] !== undefined) {
     let domain = await getCurrentParsedDomain();
     let parties = await storage.get(stores.thirdParties, "parties");
     parties = JSON.parse(parties);
-    console.log("parties: ", parties[activeTabID][domain]);
+    console.log("parties: ", parties[domain]);
     
-    requestsData = parties[activeTabID][domain];
+    requestsData = parties[domain];
     console.log("request data: ", requestsData);
-  }
+  //}
   return requestsData
 }
 
 // Info back to popup
 async function dataToPopup(wellknownData) {
+  console.log("datatopopup called");
   let requestsData = await dataToPopupHelper(); //get requests from the helper
   chrome.tabs.query({active: true, currentWindow: true}, function(tabs){
     let popupData = {
@@ -323,8 +326,9 @@ async function dataToPopup(wellknownData) {
 }
 
 async function dataToPopupRequests() {
- 
+  console.log("datatopopuprequests called");
   let requestsData = await dataToPopupHelper(); //get requests from the helper
+  console.log("requests data in DTPR: ", requestsData)
 
   chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
     chrome.runtime.sendMessage(
@@ -399,7 +403,7 @@ async function onMessageHandlerAsync(message, sender, sendResponse) {
   }
   if (message.msg === "POPUP_PROTECTION_REQUESTS") {
     console.log("info queried");
-    dataToPopupRequests();
+    await dataToPopupRequests();
   }
   if (message.msg === "CONTENT_SCRIPT_WELLKNOWN") {
     // sender.origin not working for Firefox MV3, instead added a new message argument, message.origin_url
@@ -425,9 +429,9 @@ async function onMessageHandlerAsync(message, sender, sendResponse) {
         path: "assets/face-icons/optmeow-face-circle-green-128.png",
       });
     }
-    chrome.runtime.onMessage.addListener(function (message, _, __) {
+    chrome.runtime.onMessage.addListener(async function (message, _, __) {
       if (message.msg === "POPUP_PROTECTION") {
-        dataToPopup(wellknownData);
+        await dataToPopup(wellknownData);
       }
     });
   }

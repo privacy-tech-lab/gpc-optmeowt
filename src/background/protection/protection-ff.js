@@ -47,12 +47,6 @@ async function reloadVars() {
 
 reloadVars();
 
-chrome.declarativeNetRequest.getEnabledRulesets().then(
-  (rules) => {
-    console.log("Dynamic rules:");
-    console.log(rules);
-  }
-);
 
 /******************************************************************************/
 /******************************************************************************/

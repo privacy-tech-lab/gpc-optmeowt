@@ -393,7 +393,7 @@ function removeListenerDropdown2Toggle() {
 /**
  * Redraws the popup for protection mode
  */
-function showProtectionInfo() {
+async function showProtectionInfo() {
   removeFirstPartyDomainDNSToggle();
   removeListenerDropdown1Toggle();
   removeListenerDropdown2Toggle();
@@ -420,15 +420,20 @@ function showProtectionInfo() {
   listenerDropdown1Toggle();
   listenerDropdown2Toggle();
 
-  chrome.runtime.sendMessage({
-    msg: "POPUP_PROTECTION",
-    data: null,
-  });
+  let domain = await getCurrentParsedDomain();
+  let parties = await storage.get(stores.thirdParties, "parties");
+  parties = JSON.parse(parties);
+  console.log("parties: ", parties[domain]);
+  
+  let requestsData = parties[domain];
+  console.log("request data: ", requestsData);
+  buildDomains(requestsData);
 
-    chrome.runtime.sendMessage({
-      msg: "POPUP_PROTECTION_REQUESTS",
-      data: null,
-    });
+
+    // chrome.runtime.sendMessage({
+    //   msg: "POPUP_PROTECTION_REQUESTS",
+    //   data: null,
+    // });
 }
 
 /**
@@ -657,14 +662,16 @@ async function buildWellKnown(requests) {
 chrome.runtime.onMessage.addListener(function (message, _, __) {
   if (message.msg === "POPUP_PROTECTION_DATA") {
     let { requests, wellknown } = message.data;
-    console.log("info received");
+    console.log("info received PPD");
     domainsInfo = requests;
     wellknownInfo = wellknown;
     buildDomains(requests);
     buildWellKnown(wellknown);
   }
   if (message.msg === "POPUP_PROTECTION_DATA_REQUESTS") {
+    console.log("info received PPDR");
     let requests = message.data;
+    console.log("requests: ", requests);
     buildDomains(requests);
   }
 });
