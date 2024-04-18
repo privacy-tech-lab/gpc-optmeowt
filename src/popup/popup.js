@@ -421,11 +421,11 @@ async function showProtectionInfo() {
   listenerDropdown2Toggle();
 
   let domain = await getCurrentParsedDomain();
-  let parties = await storage.get(stores.thirdParties, "parties");
-  parties = JSON.parse(parties);
-  console.log("parties: ", parties[domain]);
+  let parties = await storage.get(stores.thirdParties, domain);
+  //parties = JSON.parse(parties);
+  console.log("parties under ", domain, ": ", parties);
   
-  let requestsData = parties[domain];
+  let requestsData = parties;
   console.log("request data: ", requestsData);
   buildDomains(requestsData);
 
@@ -505,14 +505,16 @@ function addThirdPartyDomainDNSToggleListener(requestDomain) {
  * @param {Object} requests - Contains all request domains for the current tab
  * (requests = tabs[activeTabID].requestDomainS; passed from background page)
  */
-async function buildDomains(requests) {
+ async function buildDomains(requests) {
   let domain = await getCurrentParsedDomain();
   let items = "";
   const domainlistKeys = await storage.getAllKeys(stores.domainlist);
   const domainlistValues = await storage.getAll(stores.domainlist);
 
-  // Sets the 3rd party domain elements
-  for (let requestDomain in requests) {
+  // Iterate through requests array
+  for (let i = 0; i < requests.length; i++) {
+    const requestDomain = requests[i]; // Get the domain name from the request array
+
     if (requestDomain != domain) {
       let checkbox = "";
       let text = "";
@@ -527,46 +529,46 @@ async function buildDomains(requests) {
       }
 
       items += `
-  <li>
-    <div
-      class="blue-heading uk-flex-inline uk-width-1-1 uk-flex-center uk-text-center uk-text-bold uk-text-truncate"
-      style="font-size: medium"
-      id="domain"
-    >
-      ${requestDomain}
-    </div>
-    <div uk-grid  style="margin-top: 4%; ">
-      <div
-        id="dns-enabled-text-${requestDomain}"
-        class="uk-width-expand uk-margin-auto-vertical"
-        style="font-size: small;"
-      >
-        ${text}
-      </div>
-      <div>
-        <div uk-grid>
-          <div class="uk-width-auto">
-            <label class="switch switch-smaller" id="switch-label-${requestDomain}">
-              <!-- Populate switch preference here -->
-              <!-- <input type="checkbox" id="input"/> -->
-              ${checkbox}
-              <span class="tooltip-1"></span>
-            </label>
+        <li>
+          <div
+            class="blue-heading uk-flex-inline uk-width-1-1 uk-flex-center uk-text-center uk-text-bold uk-text-truncate"
+            style="font-size: medium"
+            id="domain"
+          >
+            ${requestDomain}
           </div>
-        </div>
-      </div>
-    </div>
-    <!-- Response info -->
-    <div uk-grid uk-grid-row-collapse style="margin-top:0px;">
-    </div>
-  </li>
-  `;
+          <div uk-grid  style="margin-top: 4%; ">
+            <div
+              id="dns-enabled-text-${requestDomain}"
+              class="uk-width-expand uk-margin-auto-vertical"
+              style="font-size: small;"
+            >
+              ${text}
+            </div>
+            <div>
+              <div uk-grid>
+                <div class="uk-width-auto">
+                  <label class="switch switch-smaller" id="switch-label-${requestDomain}">
+                    <!-- Populate switch preference here -->
+                    ${checkbox}
+                    <span class="tooltip-1"></span>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Response info -->
+          <div uk-grid uk-grid-row-collapse style="margin-top:0px;">
+          </div>
+        </li>
+      `;
     }
   }
   document.getElementById("dropdown-1-expandable").innerHTML = items;
 
   // Sets the 3rd party domain toggle listeners
-  for (let requestDomain in requests) {
+  for (let i = 0; i < requests.length; i++) {
+    const requestDomain = requests[i];
     if (requestDomain != domain) {
       addThirdPartyDomainDNSToggleListener(requestDomain);
     }

@@ -146,19 +146,25 @@ async function updateDomainlist(details) {
   //get the current parsed domain--this is used to store 3rd parties (using globalParsedDomain variable)
  
   let currentDomain = await getCurrentParsedDomain(); 
-  //initialize the objects
-  if (!(activeTabID in domPrev3rdParties)){
-    domPrev3rdParties[activeTabID] = {};
-  }
-  if (!(currentDomain in domPrev3rdParties[activeTabID]) ){
-    domPrev3rdParties[activeTabID][currentDomain] = {};
-  }
-  //as they come in, add the parsedDomain to the object with null value (just a placeholder)
-  domPrev3rdParties[activeTabID][currentDomain][parsedDomain] = null;
+  // console.log("activeTabID: ",activeTabID);
+  // console.log("DP3P: ", domPrev3rdParties);
+  console.log("tabs: ", tabs);
+  let info = tabs[activeTabID]["REQUEST_DOMAINS"];
+  let data = Object.keys(info);
 
-  let data = JSON.stringify(domPrev3rdParties[activeTabID]);
-  console.log("setting to storage: ", data);
-  await storage.set(stores.thirdParties, data, "parties");
+  //initialize the objects
+  // if (!(activeTabID in domPrev3rdParties)){
+  //   domPrev3rdParties[activeTabID] = {};
+  // }
+  // if (!(currentDomain in domPrev3rdParties[activeTabID]) ){
+  //   domPrev3rdParties[activeTabID][currentDomain] = {};
+  // }
+  // //as they come in, add the parsedDomain to the object with null value (just a placeholder)
+  // domPrev3rdParties[activeTabID][currentDomain][parsedDomain] = null;
+
+  //let data = JSON.stringify(data);
+  console.log("setting to storage under ", currentDomain, ": ", data);
+  await storage.set(stores.thirdParties, data, currentDomain);
   
 }
 
