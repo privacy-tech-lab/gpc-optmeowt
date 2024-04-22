@@ -419,21 +419,26 @@ async function onMessageHandlerAsync(message, sender, sendResponse) {
     let domain = parsed.domain;
 
     let tabID = sender.tab.id;
-    let wellknown = [];
+    
+    // Fetch well-known data from storage
+    let wellknownData = await storage.get(stores.wellKnownData, domain);
+
+    // Log the fetched well-known data
+    console.log("Fetched well-known data:", wellknownData);
+
     let sendSignal = await storage.get(stores.domainlist, domain);
 
-    wellknown[tabID] = message.data;
-    let wellknownData = message.data;
+    console.log("sendSignal:", sendSignal); // Log sendSignal value
 
     initIAB(!sendSignal);
 
-    if (wellknown[tabID] === null && sendSignal == null) {
-      updatePopupIcon(tabID);
-    } else if (wellknown[tabID]["gpc"] === true && sendSignal == null) {
-      chrome.action.setIcon({
-        tabId: tabID,
-        path: "assets/face-icons/optmeow-face-circle-green-128.png",
-      });
+    if (!wellknownData && sendSignal == null) {
+        updatePopupIcon(tabID);
+    } else if (wellknownData && wellknownData["gpc"] === true && sendSignal == null) {
+        chrome.action.setIcon({
+            tabId: tabID,
+            path: "assets/face-icons/optmeow-face-circle-green-128.png",
+        });
     }
     chrome.runtime.onMessage.addListener(async function (message, _, __) {
       if (message.msg === "POPUP_PROTECTION") {

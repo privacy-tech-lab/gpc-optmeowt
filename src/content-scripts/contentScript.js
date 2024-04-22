@@ -56,17 +56,21 @@ function injectScript(script) {
 
 async function getWellknown(url) {
   const response = await fetch(`${url.origin}/.well-known/gpc.json`);
-  new_url = url = JSON.parse(JSON.stringify(url));
   let wellknownData;
   try {
     wellknownData = await response.json();
+    //Get the domain from url
+    let parsed = psl.parse(url.hostname);
+    let domain = parsed.domain;
+    // Save well-known data to local storage in content script
+    await storage.set(stores.wellKnownData, domain, wellknownData);
   } catch {
     wellknownData = null;
   }
   chrome.runtime.sendMessage({
     msg: "CONTENT_SCRIPT_WELLKNOWN",
     data: wellknownData,
-    origin_url: new_url
+    origin_url: url
   });
 }
 

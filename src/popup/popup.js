@@ -580,7 +580,7 @@ function addThirdPartyDomainDNSToggleListener(requestDomain) {
  * @param {Object} requests - Contains all well-known info in current tab
  * (requests passed from contentScript.js page as of v1.1.3)
  */
-async function buildWellKnown(requests) {
+ async function buildWellKnown(wellknownData) {
   let explainer;
 
   /*
@@ -589,7 +589,7 @@ async function buildWellKnown(requests) {
   the signal or not, setting both the `explainer` and `tabDetails`
   for GPC v1
   */
-  if (requests !== null && requests["gpc"] == true) {
+  if (wellknownData !== null && wellknownData["gpc"] === true) {
     explainer = `
       <li>
         <p class="uk-text-center uk-text-small uk-text-bold">
@@ -602,7 +602,7 @@ async function buildWellKnown(requests) {
         </p>
       </li>
       `;
-  } else if (requests !== null && requests["gpc"] == false) {
+  } else if (wellknownData !== null && wellknownData["gpc"] === false) {
     explainer = `
       <li>
         <p class="uk-text-center uk-text-small uk-text-bold">
@@ -615,7 +615,7 @@ async function buildWellKnown(requests) {
         </p>
       </li>
       `;
-  } else if (requests === null || requests["gpc"] == null) {
+  } else if (wellknownData === null || wellknownData["gpc"] === null) {
     explainer = `
       <li>
         <p class="uk-text-center uk-text-small uk-text-bold">
@@ -631,14 +631,14 @@ async function buildWellKnown(requests) {
   }
 
   let wellknown =
-    requests !== null && requests["gpc"] != null
+    wellknownData !== null && wellknownData["gpc"] !== null
       ? `
     <li class="uk-text-center uk-text-small">
       Here is the GPC policy:
     </li>
     <li>
       <pre class="wellknown-bg">
-        ${JSON.stringify(requests, null, 4)
+        ${JSON.stringify(wellknownData, null, 4)
           .replace(/['"\{\}\n]/g, "")
           .replace(/,/g, "\n")}
       </pre>
