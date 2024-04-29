@@ -96,7 +96,7 @@ gpc.test.js tests the GPC signal head-fully using Puppeteer and Chromium
                        return document.evaluate(path, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
                      }
    
-                     // return only the inner text of the element
+                     // return only the inner text of the element to the const 'header'
                      // "/html/body/section[2]/div/div[1]/div/h3" is the specific path
                    return getElementByXpath("/html/body/section[2]/div/div[1]/div/h3").innerText;
                    
