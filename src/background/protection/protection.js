@@ -287,6 +287,23 @@ async function sendPrivacySignal(domain) {
 /******************************************************************************/
 /******************************************************************************/
 
+async function getWellknownAndStore(url) {
+  const response = await fetch(`${url.origin}/.well-known/gpc.json`);
+  let newUrl = JSON.parse(JSON.stringify(url));
+  let wellknownData;
+  try {
+    wellknownData = await response.json();
+  } catch (error) {
+    console.error("Error parsing JSON:", error);
+    wellknownData = null;
+  }
+  
+  // Store the well-known data in IndexedDB
+  const domain = psl.parse(url.hostname).domain;
+  await storage.set(stores.wellKnown, wellknownData, domain);
+
+}
+
 function handleSendMessageError() {
   const error = chrome.runtime.lastError;
   if (error) {
@@ -294,7 +311,7 @@ function handleSendMessageError() {
   }
 }
 async function dataToPopupHelper(){
-  //data gets sent back every time the popup is clicked
+  //datas sent back every time the popup is clicked
   let requestsData = {};
 
   console.log("data to popup helper called");
@@ -417,30 +434,39 @@ async function onMessageHandlerAsync(message, sender, sendResponse) {
     let url = new URL(message.origin_url);
     let parsed = psl.parse(url.hostname);
     let domain = parsed.domain;
-
     let tabID = sender.tab.id;
-    let wellknown = [];
+    console.log("Here");
+
+
+    // Fetch and store well-known data
+    await getWellknownAndStore(url);
+    console.log("Wellknown Storage Function Executed");
+
+    // Retrieve well-known data from storage
+    let wellknownData = await storage.get(stores.wellKnown, domain);
+    
+    // Initialize IAB based on well-known data
     let sendSignal = await storage.get(stores.domainlist, domain);
-
-    wellknown[tabID] = message.data;
-    let wellknownData = message.data;
-
     initIAB(!sendSignal);
 
-    if (wellknown[tabID] === null && sendSignal == null) {
+    // Set extension icon based on well-known data
+    if (!wellknownData || wellknownData.gpc !== true) {
       updatePopupIcon(tabID);
-    } else if (wellknown[tabID]["gpc"] === true && sendSignal == null) {
+    } else {
       chrome.action.setIcon({
         tabId: tabID,
         path: "assets/face-icons/optmeow-face-circle-green-128.png",
       });
     }
+
+    // Message handler for sending well-known data to popup
     chrome.runtime.onMessage.addListener(async function (message, _, __) {
       if (message.msg === "POPUP_PROTECTION") {
         await dataToPopup(wellknownData);
       }
     });
   }
+
 
   if (message.msg === "CONTENT_SCRIPT_TAB") {
     let url = new URL(sender.origin);

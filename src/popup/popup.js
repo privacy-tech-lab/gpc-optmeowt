@@ -422,12 +422,15 @@ async function showProtectionInfo() {
 
   let domain = await getCurrentParsedDomain();
   let parties = await storage.get(stores.thirdParties, domain);
+  let wellKnownData = await storage.get(stores.wellKnown, domain);
   //parties = JSON.parse(parties);
   console.log("parties under ", domain, ": ", parties);
+  console.log("Wellknown:", wellKnownData)
   
   let requestsData = parties;
   console.log("request data: ", requestsData);
   buildDomains(requestsData);
+  buildWellKnown(wellKnownData);
 
 
     // chrome.runtime.sendMessage({
@@ -575,12 +578,13 @@ function addThirdPartyDomainDNSToggleListener(requestDomain) {
   }
 }
 
+console.log("Outside buildwellknown");
 /**
  * Builds the Well Known HTML for the popup window
  * @param {Object} requests - Contains all well-known info in current tab
  * (requests passed from contentScript.js page as of v1.1.3)
  */
-async function buildWellKnown(requests) {
+async function buildWellKnown(wellKnownData) {
   let explainer;
 
   /*
@@ -589,7 +593,7 @@ async function buildWellKnown(requests) {
   the signal or not, setting both the `explainer` and `tabDetails`
   for GPC v1
   */
-  if (requests !== null && requests["gpc"] == true) {
+  if (wellKnownData !== null && wellKnownData.gpc == true) {
     explainer = `
       <li>
         <p class="uk-text-center uk-text-small uk-text-bold">
@@ -602,7 +606,7 @@ async function buildWellKnown(requests) {
         </p>
       </li>
       `;
-  } else if (requests !== null && requests["gpc"] == false) {
+  } else if (wellKnownData !== null && wellKnownData.gpc == false) {
     explainer = `
       <li>
         <p class="uk-text-center uk-text-small uk-text-bold">
@@ -615,7 +619,7 @@ async function buildWellKnown(requests) {
         </p>
       </li>
       `;
-  } else if (requests === null || requests["gpc"] == null) {
+  } else if (wellKnownData === null || wellKnownData.gpc == null) {
     explainer = `
       <li>
         <p class="uk-text-center uk-text-small uk-text-bold">
@@ -631,14 +635,14 @@ async function buildWellKnown(requests) {
   }
 
   let wellknown =
-    requests !== null && requests["gpc"] != null
+    wellKnownData !== null && wellKnownData.gpc != null
       ? `
     <li class="uk-text-center uk-text-small">
       Here is the GPC policy:
     </li>
     <li>
       <pre class="wellknown-bg">
-        ${JSON.stringify(requests, null, 4)
+        ${JSON.stringify(wellKnownData, null, 4)
           .replace(/['"\{\}\n]/g, "")
           .replace(/,/g, "\n")}
       </pre>
@@ -668,7 +672,7 @@ chrome.runtime.onMessage.addListener(function (message, _, __) {
     domainsInfo = requests;
     wellknownInfo = wellknown;
     buildDomains(requests);
-    buildWellKnown(wellknown);
+    buildWellKnown(wellKnownData);
   }
   if (message.msg === "POPUP_PROTECTION_DATA_REQUESTS") {
     console.log("info received PPDR");

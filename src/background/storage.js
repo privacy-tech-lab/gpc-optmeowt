@@ -27,6 +27,7 @@ const stores = Object.freeze({
   settings: "SETTINGS",
   domainlist: "DOMAINLIST",
   thirdParties: "THIRDPARTIES",
+  wellKnown: "WELLKNOWN",
 });
 
 /******************************************************************************/
@@ -38,6 +39,7 @@ const dbPromise = openDB("extensionDB", 1, {
     db.createObjectStore(stores.domainlist);
     db.createObjectStore(stores.settings);
     db.createObjectStore(stores.thirdParties);
+    db.createObjectStore(stores.wellKnown);
   },
 });
 
