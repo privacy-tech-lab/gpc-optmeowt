@@ -39,6 +39,7 @@ var activeTabID = 0;    // Caches current active tab id
 var sendSignal = true;  // Caches if the signal can be sent to the curr domain
 var domPrev3rdParties = {}; //stores all the 3rd parties by domain (resets when you quit chrome)
 var globalParsedDomain;
+var setup = false;
 
 async function reloadVars() {
   let storedDomainlisted = await storage.get(
@@ -71,6 +72,9 @@ const listenerCallbacks = {
    * @returns {array}
    */
   onBeforeSendHeaders: async (details) => {
+    // if (!setup){
+    //   initSetup();
+    // }
     await updateDomainlist(details);
   },
 
@@ -79,6 +83,7 @@ const listenerCallbacks = {
    */
   onHeadersReceived: async (details) => {
     await logData(details);
+    await sendData();
     
 
 
@@ -98,6 +103,7 @@ const listenerCallbacks = {
   onCommitted: async (details) => {
     await updateDomainlist(details);
   },
+  
   onCompleted: async (details) => {
     await sendData();
   }
@@ -112,17 +118,25 @@ const listenerCallbacks = {
 
 
 async function sendData(){
+  // chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+  //   if (tabs.id) {
+  //     activeTabID = tabs.id;
+  //   }
+  // });
   let currentDomain = await getCurrentParsedDomain(); 
   // console.log("activeTabID: ",activeTabID);
   // console.log("DP3P: ", domPrev3rdParties);
-  console.log("tabs: ", tabs);
-  let info = await tabs[activeTabID]["REQUEST_DOMAINS"];
-  let data = Object.keys(info);
-  console.log("test test1: ", tabs[activeTabID]);
-  console.log("test test2: ", tabs[activeTabID]["REQUEST_DOMAINS"]);
-  console.log("test test3: ", tabs[activeTabID]["REQUEST_DOMAINS"][currentDomain]);
+   console.log("tabs: ", tabs);
+   console.log("activeTabID: ", activeTabID);
+  // console.log("test test1: ", tabs[activeTabID]);
+  // console.log("test test2: ", tabs[activeTabID]["REQUEST_DOMAINS"]);
+  // console.log("test test3: ", tabs[activeTabID]["REQUEST_DOMAINS"][currentDomain]);
+  let data = ["Please reload the site"];
 
-  console.log("keys test: ", Object.keys(tabs[activeTabID]["REQUEST_DOMAINS"]));
+  if (tabs[activeTabID] !== undefined) {
+    let info = await tabs[activeTabID]["REQUEST_DOMAINS"];
+    data = Object.keys(info);
+  }
 
   //initialize the objects
   // if (!(activeTabID in domPrev3rdParties)){
@@ -523,6 +537,7 @@ function closeMessagePassing() {
  */
 function onActivatedProtectionMode(info) {
   activeTabID = info.tabId;
+  console.log("onActivatedProtectionMode called");
 }
 
 // Handles misc. setup & setup listeners
@@ -537,6 +552,7 @@ function initSetup() {
   });
 
   chrome.tabs.onActivated.addListener(onActivatedProtectionMode);
+  setup = true;
 }
 
 function closeSetup() {
