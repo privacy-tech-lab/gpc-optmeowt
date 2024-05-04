@@ -70,15 +70,17 @@ const listenerCallbacks = {
    * @param {object} details - retrieved info passed into callback
    * @returns {array}
    */
-  onBeforeSendHeaders: (details) => {
-    updateDomainlist(details);
+  onBeforeSendHeaders: async (details) => {
+    await updateDomainlist(details);
   },
 
   /**
    * @param {object} details - retrieved info passed into callback
    */
-  onHeadersReceived: (details) => {
-    logData(details);
+  onHeadersReceived: async (details) => {
+    await logData(details);
+    
+
 
   },
 
@@ -94,8 +96,12 @@ const listenerCallbacks = {
    * @param {object} details - retrieved info passed into callback
    */
   onCommitted: async (details) => {
-    updateDomainlist(details);
+    await updateDomainlist(details);
   },
+  onCompleted: async (details) => {
+    await sendData();
+  }
+
 }; // closes listenerCallbacks object
 
 /******************************************************************************/
@@ -103,6 +109,35 @@ const listenerCallbacks = {
 /**********      # Listener helper fxns - Main functionality         **********/
 /******************************************************************************/
 /******************************************************************************/
+
+
+async function sendData(){
+  let currentDomain = await getCurrentParsedDomain(); 
+  // console.log("activeTabID: ",activeTabID);
+  // console.log("DP3P: ", domPrev3rdParties);
+  console.log("tabs: ", tabs);
+  let info = await tabs[activeTabID]["REQUEST_DOMAINS"];
+  let data = Object.keys(info);
+  console.log("test test1: ", tabs[activeTabID]);
+  console.log("test test2: ", tabs[activeTabID]["REQUEST_DOMAINS"]);
+  console.log("test test3: ", tabs[activeTabID]["REQUEST_DOMAINS"][currentDomain]);
+
+  console.log("keys test: ", Object.keys(tabs[activeTabID]["REQUEST_DOMAINS"]));
+
+  //initialize the objects
+  // if (!(activeTabID in domPrev3rdParties)){
+  //   domPrev3rdParties[activeTabID] = {};
+  // }
+  // if (!(currentDomain in domPrev3rdParties[activeTabID]) ){
+  //   domPrev3rdParties[activeTabID][currentDomain] = {};
+  // }
+  // //as they come in, add the parsedDomain to the object with null value (just a placeholder)
+  // domPrev3rdParties[activeTabID][currentDomain][parsedDomain] = null;
+
+  //let data = JSON.stringify(data);
+  console.log("setting to storage under ", currentDomain, ": ", data);
+  await storage.set(stores.thirdParties, data, currentDomain);
+}
 
 
 function getCurrentParsedDomain() {
@@ -144,27 +179,6 @@ async function updateDomainlist(details) {
   }
   
   //get the current parsed domain--this is used to store 3rd parties (using globalParsedDomain variable)
- 
-  let currentDomain = await getCurrentParsedDomain(); 
-  // console.log("activeTabID: ",activeTabID);
-  // console.log("DP3P: ", domPrev3rdParties);
-  console.log("tabs: ", tabs);
-  let info = tabs[activeTabID]["REQUEST_DOMAINS"];
-  let data = Object.keys(info);
-
-  //initialize the objects
-  // if (!(activeTabID in domPrev3rdParties)){
-  //   domPrev3rdParties[activeTabID] = {};
-  // }
-  // if (!(currentDomain in domPrev3rdParties[activeTabID]) ){
-  //   domPrev3rdParties[activeTabID][currentDomain] = {};
-  // }
-  // //as they come in, add the parsedDomain to the object with null value (just a placeholder)
-  // domPrev3rdParties[activeTabID][currentDomain][parsedDomain] = null;
-
-  //let data = JSON.stringify(data);
-  console.log("setting to storage under ", currentDomain, ": ", data);
-  await storage.set(stores.thirdParties, data, currentDomain);
   
 }
 
@@ -175,7 +189,7 @@ function updatePopupIcon(tabId) {
   });
 }
 
-function logData(details) {
+async function logData(details) {
   let url = new URL(details.url);
   let parsed = psl.parse(url.hostname);
 
@@ -424,6 +438,11 @@ async function onMessageHandlerAsync(message, sender, sendResponse) {
 
     wellknown[tabID] = message.data;
     let wellknownData = message.data;
+
+    console.log("setting WKD at ", domain, ": ", wellknownData);
+    await storage.set(stores.wellknownInformation, wellknownData, domain);
+
+    //await sendData();
 
     initIAB(!sendSignal);
 

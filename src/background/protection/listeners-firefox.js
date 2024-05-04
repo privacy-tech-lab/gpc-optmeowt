@@ -32,6 +32,7 @@ function enableListeners(callbacks) {
     onHeadersReceived,
     onBeforeNavigate,
     onCommitted,
+    onCompleted,
   } = callbacks;
 
   // (4) global Firefox listeners
@@ -47,6 +48,7 @@ function enableListeners(callbacks) {
   );
   chrome.webNavigation.onBeforeNavigate.addListener(onBeforeNavigate);
   chrome.webNavigation.onCommitted.addListener(onCommitted);
+  chrome.webNavigation.onCompleted.addListener(onCompleted);
 }
 
 /**
@@ -58,12 +60,14 @@ function disableListeners(callbacks) {
     onHeadersReceived,
     onBeforeNavigate,
     onCommitted,
+    onCompleted,
   } = callbacks;
 
   chrome.webRequest.onBeforeSendHeaders.removeListener(onBeforeSendHeaders);
   chrome.webRequest.onHeadersReceived.removeListener(onHeadersReceived);
   chrome.webNavigation.onBeforeNavigate.removeListener(onBeforeNavigate);
   chrome.webNavigation.onCommitted.removeListener(onCommitted);
+  chrome.webNavigation.onCompleted.removeListener(onCompleted);
 }
 
 export { enableListeners, disableListeners };
