@@ -72,9 +72,6 @@ const listenerCallbacks = {
    * @returns {array}
    */
   onBeforeSendHeaders: async (details) => {
-    // if (!setup){
-    //   initSetup();
-    // }
     await updateDomainlist(details);
   },
 
@@ -82,6 +79,9 @@ const listenerCallbacks = {
    * @param {object} details - retrieved info passed into callback
    */
   onHeadersReceived: async (details) => {
+    //if (!setup){
+      //initSetup();
+    //}
     await logData(details);
     await sendData();
     
@@ -123,6 +123,10 @@ async function sendData(){
   //     activeTabID = tabs.id;
   //   }
   // });
+
+  let activeTab = await chrome.tabs.query({ active: true, currentWindow: true });
+  let activeTabID = activeTab.length > 0 ? activeTab[0].id : null;
+
   let currentDomain = await getCurrentParsedDomain(); 
   // console.log("activeTabID: ",activeTabID);
   // console.log("DP3P: ", domPrev3rdParties);
@@ -132,6 +136,16 @@ async function sendData(){
   // console.log("test test2: ", tabs[activeTabID]["REQUEST_DOMAINS"]);
   // console.log("test test3: ", tabs[activeTabID]["REQUEST_DOMAINS"][currentDomain]);
   let data = ["Please reload the site"];
+
+  // if (activeTabID == 0){
+  //   console.log("activeTabID is zero!!!");
+  //   await chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+  //     console.log("tabs.id: ",tabs.id);
+  //     if (tabs.id) {
+  //       activeTabID = tabs.id;
+  //     }
+  //   });
+  // }
 
   if (tabs[activeTabID] !== undefined) {
     let info = await tabs[activeTabID]["REQUEST_DOMAINS"];
