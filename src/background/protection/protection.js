@@ -130,7 +130,7 @@ async function sendData(){
   let currentDomain = await getCurrentParsedDomain(); 
   // console.log("activeTabID: ",activeTabID);
   // console.log("DP3P: ", domPrev3rdParties);
-  //  console.log("tabs: ", tabs);
+    console.log("tabs: ", tabs);
   //  console.log("activeTabID: ", activeTabID);
   // console.log("test test1: ", tabs[activeTabID]);
   // console.log("test test2: ", tabs[activeTabID]["REQUEST_DOMAINS"]);
@@ -186,28 +186,30 @@ async function updateDomainlist(details) {
   let parsedDomain = parsedUrl.domain;
   let currDomainValue = await storage.get(stores.domainlist, parsedDomain);
 
-  console.log("origin url: ", details.documentUrl);
+  console.log("origin url: ", details.tabId);
 
-  let origin_url = new URL(details.documentUrl);
-  let parsed_origin = psl.parse(origin_url.hostname);
-  let parsedOrigin = parsed_origin.domain;
+  // let origin_url = new URL(details.originUrl);
+  // let parsed_origin = psl.parse(origin_url.hostname);
+  // let parsedOrigin = parsed_origin.domain;
+
+  let id = details.tabId;
 
   if (currDomainValue === undefined) {
     await storage.set(stores.domainlist, null, parsedDomain); // Sets to storage async
   }
   
-  //let currentDomain = await getCurrentParsedDomain(); 
+  let currentDomain = await getCurrentParsedDomain(); 
 
 
   //get the current parsed domain--this is used to store 3rd parties (using globalParsedDomain variable)
-  if (!(activeTabID in domPrev3rdParties)){
-    domPrev3rdParties[activeTabID] = {};
+  if (!(id in domPrev3rdParties)){
+    domPrev3rdParties[id] = {};
   }
-  if (!(parsedOrigin in domPrev3rdParties[activeTabID]) ){
-    domPrev3rdParties[activeTabID][parsedOrigin] = {};
+  if (!(currentDomain in domPrev3rdParties[activeTabID]) ){
+    domPrev3rdParties[id][currentDomain] = {};
   }
   //as they come in, add the parsedDomain to the object with null value (just a placeholder)
-  domPrev3rdParties[activeTabID][parsedOrigin][parsedDomain] = null;
+  domPrev3rdParties[id][currentDomain][parsedDomain] = null;
 
 
 }
