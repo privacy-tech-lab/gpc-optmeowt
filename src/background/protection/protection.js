@@ -130,41 +130,25 @@ async function sendData(){
   let currentDomain = await getCurrentParsedDomain(); 
   // console.log("activeTabID: ",activeTabID);
   // console.log("DP3P: ", domPrev3rdParties);
-   console.log("tabs: ", tabs);
-   console.log("activeTabID: ", activeTabID);
+  //  console.log("tabs: ", tabs);
+  //  console.log("activeTabID: ", activeTabID);
   // console.log("test test1: ", tabs[activeTabID]);
   // console.log("test test2: ", tabs[activeTabID]["REQUEST_DOMAINS"]);
   // console.log("test test3: ", tabs[activeTabID]["REQUEST_DOMAINS"][currentDomain]);
   let data = ["Please reload the site"];
 
-  // if (activeTabID == 0){
-  //   console.log("activeTabID is zero!!!");
-  //   await chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-  //     console.log("tabs.id: ",tabs.id);
-  //     if (tabs.id) {
-  //       activeTabID = tabs.id;
-  //     }
-  //   });
-  // }
 
-  if (tabs[activeTabID] !== undefined) {
-    let info = await tabs[activeTabID]["REQUEST_DOMAINS"];
+  //if (tabs[activeTabID] !== undefined) {
+    let info = await domPrev3rdParties[activeTabID][currentDomain];
     data = Object.keys(info);
-  }
 
-  //initialize the objects
-  // if (!(activeTabID in domPrev3rdParties)){
-  //   domPrev3rdParties[activeTabID] = {};
-  // }
-  // if (!(currentDomain in domPrev3rdParties[activeTabID]) ){
-  //   domPrev3rdParties[activeTabID][currentDomain] = {};
-  // }
-  // //as they come in, add the parsedDomain to the object with null value (just a placeholder)
-  // domPrev3rdParties[activeTabID][currentDomain][parsedDomain] = null;
+    console.log("setting to storage under ", currentDomain, ": ", data);
+    await storage.set(stores.thirdParties, data, currentDomain);
+  //}
 
-  //let data = JSON.stringify(data);
-  console.log("setting to storage under ", currentDomain, ": ", data);
-  await storage.set(stores.thirdParties, data, currentDomain);
+  //console.log("DP3P: ", domPrev3rdParties[activeTabID][currentDomain]);
+
+
 }
 
 
@@ -202,12 +186,30 @@ async function updateDomainlist(details) {
   let parsedDomain = parsedUrl.domain;
   let currDomainValue = await storage.get(stores.domainlist, parsedDomain);
 
+  console.log("origin url: ", details.documentUrl);
+
+  let origin_url = new URL(details.documentUrl);
+  let parsed_origin = psl.parse(origin_url.hostname);
+  let parsedOrigin = parsed_origin.domain;
+
   if (currDomainValue === undefined) {
     await storage.set(stores.domainlist, null, parsedDomain); // Sets to storage async
   }
   
+  //let currentDomain = await getCurrentParsedDomain(); 
+
+
   //get the current parsed domain--this is used to store 3rd parties (using globalParsedDomain variable)
-  
+  if (!(activeTabID in domPrev3rdParties)){
+    domPrev3rdParties[activeTabID] = {};
+  }
+  if (!(parsedOrigin in domPrev3rdParties[activeTabID]) ){
+    domPrev3rdParties[activeTabID][parsedOrigin] = {};
+  }
+  //as they come in, add the parsedDomain to the object with null value (just a placeholder)
+  domPrev3rdParties[activeTabID][parsedOrigin][parsedDomain] = null;
+
+
 }
 
 function updatePopupIcon(tabId) {
