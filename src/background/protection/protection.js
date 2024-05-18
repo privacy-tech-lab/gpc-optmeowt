@@ -128,25 +128,13 @@ async function sendData(){
   let activeTabID = activeTab.length > 0 ? activeTab[0].id : null;
 
   let currentDomain = await getCurrentParsedDomain(); 
-  // console.log("activeTabID: ",activeTabID);
-  // console.log("DP3P: ", domPrev3rdParties);
-    console.log("tabs: ", tabs);
-  //  console.log("activeTabID: ", activeTabID);
-  // console.log("test test1: ", tabs[activeTabID]);
-  // console.log("test test2: ", tabs[activeTabID]["REQUEST_DOMAINS"]);
-  // console.log("test test3: ", tabs[activeTabID]["REQUEST_DOMAINS"][currentDomain]);
   let data = ["Please reload the site"];
 
 
-  //if (tabs[activeTabID] !== undefined) {
     let info = await domPrev3rdParties[activeTabID][currentDomain];
     data = Object.keys(info);
 
-    console.log("setting to storage under ", currentDomain, ": ", data);
     await storage.set(stores.thirdParties, data, currentDomain);
-  //}
-
-  //console.log("DP3P: ", domPrev3rdParties[activeTabID][currentDomain]);
 
 
 }
@@ -185,13 +173,6 @@ async function updateDomainlist(details) {
   let parsedUrl = psl.parse(url.hostname);
   let parsedDomain = parsedUrl.domain;
   let currDomainValue = await storage.get(stores.domainlist, parsedDomain);
-
-  console.log("origin url: ", details.tabId);
-
-  // let origin_url = new URL(details.originUrl);
-  // let parsed_origin = psl.parse(origin_url.hostname);
-  // let parsedOrigin = parsed_origin.domain;
-
   let id = details.tabId;
 
   if (currDomainValue === undefined) {
@@ -342,24 +323,16 @@ function handleSendMessageError() {
 async function dataToPopupHelper(){
   //data gets sent back every time the popup is clicked
   let requestsData = {};
-
-  console.log("data to popup helper called");
-  
-  //if (tabs[activeTabID] !== undefined) {
     let domain = await getCurrentParsedDomain();
     let parties = await storage.get(stores.thirdParties, "parties");
     parties = JSON.parse(parties);
-    console.log("parties: ", parties[domain]);
     
     requestsData = parties[domain];
-    console.log("request data: ", requestsData);
-  //}
   return requestsData
 }
 
 // Info back to popup
 async function dataToPopup(wellknownData) {
-  console.log("datatopopup called");
   let requestsData = await dataToPopupHelper(); //get requests from the helper
   chrome.tabs.query({active: true, currentWindow: true}, function(tabs){
     let popupData = {
@@ -378,7 +351,6 @@ async function dataToPopup(wellknownData) {
 }
 
 async function dataToPopupRequests() {
-  console.log("datatopopuprequests called");
   let requestsData = await dataToPopupHelper(); //get requests from the helper
   console.log("requests data in DTPR: ", requestsData)
 
@@ -471,7 +443,6 @@ async function onMessageHandlerAsync(message, sender, sendResponse) {
     wellknown[tabID] = message.data;
     let wellknownData = message.data;
 
-    console.log("setting WKD at ", domain, ": ", wellknownData);
     await storage.set(stores.wellknownInformation, wellknownData, domain);
 
     //await sendData();

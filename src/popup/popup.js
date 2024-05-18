@@ -423,11 +423,8 @@ async function showProtectionInfo() {
   let domain = await getCurrentParsedDomain();
   let parties = await storage.get(stores.thirdParties, domain);
   let wellknown = await storage.get(stores.wellknownInformation, domain);
-  //parties = JSON.parse(parties);
-  console.log("parties under ", domain, ": ", parties);
   
   let requestsData = parties;
-  console.log("request data: ", requestsData);
   buildDomains(requestsData);
   buildWellKnown(wellknown);
 
@@ -667,16 +664,13 @@ async function buildWellKnown(requests) {
 chrome.runtime.onMessage.addListener(function (message, _, __) {
   if (message.msg === "POPUP_PROTECTION_DATA") {
     let { requests, wellknown } = message.data;
-    console.log("info received PPD");
     domainsInfo = requests;
     wellknownInfo = wellknown;
     //buildDomains(requests);
     //buildWellKnown(wellknown);
   }
   if (message.msg === "POPUP_PROTECTION_DATA_REQUESTS") {
-    console.log("info received PPDR");
     let requests = message.data;
-    console.log("requests: ", requests);
     buildDomains(requests);
   }
 });
