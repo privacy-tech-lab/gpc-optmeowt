@@ -138,7 +138,6 @@ function renderExtensionIsEnabledDisabled(isEnabled, isDomainlisted) {
 }
 
 function turnonoff(isEnabled) {
-  if ("$BROWSER" == "chrome") {
     if (isEnabled) {
       chrome.scripting.updateContentScripts([
         {
@@ -154,7 +153,6 @@ function turnonoff(isEnabled) {
       updateRemovalScript();
       reloadDynamicRules();
     }
-  }
 }
 
 function listenerExtensionIsEnabledDisabledButton(
@@ -395,7 +393,7 @@ function removeListenerDropdown2Toggle() {
 /**
  * Redraws the popup for protection mode
  */
-function showProtectionInfo() {
+async function showProtectionInfo() {
   removeFirstPartyDomainDNSToggle();
   removeListenerDropdown1Toggle();
   removeListenerDropdown2Toggle();
@@ -422,17 +420,20 @@ function showProtectionInfo() {
   listenerDropdown1Toggle();
   listenerDropdown2Toggle();
 
-  chrome.runtime.sendMessage({
-    msg: "POPUP_PROTECTION",
-    data: null,
-  });
+  let domain = await getCurrentParsedDomain();
+  let parties = await storage.get(stores.thirdParties, domain);
+  let wellknown = await storage.get(stores.wellknownInformation, domain);
+  
+  let requestsData = parties;
+  buildDomains(requestsData);
+  buildWellKnown(wellknown);
 
-  if ("$BROWSER" == "chrome") {
-    chrome.runtime.sendMessage({
-      msg: "POPUP_PROTECTION_REQUESTS",
-      data: null,
-    });
-  }
+
+
+    // chrome.runtime.sendMessage({
+    //   msg: "POPUP_PROTECTION_REQUESTS",
+    //   data: null,
+    // });
 }
 
 /**
@@ -504,14 +505,16 @@ function addThirdPartyDomainDNSToggleListener(requestDomain) {
  * @param {Object} requests - Contains all request domains for the current tab
  * (requests = tabs[activeTabID].requestDomainS; passed from background page)
  */
-async function buildDomains(requests) {
+ async function buildDomains(requests) {
   let domain = await getCurrentParsedDomain();
   let items = "";
   const domainlistKeys = await storage.getAllKeys(stores.domainlist);
   const domainlistValues = await storage.getAll(stores.domainlist);
 
-  // Sets the 3rd party domain elements
-  for (let requestDomain in requests) {
+  // Iterate through requests array
+  for (let i = 0; i < requests.length; i++) {
+    const requestDomain = requests[i]; // Get the domain name from the request array
+
     if (requestDomain != domain) {
       let checkbox = "";
       let text = "";
@@ -526,46 +529,46 @@ async function buildDomains(requests) {
       }
 
       items += `
-  <li>
-    <div
-      class="blue-heading uk-flex-inline uk-width-1-1 uk-flex-center uk-text-center uk-text-bold uk-text-truncate"
-      style="font-size: medium"
-      id="domain"
-    >
-      ${requestDomain}
-    </div>
-    <div uk-grid  style="margin-top: 4%; ">
-      <div
-        id="dns-enabled-text-${requestDomain}"
-        class="uk-width-expand uk-margin-auto-vertical"
-        style="font-size: small;"
-      >
-        ${text}
-      </div>
-      <div>
-        <div uk-grid>
-          <div class="uk-width-auto">
-            <label class="switch switch-smaller" id="switch-label-${requestDomain}">
-              <!-- Populate switch preference here -->
-              <!-- <input type="checkbox" id="input"/> -->
-              ${checkbox}
-              <span class="tooltip-1"></span>
-            </label>
+        <li>
+          <div
+            class="blue-heading uk-flex-inline uk-width-1-1 uk-flex-center uk-text-center uk-text-bold uk-text-truncate"
+            style="font-size: medium"
+            id="domain"
+          >
+            ${requestDomain}
           </div>
-        </div>
-      </div>
-    </div>
-    <!-- Response info -->
-    <div uk-grid uk-grid-row-collapse style="margin-top:0px;">
-    </div>
-  </li>
-  `;
+          <div uk-grid  style="margin-top: 4%; ">
+            <div
+              id="dns-enabled-text-${requestDomain}"
+              class="uk-width-expand uk-margin-auto-vertical"
+              style="font-size: small;"
+            >
+              ${text}
+            </div>
+            <div>
+              <div uk-grid>
+                <div class="uk-width-auto">
+                  <label class="switch switch-smaller" id="switch-label-${requestDomain}">
+                    <!-- Populate switch preference here -->
+                    ${checkbox}
+                    <span class="tooltip-1"></span>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Response info -->
+          <div uk-grid uk-grid-row-collapse style="margin-top:0px;">
+          </div>
+        </li>
+      `;
     }
   }
   document.getElementById("dropdown-1-expandable").innerHTML = items;
 
   // Sets the 3rd party domain toggle listeners
-  for (let requestDomain in requests) {
+  for (let i = 0; i < requests.length; i++) {
+    const requestDomain = requests[i];
     if (requestDomain != domain) {
       addThirdPartyDomainDNSToggleListener(requestDomain);
     }
@@ -663,8 +666,8 @@ chrome.runtime.onMessage.addListener(function (message, _, __) {
     let { requests, wellknown } = message.data;
     domainsInfo = requests;
     wellknownInfo = wellknown;
-    buildDomains(requests);
-    buildWellKnown(wellknown);
+    //buildDomains(requests);
+    //buildWellKnown(wellknown);
   }
   if (message.msg === "POPUP_PROTECTION_DATA_REQUESTS") {
     let requests = message.data;

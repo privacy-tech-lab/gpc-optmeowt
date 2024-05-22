@@ -26,6 +26,8 @@ const { saveAs } = pkg;
 const stores = Object.freeze({
   settings: "SETTINGS",
   domainlist: "DOMAINLIST",
+  thirdParties: "THIRDPARTIES",
+  wellknownInformation: "WELLKNOWNDATA",
 });
 
 /******************************************************************************/
@@ -36,6 +38,8 @@ const dbPromise = openDB("extensionDB", 1, {
   upgrade: function dbPromiseInternal(db) {
     db.createObjectStore(stores.domainlist);
     db.createObjectStore(stores.settings);
+    db.createObjectStore(stores.thirdParties);
+    db.createObjectStore(stores.wellknownInformation);
   },
 });
 
@@ -97,9 +101,6 @@ const storage = {
 async function handleDownload() {
   const DOMAINLIST = await storage.getStore(stores.domainlist);
   let MANIFEST = chrome.runtime.getManifest();
-  if ("$BROWSER" == "firefox") {
-    MANIFEST.version = "2.0";
-  }
   let data = {
     VERSION: MANIFEST.version,
     DOMAINLIST: DOMAINLIST,

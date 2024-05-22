@@ -38,10 +38,8 @@ var signalPerTab = {};  // Caches if a signal is sent to render the popup icon
 var activeTabID = 0;    // Caches current active tab id
 var sendSignal = true;  // Caches if the signal can be sent to the curr domain
 var domPrev3rdParties = {}; //stores all the 3rd parties by domain (resets when you quit chrome)
-var isFirefox = ("$BROWSER" === "firefox");
 var globalParsedDomain;
-
-var isFirefox = "$BROWSER" === "firefox";
+var setup = false;
 
 async function reloadVars() {
   let storedDomainlisted = await storage.get(
@@ -73,15 +71,21 @@ const listenerCallbacks = {
    * @param {object} details - retrieved info passed into callback
    * @returns {array}
    */
-  onBeforeSendHeaders: (details) => {
-    updateDomainlist(details);
+  onBeforeSendHeaders: async (details) => {
+    await updateDomainlist(details);
   },
 
   /**
    * @param {object} details - retrieved info passed into callback
    */
-  onHeadersReceived: (details) => {
-    logData(details);
+  onHeadersReceived: async (details) => {
+    //if (!setup){
+      //initSetup();
+    //}
+    await logData(details);
+    await sendData();
+    
+
 
   },
 
@@ -97,8 +101,13 @@ const listenerCallbacks = {
    * @param {object} details - retrieved info passed into callback
    */
   onCommitted: async (details) => {
-    updateDomainlist(details);
+    await updateDomainlist(details);
   },
+  
+  onCompleted: async (details) => {
+    await sendData();
+  }
+
 }; // closes listenerCallbacks object
 
 /******************************************************************************/
@@ -106,6 +115,29 @@ const listenerCallbacks = {
 /**********      # Listener helper fxns - Main functionality         **********/
 /******************************************************************************/
 /******************************************************************************/
+
+
+async function sendData(){
+  // chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+  //   if (tabs.id) {
+  //     activeTabID = tabs.id;
+  //   }
+  // });
+
+  let activeTab = await chrome.tabs.query({ active: true, currentWindow: true });
+  let activeTabID = activeTab.length > 0 ? activeTab[0].id : null;
+
+  let currentDomain = await getCurrentParsedDomain(); 
+  let data = ["Please reload the site"];
+
+
+    let info = await domPrev3rdParties[activeTabID][currentDomain];
+    data = Object.keys(info);
+
+    await storage.set(stores.thirdParties, data, currentDomain);
+
+
+}
 
 
 function getCurrentParsedDomain() {
@@ -141,23 +173,26 @@ async function updateDomainlist(details) {
   let parsedUrl = psl.parse(url.hostname);
   let parsedDomain = parsedUrl.domain;
   let currDomainValue = await storage.get(stores.domainlist, parsedDomain);
+  let id = details.tabId;
 
   if (currDomainValue === undefined) {
-    storage.set(stores.domainlist, null, parsedDomain); // Sets to storage async
+    await storage.set(stores.domainlist, null, parsedDomain); // Sets to storage async
   }
   
-  //get the current parsed domain--this is used to store 3rd parties (using globalParsedDomain variable)
- 
   let currentDomain = await getCurrentParsedDomain(); 
-  //initialize the objects
-  if (!(activeTabID in domPrev3rdParties)){
-    domPrev3rdParties[activeTabID] = {};
+
+
+  //get the current parsed domain--this is used to store 3rd parties (using globalParsedDomain variable)
+  if (!(id in domPrev3rdParties)){
+    domPrev3rdParties[id] = {};
   }
   if (!(currentDomain in domPrev3rdParties[activeTabID]) ){
-    domPrev3rdParties[activeTabID][currentDomain] = {};
+    domPrev3rdParties[id][currentDomain] = {};
   }
   //as they come in, add the parsedDomain to the object with null value (just a placeholder)
-  domPrev3rdParties[activeTabID][currentDomain][parsedDomain] = null;
+  domPrev3rdParties[id][currentDomain][parsedDomain] = null;
+
+
 }
 
 function updatePopupIcon(tabId) {
@@ -167,7 +202,7 @@ function updatePopupIcon(tabId) {
   });
 }
 
-function logData(details) {
+async function logData(details) {
   let url = new URL(details.url);
   let parsed = psl.parse(url.hostname);
 
@@ -285,21 +320,20 @@ function handleSendMessageError() {
     console.warn(error.message);
   }
 }
-function dataToPopupHelper(){
+async function dataToPopupHelper(){
   //data gets sent back every time the popup is clicked
-  let requestsData = {};  
-  
-  if (tabs[activeTabID] !== undefined) {
-
-    requestsData = domPrev3rdParties[activeTabID][globalParsedDomain];
-  }
+  let requestsData = {};
+    let domain = await getCurrentParsedDomain();
+    let parties = await storage.get(stores.thirdParties, "parties");
+    parties = JSON.parse(parties);
+    
+    requestsData = parties[domain];
   return requestsData
 }
 
 // Info back to popup
-function dataToPopup(wellknownData) {
-  
-  let requestsData = dataToPopupHelper(); //get requests from the helper
+async function dataToPopup(wellknownData) {
+  let requestsData = await dataToPopupHelper(); //get requests from the helper
   chrome.tabs.query({active: true, currentWindow: true}, function(tabs){
     let popupData = {
       requests: requestsData,
@@ -316,9 +350,9 @@ function dataToPopup(wellknownData) {
   });
 }
 
-function dataToPopupRequests() {
- 
-  let requestsData = dataToPopupHelper(); //get requests from the helper
+async function dataToPopupRequests() {
+  let requestsData = await dataToPopupHelper(); //get requests from the helper
+  console.log("requests data in DTPR: ", requestsData)
 
   chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
     chrome.runtime.sendMessage(
@@ -392,10 +426,13 @@ async function onMessageHandlerAsync(message, sender, sendResponse) {
     storage.set(stores.domainlist, key, domain); // Sets to long term storage
   }
   if (message.msg === "POPUP_PROTECTION_REQUESTS") {
-    dataToPopupRequests();
+    console.log("info queried");
+    await dataToPopupRequests();
   }
   if (message.msg === "CONTENT_SCRIPT_WELLKNOWN") {
-    let url = new URL(sender.origin);
+    // sender.origin not working for Firefox MV3, instead added a new message argument, message.origin_url
+    //let url = new URL(sender.origin);
+    let url = new URL(message.origin_url);
     let parsed = psl.parse(url.hostname);
     let domain = parsed.domain;
 
@@ -405,7 +442,13 @@ async function onMessageHandlerAsync(message, sender, sendResponse) {
 
     wellknown[tabID] = message.data;
     let wellknownData = message.data;
+
+    await storage.set(stores.wellknownInformation, wellknownData, domain);
+
+    //await sendData();
+
     initIAB(!sendSignal);
+
     if (wellknown[tabID] === null && sendSignal == null) {
       updatePopupIcon(tabID);
     } else if (wellknown[tabID]["gpc"] === true && sendSignal == null) {
@@ -414,9 +457,9 @@ async function onMessageHandlerAsync(message, sender, sendResponse) {
         path: "assets/face-icons/optmeow-face-circle-green-128.png",
       });
     }
-    chrome.runtime.onMessage.addListener(function (message, _, __) {
+    chrome.runtime.onMessage.addListener(async function (message, _, __) {
       if (message.msg === "POPUP_PROTECTION") {
-        dataToPopup(wellknownData);
+        await dataToPopup(wellknownData);
       }
     });
   }
@@ -454,7 +497,6 @@ async function onMessageHandlerAsync(message, sender, sendResponse) {
     initCookiesPerDomain(message.data);
   }
   if (message.msg === "DELETE_OPTOUT_COOKIES") {
-    console.log("Msg received. Info; ", message.data);
     deleteCookiesPerDomain(message.data);
   }
 
@@ -484,6 +526,7 @@ function closeMessagePassing() {
  */
 function onActivatedProtectionMode(info) {
   activeTabID = info.tabId;
+  console.log("onActivatedProtectionMode called");
 }
 
 // Handles misc. setup & setup listeners
@@ -498,6 +541,7 @@ function initSetup() {
   });
 
   chrome.tabs.onActivated.addListener(onActivatedProtectionMode);
+  setup = true;
 }
 
 function closeSetup() {

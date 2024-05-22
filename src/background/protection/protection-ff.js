@@ -32,7 +32,6 @@ var wellknown = {};     // Caches wellknown info to be sent to popup
 var signalPerTab = {};  // Caches if a signal is sent to render the popup icon
 var activeTabID = 0;    // Caches current active tab id
 var sendSignal = true;  // Caches if the signal can be sent to the curr domain
-var isFirefox = ("$BROWSER" === "firefox");
 var domPrev3rdParties = {}; //stores all the 3rd parties by domain (resets when you quit chrome)
 var globalParsedDomain;
 
@@ -47,6 +46,7 @@ async function reloadVars() {
 }
 
 reloadVars();
+
 
 /******************************************************************************/
 /******************************************************************************/
@@ -69,7 +69,7 @@ const listenerCallbacks = {
   onBeforeSendHeaders: async (details) => {
     await updateDomainlist(details);
 
-    if (sendSignal) {
+    if (true) {
       signalPerTab[details.tabId] = true;
       return addHeaders(details);
     }
@@ -100,7 +100,7 @@ const listenerCallbacks = {
    */
   onCommitted: async (details) => {
     initIAB(sendSignal);
-    if (sendSignal) {
+    if (true) {
       addDomSignal(details);
       updatePopupIcon(details);
     }
@@ -119,6 +119,7 @@ const listenerCallbacks = {
  * @returns {array} details.requestHeaders
  */
 function addHeaders(details) {
+  console.log("addHeaders called");
   for (let signal in headers) {
     let s = headers[signal];
     details.requestHeaders.push({ name: s.name, value: s.value });
@@ -131,7 +132,8 @@ function addHeaders(details) {
  * @param {object} details - retrieved info passed into callback
  */
 function addDomSignal(details) {
-  chrome.tabs.executeScript(details.tabId, {
+  console.log("addDomSignal called");
+  chrome.scripting.executeScript(details.tabId, {
     file: "../../content-scripts/injection/gpc-dom.js",
     frameId: details.frameId, // Supposed to solve multiple injections
     // as opposed to allFrames: true

@@ -59,7 +59,6 @@ function eventListeners() {
         msg: "CHANGE_IS_DOMAINLISTED",
         data: { isDomainlisted: false },
       });
-      if ("$BROWSER" == "chrome") {
         chrome.scripting.updateContentScripts([
           {
             id: "1",
@@ -70,7 +69,6 @@ function eventListeners() {
           },
         ]);
         deleteAllDynamicRules();
-      }
     });
   document
     .getElementById("settings-view-radio1")
@@ -83,7 +81,6 @@ function eventListeners() {
         msg: "CHANGE_IS_DOMAINLISTED",
         data: { isDomainlisted: false },
       });
-      if ("$BROWSER" == "chrome") {
         chrome.scripting.updateContentScripts([
           {
             id: "1",
@@ -94,7 +91,6 @@ function eventListeners() {
           },
         ]);
         addDynamicRule(4999, "*");
-      }
     });
   document
     .getElementById("settings-view-radio2")
@@ -107,10 +103,8 @@ function eventListeners() {
         msg: "CHANGE_IS_DOMAINLISTED",
         data: { isDomainlisted: true },
       });
-      if ("$BROWSER" == "chrome") {
         updateRemovalScript();
         reloadDynamicRules();
-      }
     });
   document
     .getElementById("download-button")
@@ -206,6 +200,41 @@ function walkthrough() {
   }
 }
 
+/*
+ * Request host permissions upon install
+ */
+
+async function requestPermissionsButton() {
+  try {
+    // Request permissions
+    const response = await browser.permissions.request({
+      origins: ["<all_urls>"] // Allows host permissions
+    });
+
+    // Check if permissions were granted or refused
+    if (response) {
+      console.log("Permissions were granted");
+      storage.set(stores.settings, true, "REQUEST_PERMISSIONS_SHOWN");
+    } else {
+      console.log("Permissions were refused");
+    }
+
+    // Retrieve current permissions after the request
+    const currentPermissions = await browser.permissions.getAll();
+    console.log(`Current permissions:`, currentPermissions);
+  } catch (error) {
+    console.error('Error requesting permissions:', error);
+  }
+}
+
+function requestPermissions() {
+  let modal = UIkit.modal('#permission-modal');
+  modal.show();
+  document.getElementById("modal-button-4").onclick = () => {
+    requestPermissionsButton();
+    modal.hide();
+  }
+}
 
 /******************************************************************************/
 
@@ -243,4 +272,10 @@ export async function settingsView(scaffoldTemplate) {
     walkthrough();
   }
   storage.set(stores.settings, true, "TUTORIAL_SHOWN");
-}
+
+  if ("$BROWSER" == "firefox") {
+    const requestShown = await storage.get(stores.settings, "REQUEST_PERMISSIONS_SHOWN");
+    if (!requestShown) {
+      requestPermissions();
+    }
+  }}

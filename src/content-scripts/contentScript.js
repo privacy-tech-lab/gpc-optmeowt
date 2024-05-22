@@ -20,6 +20,7 @@ https://developer.chrome.com/extensions/content_scripts
 /******************************************************************************/
 /******************************************************************************/
 
+
 // To be injected to call the USPAPI function in analysis mode
 const uspapi = `
   try {
@@ -55,6 +56,7 @@ function injectScript(script) {
 
 async function getWellknown(url) {
   const response = await fetch(`${url.origin}/.well-known/gpc.json`);
+  new_url = url = JSON.parse(JSON.stringify(url));
   let wellknownData;
   try {
     wellknownData = await response.json();
@@ -64,6 +66,7 @@ async function getWellknown(url) {
   chrome.runtime.sendMessage({
     msg: "CONTENT_SCRIPT_WELLKNOWN",
     data: wellknownData,
+    origin_url: new_url
   });
 }
 
