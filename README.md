@@ -181,7 +181,9 @@ The following procedure is for testing the OptMeowt extension UI, which cannot b
 "permissions": [
     "declarativeNetRequest",
     "webRequest",
+    "webRequestBlocking",
     "webNavigation",
+    "<all_urls>",
     "storage",
     "activeTab",
     "cookies",
@@ -192,7 +194,9 @@ The following procedure is for testing the OptMeowt extension UI, which cannot b
 
 - `declarativeNetRequest`: Allows OptMeowt to modify rules, allowing us to send the GPC header
 - `webRequest`: Pauses outgoing HTTP requests to append opt out headers
+- `webRequestBlocking`: Allows an extension to intercept and potentially block, modify, or redirect web requests before they are completed
 - `webNavigation`: Similar to `webRequest`, allows OptMeowt to check when navigation requests are made to reset processes
+- `<all_urls>`: Gives OptMeowt permission to access and interact with the content and data of any website visited by the browser
 - `storage`: Allows OptMeowt to save your opt out preferences in your browser
 - `activeTab`: Allows OptMeowt to set opt out signals on your active browser tab
 - `cookies`: Allows OptMeowt to place opt out cookies in your browser
