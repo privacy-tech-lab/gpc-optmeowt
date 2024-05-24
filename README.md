@@ -29,7 +29,7 @@ OptMeowt ("Opt Me Out") is a browser extension for opting you out from web track
 
 OptMeowt is developed and maintained by Matt May (@Mattm27), Francisca Wijaya (@franciscawijaya), and Sebastian Zimmeck (@SebastianZimmeck) of the [privacy-tech-lab](https://privacytechlab.org/). Learn more [here](https://privacytechlab.org/).
 
-Oliver Wang (@OliverWang13), Sophie Eng (@sophieeng), Kate Hausladen (@katehausladen), Jocelyn Wang (@Jocelyn0830), Kuba Alicki (@kalicki1), Stanley Markman (@stanleymarkman), Kiryl Beliauski (@kbeliauski), Daniel Knopf (@dknopf), and Abdallah Salia (@asalia-1) contributed earlier.
+Oliver Wang (@OliverWang13), Sophie Eng (@sophieeng), Kate Hausladen (@katehausladen), Jocelyn Wang (@Jocelyn0830), Kuba Alicki (@kalicki1), Stanley Markman (@stanleymarkman), Kiryl Beliauski (@kbeliauski), Daniel Knopf (@dknopf) and Abdallah Salia (@asalia-1) contributed earlier.
 
 [1. Research Publications](#1-research-publications)  
 [2. Promo Video](#2-promo-video)  
