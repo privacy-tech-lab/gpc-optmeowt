@@ -81,8 +81,15 @@ For a more in-depth look at how OptMeowt works, check out our [Beginners Guide t
 
 ## 4. Installing OptMeowt from Source
 
-1. Clone this repo locally or download a zipped copy and unzip it.
-2. Install [npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm).
+1. Clone this repo locally with:
+
+   ```bash
+   git clone https://github.com/privacy-tech-lab/gpc-optmeowt.git
+   ```
+
+   You can also download a zipped copy and unzip it.
+
+2. Install [Node.js and npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm).
 3. From within your local `/gpc-optmeowt/` directory install OptMeowt's dependencies with:
 
    ```bash
