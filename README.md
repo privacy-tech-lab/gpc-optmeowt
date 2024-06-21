@@ -81,7 +81,7 @@ For a more in-depth look at how OptMeowt works, check out our [Beginners Guide t
 
 ## 4. Installing OptMeowt from Source
 
-Here are the instructions for installing OptMeowt for developers.
+Here are the instructions for installing OptMeowt from the source files in this repo.
 
 ### Chrome and Firefox
 
