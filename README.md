@@ -73,9 +73,9 @@ In detail, OptMeowt uses the following methods to opt you out:
 3. First party cookies of ad networks participating in the [IAB CCPA Compliance Framework for Publishers & Technology Companies](https://iabtechlab.com/standards/ccpa/).
 4. Third party cookies of ad networks participating in the [DAA's CCPA Opt Out Tool for the Web](https://digitaladvertisingalliance.org/integrate-webchoices-ccpa).
 
-**Customizing which sites receive GPC signals:** For every site you visit OptMeowt will automatically add its domain to the `domain list`. Each newly added domain will receive GPC signals by default. However, you can exclude domains that should not receive GPC signals. This functionality is available on OptMeowt's popup window and settings page.
-
 **Opting Out of the Topics API:** As all browser vendors are phasing out the use of third-party cookies Google introduced the [Topics API](https://developer.mozilla.org/en-US/docs/Web/API/Topics_API). The Topics API identifies users' general areas of interest which are then used for personalized advertising. These topics are generated through observing and recording a users' browsing activity. Websites will then receive access to these topics that are stored on users' browsers. To opt you out of the Topics API OptMeowt sends a `Permissions-Policy` header to all the sites you visit. This approach follows [Google's documentation](https://developer.chrome.com/en/docs/privacy-sandbox/topics/#site-opt-out) on how to opt a site out of the Topics API. Note that this functionality of OptMeowt is only available for Chromium browsers as other browsers do not implement the Topics API.
+
+**Customizing which sites receive GPC signals:** For every site you visit OptMeowt will automatically add its domain to the `domain list`. Each newly added domain will receive GPC signals by default. However, you can exclude domains that should not receive GPC signals. This functionality is available on OptMeowt's popup window and settings page.
 
 For a more in-depth look at how OptMeowt works, check out our [Beginners Guide to OptMeowt](https://docs.google.com/document/d/1H0sA6hK0Q0OLT4Tz_Yp-byHi0U4Ue5DO8k7K-NXnY2Q/edit?usp=sharing).
 
