@@ -169,7 +169,7 @@ npm test
 
 Using Puppeteer this command will launch an automated headful browser on Chromium testing the Chrome GPC signal against the [GPC reference server](https://global-privacy-control.glitch.me/).
 
-### Running Automated Unit Tests
+### 7.1 Running Automated Unit Tests
 
 **Locally:**
 You can run unit tests locally.
@@ -191,7 +191,7 @@ You can run unit tests locally.
 **Continuous Integration:**
 The continuous integration is built into the OptMeowt repo. Therefore, no changes to the extension environment are needed to run new tests.
 
-### Manual UI testing
+### 7.2 Manual UI testing
 
 The following procedure is for testing the OptMeowt extension UI, which cannot be automated. They are recommended to be performed manually as follows:
 
@@ -215,7 +215,7 @@ The following procedure is for testing the OptMeowt extension UI, which cannot b
 9. Go back to the main settings page and export Domainlist.
    - [ ] TEST 10: Check the exported Domainlist and the Domainlist in the settings page to make sure the websites match up.
 
-### Creating a New Test
+### 7.3 Creating a New Test
 
 1. Navigate to `.../gpc-optmeowt/test/`. Then navigate to the folder in the test directory that corresponds to the tested function's location in the extension source code.
 2. Create a new file in the matching folder. Name the file with the format `FUNCTION_NAME.test.js`.
@@ -284,7 +284,7 @@ OptMeowt uses various [third party libraries](https://github.com/privacy-tech-la
 
 ## 13. Thank You!
 
-<p align="center"><strong>We would like to thank our financial supporters!</strong></p><br>
+<p align="center"><strong>We would like to thank our supporters!</strong></p><br>
 
 <p align="center">Major financial support provided by the National Science Foundation.</p>
 
