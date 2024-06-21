@@ -118,7 +118,7 @@ Here are the instructions for installing OptMeowt from the source files in this 
 ### Firefox
 
 5. In Firefox, navigate to the addons page with developer privileges at `about:debugging#/runtime/this-firefox`.
-6. Under `Temporary extensions`, click `Load Temporary Add-on..`.
+6. Under `Temporary extensions`, click `Load Temporary Add-on...`.
 7. Select the manifest from the directory where you built OptMeowt, by default `/gpc-optmeowt/dist/firefox/manifest.json/`.
 
 **Note**: OptMeowt is in active development and new features are being added, some of which may cause errors. You can always get the stable release version on the [Chrome Web Store](https://chrome.google.com/webstore/detail/optmeowt/hdbnkdbhglahihjdbodmfefogcjbpgbo) and on [Firefox Add-Ons](https://addons.mozilla.org/en-US/firefox/addon/optmeowt/). You can also disable sending GPC signals to a site in case OptMeowt causes it to break.
@@ -133,7 +133,7 @@ npm run start
 
 This command will run the npm script (referenced in `package.json`) that will call Webpack in development mode (Webpack settings are in `webpack.config.js`). `npm run start` will also initiate Webpack servers for both the Firefox and Chrome versions, which will listen for changes as you work and rebuild as necessary.
 
-**Webpack and File Structure Notes:**
+### 5.1 Webpack
 
 Webpack will build the development versions of OptMeowt into the `dev` subdirectory instead of the `dist` subdirectory. The subdirectories for Chrome and Firefox are `dev/chrome` and `dev/firefox`, respectively.
 
@@ -147,13 +147,13 @@ npm install
 
 Running this command instead of `npm ci` will include new dependencies in the `package-lock.json`, which is generated from the `package.json`.
 
-**For Windows Users:**
+### 5.2 Debugging
 
-**Note**: We have built most of our codebase in macOS, so path variables and similar code may cause the build to break in other OSs, in particular Windows. We recommend installing a Linux OS if you will be working with the codebase in any significant manner.
+We like to use the [Debugger for Firefox](https://marketplace.visualstudio.com/items?itemName=firefox-devtools.vscode-firefox-debug) from within [Visual Studio Code](https://code.visualstudio.com/) when in development to help automating the development and build processes. The default behavior is `F5` to launch and load the extension in the browser. There is a similar extension that you can use for Chrome, [JavaScript Debugger](https://marketplace.visualstudio.com/items?itemName=ms-vscode.js-debug), which is already included in Visual Studio Code by default. Make sure to follow the online documentation on writing the correct `.vscode/launch.json` file, or other necessary settings files, in order to properly load OptMeowt with the debugger.
 
-**Optional:**
+### 5.3 Developing on Windows
 
-We also like to use [Debugger for Firefox](https://marketplace.visualstudio.com/items?itemName=firefox-devtools.vscode-firefox-debug) from within VSCode when in development to help automate loading the built extension package. The default behavior is `F5` to launch and load the extension in browser. There is a similar extension for Chrome, [Debugger for Chrome](https://marketplace.visualstudio.com/items?itemName=msjsdiag.debugger-for-chrome). Make sure to follow the online documentation on writing the correct `.vscode/launch.json` file, or other necessary settings files, in order to properly load OptMeowt with the debugger.
+We have built most of our codebase in macOS, so path variables and similar code may cause the build to break in other OSs, in particular Windows. We recommend using macOS or installing a Linux OS if you will be working with the codebase in any significant manner.
 
 ## 6. Installing the OptMeowt PETS 2023 Version
 
@@ -281,10 +281,9 @@ OptMeowt uses various [third party libraries](https://github.com/privacy-tech-la
 
 ## 12. Developer Guide
 
-### Contributing
+If you have questions about OptMeowt's functionality or have found a bug, please check out our [FAQ \ Known quirks](https://github.com/privacy-tech-lab/gpc-optmeowt/wiki/FAQ-%5C-Known-quirks) page on the [Wiki](https://github.com/privacy-tech-lab/gpc-optmeowt/wiki). If you cannot find what you are looking for, feel free to open an issue, and we will address it.
 
-- If you have questions about OptMeowt's functionality or have found a bug, please check out our [FAQ \ Known quirks](https://github.com/privacy-tech-lab/gpc-optmeowt/wiki/FAQ-%5C-Known-quirks) page on the [Wiki](https://github.com/privacy-tech-lab/gpc-optmeowt/wiki). If you cannot find what you are looking for, feel free to open an issue, and we will address it.
-- **Note**: When viewing your browser's console on a site, a 404 error status code regarding the domain's GPC status file (`/.well-known/gpc.json`) may be shown. This behavior is normal and will occur (1) on domains that do not support GPC and (2) on domains that support GPC but do not host a `/.well-known/gpc.json` file.
+**Note**: When viewing your browser's console on a site, a 404 error status code regarding the domain's GPC status file (`/.well-known/gpc.json`) may be shown. This behavior is normal and will occur (1) on domains that do not support GPC and (2) on domains that support GPC but do not host a `/.well-known/gpc.json` file.
 
 ## 13. Thank You!
 
