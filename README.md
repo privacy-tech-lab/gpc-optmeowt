@@ -81,6 +81,10 @@ For a more in-depth look at how OptMeowt works, check out our [Beginners Guide t
 
 ## 4. Installing OptMeowt from Source
 
+Here are the instructions for installing OptMeowt for developers.
+
+### Chrome and Firefox
+
 1. Clone this repo locally with:
 
    ```bash
@@ -109,7 +113,7 @@ For a more in-depth look at how OptMeowt works, check out our [Beginners Guide t
 5. In Chrome, navigate to the extensions page at `chrome://extensions/`.
 6. Enable `Developer mode` with the slider on the top right corner of the extension page.
 7. Click the `Load unpacked` button in the top left of the page.
-8. Select the directory where you built OptMeowt, by default `/gpc-optmeowt/dist/chrome/` (the directory that contains the `manifest.json``).
+8. Select the directory where you built OptMeowt, by default `/gpc-optmeowt/dist/chrome/` (the directory that contains the `manifest.json`).
 
 ### Firefox
 
@@ -155,7 +159,7 @@ We also like to use [Debugger for Firefox](https://marketplace.visualstudio.com/
 
 The version of OptMeowt used in our 2023 PETS paper, [Usability and Enforceability of Global Privacy Control](https://sebastianzimmeck.de/zimmeckEtAlGPC2023.pdf), can be found in our [v3.0.0-paper release](https://github.com/privacy-tech-lab/gpc-optmeowt/releases/tag/v3.0.0-paper). To view the v3.0.0-paper code, you can [look at the repo here](https://github.com/privacy-tech-lab/gpc-optmeowt/tree/v3.0.0-paper). Instructions for building the extension locally are the same as stated above per our [Firefox instructions](https://github.com/privacy-tech-lab/gpc-optmeowt/tree/main#firefox). To activate Analysis mode in the v3.0.0-paper release press the `Protection Mode` label in the popup. In addition, Analysis mode requires other privacy extensions or browsers to be disabled. For further detailed information on how to use analysis mode, please refer to [our methodology](https://github.com/privacy-tech-lab/gpc-optmeowt/tree/v4.0.1/#4-analysis-mode-firefox-only).
 
-Analysis mode used to be incorporated with the OptMeowt extension but can now be found in a [separate repo](https://github.com/privacy-tech-lab/gpc-web-crawler) specialized for crawling the web to analyze websites' GPC compliance.
+Analysis mode used to be part of the OptMeowt extension but is now part of the [GPC Web Crawler](https://github.com/privacy-tech-lab/gpc-web-crawler), which you can use to analyze websites' GPC compliance at scale.
 
 ## 7. Testing
 
