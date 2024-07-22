@@ -47,6 +47,7 @@ Former contributors are Oliver Wang (@OliverWang13), Sophie Eng (@sophieeng), Ka
 
 ## 1. Research Publications
 
+- Francisca Wijaya, Katherine Hausladen, Matt May, Oliver Wang, Sophie Eng, Sebastian Zimmeck, [Crawl for GPC: An Investigation of CCPA Compliance on the Internet](), Summer Research 2024 Poster Session, Wesleyan University, July 2024
 - Sebastian Zimmeck, Nishant Aggarwal, Zachary Liu and Konrad Kollnig, [From Ad Identifiers to Global Privacy Control: The Status Quo and Future of Opting Out of Ad Tracking on Android](), Under Review at 25th Privacy Enhancing Technologies Symposium (PETS), Washington, DC, United States and Online Event, July 2025, [BibTeX]()
 - Sebastian Zimmeck, Eliza Kuller, Chunyue Ma, Bella Tassone and Joe Champeau, [Generalizable Active Privacy Choice: Designing a Graphical User Interface for Global Privacy Control](https://sebastianzimmeck.de/zimmeckEtAlGPC2024.pdf), 24th Privacy Enhancing Technologies Symposium (PETS), Bristol, UK and Online Event, July 2024, [BibTeX](https://sebastianzimmeck.de/citations.html#zimmeckEtAlGPC2024Bibtex)
 - Kate Hausladen, Investigating the Current State of CCPA Compliance on the Internet, Master's Thesis, Wesleyan University, May 2024
