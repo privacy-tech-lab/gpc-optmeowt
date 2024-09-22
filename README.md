@@ -27,7 +27,7 @@ OptMeowt ("Opt Me Out") is a browser extension for opting you out from web track
   <a href="https://chrome.google.com/webstore/detail/optmeowt/hdbnkdbhglahihjdbodmfefogcjbpgbo"><img src="https://github.com/privacy-tech-lab/gpc-optmeowt/blob/main/chrome-web-store-badge.png" width="200px" alt="Chrome Web Store badge"></a>
 <p>
 
-OptMeowt is developed and maintained by Matt May (@Mattm27), Francisca Wijaya (@franciscawijaya), and Sebastian Zimmeck (@SebastianZimmeck) of the [privacy-tech-lab](https://privacytechlab.org/).
+OptMeowt is developed and maintained by Matt May (@Mattm27), Francisca Wijaya (@franciscawijaya), Nate Levinson (@natelevinson10), Ebuka Akubilo (@eakubilo) and Sebastian Zimmeck (@SebastianZimmeck) of the [privacy-tech-lab](https://privacytechlab.org/).
 
 Former contributors are Oliver Wang (@OliverWang13), Sophie Eng (@sophieeng), Kate Hausladen (@katehausladen), Jocelyn Wang (@Jocelyn0830), Kuba Alicki (@kalicki1), Stanley Markman (@stanleymarkman), Kiryl Beliauski (@kbeliauski), Daniel Knopf (@dknopf) and Abdallah Salia (@asalia-1).
 
@@ -47,11 +47,11 @@ Former contributors are Oliver Wang (@OliverWang13), Sophie Eng (@sophieeng), Ka
 
 ## 1. Research Publications
 
-- Francisca Wijaya, Katherine Hausladen, Matt May, Oliver Wang, Sophie Eng, Sebastian Zimmeck, [Crawl for GPC: An Investigation of CCPA Compliance on the Internet](https://github.com/privacy-tech-lab/gpc-optmeowt/blob/main/research/wijayaEtAlCrawlForGPC2024Poster.pdf), Summer Research 2024 Poster Session, Wesleyan University, July 2024
+- Francisca Wijaya, Katherine Hausladen, Matt May, Oliver Wang, Sophie Eng and Sebastian Zimmeck, [Crawl for GPC: An Investigation of CCPA Compliance on the Internet](https://github.com/privacy-tech-lab/gpc-optmeowt/blob/main/research/wijayaEtAlCrawlForGPC2024Poster.pdf), Summer Research 2024 Poster Session, Wesleyan University, July 2024
 - Sebastian Zimmeck, Nishant Aggarwal, Zachary Liu and Konrad Kollnig, From Ad Identifiers to Global Privacy Control: The Status Quo and Future of Opting Out of Ad Tracking on Android, Under Review
 - Sebastian Zimmeck, Eliza Kuller, Chunyue Ma, Bella Tassone and Joe Champeau, [Generalizable Active Privacy Choice: Designing a Graphical User Interface for Global Privacy Control](https://sebastianzimmeck.de/zimmeckEtAlGPC2024.pdf), 24th Privacy Enhancing Technologies Symposium (PETS), Bristol, UK and Online Event, July 2024, [BibTeX](https://sebastianzimmeck.de/citations.html#zimmeckEtAlGPC2024Bibtex)
-- Kate Hausladen, Investigating the Current State of CCPA Compliance on the Internet, Master's Thesis, Wesleyan University, May 2024
-- Nishant Aggarwal, Wesley Tan, Konrad Kollnig, Sebastian Zimmeck, [The Invisible Threat: Exploring Mobile Privacy Concerns](https://github.com/privacy-tech-lab/gpc-optmeowt/blob/main/research/aggarwalEtAlInvisibleThreat2023Poster.pdf), Summer Research 2023 Poster Session, Wesleyan University, July 2023
+- Kate Hausladen, [Investigating the Current State of CCPA Compliance on the Internet](https://doi.org/10.14418/wes01.2.451), Master's Thesis, Wesleyan University, May 2024
+- Nishant Aggarwal, Wesley Tan, Konrad Kollnig and Sebastian Zimmeck, [The Invisible Threat: Exploring Mobile Privacy Concerns](https://github.com/privacy-tech-lab/gpc-optmeowt/blob/main/research/aggarwalEtAlInvisibleThreat2023Poster.pdf), Summer Research 2023 Poster Session, Wesleyan University, July 2023
 - Eliza Kuller, [Privacy Choice Mechanisms and Online Advertising: Can Generalizable Active Privacy Choices and Online Advertising Coexist?](https://doi.org/10.14418/wes01.1.2797), Undergraduate Honors Thesis, Wesleyan University, April 2023
 - Sebastian Zimmeck, Oliver Wang, Kuba Alicki, Jocelyn Wang and Sophie Eng, [Usability and Enforceability of Global Privacy Control](https://sebastianzimmeck.de/zimmeckEtAlGPC2023.pdf), 23rd Privacy Enhancing Technologies Symposium (PETS)
   Lausanne, Switzerland and Online Event, July 2023, [BibTeX](https://sebastianzimmeck.de/citations.html#zimmeckEtAlGPC2023Bibtex). For installing the OptMeowt version used in this paper, see the [instructions below](https://github.com/privacy-tech-lab/gpc-optmeowt#6-installing-the-optmeowt-pets-2023-version).
