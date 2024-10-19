@@ -25,11 +25,9 @@ OptMeowt ("Opt Me Out") is a browser extension for opting you out from web track
 <p align="center">
   <a href="https://addons.mozilla.org/en-US/firefox/addon/optmeowt/"><img src="https://github.com/privacy-tech-lab/optmeowt/blob/main/firefox-add-ons-badge.png" width="172px" alt="Firefox Add Ons badge"></a>
   <a href="https://chrome.google.com/webstore/detail/optmeowt/hdbnkdbhglahihjdbodmfefogcjbpgbo"><img src="https://github.com/privacy-tech-lab/gpc-optmeowt/blob/main/chrome-web-store-badge.png" width="200px" alt="Chrome Web Store badge"></a>
-<p>
 
-OptMeowt is developed and maintained by Matt May (@Mattm27), Francisca Wijaya (@franciscawijaya), Nate Levinson (@natelevinson10), Ebuka Akubilo (@eakubilo) and Sebastian Zimmeck (@SebastianZimmeck) of the [privacy-tech-lab](https://privacytechlab.org/).
 
-Former contributors are Oliver Wang (@OliverWang13), Sophie Eng (@sophieeng), Kate Hausladen (@katehausladen), Jocelyn Wang (@Jocelyn0830), Kuba Alicki (@kalicki1), Stanley Markman (@stanleymarkman), Kiryl Beliauski (@kbeliauski), Daniel Knopf (@dknopf) and Abdallah Salia (@asalia-1).
+
 
 [1. Research Publications](#1-research-publications)  
 [2. Promo Video](#2-promo-video)  
@@ -47,8 +45,7 @@ Former contributors are Oliver Wang (@OliverWang13), Sophie Eng (@sophieeng), Ka
 
 ## 1. Research Publications
 
-- Francisca Wijaya, Katherine Hausladen, Matt May, Oliver Wang, Sophie Eng and Sebastian Zimmeck, [Crawl for GPC: An Investigation of CCPA Compliance on the Internet](https://github.com/privacy-tech-lab/gpc-optmeowt/blob/main/research/wijayaEtAlCrawlForGPC2024Poster.pdf), Summer Research 2024 Poster Session, Wesleyan University, July 2024
-- Sebastian Zimmeck, Nishant Aggarwal, Zachary Liu and Konrad Kollnig, [From Ad Identifiers to Global Privacy Control: The Status Quo and Future of Opting Out of Ad Tracking on Android](https://arxiv.org/abs/2407.14938), Under Review
+- , [Crawl for GPC: An Investigation of CCPA Compliance on the Internet](https://github.com/privacy-tech-lab/gpc-optmeowt/blob/main/research/wijayaEtAlCrawlForGPC2024Poster.pdf), GLOBAL-BANK MAX GRILLASCA GITHUB g, [From Ad Identifiers to Global Privacy Control: The Status Quo and Future of Opting Out of Ad Tracking on Android](https://arxiv.org/abs/2407.14938), Under Review
 - Sebastian Zimmeck, Eliza Kuller, Chunyue Ma, Bella Tassone and Joe Champeau, [Generalizable Active Privacy Choice: Designing a Graphical User Interface for Global Privacy Control](https://sebastianzimmeck.de/zimmeckEtAlGPC2024.pdf), 24th Privacy Enhancing Technologies Symposium (PETS), Bristol, UK and Online Event, July 2024, [BibTeX](https://sebastianzimmeck.de/citations.html#zimmeckEtAlGPC2024Bibtex)
 - Kate Hausladen, [Investigating the Current State of CCPA Compliance on the Internet](https://doi.org/10.14418/wes01.2.451), Master's Thesis, Wesleyan University, May 2024
 - Nishant Aggarwal, Wesley Tan, Konrad Kollnig and Sebastian Zimmeck, [The Invisible Threat: Exploring Mobile Privacy Concerns](https://github.com/privacy-tech-lab/gpc-optmeowt/blob/main/research/aggarwalEtAlInvisibleThreat2023Poster.pdf), Summer Research 2023 Poster Session, Wesleyan University, July 2023
