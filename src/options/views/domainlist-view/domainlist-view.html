@@ -19,11 +19,28 @@ options page when clicked
 <template id="domainlist-view">
   <div uk-grid>
     <div class="uk-width-3-4" style="margin-top: 0px;">
-
-      <!-- Navbar -->
-      <div class="domainlist-navbar" id="domainlist-navbar">
+      
+      <!-- Navbar with "Delete All" button -->
+      <div class="domainlist-navbar" id="domainlist-navbar" style="display: flex; justify-content: space-between; align-items: center; width: 100%; padding: 5px;">
         <div class="uk-text-lead uk-text-bold text-color-darker">
           Domains
+        </div>
+        <button
+          id="delete-all-domains"
+          class="uk-badge button"
+          type="button"
+          style="
+            padding: 5px 10px;
+            background-color: white;
+            border: 1px solid #e06d62;
+            color: #e06d62;
+            position: absolute; /* Remove from the normal flow */
+            right: 0; /* Place it all the way to the right */
+            margin-right: 119px; /* Fine-tune with additional spacing */
+          "
+        >
+          Delete All
+        </button>
         </div>
         <br>
       </div>

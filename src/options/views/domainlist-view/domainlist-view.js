@@ -122,6 +122,23 @@ const headings = {
 async function eventListeners() {
   await createToggleListeners();
 
+  document.getElementById("delete-all-domains").addEventListener("click", async () => {
+    let confirmDelete = confirm("Are you sure you want to permanently delete all domains from the Domain List?");
+    if (confirmDelete) {
+      const domainlistKeys = await storage.getAllKeys(stores.domainlist);
+      
+      for (let domain of domainlistKeys) {
+        await storage.delete(stores.domainlist, domain);
+      }
+
+      reloadDynamicRules();
+      updateRemovalScript();
+      deleteCS();
+      alert("All domains have been deleted.");
+      document.getElementById("domainlist-main").innerHTML = ""; // Clears the list visually
+    }
+  });
+
   window.onscroll = function () {
     stickyNavbar();
   };
