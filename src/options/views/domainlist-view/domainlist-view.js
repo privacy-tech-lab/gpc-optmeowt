@@ -62,6 +62,47 @@ export async function toggleListener(elementId, domain) {
   });
 }
 
+function showConfirmModal(message, callback) {
+  const modal = document.getElementById("confirm-modal");
+  const yesButton = document.getElementById("confirm-yes");
+  const noButton = document.getElementById("confirm-no");
+
+  // Set the message in the modal
+  modal.querySelector("p").textContent = message;
+
+  // Show the modal
+  modal.classList.remove("hidden");
+
+  // Handle "Yes" button click
+  yesButton.onclick = () => {
+      callback(true);  // Pass true to the callback if "Yes" was clicked
+      modal.classList.add("hidden");  // Hide the modal
+  };
+
+  // Handle "No" button click
+  noButton.onclick = () => {
+      callback(false);  // Pass false to the callback if "No" was clicked
+      modal.classList.add("hidden");  // Hide the modal
+  };
+}
+
+function showAlert(message, callback) {
+  const modal = document.getElementById("alert-modal");
+  const okButton = document.getElementById("alert-ok");
+
+  // Set the message in the modal
+  modal.querySelector("p").textContent = message;
+
+  // Show the modal
+  modal.classList.remove("hidden");
+
+  // Handle "OK" button click
+  okButton.onclick = () => {
+      callback();  // Call the callback after the alert is dismissed
+      modal.classList.add("hidden");  // Hide the modal
+  };
+}
+
 /**
  * Creates the specific Domain List toggles as well as the perm delete
  * buttons for each domain
@@ -84,25 +125,30 @@ async function createToggleListeners() {
  * Delete buttons for each domain
  * @param {string} domain
  */
-function deleteButtonListener(domain) {
+ function deleteButtonListener(domain) {
   document
     .getElementById(`delete ${domain}`)
     .addEventListener("click", async () => {
-      let deletePrompt = `Are you sure you would like to permanently delete this domain from the Domain List?`;
-      let successPrompt = `Successfully deleted ${domain} from the Domain List.
-NOTE: It will be automatically added back to the list when the domain is requested again.`;
-      if (confirm(deletePrompt)) {
-        await storage.delete(stores.domainlist, domain);
+      const deletePrompt = `Are you sure you would like to delete this domain from the Domain List?`;
+      const successPrompt = `Successfully deleted ${domain} from the Domain List.`;
 
-        reloadDynamicRules();
-        updateRemovalScript();
-        deleteCS();
-        alert(successPrompt);
-        document.getElementById(`li ${domain}`).remove();
-      }
+      showConfirmModal(deletePrompt, async (confirmed) => {
+        if (confirmed) {
+          // Proceed with deletion if user confirms
+          await storage.delete(stores.domainlist, domain);
+
+          reloadDynamicRules();
+          updateRemovalScript();
+          deleteCS();
+
+          // Replacing alert() with custom showAlert()
+          showAlert(successPrompt, () => {
+            document.getElementById(`li ${domain}`).remove();
+          });
+        }
+      });
     });
 }
-
 /******************************************************************************/
 
 /**
@@ -121,6 +167,33 @@ const headings = {
  */
 async function eventListeners() {
   await createToggleListeners();
+
+  document.getElementById("delete-all-domains").addEventListener("click", async () => {
+    const deletePrompt = `Are you sure you would like to delete all domains from the Domain List?`;
+    const successPrompt = `Successfully deleted all domains from the Domain List.`;
+
+    showConfirmModal(deletePrompt, async (confirmed) => {
+        if (confirmed) {
+            // If user clicks "Yes", proceed with deletion
+            const domainlistKeys = await storage.getAllKeys(stores.domainlist);
+            
+            for (let domain of domainlistKeys) {
+                await storage.delete(stores.domainlist, domain);
+            }
+
+            reloadDynamicRules();
+            updateRemovalScript();
+            deleteCS();
+
+            // Show success message using the custom alert modal
+            showAlert(successPrompt, () => {
+                document.getElementById("domainlist-main").innerHTML = "";  // Clears the list visually
+            });
+        } else {
+            // No action taken if user clicks "No"
+        }
+    });
+});
 
   window.onscroll = function () {
     stickyNavbar();

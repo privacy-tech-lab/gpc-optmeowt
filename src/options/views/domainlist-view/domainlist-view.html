@@ -19,11 +19,28 @@ options page when clicked
 <template id="domainlist-view">
   <div uk-grid>
     <div class="uk-width-3-4" style="margin-top: 0px;">
-
-      <!-- Navbar -->
-      <div class="domainlist-navbar" id="domainlist-navbar">
+      
+      <!-- Navbar with "Delete All" button -->
+      <div class="domainlist-navbar" id="domainlist-navbar" style="display: flex; justify-content: space-between; align-items: center; width: 100%; padding: 5px;">
         <div class="uk-text-lead uk-text-bold text-color-darker">
           Domains
+        </div>
+        <button
+          id="delete-all-domains"
+          class="uk-badge button"
+          type="button"
+          style="
+            padding: 5px 10px;
+            background-color: white;
+            border: 1px solid #e06d62;
+            color: #e06d62;
+            position: absolute; /* Remove from the normal flow */
+            right: 0; /* Place it all the way to the right */
+            margin-right: 119px; /* Fine-tune with additional spacing */
+          "
+        >
+          Delete All
+        </button>
         </div>
         <br>
       </div>
@@ -49,7 +66,90 @@ options page when clicked
         </div>
       </li>
       </ul>
+      
+      <!-- Custom Confirmation Modal -->
+      <div id="confirm-modal" class="hidden">
+        <div id="modal-content">
+          <p>Are you sure you want to delete all domains?</p>
+          <button id="confirm-yes">Yes</button>
+          <button id="confirm-no">No</button>
+        </div>
+      </div>
 
-    </div>
-  </div>
-</template>
+      <style>
+        #confirm-modal {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background-color: rgba(0, 0, 0, 0.5);
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+        #modal-content {
+          background-color: white;
+          padding: 20px;
+          border-radius: 8px;
+          text-align: center;
+        }
+
+        #modal-content p {
+          color: #333; /* Darker text color */
+        }
+        
+        #confirm-modal.hidden {
+          display: none;
+        }
+      </style>
+
+      <!-- Custom Alert Modal -->
+      <div id="alert-modal" class="hidden">
+        <div id="alert-modal-content">
+          <p></p>
+          <button id="alert-ok">OK</button>
+        </div>
+      </div>
+      <style>
+      #alert-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      #alert-modal-content {
+        background-color: white;
+        padding: 20px;
+        border-radius: 8px;
+        text-align: center;
+      }
+      
+      #alert-modal-content p {
+        color: #333; /* Darker text color */
+      }
+
+      #alert-modal.hidden {
+        display: none;
+      }
+      #alert-ok {
+        background-color: #e06d62;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      #alert-ok:hover {
+        background-color: #d05c52;
+        }
+        </style>
+
+        </div>
+      </div>
+    </template>
