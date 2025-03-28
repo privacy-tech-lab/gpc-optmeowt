@@ -36,7 +36,7 @@
     "mustache": "^4.2.0",
     "path": "^0.12.7",
     "psl": "^1.8.0",
-    "puppeteer": "^22.12.1",
+    "puppeteer": "^22.15.0",
     "rimraf": "^3.0.2",
     "tippy.js": "^6.3.7",
     "uikit": "3.6.9"
