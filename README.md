@@ -73,9 +73,8 @@ OptMeowt sends GPC signals to websites when you browse the web. Such signals mus
 In detail, OptMeowt uses the following methods to opt you out:
 
 1. The [GPC header and JS property](https://privacycg.github.io/gpc-spec/).
-2. The [DNT header](https://www.w3.org/TR/tracking-dnt/).
-3. First party cookies of ad networks participating in the [IAB CCPA Compliance Framework for Publishers & Technology Companies](https://iabtechlab.com/standards/ccpa/).
-4. Third party cookies of ad networks participating in the [DAA's CCPA Opt Out Tool for the Web](https://digitaladvertisingalliance.org/integrate-webchoices-ccpa).
+2. First party cookies of ad networks participating in the [IAB CCPA Compliance Framework for Publishers & Technology Companies](https://iabtechlab.com/standards/ccpa/).
+3. Third party cookies of ad networks participating in the [DAA's CCPA Opt Out Tool for the Web](https://digitaladvertisingalliance.org/integrate-webchoices-ccpa).
 
 **Opting Out of the Topics API:** As all browser vendors are phasing out the use of third-party cookies. In this context Google introduced the [Topics API](https://developer.mozilla.org/en-US/docs/Web/API/Topics_API). The Topics API identifies users' general areas of interest which are then used for personalized advertising. These topics are generated through observing and recording a users' browsing activity. Websites will then receive access to these topics that are stored on users' browsers. To opt you out of the Topics API OptMeowt sends a `Permissions-Policy` header to all the sites you visit. This approach follows [Google's documentation](https://developer.chrome.com/en/docs/privacy-sandbox/topics/#site-opt-out) on how to opt a site out of the Topics API. Note that this functionality of OptMeowt is only available for Chromium browsers as other browsers do not implement the Topics API.
 
