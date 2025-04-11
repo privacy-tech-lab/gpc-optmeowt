@@ -16,18 +16,13 @@ content script (registered from the extension service worker) for full DOM acces
 function setDomSignal() {
   try {
     var GPCVal = true;
-    var DNTVal = true;
+    
     const GPCDomVal = `Object.defineProperties(Navigator.prototype, 
       { "globalPrivacyControl": {
 		   get: () => ${GPCVal},
 		   configurable: true,
 		   enumerable: true
-	   },
-      "doNotTrack": {
-      get: () => ${DNTVal},
-      configurable: true,
-      enumerable: true
-    }});
+	   }});
     document.currentScript.parentElement.removeChild(document.currentScript);
 	   `;
 
