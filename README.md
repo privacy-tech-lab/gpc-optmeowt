@@ -80,7 +80,7 @@ In detail, OptMeowt uses the following methods to opt you out:
 
 **Customizing which sites receive GPC signals:** For every site you visit OptMeowt will automatically add its domain to the `domain list`. Each newly added domain will receive GPC signals by default. However, you can exclude domains that should not receive GPC signals. This functionality is available on OptMeowt's popup window and settings page.
 
-For a more in-depth look at how OptMeowt works, check out our [Beginners Guide to OptMeowt](https://docs.google.com/document/d/1H0sA6hK0Q0OLT4Tz_Yp-byHi0U4Ue5DO8k7K-NXnY2Q/edit?usp=sharing) (The document is up to date as of its date. Later changes to OptMeowt are not reflected.).
+For a more in-depth look at how OptMeowt works, check out our [Beginners Guide to OptMeowt](https://docs.google.com/document/d/1H0sA6hK0Q0OLT4Tz_Yp-byHi0U4Ue5DO8k7K-NXnY2Q/edit?usp=sharing). (The document is up to date as of its date. Later changes to OptMeowt are not reflected.)
 
 ## 4. Installing OptMeowt from Source
 
