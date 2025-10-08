@@ -117,26 +117,28 @@ const listenerCallbacks = {
 /******************************************************************************/
 
 
-async function sendData(){
-  // chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-  //   if (tabs.id) {
-  //     activeTabID = tabs.id;
-  //   }
-  // });
+async function sendData() {
+  const activeTabs = await chrome.tabs.query({
+    active: true,
+    currentWindow: true,
+  });
+  const activeTabId = activeTabs.length > 0 ? activeTabs[0].id : null;
+  if (!activeTabId) {
+    return;
+  }
 
-  let activeTab = await chrome.tabs.query({ active: true, currentWindow: true });
-  let activeTabID = activeTab.length > 0 ? activeTab[0].id : null;
+  const currentDomain = await getCurrentParsedDomain();
+  if (!currentDomain) {
+    return;
+  }
 
-  let currentDomain = await getCurrentParsedDomain(); 
-  let data = ["Please reload the site"];
+  const info = domPrev3rdParties[activeTabId]?.[currentDomain];
+  if (!info) {
+    return;
+  }
 
-
-    let info = await domPrev3rdParties[activeTabID][currentDomain];
-    data = Object.keys(info);
-
-    await storage.set(stores.thirdParties, data, currentDomain);
-
-
+  const data = Object.keys(info);
+  await storage.set(stores.thirdParties, data, currentDomain);
 }
 
 
@@ -145,10 +147,20 @@ function getCurrentParsedDomain() {
     try {
       chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
         let tab = tabs[0];
+        if (!tab || !tab.url) {
+          resolve(null);
+          return;
+        }
+
         let url = new URL(tab.url);
         let parsed = psl.parse(url.hostname);
-        let domain = parsed.domain;
-        globalParsedDomain = domain;  // for global scope variable
+        let domain = parsed?.domain;
+        if (!domain) {
+          resolve(null);
+          return;
+        }
+
+        globalParsedDomain = domain; // for global scope variable
         resolve(domain);
       });
     } catch(e) {
@@ -171,7 +183,10 @@ function getCurrentParsedDomain() {
 async function updateDomainlist(details) {
   let url = new URL(details.url);
   let parsedUrl = psl.parse(url.hostname);
-  let parsedDomain = parsedUrl.domain;
+  let parsedDomain = parsedUrl?.domain;
+  if (!parsedDomain) {
+    return;
+  }
   let currDomainValue = await storage.get(stores.domainlist, parsedDomain);
   let id = details.tabId;
 
@@ -179,14 +194,16 @@ async function updateDomainlist(details) {
     await storage.set(stores.domainlist, null, parsedDomain); // Sets to storage async
   }
   
-  let currentDomain = await getCurrentParsedDomain(); 
-
+  let currentDomain = await getCurrentParsedDomain();
+  if (!currentDomain) {
+    return;
+  }
 
   //get the current parsed domain--this is used to store 3rd parties (using globalParsedDomain variable)
   if (!(id in domPrev3rdParties)){
     domPrev3rdParties[id] = {};
   }
-  if (!(currentDomain in domPrev3rdParties[activeTabID]) ){
+  if (!(currentDomain in domPrev3rdParties[id]) ){
     domPrev3rdParties[id][currentDomain] = {};
   }
   //as they come in, add the parsedDomain to the object with null value (just a placeholder)
@@ -322,13 +339,13 @@ function handleSendMessageError() {
 }
 async function dataToPopupHelper(){
   //data gets sent back every time the popup is clicked
-  let requestsData = {};
-    let domain = await getCurrentParsedDomain();
-    let parties = await storage.get(stores.thirdParties, "parties");
-    parties = JSON.parse(parties);
-    
-    requestsData = parties[domain];
-  return requestsData
+  const domain = await getCurrentParsedDomain();
+  if (!domain) {
+    return [];
+  }
+
+  const parties = await storage.get(stores.thirdParties, domain);
+  return parties ?? [];
 }
 
 // Info back to popup
