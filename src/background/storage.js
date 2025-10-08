@@ -77,7 +77,7 @@ const storage = {
         }
       }
 
-      (await dbPromise).put(store, value, key).then(() => resolve());
+      (await dbPromise).put(store, value, key).then(resolve());
     });
   },
   async delete(store, key) {
