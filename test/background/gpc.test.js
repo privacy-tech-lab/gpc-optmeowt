@@ -49,7 +49,7 @@ gpc.test.js tests the GPC signal head-fully using Puppeteer and Chromium
              const page = await browser.newPage()
 
 
-                await page.goto(`https://global-privacy-control.glitch.me/`)
+                await page.goto(`https://global-privacy-control.vercel.app/`)
 
                 await page.reload();
    

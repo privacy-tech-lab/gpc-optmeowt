@@ -174,7 +174,7 @@ The test responsible for checking OptMeowt's ability to set the GPC signal can n
 npm test
 ```
 
-Using Puppeteer this command will launch an automated headful browser on Chromium testing the Chrome GPC signal against the [GPC reference server](https://global-privacy-control.glitch.me/).
+Using Puppeteer this command will launch an automated headful browser on Chromium testing the Chrome GPC signal against the [GPC reference server](https://global-privacy-control.vercel.app/).
 
 ### 7.1 Running Automated Unit Tests
 
@@ -203,7 +203,7 @@ The continuous integration is built into the OptMeowt repo. Therefore, no change
 The following procedure is for testing the OptMeowt extension UI, which cannot be automated. They are recommended to be performed manually as follows:
 
 1. Download the version of the extension you want to test through `npm run start`. Then, download the unpacked dev version for your browser.
-2. Navigate to a site with the well-known file, like <https://global-privacy-control.glitch.me/>
+2. Navigate to a site with the well-known file, like <https://global-privacy-control.vercel.app/>
 3. Click on the OptMeowt symbol in the top right of your browser.
    - [ ] TEST 1: The symbol for the cat should be solid green.
    - [ ] TEST 2: The URL of the website should be written under the "Protection Mode" banner.
