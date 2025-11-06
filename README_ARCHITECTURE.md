@@ -6,15 +6,12 @@ src
 ├── background      # Manages the background script processes
 │   ├── protection
 │   │   ├── background.js
-│   │   ├── cookiesOnInstall.js
 │   │   ├── listeners-chrome.js
 │   │   ├── listeners-firefox.js
 │   │   ├── protection-ff.js
 │   │   └── protection.js
 │   ├── control.js
-│   ├── cookiesIAB.js
-│   ├── storage.js
-│   └── storageCookies.js
+│   └── storage.js
 ├── common       # Manages header sending and rules
 │   ├── editDomainlist.js
 │   └── editRules.js
@@ -25,7 +22,6 @@ src
 │   │   └── gpc-dom.js
 │   └── contentScript.js
 ├── data       # Stores constant data (DNS signals, settings, etc.)
-│   ├── cookie_list.js
 │   ├── defaultSettings.js
 │   ├── headers.js
 │   └── regex.js
@@ -68,11 +64,7 @@ src
     └── darkmode.js
 test
 └── background
-    ├── gpc.test.js
-    ├── isValidSignalIAB.test.js
-    ├── makeCookieIAB.test.js
-    ├── pruneCookieIAB.test.js
-    └── pruneIABtest.js
+    └── gpc.test.js
 ```
 
 The following source folders have detailed descriptions further in the document.
@@ -91,26 +83,19 @@ The following source folders have detailed descriptions further in the document.
 
 1. `protection`
 2. `control.js`
-3. `cookiesIAB.js`
-4. `storage.js`
-5. `storageCookies.js`
+3. `storage.js`
 
 ### `src/background/protection`
 
 1. `background.js`
-2. `cookiesOnInstall.js`
-3. `listeners-chrome.js`
-4. `listeners-firefox.js`
-5. `protection.js`
-6. `protection-ff.js`
+2. `listeners-chrome.js`
+3. `listeners-firefox.js`
+4. `protection.js`
+5. `protection-ff.js`
 
 #### `protection/background.js`
 
-Initializes the protection mode cookies and listeners.
-
-#### `protection/cookiesOnInstall.js`
-
-Sets opt-out cookies for specific sites.
+Initializes the protection mode listeners.
 
 #### `protection/listeners-chrome.js` and `protection/listeners-firefox.js`
 
@@ -128,17 +113,9 @@ Manages the domain list for Firefox.
 
 Uses `protection.js` to turn the extension on and off.
 
-### `background/cookiesIAB.js`
-
-Is responsible for setting valid IAB cookies.
-
 ### `background/storage.js`
 
 Handles storage uploads and downloads.
-
-### `background/storageCookies.js`
-
-Handles cookie creation and deletion.
 
 ## common
 
@@ -181,16 +158,11 @@ This runs on every page and sends information to signal background processes.
 
 ## data
 
-1. `cookie_list.js`
-2. `defaultSettings.js`
-3. `headers.js`
-4. `regex.js`
+1. `defaultSettings.js`
+2. `headers.js`
+3. `regex.js`
 
 This folder contains static data.
-
-### `data/cookie_list.js`
-
-Contains opt out cookies that are set on install.
 
 ### `data/defaultSettings.js`
 
@@ -202,7 +174,7 @@ Contains the default headers to be attached to online requests.
 
 ### `data/regex.js`
 
-Contains regular expressions for finding "do not sell" links and relevant cookies
+Contains regular expressions for finding "do not sell" links and related privacy signals.
 
 ## manifests
 

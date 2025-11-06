@@ -7,11 +7,9 @@ privacy-tech-lab, https://privacytechlab.org/
 storage.js
 ================================================================================
 storage.js handles OptMeowt's reads/writes of data to some local location
-If the domainlist is being handled, then cookies are added/removed here too
 */
 
 import { openDB } from "idb";
-import { storageCookies } from "./storageCookies.js";
 import { reloadDynamicRules } from "../common/editRules.js";
 import pkg from 'file-saver';
 const { saveAs } = pkg;
@@ -45,6 +43,9 @@ const dbPromise = openDB("extensionDB", 1, {
 
 const storage = {
   async get(store, key) {
+    if (typeof key === "undefined") {
+      return undefined;
+    }
     return (await dbPromise).get(store, key);
   },
   async getAll(store) {
@@ -66,27 +67,15 @@ const storage = {
     return storeCopy;
   },
   async set(store, value, key) {
-    return new Promise(async (resolve, reject) => {
-      // placing or deleting opt out cookies for a given domain key
-      // We know that `key` will be a domain, i.e. a string
-      if (store === stores.domainlist) {
-        if (value === null) {
-          storageCookies.addCookiesForGivenDomain(key);
-        } else {
-          storageCookies.deleteCookiesForGivenDomain(key);
-        }
-      }
-
-      (await dbPromise).put(store, value, key).then(resolve());
-    });
+    if (typeof key === "undefined") {
+      return undefined;
+    }
+    return (await dbPromise).put(store, value, key);
   },
   async delete(store, key) {
-    // deleting opt out cookies for a given domain key
-    // We know that `key` will be a domain, i.e. a string
-    if (store === stores.domainlist) {
-      storageCookies.deleteCookiesForGivenDomain(key);
+    if (typeof key === "undefined") {
+      return undefined;
     }
-
     return (await dbPromise).delete(store, key);
   },
   async clear(store) {

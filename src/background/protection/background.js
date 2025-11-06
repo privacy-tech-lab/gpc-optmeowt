@@ -13,7 +13,6 @@ main opt-out functionality
 import { enableListeners, disableListeners } from "./listeners-$BROWSER.js";
 import { stores, storage } from "../storage.js";
 import { defaultSettings } from "../../data/defaultSettings.js";
-import { initCookiesOnInstall } from "./cookiesOnInstall.js";
 
 // We could alt. use this in place of "building" for chrome/ff, just save it to settings in storage
 var userAgent =
@@ -36,14 +35,9 @@ var userAgent =
 
 /**
  * Initializes the extension
- * Place all initialization necessary, as high level as can be, here:
- * (1) Sets settings defaults (if not done so), by comparing to whatever
- *     is already placed in the settings store via `storage.js`
- * (2) Places Do Not Sell cookies to be placed on install
- * (3) Sets correct extension on/off mode
+ * Place all initialization necessary, as high level as can be, here.
  */
 async function init() {
-  initCookiesOnInstall();
   enableListeners();
 }
 
