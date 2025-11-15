@@ -429,8 +429,8 @@ async function showProtectionInfo() {
   let parties = await storage.get(stores.thirdParties, domain);
   let wellknown = await storage.get(stores.wellknownInformation, domain);
 
-  const requestsData = Array.isArray(parties) ? parties : [];
-  await buildDomains(requestsData);
+
+  await buildDomains(parties);
   await buildWellKnown(wellknown ?? null);
 
 
@@ -597,7 +597,7 @@ async function buildWellKnown(requests) {
   the signal or not, setting both the `explainer` and `tabDetails`
   for GPC v1
   */
-  if (data !== null && data["gpc"] == true) {
+  if (data !== null && data["gpc"] === true) {
     explainer = `
       <li>
         <p class="uk-text-center uk-text-small uk-text-bold">
@@ -610,7 +610,7 @@ async function buildWellKnown(requests) {
         </p>
       </li>
       `;
-  } else if (data !== null && data["gpc"] == false) {
+  } else if (data !== null && data["gpc"] === false) {
     explainer = `
       <li>
         <p class="uk-text-center uk-text-small uk-text-bold">
@@ -639,7 +639,7 @@ async function buildWellKnown(requests) {
   }
 
   let wellknown =
-    data !== null && data["gpc"] != null
+    data !== null && data["gpc"] !== null
       ? `
     <li class="uk-text-center uk-text-small">
       Here is the GPC policy:
