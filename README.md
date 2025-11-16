@@ -20,7 +20,7 @@
 
 # OptMeowt 🐾
 
-OptMeowt ("Opt Me Out") is a browser extension for opting you out from web tracking. OptMeowt works by sending Global Privacy Control (GPC) signals to visited websites per the [GPC spec](https://privacycg.github.io/gpc-spec/) that we are developing [at the W3C](https://github.com/privacycg/gpc-spec). In addition, OptMeowt is also opting you out from Google's Topics API and places opt out cookies.
+OptMeowt ("Opt Me Out") is a browser extension for opting you out from web tracking. OptMeowt works by sending Global Privacy Control (GPC) signals to visited websites per the [GPC spec](https://privacycg.github.io/gpc-spec/) that we are developing [at the W3C](https://github.com/privacycg/gpc-spec). In addition, OptMeowt also opts you out from Google's Topics API.
 
 <p align="center">
   <a href="https://addons.mozilla.org/en-US/firefox/addon/optmeowt/"><img src="https://github.com/privacy-tech-lab/optmeowt/blob/main/firefox-add-ons-badge.png" width="172px" alt="Firefox Add Ons badge"></a>
@@ -73,8 +73,7 @@ OptMeowt sends GPC signals to websites when you browse the web. Such signals mus
 In detail, OptMeowt uses the following methods to opt you out:
 
 1. The [GPC header and JS property](https://privacycg.github.io/gpc-spec/).
-2. First party cookies of ad networks participating in the [IAB CCPA Compliance Framework for Publishers & Technology Companies](https://iabtechlab.com/standards/ccpa/).
-3. Third party cookies of ad networks participating in the [DAA's CCPA Opt Out Tool for the Web](https://digitaladvertisingalliance.org/integrate-webchoices-ccpa).
+2. A `Permissions-Policy` header that opts sites out of Google's [Topics API](https://developer.mozilla.org/en-US/docs/Web/API/Topics_API) on Chromium-based browsers.
 
 **Opting Out of the Topics API:** As all browser vendors are phasing out the use of third-party cookies. In this context Google introduced the [Topics API](https://developer.mozilla.org/en-US/docs/Web/API/Topics_API). The Topics API identifies users' general areas of interest which are then used for personalized advertising. These topics are generated through observing and recording a users' browsing activity. Websites will then receive access to these topics that are stored on users' browsers. To opt you out of the Topics API OptMeowt sends a `Permissions-Policy` header to all the sites you visit. This approach follows [Google's documentation](https://developer.chrome.com/en/docs/privacy-sandbox/topics/#site-opt-out) on how to opt a site out of the Topics API. Note that this functionality of OptMeowt is only available for Chromium browsers as other browsers do not implement the Topics API.
 
@@ -242,7 +241,6 @@ The following procedure is for testing the OptMeowt extension UI, which cannot b
     "<all_urls>",
     "storage",
     "activeTab",
-    "cookies",
     "tabs",
     "scripting"
   ]
@@ -255,7 +253,6 @@ The following procedure is for testing the OptMeowt extension UI, which cannot b
 - `<all_urls>`: Gives OptMeowt permission to access and interact with the content and data of any website visited by the browser
 - `storage`: Allows OptMeowt to save your opt out preferences in your browser
 - `activeTab`: Allows OptMeowt to set opt out signals on your active browser tab
-- `cookies`: Allows OptMeowt to place opt out cookies in your browser
 - `tabs`: Allows OptMeowt to keep track of HTTP headers per tab to show you the opt out status of the current site in a popup
 - `scripting`: Allows OptMeowt to declare content scripts and send the GPC DOM signal
 
@@ -271,8 +268,8 @@ Here are the main directories in this repo:
 
 - `src/`: Main contents of the OptMeowt browser extension.
 - `src/assets`: Graphical elements of the extension, including logos and button images.
-- `src/background`: Listeners for events and logic for placing cookies.
-- `src/data`: Definitions of headers, cookies, and privacy flags.
+- `src/background`: Listeners for events and logic for sending privacy signals.
+- `src/data`: Definitions of headers and privacy flags.
 - `src/options`: UI elements and scripts for the supplemental options page.
 - `src/popup`: UI elements and scripts for the popup inside the extensions bar.
 - `src/theme`: Dark and light mode themes.

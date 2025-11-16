@@ -10,7 +10,6 @@ popup.js supplements and renders complex elements on popup.html
 */
 
 import { stores, storage } from "../background/storage.js";
-import { initIAB, isValidSignalIAB } from "../background/cookiesIAB.js";
 import "../../node_modules/uikit/dist/css/uikit.min.css";
 import "../../node_modules/animate.css/animate.min.css";
 import "./styles.css";
@@ -421,12 +420,18 @@ async function showProtectionInfo() {
   listenerDropdown2Toggle();
 
   let domain = await getCurrentParsedDomain();
+  if (!domain) {
+    await buildDomains([]);
+    await buildWellKnown(null);
+    return;
+  }
+
   let parties = await storage.get(stores.thirdParties, domain);
   let wellknown = await storage.get(stores.wellknownInformation, domain);
-  
-  let requestsData = parties;
-  buildDomains(requestsData);
-  buildWellKnown(wellknown);
+
+
+  await buildDomains(parties);
+  await buildWellKnown(wellknown ?? null);
 
 
 
@@ -505,15 +510,16 @@ function addThirdPartyDomainDNSToggleListener(requestDomain) {
  * @param {Object} requests - Contains all request domains for the current tab
  * (requests = tabs[activeTabID].requestDomainS; passed from background page)
  */
- async function buildDomains(requests) {
+async function buildDomains(requests) {
   let domain = await getCurrentParsedDomain();
   let items = "";
   const domainlistKeys = await storage.getAllKeys(stores.domainlist);
   const domainlistValues = await storage.getAll(stores.domainlist);
+  const requestList = Array.isArray(requests) ? requests : [];
 
   // Iterate through requests array
-  for (let i = 0; i < requests.length; i++) {
-    const requestDomain = requests[i]; // Get the domain name from the request array
+  for (let i = 0; i < requestList.length; i++) {
+    const requestDomain = requestList[i]; // Get the domain name from the request array
 
     if (requestDomain != domain) {
       let checkbox = "";
@@ -567,8 +573,8 @@ function addThirdPartyDomainDNSToggleListener(requestDomain) {
   document.getElementById("dropdown-1-expandable").innerHTML = items;
 
   // Sets the 3rd party domain toggle listeners
-  for (let i = 0; i < requests.length; i++) {
-    const requestDomain = requests[i];
+  for (let i = 0; i < requestList.length; i++) {
+    const requestDomain = requestList[i];
     if (requestDomain != domain) {
       addThirdPartyDomainDNSToggleListener(requestDomain);
     }
@@ -582,6 +588,8 @@ function addThirdPartyDomainDNSToggleListener(requestDomain) {
  */
 async function buildWellKnown(requests) {
   let explainer;
+  const data =
+    requests && typeof requests === "object" ? requests : null;
 
   /*
   This iterates over the cases of possible combinations of
@@ -589,7 +597,7 @@ async function buildWellKnown(requests) {
   the signal or not, setting both the `explainer` and `tabDetails`
   for GPC v1
   */
-  if (requests !== null && requests["gpc"] == true) {
+  if (data !== null && data["gpc"] === true) {
     explainer = `
       <li>
         <p class="uk-text-center uk-text-small uk-text-bold">
@@ -602,7 +610,7 @@ async function buildWellKnown(requests) {
         </p>
       </li>
       `;
-  } else if (requests !== null && requests["gpc"] == false) {
+  } else if (data !== null && data["gpc"] === false) {
     explainer = `
       <li>
         <p class="uk-text-center uk-text-small uk-text-bold">
@@ -615,7 +623,7 @@ async function buildWellKnown(requests) {
         </p>
       </li>
       `;
-  } else if (requests === null || requests["gpc"] == null) {
+  } else {
     explainer = `
       <li>
         <p class="uk-text-center uk-text-small uk-text-bold">
@@ -631,14 +639,14 @@ async function buildWellKnown(requests) {
   }
 
   let wellknown =
-    requests !== null && requests["gpc"] != null
+    data !== null && data["gpc"] !== null
       ? `
     <li class="uk-text-center uk-text-small">
       Here is the GPC policy:
     </li>
     <li>
       <pre class="wellknown-bg">
-        ${JSON.stringify(requests, null, 4)
+        ${JSON.stringify(data, null, 4)
           .replace(/['"\{\}\n]/g, "")
           .replace(/,/g, "\n")}
       </pre>

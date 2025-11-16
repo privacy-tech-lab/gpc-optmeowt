@@ -13,10 +13,7 @@ protection.js (1) Implements our per-site functionality for the background liste
 import { stores, storage } from "./../storage.js";
 import { defaultSettings } from "../../data/defaultSettings.js";
 import { enableListeners, disableListeners } from "./listeners-$BROWSER.js";
-import { initIAB } from "../cookiesIAB.js";
-import { initCookiesPerDomain, deleteCookiesPerDomain } from "./cookiesOnInstall.js";
-import { initCookiesOnInstall } from "./cookiesOnInstall.js";
-import psl, { parse } from "psl";
+import psl from "psl";
 
 import {
   addDynamicRule,
@@ -118,43 +115,50 @@ const listenerCallbacks = {
 
 
 async function sendData(){
-  // chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-  //   if (tabs.id) {
-  //     activeTabID = tabs.id;
-  //   }
-  // });
-
   let activeTab = await chrome.tabs.query({ active: true, currentWindow: true });
   let activeTabID = activeTab.length > 0 ? activeTab[0].id : null;
 
-  let currentDomain = await getCurrentParsedDomain(); 
-  let data = ["Please reload the site"];
+  if (activeTabID === null) {
+    return;
+  }
 
+  let currentDomain = await getCurrentParsedDomain();
+  if (!currentDomain) {
+    return;
+  }
 
-    let info = await domPrev3rdParties[activeTabID][currentDomain];
-    data = Object.keys(info);
+  const partiesForTab = domPrev3rdParties?.[activeTabID];
+  const info = partiesForTab ? partiesForTab[currentDomain] : null;
 
-    await storage.set(stores.thirdParties, data, currentDomain);
+  if (!info) {
+    await storage.delete(stores.thirdParties, currentDomain);
+    return;
+  }
 
+  const data = Object.keys(info).filter(Boolean);
+  await storage.set(stores.thirdParties, data, currentDomain);
 
 }
 
 
 function getCurrentParsedDomain() {
-  return new Promise((resolve, reject) => {
-    try {
-      chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-        let tab = tabs[0];
-        let url = new URL(tab.url);
-        let parsed = psl.parse(url.hostname);
-        let domain = parsed.domain;
+  return new Promise((resolve) => {
+    chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+      try {
+        const tab = tabs && tabs[0];
+        if (!tab || !tab.url) {
+          return resolve(null);
+        }
+        const url = new URL(tab.url);
+        const parsed = psl.parse(url.hostname);
+        const domain = parsed && parsed.domain ? parsed.domain : null;
         globalParsedDomain = domain;  // for global scope variable
         resolve(domain);
-      });
-    } catch(e) {
-      reject();
-    }
-  })
+      } catch(e) {
+        resolve(null);
+      }
+    });
+  });
 }
 
 
@@ -169,9 +173,23 @@ function getCurrentParsedDomain() {
  * @param {Object} details - callback object according to Chrome API
  */
 async function updateDomainlist(details) {
-  let url = new URL(details.url);
-  let parsedUrl = psl.parse(url.hostname);
-  let parsedDomain = parsedUrl.domain;
+  if (!details || !details.url) {
+    return;
+  }
+
+  let parsedDomain;
+  try {
+    let url = new URL(details.url);
+    let parsedUrl = psl.parse(url.hostname);
+    parsedDomain = parsedUrl.domain;
+  } catch (e) {
+    return;
+  }
+
+  if (!parsedDomain) {
+    return;
+  }
+
   let currDomainValue = await storage.get(stores.domainlist, parsedDomain);
   let id = details.tabId;
 
@@ -180,13 +198,15 @@ async function updateDomainlist(details) {
   }
   
   let currentDomain = await getCurrentParsedDomain(); 
-
+  if (!currentDomain) {
+    return;
+  }
 
   //get the current parsed domain--this is used to store 3rd parties (using globalParsedDomain variable)
   if (!(id in domPrev3rdParties)){
     domPrev3rdParties[id] = {};
   }
-  if (!(currentDomain in domPrev3rdParties[activeTabID]) ){
+  if (!(currentDomain in domPrev3rdParties[id]) ){
     domPrev3rdParties[id][currentDomain] = {};
   }
   //as they come in, add the parsedDomain to the object with null value (just a placeholder)
@@ -322,13 +342,17 @@ function handleSendMessageError() {
 }
 async function dataToPopupHelper(){
   //data gets sent back every time the popup is clicked
-  let requestsData = {};
-    let domain = await getCurrentParsedDomain();
-    let parties = await storage.get(stores.thirdParties, "parties");
-    parties = JSON.parse(parties);
-    
-    requestsData = parties[domain];
-  return requestsData
+  let domain = await getCurrentParsedDomain();
+  if (!domain) {
+    return [];
+  }
+
+  let parties = await storage.get(stores.thirdParties, domain);
+  if (!Array.isArray(parties)) {
+    return [];
+  }
+
+  return parties;
 }
 
 // Info back to popup
@@ -447,8 +471,6 @@ async function onMessageHandlerAsync(message, sender, sendResponse) {
 
     //await sendData();
 
-    initIAB(!sendSignal);
-
     if (wellknown[tabID] === null && sendSignal == null) {
       updatePopupIcon(tabID);
     } else if (wellknown[tabID]["gpc"] === true && sendSignal == null) {
@@ -488,18 +510,6 @@ async function onMessageHandlerAsync(message, sender, sendResponse) {
       tabs[tabID]["TIMESTAMP"] = message.data;
     }
   }
-  if (message.msg === "SET_OPTOUT_COOKIES") {
-    // This is initialized when cookies are to be reset to a page after
-    // do not sell is turned back on (e.g., when its turned on from the popup).
-
-    // This is specifically for when cookies are removed when a user turns off
-    // do not sell for a particular site, and chooses to re-enable it
-    initCookiesPerDomain(message.data);
-  }
-  if (message.msg === "DELETE_OPTOUT_COOKIES") {
-    deleteCookiesPerDomain(message.data);
-  }
-
   return true; // Async callbacks require this
 }
 
@@ -568,7 +578,6 @@ function wipeLocalVars() {
 
 export function init() {
   reloadVars();
-  initCookiesOnInstall(); // NOTE: This replaces ALL do not sell cookies
   enableListeners(listenerCallbacks);
   initMessagePassing();
   initSetup();

@@ -10,7 +10,6 @@
     "webNavigation",
     "storage",
     "activeTab",
-    "cookies",
     "tabs",
     "scripting"
   ],
