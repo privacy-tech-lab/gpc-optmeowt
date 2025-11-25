@@ -400,15 +400,22 @@ async function showProtectionInfo() {
   document.getElementById("more-info-body").style.display = "";
   document.getElementById("more-info-text").innerHTML = "Do Not Sell Enabled!";
   document.getElementById("dropdown-1").style.display = "";
-  document.getElementById("dropdown-2").style.display = "";
   document.getElementById("dropdown-1-text").innerHTML = "3rd Party Domains";
   document.getElementById("dropdown-2-text").innerHTML = "Website Response";
   document.getElementById("dropdown-1-expandable").innerHTML = "";
   document.getElementById("dropdown-2-expandable").innerHTML = "";
   document.getElementById("dropdown-1-expandable").style.display = "none";
   document.getElementById("dropdown-2-expandable").style.display = "none";
+  document.getElementById("divider-6").style.display = "none";
+  document.getElementById("divider-7").style.display = "none";
   document.getElementById("visited-domains-stats").style.display = "";
   document.getElementById("domain-list").style.display = "";
+
+  const wellknownCheckEnabled =
+    (await storage.get(stores.settings, "WELLKNOWN_CHECK_ENABLED")) !== false;
+  document.getElementById("dropdown-2").style.display = wellknownCheckEnabled
+    ? ""
+    : "none";
 
   // Generate `Do Not Sell Enabled` elem
   renderDomainCounter(); // Render "X domains receiving signals" info section
@@ -417,21 +424,28 @@ async function showProtectionInfo() {
   // Listeners associated with the buttons / toggles rendered above
   listenerFirstPartyDomainDNSToggle();
   listenerDropdown1Toggle();
-  listenerDropdown2Toggle();
+  if (wellknownCheckEnabled) {
+    listenerDropdown2Toggle();
+  }
 
   let domain = await getCurrentParsedDomain();
   if (!domain) {
     await buildDomains([]);
-    await buildWellKnown(null);
+    if (wellknownCheckEnabled) {
+      await buildWellKnown(null);
+    }
     return;
   }
 
   let parties = await storage.get(stores.thirdParties, domain);
-  let wellknown = await storage.get(stores.wellknownInformation, domain);
-
+  let wellknown = wellknownCheckEnabled
+    ? await storage.get(stores.wellknownInformation, domain)
+    : null;
 
   await buildDomains(parties);
-  await buildWellKnown(wellknown ?? null);
+  if (wellknownCheckEnabled) {
+    await buildWellKnown(wellknown ?? null);
+  }
 
 
 

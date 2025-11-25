@@ -63,7 +63,7 @@ if ("$BROWSER" == "firefox") {
   // Initializes the default settings
   let settingsDB = await storage.getStore(stores.settings);
   for (let setting in defaultSettings) {
-    if (!settingsDB[setting]) {
+    if (typeof settingsDB[setting] === "undefined") {
       await storage.set(stores.settings, defaultSettings[setting], setting);
     }
   }

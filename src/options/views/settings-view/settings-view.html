@@ -131,7 +131,31 @@ options page when clicked
   </div>
   <hr style="margin-top: 5px; margin-bottom: 5px;">
   <div style="font-weight: bold; font-size: medium; padding-bottom: 10px;">
-    Options
+    Advanced Options
+  </div>
+  <div class="uk-margin-small">
+    <label>
+      <div uk-grid class="uk-grid-column-small" style="margin-left: 0px;">
+        <div class="uk-container" style="margin: auto;">
+          <input
+            class="uk-checkbox"
+            type="checkbox"
+            id="wellknown-check-toggle"
+          />
+        </div>
+        <div uk-grid class="uk-grid-row-collapse uk-width-expand">
+          <div
+            class="uk-first-column uk-width-1-1 uk-text-bold"
+            style="font-size: medium;"
+          >
+            Check for /.well-known/gpc.json
+          </div>
+          <div class="uk-first-column uk-width-1-1" style="font-size: small;">
+            Disable to stop the request and hide this info in the popup
+          </div>
+        </div>
+      </div>
+    </label>
   </div>
   <div uk-grid>
     <div>

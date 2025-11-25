@@ -439,6 +439,20 @@ function onMessageHandlerSynchronous(message, sender, sendResponse) {
  * https://developer.chrome.com/docs/extensions/mv3/messaging/
  */
 async function onMessageHandlerAsync(message, sender, sendResponse) {
+  if (message.msg === "GET_WELLKNOWN_CHECK_ENABLED") {
+    const enabled =
+      (await storage.get(stores.settings, "WELLKNOWN_CHECK_ENABLED")) !== false;
+    sendResponse({ enabled });
+    return true;
+  }
+  if (message.msg === "TOGGLE_WELLKNOWN_CHECK") {
+    const enabled = message.data?.enabled !== false;
+    await storage.set(stores.settings, enabled, "WELLKNOWN_CHECK_ENABLED");
+    if (!enabled) {
+      await storage.clear(stores.wellknownInformation);
+      wellknown = {};
+    }
+  }
   if (message.msg === "CHANGE_IS_DOMAINLISTED") {
     let isDomainlisted = message.data.isDomainlisted;
     storage.set(stores.settings, isDomainlisted, "IS_DOMAINLISTED");
@@ -454,6 +468,12 @@ async function onMessageHandlerAsync(message, sender, sendResponse) {
     await dataToPopupRequests();
   }
   if (message.msg === "CONTENT_SCRIPT_WELLKNOWN") {
+    const wellknownCheckEnabled =
+      (await storage.get(stores.settings, "WELLKNOWN_CHECK_ENABLED")) !==
+      false;
+    if (!wellknownCheckEnabled) {
+      return true;
+    }
     // sender.origin not working for Firefox MV3, instead added a new message argument, message.origin_url
     //let url = new URL(sender.origin);
     let url = new URL(message.origin_url);

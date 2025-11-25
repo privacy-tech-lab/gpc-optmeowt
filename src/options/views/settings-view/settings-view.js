@@ -109,6 +109,20 @@ function eventListeners() {
   document
     .getElementById("download-button")
     .addEventListener("click", handleDownload);
+  document
+    .getElementById("wellknown-check-toggle")
+    .addEventListener("change", async (event) => {
+      const enabled = event.target.checked;
+      await storage.set(
+        stores.settings,
+        enabled,
+        "WELLKNOWN_CHECK_ENABLED"
+      );
+      chrome.runtime.sendMessage({
+        msg: "TOGGLE_WELLKNOWN_CHECK",
+        data: { enabled },
+      });
+    });
   document.getElementById("upload-button").addEventListener("click", () => {
     const verify = confirm(
       `This option will load a list of domains from a file, clearing all domains currently in the list.\n Do you wish to continue?`
@@ -256,6 +270,8 @@ export async function settingsView(scaffoldTemplate) {
   // Render correct extension mode radio button
   const isEnabled = await storage.get(stores.settings, "IS_ENABLED");
   const isDomainlisted = await storage.get(stores.settings, "IS_DOMAINLISTED");
+  const wellknownCheckEnabled =
+    (await storage.get(stores.settings, "WELLKNOWN_CHECK_ENABLED")) !== false;
 
   if (isEnabled) {
     isDomainlisted
@@ -264,6 +280,9 @@ export async function settingsView(scaffoldTemplate) {
   } else {
     document.getElementById("settings-view-radio1").checked = true;
   }
+
+  document.getElementById("wellknown-check-toggle").checked =
+    wellknownCheckEnabled;
 
   eventListeners();
 
