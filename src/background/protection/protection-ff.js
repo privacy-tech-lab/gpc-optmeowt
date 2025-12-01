@@ -410,12 +410,14 @@ async function onMessageHandlerAsync(message, sender, sendResponse) {
   if (message.msg === "GET_WELLKNOWN_CHECK_ENABLED") {
     const enabled =
       (await storage.get(stores.settings, "WELLKNOWN_CHECK_ENABLED")) !== false;
+    await chrome.storage.local.set({ WELLKNOWN_CHECK_ENABLED: enabled });
     sendResponse({ enabled });
     return true;
   }
   if (message.msg === "TOGGLE_WELLKNOWN_CHECK") {
     const enabled = message.data?.enabled !== false;
     await storage.set(stores.settings, enabled, "WELLKNOWN_CHECK_ENABLED");
+    await chrome.storage.local.set({ WELLKNOWN_CHECK_ENABLED: enabled });
     if (!enabled) {
       await storage.clear(stores.wellknownInformation);
       wellknown = {};

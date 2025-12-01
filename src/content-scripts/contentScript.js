@@ -50,6 +50,14 @@ function injectScript(script) {
 
 async function isWellknownCheckEnabled() {
   try {
+    const { WELLKNOWN_CHECK_ENABLED } = await chrome.storage.local.get(
+      "WELLKNOWN_CHECK_ENABLED"
+    );
+    if (typeof WELLKNOWN_CHECK_ENABLED === "boolean") {
+      return WELLKNOWN_CHECK_ENABLED;
+    }
+  } catch (error) {}
+  try {
     const response = await chrome.runtime.sendMessage({
       msg: "GET_WELLKNOWN_CHECK_ENABLED",
     });
@@ -57,7 +65,8 @@ async function isWellknownCheckEnabled() {
       return response.enabled;
     }
   } catch (error) {}
-  return true;
+  // If we can't determine the setting, err on the side of not fetching.
+  return false;
 }
 
 /******************************************************************************/

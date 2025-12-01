@@ -118,6 +118,7 @@ function eventListeners() {
         enabled,
         "WELLKNOWN_CHECK_ENABLED"
       );
+      await chrome.storage.local.set({ WELLKNOWN_CHECK_ENABLED: enabled });
       chrome.runtime.sendMessage({
         msg: "TOGGLE_WELLKNOWN_CHECK",
         data: { enabled },
