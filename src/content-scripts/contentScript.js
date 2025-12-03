@@ -56,7 +56,9 @@ async function isWellknownCheckEnabled() {
     if (typeof WELLKNOWN_CHECK_ENABLED === "boolean") {
       return WELLKNOWN_CHECK_ENABLED;
     }
-  } catch (error) {}
+  } catch (error) {
+    print(error);
+  }
   try {
     const response = await chrome.runtime.sendMessage({
       msg: "GET_WELLKNOWN_CHECK_ENABLED",
@@ -64,7 +66,9 @@ async function isWellknownCheckEnabled() {
     if (response && typeof response.enabled === "boolean") {
       return response.enabled;
     }
-  } catch (error) {}
+  } catch (error) {
+    print(error);
+  }
   // If we can't determine the setting, err on the side of not fetching.
   return false;
 }
