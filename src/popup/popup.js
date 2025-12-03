@@ -10,6 +10,7 @@ popup.js supplements and renders complex elements on popup.html
 */
 
 import { stores, storage } from "../background/storage.js";
+import { isWellknownCheckEnabled } from "../common/settings.js";
 import "../../node_modules/uikit/dist/css/uikit.min.css";
 import "../../node_modules/animate.css/animate.min.css";
 import "./styles.css";
@@ -411,8 +412,7 @@ async function showProtectionInfo() {
   document.getElementById("visited-domains-stats").style.display = "";
   document.getElementById("domain-list").style.display = "";
 
-  const wellknownCheckEnabled =
-    (await storage.get(stores.settings, "WELLKNOWN_CHECK_ENABLED")) !== false;
+  const wellknownCheckEnabled = await isWellknownCheckEnabled();
   document.getElementById("dropdown-2").style.display = wellknownCheckEnabled
     ? ""
     : "none";

@@ -29,6 +29,7 @@ import {
   deleteAllDynamicRules,
   reloadDynamicRules,
 } from "../../../common/editRules.js";
+import { isWellknownCheckEnabled } from "../../../common/settings.js";
 import { updateRemovalScript } from "../../../common/editDomainlist.js";
 
 
@@ -271,8 +272,7 @@ export async function settingsView(scaffoldTemplate) {
   // Render correct extension mode radio button
   const isEnabled = await storage.get(stores.settings, "IS_ENABLED");
   const isDomainlisted = await storage.get(stores.settings, "IS_DOMAINLISTED");
-  const wellknownCheckEnabled =
-    (await storage.get(stores.settings, "WELLKNOWN_CHECK_ENABLED")) !== false;
+  const wellknownCheckEnabled = await isWellknownCheckEnabled();
 
   if (isEnabled) {
     isDomainlisted

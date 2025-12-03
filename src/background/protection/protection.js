@@ -20,6 +20,7 @@ import {
   deleteDynamicRule,
   reloadDynamicRules,
 } from "../../common/editRules.js";
+import { isWellknownCheckEnabled } from "../../common/settings.js";
 
 /******************************************************************************/
 /******************************************************************************/
@@ -437,11 +438,10 @@ function onMessageHandlerSynchronous(message, sender, sendResponse) {
  * Listeners for information from --POPUP-- or --OPTIONS-- page
  * This is the main "hub" for message passing between the extension components
  * https://developer.chrome.com/docs/extensions/mv3/messaging/
- */
+  */
 async function onMessageHandlerAsync(message, sender, sendResponse) {
   if (message.msg === "GET_WELLKNOWN_CHECK_ENABLED") {
-    const enabled =
-      (await storage.get(stores.settings, "WELLKNOWN_CHECK_ENABLED")) !== false;
+    const enabled = await isWellknownCheckEnabled();
     await chrome.storage.local.set({ WELLKNOWN_CHECK_ENABLED: enabled });
     sendResponse({ enabled });
     return true;
@@ -470,9 +470,7 @@ async function onMessageHandlerAsync(message, sender, sendResponse) {
     await dataToPopupRequests();
   }
   if (message.msg === "CONTENT_SCRIPT_WELLKNOWN") {
-    const wellknownCheckEnabled =
-      (await storage.get(stores.settings, "WELLKNOWN_CHECK_ENABLED")) !==
-      false;
+    const wellknownCheckEnabled = await isWellknownCheckEnabled();
     if (!wellknownCheckEnabled) {
       return true;
     }

@@ -15,6 +15,7 @@ import { defaultSettings } from "../../data/defaultSettings.js";
 import { headers } from "../../data/headers.js";
 import { enableListeners, disableListeners } from "./listeners-$BROWSER.js";
 import psl from "psl";
+import { isWellknownCheckEnabled } from "../../common/settings.js";
 
 /******************************************************************************/
 /******************************************************************************/
@@ -408,8 +409,7 @@ function onMessageHandlerSynchronous(message, sender, sendResponse) {
  */
 async function onMessageHandlerAsync(message, sender, sendResponse) {
   if (message.msg === "GET_WELLKNOWN_CHECK_ENABLED") {
-    const enabled =
-      (await storage.get(stores.settings, "WELLKNOWN_CHECK_ENABLED")) !== false;
+    const enabled = await isWellknownCheckEnabled();
     await chrome.storage.local.set({ WELLKNOWN_CHECK_ENABLED: enabled });
     sendResponse({ enabled });
     return true;
@@ -440,9 +440,7 @@ async function onMessageHandlerAsync(message, sender, sendResponse) {
     dataToPopup();
   }
   if (message.msg === "CONTENT_SCRIPT_WELLKNOWN") {
-    const wellknownCheckEnabled =
-      (await storage.get(stores.settings, "WELLKNOWN_CHECK_ENABLED")) !==
-      false;
+    const wellknownCheckEnabled = await isWellknownCheckEnabled();
     if (!wellknownCheckEnabled) {
       return true;
     }
