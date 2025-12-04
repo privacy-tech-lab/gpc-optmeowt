@@ -20,6 +20,7 @@ import {
   deleteDynamicRule,
   reloadDynamicRules,
 } from "../../common/editRules.js";
+import { isWellknownCheckEnabled } from "../../common/settings.js";
 
 /******************************************************************************/
 /******************************************************************************/
@@ -437,8 +438,23 @@ function onMessageHandlerSynchronous(message, sender, sendResponse) {
  * Listeners for information from --POPUP-- or --OPTIONS-- page
  * This is the main "hub" for message passing between the extension components
  * https://developer.chrome.com/docs/extensions/mv3/messaging/
- */
+  */
 async function onMessageHandlerAsync(message, sender, sendResponse) {
+  if (message.msg === "GET_WELLKNOWN_CHECK_ENABLED") {
+    const enabled = await isWellknownCheckEnabled();
+    await chrome.storage.local.set({ WELLKNOWN_CHECK_ENABLED: enabled });
+    sendResponse({ enabled });
+    return true;
+  }
+  if (message.msg === "TOGGLE_WELLKNOWN_CHECK") {
+    const enabled = message.data?.enabled !== false;
+    await storage.set(stores.settings, enabled, "WELLKNOWN_CHECK_ENABLED");
+    await chrome.storage.local.set({ WELLKNOWN_CHECK_ENABLED: enabled });
+    if (!enabled) {
+      await storage.clear(stores.wellknownInformation);
+      wellknown = {};
+    }
+  }
   if (message.msg === "CHANGE_IS_DOMAINLISTED") {
     let isDomainlisted = message.data.isDomainlisted;
     storage.set(stores.settings, isDomainlisted, "IS_DOMAINLISTED");
@@ -454,6 +470,10 @@ async function onMessageHandlerAsync(message, sender, sendResponse) {
     await dataToPopupRequests();
   }
   if (message.msg === "CONTENT_SCRIPT_WELLKNOWN") {
+    const wellknownCheckEnabled = await isWellknownCheckEnabled();
+    if (!wellknownCheckEnabled) {
+      return true;
+    }
     // sender.origin not working for Firefox MV3, instead added a new message argument, message.origin_url
     //let url = new URL(sender.origin);
     let url = new URL(message.origin_url);

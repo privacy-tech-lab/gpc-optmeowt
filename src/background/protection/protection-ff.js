@@ -15,6 +15,7 @@ import { defaultSettings } from "../../data/defaultSettings.js";
 import { headers } from "../../data/headers.js";
 import { enableListeners, disableListeners } from "./listeners-$BROWSER.js";
 import psl from "psl";
+import { isWellknownCheckEnabled } from "../../common/settings.js";
 
 /******************************************************************************/
 /******************************************************************************/
@@ -407,6 +408,21 @@ function onMessageHandlerSynchronous(message, sender, sendResponse) {
  * https://developer.chrome.com/docs/extensions/mv3/messaging/
  */
 async function onMessageHandlerAsync(message, sender, sendResponse) {
+  if (message.msg === "GET_WELLKNOWN_CHECK_ENABLED") {
+    const enabled = await isWellknownCheckEnabled();
+    await chrome.storage.local.set({ WELLKNOWN_CHECK_ENABLED: enabled });
+    sendResponse({ enabled });
+    return true;
+  }
+  if (message.msg === "TOGGLE_WELLKNOWN_CHECK") {
+    const enabled = message.data?.enabled !== false;
+    await storage.set(stores.settings, enabled, "WELLKNOWN_CHECK_ENABLED");
+    await chrome.storage.local.set({ WELLKNOWN_CHECK_ENABLED: enabled });
+    if (!enabled) {
+      await storage.clear(stores.wellknownInformation);
+      wellknown = {};
+    }
+  }
   if (message.msg === "CHANGE_IS_DOMAINLISTED") {
     isDomainlisted = message.data.isDomainlisted;
     storage.set(stores.settings, isDomainlisted, "IS_DOMAINLISTED");
@@ -424,6 +440,10 @@ async function onMessageHandlerAsync(message, sender, sendResponse) {
     dataToPopup();
   }
   if (message.msg === "CONTENT_SCRIPT_WELLKNOWN") {
+    const wellknownCheckEnabled = await isWellknownCheckEnabled();
+    if (!wellknownCheckEnabled) {
+      return true;
+    }
     let tabID = sender.tab.id;
     wellknown[tabID] = message.data;
     if (wellknown[tabID]["gpc"] === true) {

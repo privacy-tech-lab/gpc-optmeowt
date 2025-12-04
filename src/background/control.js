@@ -63,9 +63,17 @@ if ("$BROWSER" == "firefox") {
   // Initializes the default settings
   let settingsDB = await storage.getStore(stores.settings);
   for (let setting in defaultSettings) {
-    if (!settingsDB[setting]) {
+    if (typeof settingsDB[setting] === "undefined") {
       await storage.set(stores.settings, defaultSettings[setting], setting);
     }
+  }
+  const localSettings = await chrome.storage.local.get(
+    "WELLKNOWN_CHECK_ENABLED"
+  );
+  if (typeof localSettings.WELLKNOWN_CHECK_ENABLED === "undefined") {
+    await chrome.storage.local.set({
+      WELLKNOWN_CHECK_ENABLED: defaultSettings["WELLKNOWN_CHECK_ENABLED"],
+    });
   }
 
   let isEnabled = await storage.get(stores.settings, "IS_ENABLED");
