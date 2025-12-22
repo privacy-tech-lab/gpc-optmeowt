@@ -11,6 +11,12 @@ domainlist-view.js loads domainlist-view.html when clicked on the options page
 
 import { storage, stores } from "../../../background/storage.js";
 import { renderParse, fetchParse } from "../../components/util.js";
+import {
+  getWellknownCheckOverrides,
+  resolveWellknownCheckEnabled,
+  setWellknownCheckOverrideForDomain,
+  isWellknownCheckEnabled,
+} from "../../../common/settings.js";
 
 import {
   addDomainToDomainlistAndRules,
@@ -41,6 +47,11 @@ export function buildToggle(domain, id) {
   return toggle;
 }
 
+export function buildWellknownToggle(domain, enabled) {
+  const checked = enabled ? "checked" : "";
+  return `<input type="checkbox" id="wellknown-${domain}" ${checked} aria-label="Check for /.well-known/gpc.json" />`;
+}
+
 /**
  * Creates an event listener that toggles a given domain's stored value in
  * the domainlist if a user clicks on the object with the given element ID
@@ -62,6 +73,16 @@ export async function toggleListener(elementId, domain) {
   });
 }
 
+function wellknownToggleListener(elementId, domain) {
+  const element = document.getElementById(elementId);
+  if (!element) {
+    return;
+  }
+  element.addEventListener("change", async (event) => {
+    await setWellknownCheckOverrideForDomain(domain, event.target.checked);
+  });
+}
+
 function showConfirmModal(message, callback) {
   const modal = document.getElementById("confirm-modal");
   const yesButton = document.getElementById("confirm-yes");
@@ -75,14 +96,14 @@ function showConfirmModal(message, callback) {
 
   // Handle "Yes" button click
   yesButton.onclick = () => {
-      callback(true);  // Pass true to the callback if "Yes" was clicked
-      modal.classList.add("hidden");  // Hide the modal
+    callback(true);  // Pass true to the callback if "Yes" was clicked
+    modal.classList.add("hidden");  // Hide the modal
   };
 
   // Handle "No" button click
   noButton.onclick = () => {
-      callback(false);  // Pass false to the callback if "No" was clicked
-      modal.classList.add("hidden");  // Hide the modal
+    callback(false);  // Pass false to the callback if "No" was clicked
+    modal.classList.add("hidden");  // Hide the modal
   };
 }
 
@@ -98,8 +119,8 @@ function showAlert(message, callback) {
 
   // Handle "OK" button click
   okButton.onclick = () => {
-      callback();  // Call the callback after the alert is dismissed
-      modal.classList.add("hidden");  // Hide the modal
+    callback();  // Call the callback after the alert is dismissed
+    modal.classList.add("hidden");  // Hide the modal
   };
 }
 
@@ -117,6 +138,7 @@ async function createToggleListeners() {
     domainValue = domainlistValues[index];
     // MAKE SURE THE ID MATCHES EXACTLY
     toggleListener(domain, domain);
+    wellknownToggleListener(`wellknown-${domain}`, domain);
     deleteButtonListener(domain);
   }
 }
@@ -125,7 +147,7 @@ async function createToggleListeners() {
  * Delete buttons for each domain
  * @param {string} domain
  */
- function deleteButtonListener(domain) {
+function deleteButtonListener(domain) {
   document
     .getElementById(`delete ${domain}`)
     .addEventListener("click", async () => {
@@ -173,27 +195,27 @@ async function eventListeners() {
     const successPrompt = `Successfully deleted all domains from the Domain List.`;
 
     showConfirmModal(deletePrompt, async (confirmed) => {
-        if (confirmed) {
-            // If user clicks "Yes", proceed with deletion
-            const domainlistKeys = await storage.getAllKeys(stores.domainlist);
-            
-            for (let domain of domainlistKeys) {
-                await storage.delete(stores.domainlist, domain);
-            }
+      if (confirmed) {
+        // If user clicks "Yes", proceed with deletion
+        const domainlistKeys = await storage.getAllKeys(stores.domainlist);
 
-            reloadDynamicRules();
-            updateRemovalScript();
-            deleteCS();
-
-            // Show success message using the custom alert modal
-            showAlert(successPrompt, () => {
-                document.getElementById("domainlist-main").innerHTML = "";  // Clears the list visually
-            });
-        } else {
-            // No action taken if user clicks "No"
+        for (let domain of domainlistKeys) {
+          await storage.delete(stores.domainlist, domain);
         }
+
+        reloadDynamicRules();
+        updateRemovalScript();
+        deleteCS();
+
+        // Show success message using the custom alert modal
+        showAlert(successPrompt, () => {
+          document.getElementById("domainlist-main").innerHTML = "";  // Clears the list visually
+        });
+      } else {
+        // No action taken if user clicks "No"
+      }
     });
-});
+  });
 
   window.onscroll = function () {
     stickyNavbar();
@@ -221,11 +243,18 @@ async function buildList() {
   let items = "";
   let domain;
   let domainValue;
+  const wellknownGlobalEnabled = await isWellknownCheckEnabled();
+  const wellknownOverrides = await getWellknownCheckOverrides();
   const domainlistKeys = await storage.getAllKeys(stores.domainlist);
   const domainlistValues = await storage.getAll(stores.domainlist);
   for (let index in domainlistKeys) {
     domain = domainlistKeys[index];
     domainValue = domainlistValues[index];
+    const wellknownEnabled = resolveWellknownCheckEnabled(
+      domain,
+      wellknownGlobalEnabled,
+      wellknownOverrides
+    );
     items +=
       `
     <li id="li ${domain}">
@@ -248,7 +277,10 @@ async function buildList() {
           margin-bottom: auto;
           "
         >
-          <label class="switch" >
+          <label class="switch" title="Check for /.well-known/gpc.json">
+          ` +
+      buildWellknownToggle(domain, wellknownEnabled) +
+      `
             <span></span>
           </label>
         </div>

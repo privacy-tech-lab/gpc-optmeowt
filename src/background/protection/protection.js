@@ -20,7 +20,12 @@ import {
   deleteDynamicRule,
   reloadDynamicRules,
 } from "../../common/editRules.js";
-import { isWellknownCheckEnabled } from "../../common/settings.js";
+import {
+  getWellknownCheckOverrides,
+  isWellknownCheckEnabled,
+  isWellknownCheckEnabledForDomain,
+  resolveWellknownCheckEnabled,
+} from "../../common/settings.js";
 
 /******************************************************************************/
 /******************************************************************************/
@@ -441,8 +446,25 @@ function onMessageHandlerSynchronous(message, sender, sendResponse) {
   */
 async function onMessageHandlerAsync(message, sender, sendResponse) {
   if (message.msg === "GET_WELLKNOWN_CHECK_ENABLED") {
-    const enabled = await isWellknownCheckEnabled();
-    await chrome.storage.local.set({ WELLKNOWN_CHECK_ENABLED: enabled });
+    let domain;
+    const urlString = message.data?.url;
+    if (urlString) {
+      try {
+        const url = new URL(urlString);
+        const parsed = psl.parse(url.hostname);
+        domain = parsed.domain;
+      } catch (error) {
+        domain = undefined;
+      }
+    }
+    const globalEnabled = await isWellknownCheckEnabled();
+    const overrides = await getWellknownCheckOverrides();
+    const enabled = resolveWellknownCheckEnabled(
+      domain,
+      globalEnabled,
+      overrides
+    );
+    await chrome.storage.local.set({ WELLKNOWN_CHECK_ENABLED: globalEnabled });
     sendResponse({ enabled });
     return true;
   }
@@ -470,15 +492,24 @@ async function onMessageHandlerAsync(message, sender, sendResponse) {
     await dataToPopupRequests();
   }
   if (message.msg === "CONTENT_SCRIPT_WELLKNOWN") {
-    const wellknownCheckEnabled = await isWellknownCheckEnabled();
+    // sender.origin not working for Firefox MV3, instead added a new message argument, message.origin_url
+    const originUrl = message.origin_url || sender.origin;
+    let domain;
+    if (originUrl) {
+      try {
+        const url = new URL(originUrl);
+        const parsed = psl.parse(url.hostname);
+        domain = parsed.domain;
+      } catch (error) {
+        domain = undefined;
+      }
+    }
+    const wellknownCheckEnabled = await isWellknownCheckEnabledForDomain(
+      domain
+    );
     if (!wellknownCheckEnabled) {
       return true;
     }
-    // sender.origin not working for Firefox MV3, instead added a new message argument, message.origin_url
-    //let url = new URL(sender.origin);
-    let url = new URL(message.origin_url);
-    let parsed = psl.parse(url.hostname);
-    let domain = parsed.domain;
 
     let tabID = sender.tab.id;
     let wellknown = [];

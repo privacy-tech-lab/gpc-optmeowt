@@ -48,23 +48,24 @@ function injectScript(script) {
   document.documentElement.prepend(scriptElem);
 }
 
-async function isWellknownCheckEnabled() {
+async function isWellknownCheckEnabled(pageUrl) {
+  try {
+    const response = await chrome.runtime.sendMessage({
+      msg: "GET_WELLKNOWN_CHECK_ENABLED",
+      data: { url: pageUrl?.href || pageUrl },
+    });
+    if (response && typeof response.enabled === "boolean") {
+      return response.enabled;
+    }
+  } catch (error) {
+    print(error);
+  }
   try {
     const { WELLKNOWN_CHECK_ENABLED } = await chrome.storage.local.get(
       "WELLKNOWN_CHECK_ENABLED"
     );
     if (typeof WELLKNOWN_CHECK_ENABLED === "boolean") {
       return WELLKNOWN_CHECK_ENABLED;
-    }
-  } catch (error) {
-    print(error);
-  }
-  try {
-    const response = await chrome.runtime.sendMessage({
-      msg: "GET_WELLKNOWN_CHECK_ENABLED",
-    });
-    if (response && typeof response.enabled === "boolean") {
-      return response.enabled;
     }
   } catch (error) {
     print(error);
@@ -105,7 +106,7 @@ async function getWellknown(url) {
   /*   MAIN CONTENT SCRIPT PROCESSES GO HERE   */
 
   let url = new URL(location); // location object
-  isWellknownCheckEnabled().then((shouldCheck) => {
+  isWellknownCheckEnabled(url).then((shouldCheck) => {
     if (shouldCheck) {
       getWellknown(url);
     }
