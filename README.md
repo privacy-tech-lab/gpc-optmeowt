@@ -47,6 +47,7 @@ Former contributors are Francisca Wijaya (@franciscawijaya), Sage Altman (@sagea
 
 ## 1. Research Publications
 
+- Sebastian Zimmeck, Nishant Aggarwal, Zachary Liu, Sage Altman and Konrad Kollnig, [Exercising the CCPA Opt-out Right on Android: Legally Mandated but Practically Challenging](https://sebastianzimmeck.de/zimmeckEtAlGPCAndroid2026.pdf), 26th Privacy Enhancing Technologies Symposium (PETS), Calgary, Canada, July 2026, [BibTeX](https://sebastianzimmeck.de/citations.html#zimmeckEtAlGPCAndroid2026Bibtex)
 - Katherine Hausladen, Oliver Wang, Sophie Eng, Jocelyn Wang, Francisca Wijaya, Matt May and Sebastian Zimmeck, [Websites' Global Privacy Control Compliance at Scale and over Time](https://sebastianzimmeck.de/hausladenEtAlGPCWeb2025.pdf), 34th USENIX Security Symposium (USENIX Security), Seattle, CA, August 2025, [BibTeX](https://sebastianzimmeck.de/citations.html#hausladenEtAlGPCWeb2025Bibtex)
 - Francisca Wijaya, Katherine Hausladen, Matt May, Oliver Wang, Sophie Eng and Sebastian Zimmeck, [Crawl for GPC: An Investigation of CCPA Compliance on the Internet](https://github.com/privacy-tech-lab/gpc-optmeowt/blob/main/research/wijayaEtAlCrawlForGPC2024Poster.pdf), Summer Research 2024 Poster Session, Wesleyan University, July 2024
 - Sebastian Zimmeck, Nishant Aggarwal, Zachary Liu and Konrad Kollnig, [From Ad Identifiers to Global Privacy Control: The Status Quo and Future of Opting Out of Ad Tracking on Android](https://arxiv.org/abs/2407.14938), Under Review
