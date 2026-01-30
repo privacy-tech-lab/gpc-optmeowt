@@ -213,7 +213,7 @@ async function renderDomainCounter() {
   `;
 }
 
-// First party domain and the Do Not Sell listener helper
+// First party domain and the Global Privacy Control listener helper
 
 async function renderFirstPartyDomainDNSToggle() {
   let checkbox = "";
@@ -227,10 +227,10 @@ async function renderFirstPartyDomainDNSToggle() {
 
       if (!parsedDomainValue) {
         checkbox = `<input type="checkbox" id="input" checked/><span></span>`;
-        text = "Do Not Sell Enabled";
+        text = "Global Privacy Control Enabled";
       } else {
         checkbox = `<input type="checkbox" id="input"/><span></span>`;
-        text = "Do Not Sell Disabled";
+        text = "Global Privacy Control Disabled";
       }
       document.getElementById("switch-label").innerHTML = checkbox;
       document.getElementById("more-info-text").innerHTML = text;
@@ -254,10 +254,10 @@ async function listenerFirstPartyDomainDNSToggleCallback() {
   const parsedDomainValue = await storage.get(stores.domainlist, parsedDomain);
   let elemString = "";
   if (!parsedDomainValue) {
-    elemString = "Do Not Sell Disabled";
+    elemString = "Global Privacy Control Disabled";
     await addDomainToDomainlistAndRules(parsedDomain);
   } else {
-    elemString = "Do Not Sell Enabled";
+    elemString = "Global Privacy Control Enabled";
     await removeDomainFromDomainlistAndRules(parsedDomain);
   }
 
@@ -399,7 +399,7 @@ async function showProtectionInfo() {
   removeListenerDropdown2Toggle();
   document.getElementById("switch-label").innerHTML = "";
   document.getElementById("more-info-body").style.display = "";
-  document.getElementById("more-info-text").innerHTML = "Do Not Sell Enabled!";
+  document.getElementById("more-info-text").innerHTML = "Global Privacy Control Enabled!";
   document.getElementById("dropdown-1").style.display = "";
   document.getElementById("dropdown-1-text").innerHTML = "3rd Party Domains";
   document.getElementById("dropdown-2-text").innerHTML = "Website Response";
@@ -417,7 +417,7 @@ async function showProtectionInfo() {
     ? ""
     : "none";
 
-  // Generate `Do Not Sell Enabled` elem
+  // Generate `Global Privacy Control Enabled` elem
   renderDomainCounter(); // Render "X domains receiving signals" info section
   renderFirstPartyDomainDNSToggle(); // Render 1P domain "DNS Enabled/Disabled" text+toggle
 
@@ -507,10 +507,10 @@ function addThirdPartyDomainDNSToggleListener(requestDomain) {
       );
       let elemString = "";
       if (!requestDomainValue) {
-        elemString = "Do Not Sell Disabled";
+        elemString = "Global Privacy Control Disabled";
         addDomainToDomainlistAndRules(requestDomain);
       } else {
-        elemString = "Do Not Sell Enabled";
+        elemString = "Global Privacy Control Enabled";
         removeDomainFromDomainlistAndRules(requestDomain);
       }
       
@@ -542,10 +542,10 @@ async function buildDomains(requests) {
       let index = domainlistKeys.indexOf(requestDomain);
       if (index > -1 && !domainlistValues[index]) {
         checkbox = `<input type="checkbox" id="input-${requestDomain}" checked/>`;
-        text = "Do Not Sell Enabled";
+        text = "Global Privacy Control Enabled";
       } else {
         checkbox = `<input type="checkbox" id="input-${requestDomain}"/>`;
-        text = "Do Not Sell Disabled";
+        text = "Global Privacy Control Disabled";
       }
 
       items += `
@@ -715,7 +715,7 @@ function setToDomainlist(d, k) {
 // Walkthrough function
 function popUpWalkthrough() {
   let contentStr =
-    "Toggle this switch to enable or disable sending Do Not Sell signals to this site in Protection mode";
+    "Toggle this switch to enable or disable sending Global Privacy Control signals to this site in Protection mode";
   tippy(".tooltip-1", {
     content: contentStr,
     trigger: "manual",

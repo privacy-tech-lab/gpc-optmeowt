@@ -169,7 +169,7 @@ function walkthrough() {
     modal.hide();
     tippy(".tutorial-tooltip1", {
       content:
-        "<p>Set which sites should receive a Do Not Sell signal<p>  <button class='uk-button uk-button-default'>Next</button>",
+        "<p>Set which sites should receive a Global Privacy Control signal<p>  <button class='uk-button uk-button-default'>Next</button>",
       allowHTML: true,
       trigger: "manual",
       placement: "right",
