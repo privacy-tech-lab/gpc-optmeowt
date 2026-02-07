@@ -159,7 +159,7 @@ async function createToggleListeners() {
 const headings = {
   title: "Domain List",
   subtitle:
-    "Toggle which domains you would like to receive Do Not Sell signals in Protection Mode",
+    "Toggle which domains you would like to receive Global Privacy Control signals in Protection Mode",
 };
 
 /**
