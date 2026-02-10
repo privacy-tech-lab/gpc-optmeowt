@@ -20,3 +20,13 @@ export async function isWellknownCheckEnabled() {
   const enabled = await storage.get(stores.settings, "WELLKNOWN_CHECK_ENABLED");
   return enabled !== false;
 }
+
+/**
+ * Returns whether the compliance check is enabled.
+ * Defaults to true unless explicitly disabled.
+ * @returns {Promise<boolean>}
+ */
+export async function isComplianceCheckEnabled() {
+  const enabled = await storage.get(stores.settings, "COMPLIANCE_CHECK_ENABLED");
+  return enabled !== false;
+}

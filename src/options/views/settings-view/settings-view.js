@@ -60,16 +60,16 @@ function eventListeners() {
         msg: "CHANGE_IS_DOMAINLISTED",
         data: { isDomainlisted: false },
       });
-        chrome.scripting.updateContentScripts([
-          {
-            id: "1",
-            matches: ["<all_urls>"],
-            excludeMatches: [],
-            js: ["content-scripts/registration/gpc-dom.js"],
-            runAt: "document_start",
-          },
-        ]);
-        deleteAllDynamicRules();
+      chrome.scripting.updateContentScripts([
+        {
+          id: "1",
+          matches: ["<all_urls>"],
+          excludeMatches: [],
+          js: ["content-scripts/registration/gpc-dom.js"],
+          runAt: "document_start",
+        },
+      ]);
+      deleteAllDynamicRules();
     });
   document
     .getElementById("settings-view-radio1")
@@ -82,16 +82,16 @@ function eventListeners() {
         msg: "CHANGE_IS_DOMAINLISTED",
         data: { isDomainlisted: false },
       });
-        chrome.scripting.updateContentScripts([
-          {
-            id: "1",
-            matches: ["https://example.com/foo/bar.html"],
-            excludeMatches: [],
-            js: ["content-scripts/registration/gpc-dom.js"],
-            runAt: "document_start",
-          },
-        ]);
-        addDynamicRule(4999, "*");
+      chrome.scripting.updateContentScripts([
+        {
+          id: "1",
+          matches: ["https://example.com/foo/bar.html"],
+          excludeMatches: [],
+          js: ["content-scripts/registration/gpc-dom.js"],
+          runAt: "document_start",
+        },
+      ]);
+      addDynamicRule(4999, "*");
     });
   document
     .getElementById("settings-view-radio2")
@@ -104,8 +104,8 @@ function eventListeners() {
         msg: "CHANGE_IS_DOMAINLISTED",
         data: { isDomainlisted: true },
       });
-        updateRemovalScript();
-        reloadDynamicRules();
+      updateRemovalScript();
+      reloadDynamicRules();
     });
   document
     .getElementById("download-button")
@@ -125,9 +125,20 @@ function eventListeners() {
         data: { enabled },
       });
     });
+  document
+    .getElementById("compliance-check-toggle")
+    .addEventListener("change", async (event) => {
+      const enabled = event.target.checked;
+      await storage.set(
+        stores.settings,
+        enabled,
+        "COMPLIANCE_CHECK_ENABLED"
+      );
+      await chrome.storage.local.set({ COMPLIANCE_CHECK_ENABLED: enabled });
+    });
   document.getElementById("upload-button").addEventListener("click", () => {
     const verify = confirm(
-      `This option will load a list of domains from a file, clearing all domains currently in the list.\n Do you wish to continue?`
+      `This option will load a list of domains from a file, clearing all domains currently in the list.\\n Do you wish to continue?`
     );
     if (verify) {
       startUpload();
@@ -210,7 +221,7 @@ function walkthrough() {
     document.getElementById("modal-button-3").onclick = () => {
       chrome.tabs.create(
         { url: "https://privacytechlab.org/optmeowt" },
-        function (tab) {}
+        function (tab) { }
       );
     };
   }
@@ -285,6 +296,10 @@ export async function settingsView(scaffoldTemplate) {
   document.getElementById("wellknown-check-toggle").checked =
     wellknownCheckEnabled;
 
+  const complianceCheckEnabled = await storage.get(stores.settings, "COMPLIANCE_CHECK_ENABLED");
+  document.getElementById("compliance-check-toggle").checked =
+    complianceCheckEnabled !== false;
+
   eventListeners();
 
   const tutorialShown = await storage.get(stores.settings, "TUTORIAL_SHOWN");
@@ -298,4 +313,5 @@ export async function settingsView(scaffoldTemplate) {
     if (!requestShown) {
       requestPermissions();
     }
-  }}
+  }
+}

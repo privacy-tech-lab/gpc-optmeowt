@@ -26,18 +26,32 @@ const stores = Object.freeze({
   domainlist: "DOMAINLIST",
   thirdParties: "THIRDPARTIES",
   wellknownInformation: "WELLKNOWNDATA",
+  complianceData: "COMPLIANCEDATA",
 });
 
 /******************************************************************************/
 /*************************  Main Storage Functions  ***************************/
 /******************************************************************************/
 
-const dbPromise = openDB("extensionDB", 1, {
-  upgrade: function dbPromiseInternal(db) {
-    db.createObjectStore(stores.domainlist);
-    db.createObjectStore(stores.settings);
-    db.createObjectStore(stores.thirdParties);
-    db.createObjectStore(stores.wellknownInformation);
+const dbPromise = openDB("extensionDB", 2, {
+  upgrade: function dbPromiseInternal(db, oldVersion) {
+    // Create stores that don't exist yet
+    if (!db.objectStoreNames.contains(stores.domainlist)) {
+      db.createObjectStore(stores.domainlist);
+    }
+    if (!db.objectStoreNames.contains(stores.settings)) {
+      db.createObjectStore(stores.settings);
+    }
+    if (!db.objectStoreNames.contains(stores.thirdParties)) {
+      db.createObjectStore(stores.thirdParties);
+    }
+    if (!db.objectStoreNames.contains(stores.wellknownInformation)) {
+      db.createObjectStore(stores.wellknownInformation);
+    }
+    // New in version 2
+    if (oldVersion < 2 && !db.objectStoreNames.contains(stores.complianceData)) {
+      db.createObjectStore(stores.complianceData);
+    }
   },
 });
 

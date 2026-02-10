@@ -20,7 +20,8 @@ import {
   deleteDynamicRule,
   reloadDynamicRules,
 } from "../../common/editRules.js";
-import { isWellknownCheckEnabled } from "../../common/settings.js";
+import { isWellknownCheckEnabled, isComplianceCheckEnabled } from "../../common/settings.js";
+import { fetchComplianceData, isCacheValid } from "../../data/complianceData.js";
 
 /******************************************************************************/
 /******************************************************************************/
@@ -38,6 +39,8 @@ var sendSignal = true;  // Caches if the signal can be sent to the curr domain
 var domPrev3rdParties = {}; //stores all the 3rd parties by domain (resets when you quit chrome)
 var globalParsedDomain;
 var setup = false;
+var complianceCache = null; // Caches fetched compliance data
+var complianceFetchedAt = null; // Timestamp of last fetch
 
 async function reloadVars() {
   let storedDomainlisted = await storage.get(
@@ -78,11 +81,11 @@ const listenerCallbacks = {
    */
   onHeadersReceived: async (details) => {
     //if (!setup){
-      //initSetup();
+    //initSetup();
     //}
     await logData(details);
     await sendData();
-    
+
 
 
   },
@@ -101,9 +104,10 @@ const listenerCallbacks = {
   onCommitted: async (details) => {
     await updateDomainlist(details);
   },
-  
+
   onCompleted: async (details) => {
     await sendData();
+    await handleComplianceCheck(details);
   }
 
 }; // closes listenerCallbacks object
@@ -115,7 +119,85 @@ const listenerCallbacks = {
 /******************************************************************************/
 
 
-async function sendData(){
+/**
+ * Fetches compliance data if not cached or cache is stale
+ * @returns {Promise<Object|null>} - Compliance data map or null if disabled/error
+ */
+async function getComplianceData() {
+  const complianceCheckEnabled = await isComplianceCheckEnabled();
+  if (!complianceCheckEnabled) {
+    return null;
+  }
+
+  // Check if we have valid cached data
+  if (complianceCache && isCacheValid(complianceFetchedAt)) {
+    return complianceCache;
+  }
+
+  // Fetch fresh data
+  try {
+    const result = await fetchComplianceData();
+    complianceCache = result.data;
+    complianceFetchedAt = result.fetchedAt;
+
+    // Store metadata in storage
+    await storage.set(stores.complianceData, {
+      fetchedAt: result.fetchedAt,
+      count: result.count
+    }, '_metadata');
+
+    console.log(`Fetched compliance data for ${result.count} domains`);
+    return complianceCache;
+  } catch (error) {
+    console.error('Failed to fetch compliance data:', error);
+    return null;
+  }
+}
+
+/**
+ * Looks up and stores compliance status for current domain after page load
+ * @param {Object} details - callback object from onCompleted listener
+ */
+async function handleComplianceCheck(details) {
+  // Only check main frame navigations
+  if (details.frameId !== 0) return;
+
+  const complianceCheckEnabled = await isComplianceCheckEnabled();
+  if (!complianceCheckEnabled) {
+    return;
+  }
+
+  try {
+    const url = new URL(details.url);
+    const parsed = psl.parse(url.hostname);
+    const domain = parsed.domain;
+
+    if (!domain) return;
+
+    console.log('Running compliance check for:', domain);
+
+    const complianceData = await getComplianceData();
+    if (!complianceData) {
+      console.log('No compliance data available');
+      return;
+    }
+
+    const status = complianceData[domain] || {
+      status: 'no_data',
+      details: 'This site was not included in the crawl dataset',
+      lastChecked: null
+    };
+
+    console.log('Compliance status for', domain, ':', status.status);
+
+    // Store in IndexedDB for popup to access
+    await storage.set(stores.complianceData, status, domain);
+  } catch (error) {
+    console.debug('Error in compliance check:', error);
+  }
+}
+
+async function sendData() {
   let activeTab = await chrome.tabs.query({ active: true, currentWindow: true });
   let activeTabID = activeTab.length > 0 ? activeTab[0].id : null;
 
@@ -155,7 +237,7 @@ function getCurrentParsedDomain() {
         const domain = parsed && parsed.domain ? parsed.domain : null;
         globalParsedDomain = domain;  // for global scope variable
         resolve(domain);
-      } catch(e) {
+      } catch (e) {
         resolve(null);
       }
     });
@@ -197,17 +279,17 @@ async function updateDomainlist(details) {
   if (currDomainValue === undefined) {
     await storage.set(stores.domainlist, null, parsedDomain); // Sets to storage async
   }
-  
-  let currentDomain = await getCurrentParsedDomain(); 
+
+  let currentDomain = await getCurrentParsedDomain();
   if (!currentDomain) {
     return;
   }
 
   //get the current parsed domain--this is used to store 3rd parties (using globalParsedDomain variable)
-  if (!(id in domPrev3rdParties)){
+  if (!(id in domPrev3rdParties)) {
     domPrev3rdParties[id] = {};
   }
-  if (!(currentDomain in domPrev3rdParties[id]) ){
+  if (!(currentDomain in domPrev3rdParties[id])) {
     domPrev3rdParties[id][currentDomain] = {};
   }
   //as they come in, add the parsedDomain to the object with null value (just a placeholder)
@@ -341,7 +423,7 @@ function handleSendMessageError() {
     console.warn(error.message);
   }
 }
-async function dataToPopupHelper(){
+async function dataToPopupHelper() {
   //data gets sent back every time the popup is clicked
   let domain = await getCurrentParsedDomain();
   if (!domain) {
@@ -359,7 +441,7 @@ async function dataToPopupHelper(){
 // Info back to popup
 async function dataToPopup(wellknownData) {
   let requestsData = await dataToPopupHelper(); //get requests from the helper
-  chrome.tabs.query({active: true, currentWindow: true}, function(tabs){
+  chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
     let popupData = {
       requests: requestsData,
       wellknown: wellknownData,

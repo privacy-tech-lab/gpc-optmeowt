@@ -39,6 +39,7 @@ styles.css is the main css page for OptMeowt's popup page
   outline: none;
   transition: all ease 0.25s;
 }
+
 .importexport-button:hover {
   background-color: var(--accent-color);
   border-color: var(--accent-color);
@@ -84,6 +85,7 @@ styles.css is the main css page for OptMeowt's popup page
 SVG photo assets style
 */
 @import "../options/styles.css";
+
 svg {
   fill: #d3d3d3;
   transition: all ease 0.5s;
@@ -115,8 +117,7 @@ Blue Heading
   float: left;
 }
 
-.tippy-box[data-theme~="custom-2"][data-placement^="bottom"]
-  > .tippy-arrow::before {
+.tippy-box[data-theme~="custom-2"][data-placement^="bottom"]>.tippy-arrow::before {
   border-bottom-color: #87cefa;
 }
 
@@ -169,3 +170,71 @@ Accepted/rejected text on popup
   height: 1px;
   background: black;
 } */
+
+/********************************************************/
+
+/*
+Compliance status indicators
+*/
+
+.compliance-status-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: small;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.compliance-compliant {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.compliance-non-compliant {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+.compliance-no-signals {
+  background-color: #fff3cd;
+  color: #856404;
+  border: 1px solid #ffeeba;
+}
+
+.compliance-no-data {
+  background-color: #e2e3e5;
+  color: #383d41;
+  border: 1px solid #d6d8db;
+}
+
+.compliance-unknown {
+  background-color: #cce5ff;
+  color: #004085;
+  border: 1px solid #b8daff;
+}
+
+.compliance-inline {
+  text-align: center;
+}
+
+.compliance-status-text {
+  font-size: small;
+  margin-top: 6px;
+  margin-bottom: 4px;
+}
+
+.compliance-details {
+  font-size: x-small;
+  color: var(--text-gray);
+  margin-top: 2px;
+  margin-bottom: 4px;
+}
+
+.compliance-link {
+  font-size: x-small;
+  display: inline-block;
+  margin-top: 4px;
+}

@@ -19,34 +19,39 @@ options page when clicked
 <template id="settings-view">
   <div id="welcome-modal" uk-modal>
     <div class="uk-modal-dialog">
-        <button class="uk-modal-close-default" type="button" uk-close></button>
-        <div class="uk-modal-header uk-flex uk-flex-column uk-flex-middle">
-            <img src="../../../assets/face-icons/icon64-face-circle.png" alt="" style="margin: 0px;">
-            <h2 class="uk-align-center text-color-darker">Welcome to OptMeowt!</h2>
-        </div>
-        <div class="uk-modal-body" style="font-size: 15px; text-align: center;">
-          OptMeowt has been successfully installed on your browser! Would you like a quick walkthrough of the options page?
-        </div>
-        <div class="uk-modal-footer">
-          <button id="modal-button-1" class="text-color uk-button uk-button-default uk-align-right" style="margin: 0px 10px;">NOT NOW</button>
-          <button id="modal-button-2" class="text-color uk-button uk-button-default uk-align-right" style="margin: 0px 10px;">OK</button>
-        </div>
+      <button class="uk-modal-close-default" type="button" uk-close></button>
+      <div class="uk-modal-header uk-flex uk-flex-column uk-flex-middle">
+        <img src="../../../assets/face-icons/icon64-face-circle.png" alt="" style="margin: 0px;">
+        <h2 class="uk-align-center text-color-darker">Welcome to OptMeowt!</h2>
+      </div>
+      <div class="uk-modal-body" style="font-size: 15px; text-align: center;">
+        OptMeowt has been successfully installed on your browser! Would you like a quick walkthrough of the options
+        page?
+      </div>
+      <div class="uk-modal-footer">
+        <button id="modal-button-1" class="text-color uk-button uk-button-default uk-align-right"
+          style="margin: 0px 10px;">NOT NOW</button>
+        <button id="modal-button-2" class="text-color uk-button uk-button-default uk-align-right"
+          style="margin: 0px 10px;">OK</button>
+      </div>
     </div>
   </div>
 
   <div id="permission-modal" uk-modal>
     <div class="uk-modal-dialog">
-        <button class="uk-modal-close-default" type="button" uk-close></button>
-        <div class="uk-modal-header uk-flex uk-flex-column uk-flex-middle">
-            <img src="../../../assets/face-icons/icon64-face-circle.png" alt="" style="margin: 0px;">
-            <h2 class="uk-align-center text-color-darker">Welcome to OptMeowt!</h2>
-        </div>
-        <div class="uk-modal-body" style="font-size: 15px; text-align: center;">
-          OptMeowt requires host permissions to be enabled to function correctly, please enable these permissions using the button below. Note that OptMeowt does not collect your data!
-        </div>
-        <div class="uk-modal-footer">
-          <button id="modal-button-4" class="text-color uk-button uk-button-default" style="display: block; margin: 0 auto;">ENABLE</button>
-        </div>
+      <button class="uk-modal-close-default" type="button" uk-close></button>
+      <div class="uk-modal-header uk-flex uk-flex-column uk-flex-middle">
+        <img src="../../../assets/face-icons/icon64-face-circle.png" alt="" style="margin: 0px;">
+        <h2 class="uk-align-center text-color-darker">Welcome to OptMeowt!</h2>
+      </div>
+      <div class="uk-modal-body" style="font-size: 15px; text-align: center;">
+        OptMeowt requires host permissions to be enabled to function correctly, please enable these permissions using
+        the button below. Note that OptMeowt does not collect your data!
+      </div>
+      <div class="uk-modal-footer">
+        <button id="modal-button-4" class="text-color uk-button uk-button-default"
+          style="display: block; margin: 0 auto;">ENABLE</button>
+      </div>
     </div>
   </div>
 
@@ -54,19 +59,11 @@ options page when clicked
     <label>
       <div uk-grid class="uk-grid-column-small" style="margin-left: 0px;">
         <div class="uk-container" style="margin: auto;">
-          <input
-            class="uk-radio"
-            type="radio"
-            name="radio"
-            id="settings-view-radio0"
-          />
+          <input class="uk-radio" type="radio" name="radio" id="settings-view-radio0" />
         </div>
         <div uk-grid class="uk-grid-row-collapse uk-width-expand">
-          <div
-            class="uk-first-column uk-width-1-1 uk-text-bold settings-popup1"
-            style="font-size: large;"
-            id="settings-view-radio0-text"
-          >
+          <div class="uk-first-column uk-width-1-1 uk-text-bold settings-popup1" style="font-size: large;"
+            id="settings-view-radio0-text">
             Enable
           </div>
           <div class="uk-first-column uk-width-1-1" style="font-size: small;">
@@ -79,18 +76,10 @@ options page when clicked
     <label>
       <div uk-grid class="uk-grid-column-small" style="margin-left: 0px;">
         <div class="uk-container" style="margin: auto;">
-          <input
-            class="uk-radio"
-            type="radio"
-            name="radio"
-            id="settings-view-radio2"
-          />
+          <input class="uk-radio" type="radio" name="radio" id="settings-view-radio2" />
         </div>
         <div uk-grid class="uk-grid-row-collapse uk-width-expand">
-          <div
-            class="uk-first-column uk-width-1-1 uk-text-bold tutorial-tooltip1"
-            style="font-size: large;"
-          >
+          <div class="uk-first-column uk-width-1-1 uk-text-bold tutorial-tooltip1" style="font-size: large;">
             Domain List
           </div>
           <div class="uk-first-column uk-width-1-1" style="font-size: small;">
@@ -103,19 +92,11 @@ options page when clicked
     <label>
       <div uk-grid class="uk-grid-column-small" style="margin-left: 0px;">
         <div class="uk-container" style="margin: auto;">
-          <input
-            class="uk-radio"
-            type="radio"
-            name="radio"
-            id="settings-view-radio1"
-          />
+          <input class="uk-radio" type="radio" name="radio" id="settings-view-radio1" />
         </div>
         <div uk-grid class="uk-grid-row-collapse uk-width-expand">
-          <div
-            class="uk-first-column uk-width-1-1 uk-text-bold"
-            style="font-size: large;"
-            id="settings-view-radio1-text"
-          >
+          <div class="uk-first-column uk-width-1-1 uk-text-bold" style="font-size: large;"
+            id="settings-view-radio1-text">
             Disable
           </div>
           <div class="uk-first-column uk-width-1-1" style="font-size: small;">
@@ -127,7 +108,8 @@ options page when clicked
   </div>
   </div>
   <div class="uk-text-small uk-text-muted" style="font-size: x-small; margin-top: 10px;">
-    ** Please note that the privacy preferences you configure in OptMeowt may be influenced by global browser settings, like enabling GPC browser-wide.
+    ** Please note that the privacy preferences you configure in OptMeowt may be influenced by global browser settings,
+    like enabling GPC browser-wide.
   </div>
   <hr style="margin-top: 5px; margin-bottom: 5px;">
   <div style="font-weight: bold; font-size: medium; padding-bottom: 10px;">
@@ -137,17 +119,10 @@ options page when clicked
     <label>
       <div uk-grid class="uk-grid-column-small" style="margin-left: 0px;">
         <div class="uk-container" style="margin: auto;">
-          <input
-            class="uk-checkbox"
-            type="checkbox"
-            id="wellknown-check-toggle"
-          />
+          <input class="uk-checkbox" type="checkbox" id="wellknown-check-toggle" />
         </div>
         <div uk-grid class="uk-grid-row-collapse uk-width-expand">
-          <div
-            class="uk-first-column uk-width-1-1 uk-text-bold"
-            style="font-size: medium;"
-          >
+          <div class="uk-first-column uk-width-1-1 uk-text-bold" style="font-size: medium;">
             Check for /.well-known/gpc.json
           </div>
           <div class="uk-first-column uk-width-1-1" style="font-size: small;">
@@ -157,26 +132,34 @@ options page when clicked
       </div>
     </label>
   </div>
+  <div class="uk-margin-small">
+    <label>
+      <div uk-grid class="uk-grid-column-small" style="margin-left: 0px;">
+        <div class="uk-container" style="margin: auto;">
+          <input class="uk-checkbox" type="checkbox" id="compliance-check-toggle" />
+        </div>
+        <div uk-grid class="uk-grid-row-collapse uk-width-expand">
+          <div class="uk-first-column uk-width-1-1 uk-text-bold" style="font-size: medium;">
+            Show GPC Compliance Status
+          </div>
+          <div class="uk-first-column uk-width-1-1" style="font-size: small;">
+            Check crawl data for each site's GPC compliance and display in popup
+          </div>
+        </div>
+      </div>
+    </label>
+  </div>
   <div uk-grid>
     <div>
-      <button
-        id="download-button" class="importexport-button"
-      >
+      <button id="download-button" class="importexport-button">
         Export Domain List
-      </a>
+        </a>
     </div>
     <div>
-      <button
-        id="upload-button" class="importexport-button tutorial-tooltip2"
-      >
+      <button id="upload-button" class="importexport-button tutorial-tooltip2">
         Import Domain List from File
       </button>
-      <input
-        hidden
-        type="file"
-        accept=".json"
-        id="upload-domainlist"
-      >
+      <input hidden type="file" accept=".json" id="upload-domainlist">
       </input>
     </div>
   </div>
@@ -185,18 +168,19 @@ options page when clicked
 
   <div id="thank-you-modal" uk-modal>
     <div class="uk-modal-dialog">
-        <button class="uk-modal-close-default" type="button" uk-close></button>
-        <div class="uk-modal-header uk-flex uk-flex-column uk-flex-middle">
-            <img src="../../../assets/face-icons/optmeow-face-circle-green-ring-128.png" alt="">
-        </div>
-        <div class="uk-modal-body" style="font-size: 15px; text-align: center;">
-          <h2 class="text-color-darker">Enjoy Using OptMeowt!</h2>
-        </div>
-        <div class="uk-modal-footer">
-          <button id="modal-button-3" class="text-color uk-button uk-button-default uk-align-center">Learn More About Us</button>
-        </div>
+      <button class="uk-modal-close-default" type="button" uk-close></button>
+      <div class="uk-modal-header uk-flex uk-flex-column uk-flex-middle">
+        <img src="../../../assets/face-icons/optmeow-face-circle-green-ring-128.png" alt="">
+      </div>
+      <div class="uk-modal-body" style="font-size: 15px; text-align: center;">
+        <h2 class="text-color-darker">Enjoy Using OptMeowt!</h2>
+      </div>
+      <div class="uk-modal-footer">
+        <button id="modal-button-3" class="text-color uk-button uk-button-default uk-align-center">Learn More About
+          Us</button>
+      </div>
     </div>
   </div>
 
-  
+
 </template>

@@ -138,21 +138,21 @@ function renderExtensionIsEnabledDisabled(isEnabled, isDomainlisted) {
 }
 
 function turnonoff(isEnabled) {
-    if (isEnabled) {
-      chrome.scripting.updateContentScripts([
-        {
-          id: "1",
-          matches: ["https://example.com/foo/bar.html"],
-          excludeMatches: [],
-          js: ["content-scripts/registration/gpc-dom.js"],
-          runAt: "document_start",
-        },
-      ]);
-      addDynamicRule(4999, "*");
-    } else {
-      updateRemovalScript();
-      reloadDynamicRules();
-    }
+  if (isEnabled) {
+    chrome.scripting.updateContentScripts([
+      {
+        id: "1",
+        matches: ["https://example.com/foo/bar.html"],
+        excludeMatches: [],
+        js: ["content-scripts/registration/gpc-dom.js"],
+        runAt: "document_start",
+      },
+    ]);
+    addDynamicRule(4999, "*");
+  } else {
+    updateRemovalScript();
+    reloadDynamicRules();
+  }
 }
 
 function listenerExtensionIsEnabledDisabledButton(
@@ -384,6 +384,38 @@ function removeListenerDropdown2Toggle() {
     .removeEventListener("click", listenerDropdown2ToggleCallback);
 }
 
+function listenerDropdown3ToggleCallback() {
+  if (
+    document.getElementById("dropdown-3-expandable").style.display === "none"
+  ) {
+    document.getElementById("dropdown-chevron-3").src =
+      "../assets/chevron-up.svg";
+    document.getElementById("dropdown-3-expandable").style.display = "";
+    document.getElementById("dropdown-3").classList.add("dropdown-tab-click");
+    document.getElementById("divider-8").style.display = "";
+  } else {
+    document.getElementById("dropdown-chevron-3").src =
+      "../assets/chevron-down.svg";
+    document.getElementById("dropdown-3-expandable").style.display = "none";
+    document
+      .getElementById("dropdown-3")
+      .classList.remove("dropdown-tab-click");
+    document.getElementById("divider-8").style.display = "none";
+  }
+}
+
+function listenerDropdown3Toggle() {
+  document
+    .getElementById("dropdown-3")
+    .addEventListener("click", listenerDropdown3ToggleCallback);
+}
+
+function removeListenerDropdown3Toggle() {
+  document
+    .getElementById("dropdown-3")
+    .removeEventListener("click", listenerDropdown3ToggleCallback);
+}
+
 /******************************************************************************/
 /******************************************************************************/
 /**********                 # Inflates main content                  **********/
@@ -447,12 +479,23 @@ async function showProtectionInfo() {
     await buildWellKnown(wellknown ?? null);
   }
 
+  // Compliance status (always visible, no dropdown)
+  const complianceCheckEnabled = await storage.get(stores.settings, "COMPLIANCE_CHECK_ENABLED");
+
+  if (complianceCheckEnabled !== false) {
+    const complianceStatus = await storage.get(stores.complianceData, domain);
+    await buildComplianceStatus(complianceStatus ?? null);
+    document.getElementById("compliance-section").style.display = "";
+  } else {
+    document.getElementById("compliance-section").style.display = "none";
+  }
 
 
-    // chrome.runtime.sendMessage({
-    //   msg: "POPUP_PROTECTION_REQUESTS",
-    //   data: null,
-    // });
+
+  // chrome.runtime.sendMessage({
+  //   msg: "POPUP_PROTECTION_REQUESTS",
+  //   data: null,
+  // });
 }
 
 /**
@@ -513,7 +556,7 @@ function addThirdPartyDomainDNSToggleListener(requestDomain) {
         elemString = "Global Privacy Control Enabled";
         removeDomainFromDomainlistAndRules(requestDomain);
       }
-      
+
       document.getElementById(`dns-enabled-text-${requestDomain}`).innerHTML =
         elemString;
     });
@@ -661,8 +704,8 @@ async function buildWellKnown(requests) {
     <li>
       <pre class="wellknown-bg">
         ${JSON.stringify(data, null, 4)
-          .replace(/['"\{\}\n]/g, "")
-          .replace(/,/g, "\n")}
+        .replace(/['"\{\}\n]/g, "")
+        .replace(/,/g, "\n")}
       </pre>
     </li>
   `
@@ -671,6 +714,53 @@ async function buildWellKnown(requests) {
   document.getElementById(
     "dropdown-2-expandable"
   ).innerHTML = `${explainer} ${wellknown}`;
+}
+
+/**
+ * Builds the Compliance Status HTML for the popup window
+ * @param {Object} status - Compliance status object from storage
+ */
+async function buildComplianceStatus(status) {
+  const container = document.getElementById("compliance-status-content");
+
+  if (!status || status.status === 'no_data') {
+    container.innerHTML = `
+      <div class="compliance-inline">
+        <span class="compliance-status-badge compliance-no-data">⚪ Not in Dataset</span>
+        <p class="compliance-details">This site was not included in the GPC web crawl. Only the top ~10,000 sites are crawled.</p>
+        <a class="compliance-link" href="https://docs.google.com/spreadsheets/d/1xDz4RS5tlWBmAS33xVEOk2rqtc21lSkdInRv9J02ZFs/edit" target="_blank">View full dataset →</a>
+      </div>
+    `;
+    return;
+  }
+
+  let badge = '';
+  let statusText = '';
+
+  if (status.status === 'compliant') {
+    badge = '<span class="compliance-status-badge compliance-compliant">🟢 Compliant</span>';
+    statusText = 'This site honors the GPC signal.';
+  } else if (status.status === 'non_compliant') {
+    badge = '<span class="compliance-status-badge compliance-non-compliant">🔴 Non-Compliant</span>';
+    statusText = 'This site has consent mechanisms but does not honor the GPC signal.';
+  } else if (status.status === 'no_signals') {
+    badge = '<span class="compliance-status-badge compliance-no-signals">🟡 No Consent Signals</span>';
+    statusText = 'This site was crawled but no consent mechanisms (US Privacy API, OneTrust, GPP) were found on the page.';
+  } else {
+    badge = '<span class="compliance-status-badge compliance-unknown">🔵 Could Not Determine</span>';
+    statusText = 'This site is in the dataset but returned null values — we could not determine its compliance status.';
+  }
+
+  const details = status.details || '';
+
+  container.innerHTML = `
+    <div class="compliance-inline">
+      ${badge}
+      <p class="compliance-status-text">${statusText}</p>
+      ${details ? `<p class="compliance-details">${details}</p>` : ''}
+      <a class="compliance-link" href="https://docs.google.com/spreadsheets/d/1xDz4RS5tlWBmAS33xVEOk2rqtc21lSkdInRv9J02ZFs/edit" target="_blank">View full dataset →</a>
+    </div>
+  `;
 }
 
 /******************************************************************************/
