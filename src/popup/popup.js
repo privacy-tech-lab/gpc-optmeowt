@@ -10,7 +10,8 @@ popup.js supplements and renders complex elements on popup.html
 */
 
 import { stores, storage } from "../background/storage.js";
-import { isWellknownCheckEnabled } from "../common/settings.js";
+import { isWellknownCheckEnabled, getUserState } from "../common/settings.js";
+import { STATE_NAMES, STATE_VIEW_URLS } from "../data/complianceData.js";
 import "../../node_modules/uikit/dist/css/uikit.min.css";
 import "../../node_modules/animate.css/animate.min.css";
 import "./styles.css";
@@ -227,10 +228,10 @@ async function renderFirstPartyDomainDNSToggle() {
 
       if (!parsedDomainValue) {
         checkbox = `<input type="checkbox" id="input" checked/><span></span>`;
-        text = "Global Privacy Control Enabled";
+        text = "Global Privacy Control On";
       } else {
         checkbox = `<input type="checkbox" id="input"/><span></span>`;
-        text = "Global Privacy Control Disabled";
+        text = "Global Privacy Control Off";
       }
       document.getElementById("switch-label").innerHTML = checkbox;
       document.getElementById("more-info-text").innerHTML = text;
@@ -257,7 +258,7 @@ async function listenerFirstPartyDomainDNSToggleCallback() {
     elemString = "Global Privacy Control Disabled";
     await addDomainToDomainlistAndRules(parsedDomain);
   } else {
-    elemString = "Global Privacy Control Enabled";
+    elemString = "Global Privacy Control On";
     await removeDomainFromDomainlistAndRules(parsedDomain);
   }
 
@@ -384,37 +385,6 @@ function removeListenerDropdown2Toggle() {
     .removeEventListener("click", listenerDropdown2ToggleCallback);
 }
 
-function listenerDropdown3ToggleCallback() {
-  if (
-    document.getElementById("dropdown-3-expandable").style.display === "none"
-  ) {
-    document.getElementById("dropdown-chevron-3").src =
-      "../assets/chevron-up.svg";
-    document.getElementById("dropdown-3-expandable").style.display = "";
-    document.getElementById("dropdown-3").classList.add("dropdown-tab-click");
-    document.getElementById("divider-8").style.display = "";
-  } else {
-    document.getElementById("dropdown-chevron-3").src =
-      "../assets/chevron-down.svg";
-    document.getElementById("dropdown-3-expandable").style.display = "none";
-    document
-      .getElementById("dropdown-3")
-      .classList.remove("dropdown-tab-click");
-    document.getElementById("divider-8").style.display = "none";
-  }
-}
-
-function listenerDropdown3Toggle() {
-  document
-    .getElementById("dropdown-3")
-    .addEventListener("click", listenerDropdown3ToggleCallback);
-}
-
-function removeListenerDropdown3Toggle() {
-  document
-    .getElementById("dropdown-3")
-    .removeEventListener("click", listenerDropdown3ToggleCallback);
-}
 
 /******************************************************************************/
 /******************************************************************************/
@@ -431,10 +401,10 @@ async function showProtectionInfo() {
   removeListenerDropdown2Toggle();
   document.getElementById("switch-label").innerHTML = "";
   document.getElementById("more-info-body").style.display = "";
-  document.getElementById("more-info-text").innerHTML = "Global Privacy Control Enabled!";
+  document.getElementById("more-info-text").innerHTML = "Global Privacy Control On!";
   document.getElementById("dropdown-1").style.display = "";
   document.getElementById("dropdown-1-text").innerHTML = "3rd Party Domains";
-  document.getElementById("dropdown-2-text").innerHTML = "Website Response";
+  document.getElementById("dropdown-2-text").innerHTML = "Site's GPC Policy";
   document.getElementById("dropdown-1-expandable").innerHTML = "";
   document.getElementById("dropdown-2-expandable").innerHTML = "";
   document.getElementById("dropdown-1-expandable").style.display = "none";
@@ -449,7 +419,7 @@ async function showProtectionInfo() {
     ? ""
     : "none";
 
-  // Generate `Global Privacy Control Enabled` elem
+  // Generate `Global Privacy Control On` elem
   renderDomainCounter(); // Render "X domains receiving signals" info section
   renderFirstPartyDomainDNSToggle(); // Render 1P domain "DNS Enabled/Disabled" text+toggle
 
@@ -480,11 +450,12 @@ async function showProtectionInfo() {
   }
 
   // Compliance status (always visible, no dropdown)
-  const complianceCheckEnabled = await storage.get(stores.settings, "COMPLIANCE_CHECK_ENABLED");
+  const userState = await getUserState();
+  const complianceEnabled = userState && userState !== 'none';
 
-  if (complianceCheckEnabled !== false) {
+  if (complianceEnabled) {
     const complianceStatus = await storage.get(stores.complianceData, domain);
-    await buildComplianceStatus(complianceStatus ?? null);
+    await buildComplianceStatus(complianceStatus ?? null, userState);
     document.getElementById("compliance-section").style.display = "";
   } else {
     document.getElementById("compliance-section").style.display = "none";
@@ -508,6 +479,35 @@ async function showProtectionInfo() {
  * @param {Object} event - contains information about the event
  */
 document.addEventListener("DOMContentLoaded", async (event) => {
+  // Check if state has been selected (first-time setup)
+  const userState = await getUserState();
+
+  if (!userState) {
+    // Show state selection overlay
+    document.getElementById("state-selection-overlay").style.display = "flex";
+
+    // State button listeners
+    document.querySelectorAll(".state-btn").forEach(btn => {
+      btn.addEventListener("click", async () => {
+        const stateCode = btn.dataset.state;
+        await storage.set(stores.settings, stateCode, "USER_STATE");
+        document.getElementById("state-selection-overlay").style.display = "none";
+        // Re-initialize popup with state selected
+        location.reload();
+      });
+    });
+
+    // Skip link
+    document.getElementById("state-skip-link").addEventListener("click", async (e) => {
+      e.preventDefault();
+      await storage.set(stores.settings, "none", "USER_STATE");
+      document.getElementById("state-selection-overlay").style.display = "none";
+      location.reload();
+    });
+
+    return; // Don't initialize rest of popup
+  }
+
   isEnabled = await storage.get(stores.settings, "IS_ENABLED");
   isDomainlisted = await storage.get(stores.settings, "IS_DOMAINLISTED");
   parsedDomain = await getCurrentParsedDomain(); // This must happen first
@@ -553,7 +553,7 @@ function addThirdPartyDomainDNSToggleListener(requestDomain) {
         elemString = "Global Privacy Control Disabled";
         addDomainToDomainlistAndRules(requestDomain);
       } else {
-        elemString = "Global Privacy Control Enabled";
+        elemString = "Global Privacy Control On";
         removeDomainFromDomainlistAndRules(requestDomain);
       }
 
@@ -585,7 +585,7 @@ async function buildDomains(requests) {
       let index = domainlistKeys.indexOf(requestDomain);
       if (index > -1 && !domainlistValues[index]) {
         checkbox = `<input type="checkbox" id="input-${requestDomain}" checked/>`;
-        text = "Global Privacy Control Enabled";
+        text = "Global Privacy Control On";
       } else {
         checkbox = `<input type="checkbox" id="input-${requestDomain}"/>`;
         text = "Global Privacy Control Disabled";
@@ -663,7 +663,7 @@ async function buildWellKnown(requests) {
       </li>
       <li>
         <p class="uk-text-center uk-text-small">
-          This website respects GPC signals
+          This website says it respects GPC signals
         </p>
       </li>
       `;
@@ -720,15 +720,19 @@ async function buildWellKnown(requests) {
  * Builds the Compliance Status HTML for the popup window
  * @param {Object} status - Compliance status object from storage
  */
-async function buildComplianceStatus(status) {
+async function buildComplianceStatus(status, stateCode) {
   const container = document.getElementById("compliance-status-content");
+  const stateName = STATE_NAMES[stateCode] || stateCode;
+  const datasetUrl = STATE_VIEW_URLS[stateCode] || '#';
+  const stateLabel = `<p class="compliance-state-label">What We Observed · ${stateName}</p>`;
 
   if (!status || status.status === 'no_data') {
     container.innerHTML = `
       <div class="compliance-inline">
+        ${stateLabel}
         <span class="compliance-status-badge compliance-no-data">⚪ Not in Dataset</span>
-        <p class="compliance-details">This site was not included in the GPC web crawl. Only the top ~10,000 sites are crawled.</p>
-        <a class="compliance-link" href="https://docs.google.com/spreadsheets/d/1xDz4RS5tlWBmAS33xVEOk2rqtc21lSkdInRv9J02ZFs/edit" target="_blank">View full dataset →</a>
+        <p class="compliance-status-text">This site wasn't included in the ${stateName} crawl.</p>
+        <a class="compliance-link" href="${datasetUrl}" target="_blank">View ${stateName} dataset →</a>
       </div>
     `;
     return;
@@ -738,27 +742,28 @@ async function buildComplianceStatus(status) {
   let statusText = '';
 
   if (status.status === 'compliant') {
-    badge = '<span class="compliance-status-badge compliance-compliant">🟢 Compliant</span>';
-    statusText = 'This site honors the GPC signal.';
+    badge = '<span class="compliance-status-badge compliance-compliant">🟢 Likely Honors GPC</span>';
+    statusText = 'Our crawl data suggests this site responds to the GPC signal.';
   } else if (status.status === 'non_compliant') {
-    badge = '<span class="compliance-status-badge compliance-non-compliant">🔴 Non-Compliant</span>';
-    statusText = 'This site has consent mechanisms but does not honor the GPC signal.';
+    badge = '<span class="compliance-status-badge compliance-non-compliant">🔴 Likely Ignores GPC</span>';
+    statusText = 'This site has consent tools but did not appear to respond to GPC during our crawl.';
   } else if (status.status === 'no_signals') {
     badge = '<span class="compliance-status-badge compliance-no-signals">🟡 No Consent Signals</span>';
-    statusText = 'This site was crawled but no consent mechanisms (US Privacy API, OneTrust, GPP) were found on the page.';
+    statusText = 'No consent mechanisms were found on this site during our crawl.';
   } else {
-    badge = '<span class="compliance-status-badge compliance-unknown">🔵 Could Not Determine</span>';
-    statusText = 'This site is in the dataset but returned null values — we could not determine its compliance status.';
+    badge = '<span class="compliance-status-badge compliance-unknown">🔵 Inconclusive</span>';
+    statusText = 'This site is in the dataset but results were inconclusive.';
   }
 
   const details = status.details || '';
 
   container.innerHTML = `
     <div class="compliance-inline">
+      ${stateLabel}
       ${badge}
       <p class="compliance-status-text">${statusText}</p>
       ${details ? `<p class="compliance-details">${details}</p>` : ''}
-      <a class="compliance-link" href="https://docs.google.com/spreadsheets/d/1xDz4RS5tlWBmAS33xVEOk2rqtc21lSkdInRv9J02ZFs/edit" target="_blank">View full dataset →</a>
+      <a class="compliance-link" href="${datasetUrl}" target="_blank">View ${stateName} dataset →</a>
     </div>
   `;
 }

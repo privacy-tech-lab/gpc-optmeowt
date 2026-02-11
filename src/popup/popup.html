@@ -21,6 +21,24 @@ popup.html is the html scaffolding for OptMeowt's popup page
 <!-- This is the entry point to 'Popup' -->
 
 <body class="uk-padding-large" style="width: 320px">
+  <!-- State Selection Overlay (first-time setup) -->
+  <div id="state-selection-overlay" style="display: none;">
+    <div class="state-overlay-content">
+      <img src="./assets/cat-w-text/optmeow-logo-circle.png" height="36" width="36" alt="Logo" />
+      <h3 class="state-overlay-title">See how sites treat your data by selecting a state</h3>
+      <p class="state-overlay-desc">
+        GPC compliance data is available for select states.
+      </p>
+      <div class="state-buttons">
+        <button class="state-btn" data-state="CA">🌴 California</button>
+        <button class="state-btn" data-state="CO">🏔️ Colorado</button>
+        <button class="state-btn" data-state="CT">🌳 Connecticut</button>
+        <button class="state-btn" data-state="NJ">🏖️ New Jersey</button>
+      </div>
+      <button id="state-skip-link" class="state-btn state-btn-skip">Skip — I'm not in these states</button>
+    </div>
+  </div>
+
   <!-- Header -->
   <div id="pop-up-header" uk-grid class="uk-grid-small">
     <div>

@@ -126,15 +126,16 @@ function eventListeners() {
       });
     });
   document
-    .getElementById("compliance-check-toggle")
+    .getElementById("state-select")
     .addEventListener("change", async (event) => {
-      const enabled = event.target.checked;
+      const stateCode = event.target.value;
       await storage.set(
         stores.settings,
-        enabled,
-        "COMPLIANCE_CHECK_ENABLED"
+        stateCode,
+        "USER_STATE"
       );
-      await chrome.storage.local.set({ COMPLIANCE_CHECK_ENABLED: enabled });
+      // Clear cached compliance data when state changes
+      await storage.clear(stores.complianceData);
     });
   document.getElementById("upload-button").addEventListener("click", () => {
     const verify = confirm(
@@ -296,9 +297,8 @@ export async function settingsView(scaffoldTemplate) {
   document.getElementById("wellknown-check-toggle").checked =
     wellknownCheckEnabled;
 
-  const complianceCheckEnabled = await storage.get(stores.settings, "COMPLIANCE_CHECK_ENABLED");
-  document.getElementById("compliance-check-toggle").checked =
-    complianceCheckEnabled !== false;
+  const userState = await storage.get(stores.settings, "USER_STATE");
+  document.getElementById("state-select").value = userState || "none";
 
   eventListeners();
 

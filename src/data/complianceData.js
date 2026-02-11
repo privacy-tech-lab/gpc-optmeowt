@@ -6,11 +6,32 @@ privacy-tech-lab, https://privacytechlab.org/
 /*
 complianceData.js
 ================================================================================
-Fetches and processes GPC compliance data from the hosted CSV file
+Fetches and processes GPC compliance data from state-specific hosted CSV files
 */
 
-// Google Drive direct download URL (converted from view link)
-const COMPLIANCE_DATA_URL = 'https://drive.google.com/uc?export=download&id=1QqRRb7S8HxLZPXMnryp5cCq8UJLpz8D_';
+// State-specific Google Drive direct download URLs
+const STATE_DATA_URLS = {
+  CA: 'https://drive.google.com/uc?export=download&id=1QqRRb7S8HxLZPXMnryp5cCq8UJLpz8D_',
+  CO: 'https://drive.google.com/uc?export=download&id=1cYYJIJnbHJvKHzWwalqxYEZClZoXRqLP',
+  CT: 'https://drive.google.com/uc?export=download&id=1POdmV0CPcFvO5jn00KYuMfhhiNtvFC4f',
+  NJ: 'https://drive.google.com/uc?export=download&id=1I_fNSOycGnRWX-sZ-mn5C05rw8vsOe9b',
+};
+
+// Human-readable state names
+export const STATE_NAMES = {
+  CA: 'California',
+  CO: 'Colorado',
+  CT: 'Connecticut',
+  NJ: 'New Jersey',
+};
+
+// Viewable Google Drive URLs for each state's dataset
+export const STATE_VIEW_URLS = {
+  CA: 'https://drive.google.com/file/d/1QqRRb7S8HxLZPXMnryp5cCq8UJLpz8D_/view',
+  CO: 'https://drive.google.com/file/d/1cYYJIJnbHJvKHzWwalqxYEZClZoXRqLP/view',
+  CT: 'https://drive.google.com/file/d/1POdmV0CPcFvO5jn00KYuMfhhiNtvFC4f/view',
+  NJ: 'https://drive.google.com/file/d/1I_fNSOycGnRWX-sZ-mn5C05rw8vsOe9b/view',
+};
 
 // Cache TTL: 24 hours
 const CACHE_TTL_MS = 24 * 60 * 60 * 1000;
@@ -80,12 +101,10 @@ function determineComplianceStatus(entry) {
  * @returns {string} - Human-readable explanation
  */
 function generateStatusExplanation(entry, status) {
-  if (status === 'unknown') {
-    return 'GPC signal was not sent to this site during the crawl';
-  }
-
-  if (status === 'no_signals') {
-    return 'Site was crawled and GPC was sent, but no consent mechanisms (US Privacy API, OptanonConsent, GPP) were detected';
+  // For these statuses, there's no technical evidence to show
+  // The popup statusText already explains them
+  if (status === 'unknown' || status === 'no_signals') {
+    return '';
   }
 
   const reasons = [];
@@ -106,13 +125,13 @@ function generateStatusExplanation(entry, status) {
     reasons.push('GPP string present');
   }
 
-  if (status === 'compliant') {
-    return reasons.length > 0 ? reasons.join(', ') : 'GPC signal honored';
+  if (status === 'compliant' && reasons.length > 0) {
+    return reasons.join(' · ');
   } else if (status === 'non_compliant') {
-    return 'Consent mechanisms present but GPC not honored';
-  } else {
-    return 'Compliance status could not be determined';
+    return 'Consent mechanisms found but did not respond to GPC';
   }
+
+  return '';
 }
 
 /**
@@ -124,7 +143,6 @@ function parseCSV(csvText) {
   const lines = csvText.split(/\r?\n/);
   if (lines.length < 2) return [];
 
-  // Helper to split CSV line respecting quotes
   const splitLine = (line) => {
     const values = [];
     let current = '';
@@ -135,7 +153,7 @@ function parseCSV(csvText) {
       if (char === '"') {
         if (inQuote && line[i + 1] === '"') {
           current += '"';
-          i++; // Skip escaped quote
+          i++;
         } else {
           inQuote = !inQuote;
         }
@@ -171,13 +189,19 @@ function parseCSV(csvText) {
 }
 
 /**
- * Fetches and processes the compliance data CSV
+ * Fetches and processes the compliance data CSV for a specific state
+ * @param {string} stateCode - Two-letter state code (CA, CO, CT, NJ)
  * @returns {Promise<Object>} - Domain-keyed compliance data
  */
-export async function fetchComplianceData() {
+export async function fetchComplianceData(stateCode) {
+  const url = STATE_DATA_URLS[stateCode];
+  if (!url) {
+    throw new Error(`No compliance data URL for state: ${stateCode}`);
+  }
+
   try {
-    console.log('Fetching compliance data from:', COMPLIANCE_DATA_URL);
-    const response = await fetch(COMPLIANCE_DATA_URL);
+    console.log(`Fetching ${stateCode} compliance data from:`, url);
+    const response = await fetch(url);
 
     console.log('Compliance fetch status:', response.status);
     if (!response.ok) {
@@ -185,16 +209,15 @@ export async function fetchComplianceData() {
     }
 
     const csvText = await response.text();
-    console.log(`Fetched ${csvText.length} bytes of compliance data`);
+    console.log(`Fetched ${csvText.length} bytes of ${stateCode} compliance data`);
 
     if (csvText.trim().startsWith('<!DOCTYPE html>') || csvText.includes('Google Drive - Virus scan warning')) {
-      console.error('Compliance data fetch returned HTML instead of CSV. Google Drive virus scan warning likely encountered.');
+      console.error('Compliance data fetch returned HTML instead of CSV.');
     }
 
     const rows = parseCSV(csvText);
-    console.log(`Parsed ${rows.length} compliance rows`);
+    console.log(`Parsed ${rows.length} compliance rows for ${stateCode}`);
 
-    // Convert to domain-keyed object
     const complianceMap = {};
 
     rows.forEach(row => {
@@ -206,7 +229,7 @@ export async function fetchComplianceData() {
       complianceMap[row.domain] = {
         status,
         details,
-        lastChecked: row.id || 'unknown',  // Use the crawl ID as a timestamp proxy
+        lastChecked: row.id || 'unknown',
         rawData: {
           uspapi_after: row.uspapi_after_gpc,
           optanon_after: !isNull(row.OptanonConsent_after_gpc) ? 'present' : null,
@@ -218,11 +241,12 @@ export async function fetchComplianceData() {
     return {
       data: complianceMap,
       fetchedAt: Date.now(),
+      stateCode,
       count: Object.keys(complianceMap).length
     };
 
   } catch (error) {
-    console.error('Error fetching compliance data:', error);
+    console.error(`Error fetching ${stateCode} compliance data:`, error);
     throw error;
   }
 }

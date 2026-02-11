@@ -20,7 +20,7 @@ import {
   deleteDynamicRule,
   reloadDynamicRules,
 } from "../../common/editRules.js";
-import { isWellknownCheckEnabled, isComplianceCheckEnabled } from "../../common/settings.js";
+import { isWellknownCheckEnabled, isComplianceCheckEnabled, getUserState } from "../../common/settings.js";
 import { fetchComplianceData, isCacheValid } from "../../data/complianceData.js";
 
 /******************************************************************************/
@@ -41,6 +41,7 @@ var globalParsedDomain;
 var setup = false;
 var complianceCache = null; // Caches fetched compliance data
 var complianceFetchedAt = null; // Timestamp of last fetch
+var complianceCachedState = null; // State code the cache was fetched for
 
 async function reloadVars() {
   let storedDomainlisted = await storage.get(
@@ -124,9 +125,17 @@ const listenerCallbacks = {
  * @returns {Promise<Object|null>} - Compliance data map or null if disabled/error
  */
 async function getComplianceData() {
-  const complianceCheckEnabled = await isComplianceCheckEnabled();
-  if (!complianceCheckEnabled) {
+  const stateCode = await getUserState();
+  if (!stateCode || stateCode === 'none') {
     return null;
+  }
+
+  // Invalidate cache if state changed
+  if (complianceCachedState && complianceCachedState !== stateCode) {
+    complianceCache = null;
+    complianceFetchedAt = null;
+    complianceCachedState = null;
+    await storage.clear(stores.complianceData);
   }
 
   // Check if we have valid cached data
@@ -134,19 +143,21 @@ async function getComplianceData() {
     return complianceCache;
   }
 
-  // Fetch fresh data
+  // Fetch fresh data for the selected state
   try {
-    const result = await fetchComplianceData();
+    const result = await fetchComplianceData(stateCode);
     complianceCache = result.data;
     complianceFetchedAt = result.fetchedAt;
+    complianceCachedState = stateCode;
 
     // Store metadata in storage
     await storage.set(stores.complianceData, {
       fetchedAt: result.fetchedAt,
-      count: result.count
+      count: result.count,
+      stateCode
     }, '_metadata');
 
-    console.log(`Fetched compliance data for ${result.count} domains`);
+    console.log(`Fetched ${stateCode} compliance data for ${result.count} domains`);
     return complianceCache;
   } catch (error) {
     console.error('Failed to fetch compliance data:', error);
@@ -162,8 +173,8 @@ async function handleComplianceCheck(details) {
   // Only check main frame navigations
   if (details.frameId !== 0) return;
 
-  const complianceCheckEnabled = await isComplianceCheckEnabled();
-  if (!complianceCheckEnabled) {
+  const stateCode = await getUserState();
+  if (!stateCode || stateCode === 'none') {
     return;
   }
 

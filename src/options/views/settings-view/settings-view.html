@@ -135,15 +135,21 @@ options page when clicked
   <div class="uk-margin-small">
     <label>
       <div uk-grid class="uk-grid-column-small" style="margin-left: 0px;">
-        <div class="uk-container" style="margin: auto;">
-          <input class="uk-checkbox" type="checkbox" id="compliance-check-toggle" />
-        </div>
         <div uk-grid class="uk-grid-row-collapse uk-width-expand">
           <div class="uk-first-column uk-width-1-1 uk-text-bold" style="font-size: medium;">
-            Show GPC Compliance Status
+            GPC Compliance State
           </div>
           <div class="uk-first-column uk-width-1-1" style="font-size: small;">
-            Check crawl data for each site's GPC compliance and display in popup
+            Select your state to see compliance data, or choose "None" to hide
+          </div>
+          <div class="uk-first-column uk-width-1-1" style="margin-top: 6px;">
+            <select id="state-select" class="uk-select" style="width: 200px; font-size: small;">
+              <option value="none">None (hidden)</option>
+              <option value="CA">California</option>
+              <option value="CO">Colorado</option>
+              <option value="CT">Connecticut</option>
+              <option value="NJ">New Jersey</option>
+            </select>
           </div>
         </div>
       </div>
