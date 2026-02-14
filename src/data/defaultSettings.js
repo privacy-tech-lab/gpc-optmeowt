@@ -18,4 +18,5 @@ export const defaultSettings = {
   REQUEST_PERMISSIONS_SHOWN: false,
   TUTORIAL_SHOWN_IN_POPUP: true,
   WELLKNOWN_CHECK_ENABLED: true,
+  COMPLIANCE_CHECK_ENABLED: true,
 };
