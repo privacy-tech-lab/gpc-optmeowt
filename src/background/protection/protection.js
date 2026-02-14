@@ -539,6 +539,47 @@ async function onMessageHandlerAsync(message, sender, sendResponse) {
     sendResponse({ enabled });
     return true;
   }
+  if (message.msg === "USER_STATE_CHANGE") {
+    console.log("User state changed, triggering immediate compliance fetch...");
+    // Force clear cache variables
+    complianceCache = null;
+    complianceFetchedAt = null;
+    complianceCachedState = null;
+
+    // Trigger fetch and update current tab
+    (async () => {
+      try {
+        // Set loading flag
+        await storage.set(stores.settings, true, "COMPLIANCE_LOADING");
+
+        const data = await getComplianceData();
+        if (data) {
+          // Update current tab's compliance status in storage so popup sees it
+          const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
+          if (tabs.length > 0 && tabs[0].url) {
+            const url = new URL(tabs[0].url);
+            const parsed = psl.parse(url.hostname);
+            const domain = parsed.domain;
+            if (domain) {
+              const status = data[domain] || {
+                status: 'no_data',
+                details: 'This site was not included in the crawl dataset',
+                lastChecked: null
+              };
+              await storage.set(stores.complianceData, status, domain);
+              console.log(`Updated compliance storage for active domain: ${domain}`);
+            }
+          }
+        }
+      } catch (e) {
+        console.error("Failed to fetch/update compliance data:", e);
+      } finally {
+        // Clear loading flag
+        await storage.set(stores.settings, false, "COMPLIANCE_LOADING");
+      }
+    })();
+    return true;
+  }
   if (message.msg === "TOGGLE_WELLKNOWN_CHECK") {
     const enabled = message.data?.enabled !== false;
     await storage.set(stores.settings, enabled, "WELLKNOWN_CHECK_ENABLED");

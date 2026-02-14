@@ -228,7 +228,7 @@ async function renderFirstPartyDomainDNSToggle() {
 
       if (!parsedDomainValue) {
         checkbox = `<input type="checkbox" id="input" checked/><span></span>`;
-        text = "Global Privacy Control On";
+        text = "Global Privacy Control";
       } else {
         checkbox = `<input type="checkbox" id="input"/><span></span>`;
         text = "Global Privacy Control Off";
@@ -258,7 +258,7 @@ async function listenerFirstPartyDomainDNSToggleCallback() {
     elemString = "Global Privacy Control Disabled";
     await addDomainToDomainlistAndRules(parsedDomain);
   } else {
-    elemString = "Global Privacy Control On";
+    elemString = "Global Privacy Control";
     await removeDomainFromDomainlistAndRules(parsedDomain);
   }
 
@@ -404,7 +404,7 @@ async function showProtectionInfo() {
   document.getElementById("more-info-text").innerHTML = "Global Privacy Control On!";
   document.getElementById("dropdown-1").style.display = "";
   document.getElementById("dropdown-1-text").innerHTML = "3rd Party Domains";
-  document.getElementById("dropdown-2-text").innerHTML = "Site's GPC Policy";
+  document.getElementById("dropdown-2-text").innerHTML = "Well-known Data";
   document.getElementById("dropdown-1-expandable").innerHTML = "";
   document.getElementById("dropdown-2-expandable").innerHTML = "";
   document.getElementById("dropdown-1-expandable").style.display = "none";
@@ -419,7 +419,7 @@ async function showProtectionInfo() {
     ? ""
     : "none";
 
-  // Generate `Global Privacy Control On` elem
+  // Generate `Global Privacy Control` elem
   renderDomainCounter(); // Render "X domains receiving signals" info section
   renderFirstPartyDomainDNSToggle(); // Render 1P domain "DNS Enabled/Disabled" text+toggle
 
@@ -454,8 +454,24 @@ async function showProtectionInfo() {
   const complianceEnabled = userState && userState !== 'none';
 
   if (complianceEnabled) {
-    const complianceStatus = await storage.get(stores.complianceData, domain);
-    await buildComplianceStatus(complianceStatus ?? null, userState);
+    const isLoading = await storage.get(stores.settings, "COMPLIANCE_LOADING");
+    if (isLoading) {
+      await buildComplianceStatusLoading(userState);
+
+      // Poll for completion every 500ms
+      const pollInterval = setInterval(async () => {
+        const stillLoading = await storage.get(stores.settings, "COMPLIANCE_LOADING");
+        if (!stillLoading) {
+          clearInterval(pollInterval);
+          // Re-fetch fresh status and render
+          const newStatus = await storage.get(stores.complianceData, domain);
+          await buildComplianceStatus(newStatus ?? null, userState);
+        }
+      }, 500);
+    } else {
+      const complianceStatus = await storage.get(stores.complianceData, domain);
+      await buildComplianceStatus(complianceStatus ?? null, userState);
+    }
     document.getElementById("compliance-section").style.display = "";
   } else {
     document.getElementById("compliance-section").style.display = "none";
@@ -553,7 +569,7 @@ function addThirdPartyDomainDNSToggleListener(requestDomain) {
         elemString = "Global Privacy Control Disabled";
         addDomainToDomainlistAndRules(requestDomain);
       } else {
-        elemString = "Global Privacy Control On";
+        elemString = "Global Privacy Control";
         removeDomainFromDomainlistAndRules(requestDomain);
       }
 
@@ -585,7 +601,7 @@ async function buildDomains(requests) {
       let index = domainlistKeys.indexOf(requestDomain);
       if (index > -1 && !domainlistValues[index]) {
         checkbox = `<input type="checkbox" id="input-${requestDomain}" checked/>`;
-        text = "Global Privacy Control On";
+        text = "Global Privacy Control";
       } else {
         checkbox = `<input type="checkbox" id="input-${requestDomain}"/>`;
         text = "Global Privacy Control Disabled";
@@ -714,6 +730,26 @@ async function buildWellKnown(requests) {
   document.getElementById(
     "dropdown-2-expandable"
   ).innerHTML = `${explainer} ${wellknown}`;
+}
+
+/**
+ * Builds the Compliance Status Loading HTML for the popup window
+ * @param {string} stateCode - The state code being loaded
+ */
+async function buildComplianceStatusLoading(stateCode) {
+  const container = document.getElementById("compliance-status-content");
+  const stateName = STATE_NAMES[stateCode] || stateCode;
+  const stateLabel = `<p class="compliance-state-label">What We Observed · ${stateName}</p>`;
+
+  container.innerHTML = `
+    <div class="compliance-inline">
+      ${stateLabel}
+      <div class="uk-text-center uk-margin-small-top">
+        <div uk-spinner="ratio: 0.8"></div>
+        <p class="compliance-status-text" style="margin-top: 8px; font-style: italic;">Loading ${stateName} compliance data...</p>
+      </div>
+    </div>
+  `;
 }
 
 /**

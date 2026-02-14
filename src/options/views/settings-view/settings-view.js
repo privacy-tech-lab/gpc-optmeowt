@@ -136,6 +136,12 @@ function eventListeners() {
       );
       // Clear cached compliance data when state changes
       await storage.clear(stores.complianceData);
+
+      // Set loading flag immediately
+      await storage.set(stores.settings, true, "COMPLIANCE_LOADING");
+
+      // Notify background script to start fetching new data immediately
+      chrome.runtime.sendMessage({ msg: "USER_STATE_CHANGE" });
     });
   document.getElementById("upload-button").addEventListener("click", () => {
     const verify = confirm(
