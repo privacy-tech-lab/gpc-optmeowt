@@ -767,7 +767,7 @@ async function buildComplianceStatus(status, stateCode) {
       <div class="compliance-inline">
         ${stateLabel}
         <span class="compliance-status-badge compliance-no-data">⚪ Not in Dataset</span>
-        <p class="compliance-status-text">This site wasn't included in the ${stateName} crawl.</p>
+        <p class="compliance-status-text">We do not have data for this site.</p>
         <a class="compliance-link" href="${datasetUrl}" target="_blank">View ${stateName} dataset →</a>
       </div>
     `;
@@ -779,7 +779,7 @@ async function buildComplianceStatus(status, stateCode) {
 
   if (status.status === 'compliant') {
     badge = '<span class="compliance-status-badge compliance-compliant">🟢 Likely Honors GPC</span>';
-    statusText = 'Our crawl data suggests this site responds to the GPC signal.';
+    statusText = '';
   } else if (status.status === 'non_compliant') {
     badge = '<span class="compliance-status-badge compliance-non-compliant">🔴 Likely Ignores GPC</span>';
     statusText = 'This site has consent tools but did not appear to respond to GPC during our crawl.';

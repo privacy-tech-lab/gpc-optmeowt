@@ -195,7 +195,7 @@ async function handleComplianceCheck(details) {
 
     const status = complianceData[domain] || {
       status: 'no_data',
-      details: 'This site was not included in the crawl dataset',
+      details: 'We do not have data for this site.',
       lastChecked: null
     };
 
@@ -563,7 +563,7 @@ async function onMessageHandlerAsync(message, sender, sendResponse) {
             if (domain) {
               const status = data[domain] || {
                 status: 'no_data',
-                details: 'This site was not included in the crawl dataset',
+                details: 'We do not have data for this site.',
                 lastChecked: null
               };
               await storage.set(stores.complianceData, status, domain);
