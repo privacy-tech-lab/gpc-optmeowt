@@ -31,6 +31,7 @@ function enableListeners(callbacks) {
     onHeadersReceived,
     onBeforeNavigate,
     onCommitted,
+    onCompleted,
   } = callbacks;
 
   // (4) global Chrome listeners
@@ -46,6 +47,7 @@ function enableListeners(callbacks) {
   );
   chrome.webNavigation.onBeforeNavigate.addListener(onBeforeNavigate, FILTER);
   chrome.webNavigation.onCommitted.addListener(onCommitted, FILTER);
+  chrome.webNavigation.onCompleted.addListener(onCompleted, FILTER);
 }
 
 /**
@@ -57,12 +59,14 @@ function disableListeners(callbacks) {
     onHeadersReceived,
     onBeforeNavigate,
     onCommitted,
+    onCompleted,
   } = callbacks;
 
   chrome.webRequest.onBeforeSendHeaders.removeListener(onBeforeSendHeaders);
   chrome.webRequest.onHeadersReceived.removeListener(onHeadersReceived);
   chrome.webNavigation.onBeforeNavigate.removeListener(onBeforeNavigate);
   chrome.webNavigation.onCommitted.removeListener(onCommitted);
+  chrome.webNavigation.onCompleted.removeListener(onCompleted);
 }
 
 export { enableListeners, disableListeners };
