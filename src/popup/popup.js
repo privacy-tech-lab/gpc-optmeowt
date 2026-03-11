@@ -11,7 +11,7 @@ popup.js supplements and renders complex elements on popup.html
 
 import { stores, storage } from "../background/storage.js";
 import { isWellknownCheckEnabled, getUserState } from "../common/settings.js";
-import { STATE_NAMES, STATE_VIEW_URLS } from "../data/complianceData.js";
+import { STATE_NAMES } from "../data/complianceData.js";
 import "../../node_modules/uikit/dist/css/uikit.min.css";
 import "../../node_modules/animate.css/animate.min.css";
 import "./styles.css";
@@ -449,11 +449,14 @@ async function showProtectionInfo() {
     await buildWellKnown(wellknown ?? null);
   }
 
-  // Compliance status (always visible, no dropdown)
   const userState = await getUserState();
   const complianceEnabled = userState && userState !== 'none';
 
   if (complianceEnabled) {
+    // Read the dataset view URL from stored metadata (set when compliance data was fetched)
+    const metadata = await storage.get(stores.complianceData, '_metadata');
+    const viewUrl = metadata?.viewUrl || null;
+
     const isLoading = await storage.get(stores.settings, "COMPLIANCE_LOADING");
     if (isLoading) {
       await buildComplianceStatusLoading(userState);
@@ -463,14 +466,16 @@ async function showProtectionInfo() {
         const stillLoading = await storage.get(stores.settings, "COMPLIANCE_LOADING");
         if (!stillLoading) {
           clearInterval(pollInterval);
-          // Re-fetch fresh status and render
+          // Re-fetch metadata in case viewUrl just became available
+          const freshMeta = await storage.get(stores.complianceData, '_metadata');
+          const freshViewUrl = freshMeta?.viewUrl || null;
           const newStatus = await storage.get(stores.complianceData, domain);
-          await buildComplianceStatus(newStatus ?? null, userState);
+          await buildComplianceStatus(newStatus ?? null, userState, freshViewUrl);
         }
       }, 500);
     } else {
       const complianceStatus = await storage.get(stores.complianceData, domain);
-      await buildComplianceStatus(complianceStatus ?? null, userState);
+      await buildComplianceStatus(complianceStatus ?? null, userState, viewUrl);
     }
     document.getElementById("compliance-section").style.display = "";
   } else {
@@ -755,11 +760,13 @@ async function buildComplianceStatusLoading(stateCode) {
 /**
  * Builds the Compliance Status HTML for the popup window
  * @param {Object} status - Compliance status object from storage
+ * @param {string} stateCode - The state code
+ * @param {string|null} viewUrl - URL to the all_sites dataset (from states.json metadata)
  */
-async function buildComplianceStatus(status, stateCode) {
+async function buildComplianceStatus(status, stateCode, viewUrl) {
   const container = document.getElementById("compliance-status-content");
   const stateName = STATE_NAMES[stateCode] || stateCode;
-  const datasetUrl = STATE_VIEW_URLS[stateCode] || '#';
+  const datasetUrl = viewUrl || '#';
   const stateLabel = `<p class="compliance-state-label">What We Observed · ${stateName}</p>`;
 
   if (!status || status.status === 'no_data') {
@@ -769,6 +776,17 @@ async function buildComplianceStatus(status, stateCode) {
         <span class="compliance-status-badge compliance-no-data">⚪ Not in Dataset</span>
         <p class="compliance-status-text">We do not have data for this site.</p>
         <a class="compliance-link" href="${datasetUrl}" target="_blank">View ${stateName} dataset →</a>
+      </div>
+    `;
+    return;
+  }
+
+  if (status.status === 'fetch_error') {
+    container.innerHTML = `
+      <div class="compliance-inline">
+        ${stateLabel}
+        <span class="compliance-status-badge compliance-unknown">🟠 Data Unavailable</span>
+        <p class="compliance-status-text">Could not reach the compliance data server. Check your connection and try again.</p>
       </div>
     `;
     return;
@@ -784,8 +802,8 @@ async function buildComplianceStatus(status, stateCode) {
     badge = '<span class="compliance-status-badge compliance-non-compliant">🔴 Likely Ignores GPC</span>';
     statusText = 'This site has consent tools but did not appear to respond to GPC during our crawl.';
   } else if (status.status === 'no_signals') {
-    badge = '<span class="compliance-status-badge compliance-no-signals">🟡 No Consent Signals</span>';
-    statusText = 'No consent mechanisms were found on this site during our crawl.';
+    badge = '<span class="compliance-status-badge compliance-no-signals">🟡 Could Not Determine</span>';
+    statusText = 'No consent signals were detected on this site during our crawl, so we cannot assess GPC compliance.';
   } else {
     badge = '<span class="compliance-status-badge compliance-unknown">🔵 Inconclusive</span>';
     statusText = 'This site is in the dataset but results were inconclusive.';

@@ -146,15 +146,23 @@ async function getComplianceData() {
   // Fetch fresh data for the selected state
   try {
     const result = await fetchComplianceData(stateCode);
+
+    // fetchComplianceData returns { error: 'fetch_error' } on network/server failure
+    if (result.error === 'fetch_error') {
+      console.warn(`Compliance data unavailable for ${stateCode} (server/network error)`);
+      return { _fetchError: true };
+    }
+
     complianceCache = result.data;
     complianceFetchedAt = result.fetchedAt;
     complianceCachedState = stateCode;
 
-    // Store metadata in storage
+    // Store metadata in storage (including viewUrl for the popup's dataset link)
     await storage.set(stores.complianceData, {
       fetchedAt: result.fetchedAt,
       count: result.count,
-      stateCode
+      stateCode,
+      viewUrl: result.viewUrl || null,
     }, '_metadata');
 
     console.log(`Fetched ${stateCode} compliance data for ${result.count} domains`);
@@ -187,24 +195,50 @@ async function handleComplianceCheck(details) {
 
     console.log('Running compliance check for:', domain);
 
-    const complianceData = await getComplianceData();
-    if (!complianceData) {
-      console.log('No compliance data available');
-      return;
+    // If the in-memory cache is cold (first load after restart), signal the
+    // popup to show a loading state rather than a misleading "Not in Dataset".
+    const cacheIsCold = !complianceCache || !isCacheValid(complianceFetchedAt);
+    if (cacheIsCold) {
+      await storage.set(stores.settings, true, 'COMPLIANCE_LOADING');
     }
 
-    const status = complianceData[domain] || {
-      status: 'no_data',
-      details: 'We do not have data for this site.',
-      lastChecked: null
-    };
+    // Wrap fetch + process + store in one try/finally so COMPLIANCE_LOADING is
+    // only cleared AFTER the domain status is in storage. Clearing it earlier
+    // caused the popup poll to read before the write completed ("Not in Dataset").
+    try {
+      const complianceData = await getComplianceData();
 
-    console.log('Compliance status for', domain, ':', status.status);
+      // Server/network was unreachable — store fetch_error so popup can show it
+      if (complianceData && complianceData._fetchError) {
+        await storage.set(stores.complianceData, { status: 'fetch_error' }, domain);
+        return;
+      }
 
-    // Store in IndexedDB for popup to access
-    await storage.set(stores.complianceData, status, domain);
+      if (!complianceData) {
+        console.log('No compliance data available');
+        return;
+      }
+
+      const status = complianceData[domain] || {
+        status: 'no_data',
+        details: 'We do not have data for this site.',
+        lastChecked: null
+      };
+
+      console.log('Compliance status for', domain, ':', status.status);
+
+      // Write status to storage FIRST, then clear loading flag
+      await storage.set(stores.complianceData, status, domain);
+    } finally {
+      // Only clear after the write above completes (or on any error path)
+      if (cacheIsCold) {
+        await storage.set(stores.settings, false, 'COMPLIANCE_LOADING');
+      }
+    }
   } catch (error) {
     console.debug('Error in compliance check:', error);
+    // Ensure loading flag is cleared on unexpected errors
+    await storage.set(stores.settings, false, 'COMPLIANCE_LOADING');
   }
 }
 
@@ -553,14 +587,17 @@ async function onMessageHandlerAsync(message, sender, sendResponse) {
         await storage.set(stores.settings, true, "COMPLIANCE_LOADING");
 
         const data = await getComplianceData();
-        if (data) {
-          // Update current tab's compliance status in storage so popup sees it
-          const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
-          if (tabs.length > 0 && tabs[0].url) {
-            const url = new URL(tabs[0].url);
-            const parsed = psl.parse(url.hostname);
-            const domain = parsed.domain;
-            if (domain) {
+        const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
+        if (tabs.length > 0 && tabs[0].url) {
+          const url = new URL(tabs[0].url);
+          const parsed = psl.parse(url.hostname);
+          const domain = parsed.domain;
+          if (domain) {
+            // Server/network error — propagate fetch_error to the popup
+            if (data && data._fetchError) {
+              await storage.set(stores.complianceData, { status: 'fetch_error' }, domain);
+              console.warn('Compliance config server unreachable; stored fetch_error for active domain');
+            } else if (data) {
               const status = data[domain] || {
                 status: 'no_data',
                 details: 'We do not have data for this site.',
