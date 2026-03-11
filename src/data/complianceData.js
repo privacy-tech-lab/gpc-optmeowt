@@ -25,7 +25,7 @@ The 8 signal columns checked for null:
 */
 
 const STATES_JSON_URL =
-  'https://raw.githubusercontent.com/privacy-tech-lab/gpc-web-ui/74be7ff4521835b83da26ef69bdf03d8d0bcf315/client/public/states.json'; // Permalink to raw states.json — use raw.githubusercontent.com so fetch() gets JSON, not an HTML page
+  'https://raw.githubusercontent.com/privacy-tech-lab/gpc-web-ui/master/client/public/states.json'; // Permalink to raw states.json — use raw.githubusercontent.com so fetch() gets JSON, not an HTML page
 
 // Human-readable state names (used to look up entries in states.json)
 export const STATE_NAMES = {
