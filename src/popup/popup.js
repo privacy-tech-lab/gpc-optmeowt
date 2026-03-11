@@ -453,31 +453,32 @@ async function showProtectionInfo() {
   const complianceEnabled = userState && userState !== 'none';
 
   if (complianceEnabled) {
-    // Read the dataset view URL from stored metadata (set when compliance data was fetched)
-    const metadata = await storage.get(stores.complianceData, '_metadata');
-    const viewUrl = metadata?.viewUrl || null;
-
+    // Check initial loading state
     const isLoading = await storage.get(stores.settings, "COMPLIANCE_LOADING");
     if (isLoading) {
       await buildComplianceStatusLoading(userState);
-
-      // Poll for completion every 500ms
-      const pollInterval = setInterval(async () => {
-        const stillLoading = await storage.get(stores.settings, "COMPLIANCE_LOADING");
-        if (!stillLoading) {
-          clearInterval(pollInterval);
-          // Re-fetch metadata in case viewUrl just became available
-          const freshMeta = await storage.get(stores.complianceData, '_metadata');
-          const freshViewUrl = freshMeta?.viewUrl || null;
-          const newStatus = await storage.get(stores.complianceData, domain);
-          await buildComplianceStatus(newStatus ?? null, userState, freshViewUrl);
-        }
-      }, 500);
     } else {
+      // Data might already be loaded
+      const metadata = await storage.get(stores.complianceData, '_metadata');
+      const viewUrl = metadata?.viewUrl || null;
       const complianceStatus = await storage.get(stores.complianceData, domain);
       await buildComplianceStatus(complianceStatus ?? null, userState, viewUrl);
     }
     document.getElementById("compliance-section").style.display = "";
+
+    // Add a local listener specifically for this popup view
+    // so it updates when the background script says it's downloading/ready
+    chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
+      if (message.msg === "COMPLIANCE_DATA_LOADING") {
+        await buildComplianceStatusLoading(userState);
+      } else if (message.msg === "COMPLIANCE_DATA_READY") {
+        const metadata = await storage.get(stores.complianceData, '_metadata');
+        const freshViewUrl = metadata?.viewUrl || null;
+        const newStatus = await storage.get(stores.complianceData, domain);
+        await buildComplianceStatus(newStatus ?? null, userState, freshViewUrl);
+      }
+    });
+
   } else {
     document.getElementById("compliance-section").style.display = "none";
   }
@@ -512,6 +513,9 @@ document.addEventListener("DOMContentLoaded", async (event) => {
       btn.addEventListener("click", async () => {
         const stateCode = btn.dataset.state;
         await storage.set(stores.settings, stateCode, "USER_STATE");
+        await storage.clear(stores.complianceData);
+        await storage.set(stores.settings, true, "COMPLIANCE_LOADING");
+        await chrome.runtime.sendMessage({ msg: "USER_STATE_CHANGE" });
         document.getElementById("state-selection-overlay").style.display = "none";
         // Re-initialize popup with state selected
         location.reload();

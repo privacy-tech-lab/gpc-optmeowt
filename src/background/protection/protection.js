@@ -39,9 +39,7 @@ var sendSignal = true;  // Caches if the signal can be sent to the curr domain
 var domPrev3rdParties = {}; //stores all the 3rd parties by domain (resets when you quit chrome)
 var globalParsedDomain;
 var setup = false;
-var complianceCache = null; // Caches fetched compliance data
-var complianceFetchedAt = null; // Timestamp of last fetch
-var complianceCachedState = null; // State code the cache was fetched for
+// complianceData cache is now handled by the IndexedDB store "stores.complianceData"
 
 async function reloadVars() {
   let storedDomainlisted = await storage.get(
@@ -122,7 +120,7 @@ const listenerCallbacks = {
 
 /**
  * Fetches compliance data if not cached or cache is stale
- * @returns {Promise<Object|null>} - Compliance data map or null if disabled/error
+ * @returns {Promise<Object|null>} - Metadata map containing stateCode or null if disabled/error
  */
 async function getComplianceData() {
   const stateCode = await getUserState();
@@ -130,17 +128,14 @@ async function getComplianceData() {
     return null;
   }
 
+  // Check if we have valid cached data in IndexedDB
+  const metadata = await storage.get(stores.complianceData, '_metadata');
+  
   // Invalidate cache if state changed
-  if (complianceCachedState && complianceCachedState !== stateCode) {
-    complianceCache = null;
-    complianceFetchedAt = null;
-    complianceCachedState = null;
+  if (metadata && metadata.stateCode && metadata.stateCode !== stateCode) {
     await storage.clear(stores.complianceData);
-  }
-
-  // Check if we have valid cached data
-  if (complianceCache && isCacheValid(complianceFetchedAt)) {
-    return complianceCache;
+  } else if (metadata && isCacheValid(metadata.fetchedAt)) {
+    return metadata; // Cache is valid, return metadata to signify readiness
   }
 
   // Fetch fresh data for the selected state
@@ -153,20 +148,30 @@ async function getComplianceData() {
       return { _fetchError: true };
     }
 
-    complianceCache = result.data;
-    complianceFetchedAt = result.fetchedAt;
-    complianceCachedState = stateCode;
+    // Save individual domains to indexedDB instead of holding a huge object in memory
+    const dataKeys = Object.keys(result.data);
+    for (const key of dataKeys) {
+      await storage.set(stores.complianceData, result.data[key], key);
+    }
 
     // Store metadata in storage (including viewUrl for the popup's dataset link)
-    await storage.set(stores.complianceData, {
+    const newMetadata = {
       fetchedAt: result.fetchedAt,
       count: result.count,
       stateCode,
       viewUrl: result.viewUrl || null,
-    }, '_metadata');
+    };
+    await storage.set(stores.complianceData, newMetadata, '_metadata');
+
+    // Notify the popup that fresh compliance data is ready to be painted!
+    chrome.runtime.sendMessage({
+      msg: "COMPLIANCE_DATA_READY"
+    }).catch(e => {
+      // Ignored: Popup might be closed
+    });
 
     console.log(`Fetched ${stateCode} compliance data for ${result.count} domains`);
-    return complianceCache;
+    return newMetadata;
   } catch (error) {
     console.error('Failed to fetch compliance data:', error);
     return null;
@@ -195,31 +200,32 @@ async function handleComplianceCheck(details) {
 
     console.log('Running compliance check for:', domain);
 
-    // If the in-memory cache is cold (first load after restart), signal the
-    // popup to show a loading state rather than a misleading "Not in Dataset".
-    const cacheIsCold = !complianceCache || !isCacheValid(complianceFetchedAt);
+    const metadata = await storage.get(stores.complianceData, '_metadata');
+    const cacheIsCold = !metadata || !isCacheValid(metadata.fetchedAt);
     if (cacheIsCold) {
       await storage.set(stores.settings, true, 'COMPLIANCE_LOADING');
+      // Tell popup we are loading
+      chrome.runtime.sendMessage({ msg: "COMPLIANCE_DATA_LOADING" }).catch(() => {});
     }
 
     // Wrap fetch + process + store in one try/finally so COMPLIANCE_LOADING is
     // only cleared AFTER the domain status is in storage. Clearing it earlier
     // caused the popup poll to read before the write completed ("Not in Dataset").
     try {
-      const complianceData = await getComplianceData();
+      const complianceDataMeta = await getComplianceData();
 
       // Server/network was unreachable — store fetch_error so popup can show it
-      if (complianceData && complianceData._fetchError) {
+      if (complianceDataMeta && complianceDataMeta._fetchError) {
         await storage.set(stores.complianceData, { status: 'fetch_error' }, domain);
         return;
       }
 
-      if (!complianceData) {
+      if (!complianceDataMeta) {
         console.log('No compliance data available');
         return;
       }
 
-      const status = complianceData[domain] || {
+      const status = await storage.get(stores.complianceData, domain) || {
         status: 'no_data',
         details: 'We do not have data for this site.',
         lastChecked: null
@@ -233,6 +239,8 @@ async function handleComplianceCheck(details) {
       // Only clear after the write above completes (or on any error path)
       if (cacheIsCold) {
         await storage.set(stores.settings, false, 'COMPLIANCE_LOADING');
+        // Notify popup that load is successful and store is populated
+        chrome.runtime.sendMessage({ msg: "COMPLIANCE_DATA_READY" }).catch(() => {});
       }
     }
   } catch (error) {
@@ -575,18 +583,15 @@ async function onMessageHandlerAsync(message, sender, sendResponse) {
   }
   if (message.msg === "USER_STATE_CHANGE") {
     console.log("User state changed, triggering immediate compliance fetch...");
-    // Force clear cache variables
-    complianceCache = null;
-    complianceFetchedAt = null;
-    complianceCachedState = null;
 
     // Trigger fetch and update current tab
     (async () => {
       try {
         // Set loading flag
         await storage.set(stores.settings, true, "COMPLIANCE_LOADING");
+        chrome.runtime.sendMessage({ msg: "COMPLIANCE_DATA_LOADING" }).catch(() => {});
 
-        const data = await getComplianceData();
+        const dataMeta = await getComplianceData();
         const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
         if (tabs.length > 0 && tabs[0].url) {
           const url = new URL(tabs[0].url);
@@ -594,11 +599,11 @@ async function onMessageHandlerAsync(message, sender, sendResponse) {
           const domain = parsed.domain;
           if (domain) {
             // Server/network error — propagate fetch_error to the popup
-            if (data && data._fetchError) {
+            if (dataMeta && dataMeta._fetchError) {
               await storage.set(stores.complianceData, { status: 'fetch_error' }, domain);
               console.warn('Compliance config server unreachable; stored fetch_error for active domain');
-            } else if (data) {
-              const status = data[domain] || {
+            } else if (dataMeta) {
+              const status = await storage.get(stores.complianceData, domain) || {
                 status: 'no_data',
                 details: 'We do not have data for this site.',
                 lastChecked: null
@@ -613,6 +618,7 @@ async function onMessageHandlerAsync(message, sender, sendResponse) {
       } finally {
         // Clear loading flag
         await storage.set(stores.settings, false, "COMPLIANCE_LOADING");
+        chrome.runtime.sendMessage({ msg: "COMPLIANCE_DATA_READY" }).catch(() => {});
       }
     })();
     return true;
