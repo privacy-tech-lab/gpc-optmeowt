@@ -60,6 +60,9 @@
     "webpack-dev-server": "^5.2.1",
     "workbox-webpack-plugin": "^7.3.0"
   },
+  "overrides": {
+    "serialize-javascript": "^7.0.4"
+  },
   "resolutions": {
     "ws": "^8.17.1"
   }
