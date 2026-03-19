@@ -211,7 +211,7 @@ The following procedure is for testing the OptMeowt extension UI, which cannot b
    - [ ] TEST 3: Global Privacy Control should be enabled.
    - [ ] TEST 4: There should be a blue number detailing the number of domains receiving signals.
 4. Click on the drop down for "3rd Party Domains".
-   - [ ] TEST 5: There should be sites that show up with Global Privacy Control Enabled switched on.
+   - [ ] TEST 5: There should be sites that show up with Global Privacy Control switched on.
 5. Navigate out of the "3rd Party Domains" drop down and click on the "Website Response" drop down
    - [ ] TEST 6: There should be text showing that GPC Signals were accepted.
    - [ ] TEST 7: Switch "Dark Mode" on and off and ensure the popup is correctly changing colors.
