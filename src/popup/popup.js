@@ -799,6 +799,7 @@ async function buildComplianceStatus(status, stateCode, viewUrl) {
   let badge = '';
   let statusText = '';
 
+  //FUTURE NOTE: WE WILL NEED TO ALIGN THIS WITH OUR FUTURE COMPLIANCE CLASSIFICATIONS
   if (status.status === 'compliant') {
     badge = '<span class="compliance-status-badge compliance-compliant">🟢 Likely Honors GPC</span>';
     statusText = '';

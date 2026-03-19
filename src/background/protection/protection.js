@@ -40,6 +40,11 @@ var domPrev3rdParties = {}; //stores all the 3rd parties by domain (resets when 
 var globalParsedDomain;
 var setup = false;
 // complianceData cache is now handled by the IndexedDB store "stores.complianceData"
+const DEFAULT_NO_DATA_STATUS = {
+  status: 'no_data',
+  details: 'We do not have data for this site.',
+  lastChecked: null
+};
 
 async function reloadVars() {
   let storedDomainlisted = await storage.get(
@@ -225,11 +230,7 @@ async function handleComplianceCheck(details) {
         return;
       }
 
-      const status = await storage.get(stores.complianceData, domain) || {
-        status: 'no_data',
-        details: 'We do not have data for this site.',
-        lastChecked: null
-      };
+      const status = await storage.get(stores.complianceData, domain) || DEFAULT_NO_DATA_STATUS;
 
       console.log('Compliance status for', domain, ':', status.status);
 
@@ -603,11 +604,7 @@ async function onMessageHandlerAsync(message, sender, sendResponse) {
               await storage.set(stores.complianceData, { status: 'fetch_error' }, domain);
               console.warn('Compliance config server unreachable; stored fetch_error for active domain');
             } else if (dataMeta) {
-              const status = await storage.get(stores.complianceData, domain) || {
-                status: 'no_data',
-                details: 'We do not have data for this site.',
-                lastChecked: null
-              };
+              const status = await storage.get(stores.complianceData, domain) || DEFAULT_NO_DATA_STATUS;
               await storage.set(stores.complianceData, status, domain);
               console.log(`Updated compliance storage for active domain: ${domain}`);
             }
