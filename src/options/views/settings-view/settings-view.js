@@ -227,7 +227,7 @@ function walkthrough() {
     modal.show();
     document.getElementById("modal-button-3").onclick = () => {
       chrome.tabs.create(
-        { url: "https://privacytechlab.org/optmeowt" },
+        { url: "https://privacytechlab.org/" },
         function (tab) { }
       );
     };
