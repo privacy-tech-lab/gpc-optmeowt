@@ -413,6 +413,7 @@ async function showProtectionInfo() {
   document.getElementById("divider-7").style.display = "none";
   document.getElementById("visited-domains-stats").style.display = "";
   document.getElementById("domain-list").style.display = "";
+  document.getElementById("gpc-web-ui-link").style.display = "";
 
   const wellknownCheckEnabled = await isWellknownCheckEnabled();
   document.getElementById("dropdown-2").style.display = wellknownCheckEnabled
@@ -945,4 +946,15 @@ if ("$BROWSER" == "chrome") {
 document.getElementById("domain-list").addEventListener("click", async () => {
   await storage.set(stores.settings, true, "DOMAINLIST_PRESSED");
   chrome.runtime.openOptionsPage();
+});
+
+// Listener: Opens GPC Web UI with current domain and user's selected state
+document.getElementById("gpc-web-ui-link").addEventListener("click", async () => {
+  const userState = await getUserState();
+  const stateParam = userState && userState !== "none" ? `&state=${userState}` : "";
+  if (parsedDomain) {
+    chrome.tabs.create({ url: `https://gpc-web-ui.vercel.app/?url=${parsedDomain}${stateParam}` });
+  } else {
+    chrome.tabs.create({ url: `https://gpc-web-ui.vercel.app/${stateParam ? `?${stateParam.slice(1)}` : ""}` });
+  }
 });
