@@ -210,7 +210,7 @@ async function renderDomainCounter() {
   }).length;
   document.getElementById("visited-domains-stats").innerHTML = `
     <p id = "domain-count" class="blue-heading" style="font-size:25px;
-    font-weight: bold">${count}</p> domains receiving signals
+    font-weight: bold">${count}</p> Domains Receiving Signals
   `;
 }
 
@@ -762,6 +762,85 @@ async function buildComplianceStatusLoading(stateCode) {
   `;
 }
 
+// Maps a schema status string to a (label, css class) for the status pill.
+// `null`/missing means no privacy string of that family was detected.
+const CLASSIFICATION_STATUS_META = {
+  opted_out:        { label: 'Opted Out',        cls: 'status-opted-out' },
+  did_not_opt_out:  { label: 'Did Not Opt Out',  cls: 'status-did-not-opt-out' },
+  invalid_missing:  { label: 'Invalid/Missing',  cls: 'status-invalid' },
+  invalid:          { label: 'Invalid',          cls: 'status-invalid' },
+  not_applicable:   { label: 'Not Applicable',   cls: 'status-na' },
+};
+const CLASSIFICATION_NONE_META  = { label: 'None',  cls: 'status-none' };
+const CLASSIFICATION_MIXED_META = { label: 'Mixed', cls: 'status-mixed' };
+
+function metaForStatus(status) {
+  if (!status) return CLASSIFICATION_NONE_META;
+  // Fallback label is a fixed string (not `status`) so unexpected/malformed
+  // values from the CSV can't be injected into innerHTML downstream.
+  return CLASSIFICATION_STATUS_META[status] || { label: 'Unknown', cls: 'status-none' };
+}
+
+// GPP ships a list of per-(state, field) classifications. Collapse to one
+// status: same across all → that status; different → "Mixed".
+function aggregateGppMeta(gpp) {
+  if (!gpp || !Array.isArray(gpp.classifications) || gpp.classifications.length === 0) {
+    return CLASSIFICATION_NONE_META;
+  }
+  const statuses = new Set(gpp.classifications.map(c => c.status));
+  if (statuses.size === 1) return metaForStatus([...statuses][0]);
+  return CLASSIFICATION_MIXED_META;
+}
+
+function classificationRowHtml(family, meta) {
+  return `
+    <div class="classification-row">
+      <span class="classification-family">${family}</span>
+      <span class="classification-status ${meta.cls}">${meta.label}</span>
+    </div>
+  `;
+}
+
+function buildClassificationHtml(classification) {
+  return `
+    <div class="compliance-classifications">
+      ${classificationRowHtml('USPS',            metaForStatus(classification.usps?.status))}
+      ${classificationRowHtml('Optanon Consent', metaForStatus(classification.optanonConsent?.status))}
+      ${classificationRowHtml('Well-known',      metaForStatus(classification.wellKnown?.status))}
+      ${classificationRowHtml('GPP',             aggregateGppMeta(classification.gpp))}
+    </div>
+  `;
+}
+
+// Roll the four families (GPP flattened) into a single top-line verdict:
+// any did_not_opt_out → "does_not_honor"; else any opted_out → "honors";
+// else "unknown" (all None, or only invalid/not_applicable).
+function computeOverallVerdict(classification) {
+  const statuses = [];
+  if (classification.usps?.status)            statuses.push(classification.usps.status);
+  if (classification.optanonConsent?.status)  statuses.push(classification.optanonConsent.status);
+  if (classification.wellKnown?.status)       statuses.push(classification.wellKnown.status);
+  if (Array.isArray(classification.gpp?.classifications)) {
+    for (const c of classification.gpp.classifications) {
+      if (c.status) statuses.push(c.status);
+    }
+  }
+  if (statuses.includes('did_not_opt_out')) return 'does_not_honor';
+  if (statuses.includes('opted_out'))       return 'honors';
+  return 'unknown';
+}
+
+function overallBadgeHtml(classification) {
+  const verdict = computeOverallVerdict(classification);
+  if (verdict === 'honors') {
+    return '<span class="compliance-status-badge compliance-compliant">🟢 Likely Honors GPC</span>';
+  }
+  if (verdict === 'does_not_honor') {
+    return '<span class="compliance-status-badge compliance-non-compliant">🔴 Likely Does Not Honor GPC</span>';
+  }
+  return '<span class="compliance-status-badge compliance-no-signals">🟡 Could Not Determine</span>';
+}
+
 /**
  * Builds the Compliance Status HTML for the popup window
  * @param {Object} status - Compliance status object from storage
@@ -797,10 +876,22 @@ async function buildComplianceStatus(status, stateCode, viewUrl) {
     return;
   }
 
+  // New schema-based per-family classification (preferred when the dataset has it).
+  if (status.classification) {
+    container.innerHTML = `
+      <div class="compliance-inline">
+        ${stateLabel}
+        ${overallBadgeHtml(status.classification)}
+        ${buildClassificationHtml(status.classification)}
+        <a class="compliance-link" href="${datasetUrl}" target="_blank">View ${stateName} dataset →</a>
+      </div>
+    `;
+    return;
+  }
+
+  // Fallback: legacy summary badge for datasets without the classification column.
   let badge = '';
   let statusText = '';
-
-  //FUTURE NOTE: WE WILL NEED TO ALIGN THIS WITH OUR FUTURE COMPLIANCE CLASSIFICATIONS
   if (status.status === 'compliant') {
     badge = '<span class="compliance-status-badge compliance-compliant">🟢 Likely Honors GPC</span>';
     statusText = '';

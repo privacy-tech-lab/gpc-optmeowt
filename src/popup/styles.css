@@ -264,6 +264,73 @@ Compliance status indicators
 }
 
 /*
+Per-family compliance classification rows
+(USPS, Optanon Consent, Well-known, GPP)
+*/
+
+.compliance-classifications {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 4px 0 10px;
+  text-align: left;
+}
+
+.classification-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+  padding: 4px 2px;
+}
+
+.classification-family {
+  font-weight: 600;
+  color: var(--text-color, inherit);
+}
+
+.classification-status {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.4;
+  border: 1px solid transparent;
+}
+
+.classification-status.status-opted-out {
+  background-color: rgba(40, 167, 69, 0.15);
+  color: #2e8540;
+  border-color: rgba(40, 167, 69, 0.35);
+}
+
+.classification-status.status-did-not-opt-out {
+  background-color: rgba(220, 53, 69, 0.15);
+  color: #c0392b;
+  border-color: rgba(220, 53, 69, 0.35);
+}
+
+.classification-status.status-invalid {
+  background-color: rgba(255, 152, 0, 0.15);
+  color: #b76f00;
+  border-color: rgba(255, 152, 0, 0.35);
+}
+
+.classification-status.status-mixed {
+  background-color: rgba(0, 123, 255, 0.15);
+  color: #1565c0;
+  border-color: rgba(0, 123, 255, 0.35);
+}
+
+.classification-status.status-na,
+.classification-status.status-none {
+  background-color: rgba(120, 120, 120, 0.12);
+  color: #888;
+  border-color: rgba(120, 120, 120, 0.25);
+}
+
+/*
 State selection overlay
 */
 
