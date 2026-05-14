@@ -159,12 +159,10 @@ async function getComplianceData() {
       await storage.set(stores.complianceData, result.data[key], key);
     }
 
-    // Store metadata in storage (including viewUrl for the popup's dataset link)
     const newMetadata = {
       fetchedAt: result.fetchedAt,
       count: result.count,
       stateCode,
-      viewUrl: result.viewUrl || null,
     };
     await storage.set(stores.complianceData, newMetadata, '_metadata');
 

@@ -347,8 +347,6 @@ export async function fetchComplianceData(stateCode) {
     fetchedAt: Date.now(),
     stateCode,
     count: Object.keys(complianceMap).length,
-    // The view URL for this state's all_sites dataset (from states.json)
-    viewUrl: stateEntry.all_sites,
   };
 }
 
