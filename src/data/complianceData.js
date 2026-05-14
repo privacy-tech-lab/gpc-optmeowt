@@ -22,6 +22,12 @@ The 8 signal columns checked for null:
   usp_cookies_before_gpc, usp_cookies_after_gpc,
   OptanonConsent_before_gpc, OptanonConsent_after_gpc,
   gpp_before_gpc, gpp_after_gpc
+
+When the all_sites CSV includes a `compliance_classification` column (per the
+schema in gpc-web-ui at client/background_reading/COMPLIANCE_CLASSIFICATION_OVERVIEW.md
+— https://github.com/privacy-tech-lab/gpc-web-ui/blob/master/client/background_reading/COMPLIANCE_CLASSIFICATION_OVERVIEW.md),
+the parsed JSON object is attached to each domain entry as `classification` so
+the popup can show per-family status (USPS, OptanonConsent, Well-known, GPP).
 */
 
 const STATES_JSON_URL =
@@ -94,6 +100,63 @@ function isNullSignal(val) {
 }
 
 /**
+ * Parses a single CSV line, honoring double-quote-wrapped fields with `""`
+ * escapes. Required because some columns (urlClassification, third_party_urls,
+ * compliance_classification, …) contain quoted JSON with embedded commas.
+ * Naive `line.split(',')` mis-aligns columns past the first quoted field.
+ * Assumes no embedded newlines inside quoted fields, which holds for these CSVs.
+ * @param {string} line
+ * @returns {string[]}
+ */
+function parseCSVLine(line) {
+  const out = [];
+  let cur = '';
+  let inQuotes = false;
+  for (let i = 0; i < line.length; i++) {
+    const ch = line[i];
+    if (inQuotes) {
+      if (ch === '"') {
+        if (line[i + 1] === '"') { cur += '"'; i++; }
+        else { inQuotes = false; }
+      } else {
+        cur += ch;
+      }
+    } else if (ch === ',') {
+      out.push(cur); cur = '';
+    } else if (ch === '"' && cur === '') {
+      inQuotes = true;
+    } else {
+      cur += ch;
+    }
+  }
+  out.push(cur);
+  return out;
+}
+
+/**
+ * Parses the `compliance_classification` field, which the upstream crawler
+ * currently emits as a Python repr (single quotes, None/True/False) rather
+ * than real JSON. We coerce to JSON before parsing so the field is usable.
+ * Returns null if the value can't be parsed under either dialect.
+ *
+ * TODO: the blind `'` → `"` replace will mangle any string value that contains
+ * an apostrophe. Today the schema only carries enum statuses with no free-form
+ * strings, so this is safe, but the real fix is upstream: have the crawler
+ * emit real JSON (json.dumps) instead of a Python repr in this column.
+ * @param {string} raw
+ * @returns {object|null}
+ */
+function parseClassification(raw) {
+  try { return JSON.parse(raw); } catch (_) {}
+  const jsonish = raw
+    .replace(/\bNone\b/g, 'null')
+    .replace(/\bTrue\b/g, 'true')
+    .replace(/\bFalse\b/g, 'false')
+    .replace(/'/g, '"');
+  try { return JSON.parse(jsonish); } catch (_) { return null; }
+}
+
+/**
  * Fetches a CSV from the given URL and returns a Set of domain strings.
  * Used for the noncompliant_sites CSV where we only need domain membership.
  * Assumes a column header named "domain" (case-insensitive).
@@ -138,11 +201,14 @@ async function fetchDomainSet(url) {
 }
 
 /**
- * Fetches the all_sites CSV and returns a Map of domain → { allNull: boolean }.
- * allNull is true when all 8 privacy-signal columns are null/empty, meaning
- * we could not observe any consent mechanism to measure GPC compliance against.
+ * Fetches the all_sites CSV and returns a Map of domain →
+ *   { allNull: boolean, classification: object|null }.
+ * - allNull is true when all 8 privacy-signal columns are null/empty, meaning
+ *   we could not observe any consent mechanism to measure GPC compliance against.
+ * - classification is the parsed `compliance_classification` JSON object when
+ *   the column is present and parseable, otherwise null.
  * @param {string} url - Direct download URL for the all_sites CSV
- * @returns {Promise<Map<string, {allNull: boolean}>>}
+ * @returns {Promise<Map<string, {allNull: boolean, classification: object|null}>>}
  */
 async function fetchAllSitesData(url) {
   const response = await fetch(url);
@@ -159,7 +225,7 @@ async function fetchAllSitesData(url) {
   const lines = csvText.split(/\r?\n/);
   if (lines.length < 2) return new Map();
 
-  const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
+  const headers = parseCSVLine(lines[0]).map(h => h.trim().toLowerCase());
   const domainIndex = headers.indexOf('domain');
   if (domainIndex === -1) {
     throw new Error('all_sites CSV does not contain a "domain" column');
@@ -167,12 +233,13 @@ async function fetchAllSitesData(url) {
 
   // Map each signal column name to its index (-1 if not present)
   const signalIndices = SIGNAL_COLUMNS.map(col => headers.indexOf(col));
+  const classificationIndex = headers.indexOf('compliance_classification');
 
   const result = new Map();
   for (let i = 1; i < lines.length; i++) {
-    const line = lines[i].trim();
-    if (!line) continue;
-    const cols = line.split(',');
+    const line = lines[i];
+    if (!line || !line.trim()) continue;
+    const cols = parseCSVLine(line);
     const domain = cols[domainIndex] ? cols[domainIndex].trim() : null;
     // Skip rows where domain itself is missing or the literal string "null"
     // (happens when the crawler couldn't resolve the domain, e.g. status="not added")
@@ -180,7 +247,16 @@ async function fetchAllSitesData(url) {
 
     // A domain is allNull only if every signal column is null/empty
     const allNull = signalIndices.every(idx => idx === -1 || isNullSignal(cols[idx]));
-    result.set(domain, { allNull });
+
+    let classification = null;
+    if (classificationIndex !== -1) {
+      const raw = cols[classificationIndex];
+      if (raw && raw.trim() && raw.trim().toLowerCase() !== 'null') {
+        classification = parseClassification(raw);
+      }
+    }
+
+    result.set(domain, { allNull, classification });
   }
 
   return result;
@@ -249,24 +325,21 @@ export async function fetchComplianceData(stateCode) {
 
   const complianceMap = {};
 
-  for (const [domain, { allNull }] of allSitesData) {
+  for (const [domain, { allNull, classification }] of allSitesData) {
+    let status;
     if (noncompliantDomains.has(domain)) {
-      complianceMap[domain] = {
-        status: 'non_compliant',
-        details: '',
-      };
+      status = 'non_compliant';
     } else if (allNull) {
       // All 8 signal columns were null during the crawl — we can't assess compliance
-      complianceMap[domain] = {
-        status: 'no_signals',
-        details: '',
-      };
+      status = 'no_signals';
     } else {
-      complianceMap[domain] = {
-        status: 'compliant',
-        details: '',
-      };
+      status = 'compliant';
     }
+    complianceMap[domain] = {
+      status,
+      details: '',
+      classification, // null when CSV lacks the column or value is JSON null
+    };
   }
 
   return {
