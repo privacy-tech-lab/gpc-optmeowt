@@ -39,11 +39,11 @@
     "puppeteer": "^22.15.0",
     "rimraf": "^3.0.2",
     "tippy.js": "^6.3.7",
-    "uikit": "3.6.9"
+    "uikit": "3.25.17"
   },
   "devDependencies": {
-    "@babel/core": "^7.21.3",
-    "@babel/preset-env": "^7.20.2",
+    "@babel/core": "^7.29.7",
+    "@babel/preset-env": "^7.29.7",
     "babel-loader": "^9.1.2",
     "clean-webpack-plugin": "^4.0.0",
     "concurrently": "^6.2.1",
@@ -55,10 +55,10 @@
     "string-replace-loader": "^3.0.3",
     "style-loader": "^2.0.0",
     "wait-on": "^7.2.0",
-    "webpack": "^5.105.0",
+    "webpack": "^5.107.2",
     "webpack-cli": "^4.8.0",
     "webpack-dev-server": "^5.2.4",
-    "workbox-webpack-plugin": "^7.3.0"
+    "workbox-webpack-plugin": "^7.4.1"
   },
   "overrides": {
     "serialize-javascript": "^7.0.4"
