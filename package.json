@@ -1,6 +1,6 @@
 {
   "name": "optmeowt",
-  "version": "6.1.0",
+  "version": "6.2.0",
   "description": "A privacy extension that allows users to exercise rights under GPC",
   "main": "index.js",
   "type": "module",
