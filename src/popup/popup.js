@@ -413,7 +413,6 @@ async function showProtectionInfo() {
   document.getElementById("divider-7").style.display = "none";
   document.getElementById("visited-domains-stats").style.display = "";
   document.getElementById("domain-list").style.display = "";
-  document.getElementById("gpc-web-ui-link").style.display = "";
 
   const wellknownCheckEnabled = await isWellknownCheckEnabled();
   document.getElementById("dropdown-2").style.display = wellknownCheckEnabled
@@ -460,10 +459,8 @@ async function showProtectionInfo() {
       await buildComplianceStatusLoading(userState);
     } else {
       // Data might already be loaded
-      const metadata = await storage.get(stores.complianceData, '_metadata');
-      const viewUrl = metadata?.viewUrl || null;
       const complianceStatus = await storage.get(stores.complianceData, domain);
-      await buildComplianceStatus(complianceStatus ?? null, userState, viewUrl);
+      await buildComplianceStatus(complianceStatus ?? null, userState);
     }
     document.getElementById("compliance-section").style.display = "";
 
@@ -473,10 +470,8 @@ async function showProtectionInfo() {
       if (message.msg === "COMPLIANCE_DATA_LOADING") {
         await buildComplianceStatusLoading(userState);
       } else if (message.msg === "COMPLIANCE_DATA_READY") {
-        const metadata = await storage.get(stores.complianceData, '_metadata');
-        const freshViewUrl = metadata?.viewUrl || null;
         const newStatus = await storage.get(stores.complianceData, domain);
-        await buildComplianceStatus(newStatus ?? null, userState, freshViewUrl);
+        await buildComplianceStatus(newStatus ?? null, userState);
       }
     });
 
@@ -845,12 +840,15 @@ function overallBadgeHtml(classification) {
  * Builds the Compliance Status HTML for the popup window
  * @param {Object} status - Compliance status object from storage
  * @param {string} stateCode - The state code
- * @param {string|null} viewUrl - URL to the all_sites dataset (from states.json metadata)
  */
-async function buildComplianceStatus(status, stateCode, viewUrl) {
+async function buildComplianceStatus(status, stateCode) {
   const container = document.getElementById("compliance-status-content");
   const stateName = STATE_NAMES[stateCode] || stateCode;
-  const datasetUrl = viewUrl || '#';
+  // Link to the gpc-web-ui pre-filtered to this state (and the current site
+  // when known) via its URL parameter API (`state`, `url`).
+  const params = new URLSearchParams({ state: stateCode });
+  if (parsedDomain) params.set('url', parsedDomain);
+  const datasetUrl = `https://gpc-web-ui.vercel.app/?${params.toString()}`;
   const stateLabel = `<p class="compliance-state-label">What We Observed · ${stateName}</p>`;
 
   if (!status || status.status === 'no_data') {
@@ -1037,15 +1035,4 @@ if ("$BROWSER" == "chrome") {
 document.getElementById("domain-list").addEventListener("click", async () => {
   await storage.set(stores.settings, true, "DOMAINLIST_PRESSED");
   chrome.runtime.openOptionsPage();
-});
-
-// Listener: Opens GPC Web UI with current domain and user's selected state
-document.getElementById("gpc-web-ui-link").addEventListener("click", async () => {
-  const userState = await getUserState();
-  const stateParam = userState && userState !== "none" ? `&state=${userState}` : "";
-  if (parsedDomain) {
-    chrome.tabs.create({ url: `https://gpc-web-ui.vercel.app/?url=${parsedDomain}${stateParam}` });
-  } else {
-    chrome.tabs.create({ url: `https://gpc-web-ui.vercel.app/${stateParam ? `?${stateParam.slice(1)}` : ""}` });
-  }
 });
