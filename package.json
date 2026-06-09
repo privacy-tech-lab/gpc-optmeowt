@@ -31,7 +31,7 @@
     "animate.css": "^4.1.1",
     "darkmode-js": "^1.5.7",
     "file-saver": "^2.0.5",
-    "idb": "^7.1.1",
+    "idb": "^8.0.3",
     "mocha": "^10.8.2",
     "mustache": "^4.2.0",
     "path": "^0.12.7",
