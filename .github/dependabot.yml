@@ -10,6 +10,9 @@ updates:
         update-types:
           - minor
           - patch
+      optmeowt-major:
+        update-types:
+          - major
 
   - package-ecosystem: github-actions
     directory: /
