@@ -13,8 +13,8 @@
     "build": "npm run build:firefox && npm run build:chrome",
     "build:firefox": "webpack --mode production --env firefox",
     "build:chrome": "webpack --mode production --env chrome",
-    "postbuild:firefox": "cd dist/firefox && zip -rFSX ../packages/ff-optmeowt-$npm_package_version.zip * -x '*.git*' -x '*.DS_Store*' -x '*.txt*'",
-    "postbuild:chrome": "cd dist/chrome && zip -rFSX ../packages/chrome-optmeowt-$npm_package_version.zip * -x '*.git*' -x '*.DS_Store*' -x '*.txt*'",
+    "postbuild:firefox": "cd dist/firefox && mkdir -p ../packages && zip -rFSX ../packages/ff-optmeowt-$npm_package_version.zip * -x '*.git*' -x '*.DS_Store*' -x '*.txt*'",
+    "postbuild:chrome": "cd dist/chrome && mkdir -p ../packages && zip -rFSX ../packages/chrome-optmeowt-$npm_package_version.zip * -x '*.git*' -x '*.DS_Store*' -x '*.txt*'",
     "test": "mocha $(find test -name '*.js')"
   },
   "repository": {
