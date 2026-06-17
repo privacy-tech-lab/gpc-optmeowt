@@ -6,11 +6,23 @@ updates:
       interval: weekly
     open-pull-requests-limit: 10
     groups:
+      # Groups for Version Updates
       optmeowt-minor-and-patch:
         update-types:
           - minor
           - patch
       optmeowt-major:
+        update-types:
+          - major
+          
+      # Groups for Security Updates
+      optmeowt-security-minor-and-patch:
+        applies-to: security-updates
+        update-types:
+          - minor
+          - patch
+      optmeowt-security-major:
+        applies-to: security-updates
         update-types:
           - major
 
