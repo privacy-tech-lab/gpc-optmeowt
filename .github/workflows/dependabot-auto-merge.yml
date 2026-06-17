@@ -17,8 +17,8 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Approve and enable auto-merge for patch and minor updates
-        if: steps.metadata.outputs.dependency-group == 'optmeowt-minor-and-patch'
+      - name: Approve and enable auto-merge for minor and patch updates
+        if: endsWith(steps.metadata.outputs.dependency-group, '-minor-and-patch')
         run: |
           gh pr review --approve "$PR_URL"
           gh pr merge --auto --squash "$PR_URL"
