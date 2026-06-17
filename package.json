@@ -42,8 +42,8 @@
     "uikit": "3.25.17"
   },
   "devDependencies": {
-    "@babel/core": "^7.29.7",
-    "@babel/preset-env": "^7.29.7",
+    "@babel/core": "^8.0.1",
+    "@babel/preset-env": "^8.0.1",
     "babel-loader": "^10.1.1",
     "clean-webpack-plugin": "^4.0.0",
     "concurrently": "^10.0.3",
