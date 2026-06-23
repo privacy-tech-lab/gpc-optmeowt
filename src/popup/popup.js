@@ -941,15 +941,6 @@ chrome.runtime.onMessage.addListener(function (message, _, __) {
   }
 });
 
-// Initializes the process to add to domainlist, via the background script
-// This is to ensure all processes happen correctly
-function setToDomainlist(d, k) {
-  chrome.runtime.sendMessage({
-    msg: "SET_TO_DOMAINLIST",
-    data: { domain: d, key: k },
-  });
-}
-
 /******************************************************************************/
 /******************************************************************************/
 /**********                  # Tutorial walkthorugh                  **********/
