@@ -61,7 +61,8 @@
     "workbox-webpack-plugin": "^7.4.1"
   },
   "overrides": {
-    "serialize-javascript": "^7.0.4"
+    "serialize-javascript": "^7.0.4",
+    "http-proxy-middleware": "^2.0.10"
   },
   "resolutions": {
     "ws": "^8.17.1"
