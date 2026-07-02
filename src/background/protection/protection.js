@@ -631,12 +631,6 @@ async function onMessageHandlerAsync(message, sender, sendResponse) {
     let isDomainlisted = message.data.isDomainlisted;
     storage.set(stores.settings, isDomainlisted, "IS_DOMAINLISTED");
   }
-  if (message.msg === "SET_TO_DOMAINLIST") {
-    let { domain, key } = message.data;
-    domainlist[domain] = key; // Sets to cache
-    addDynamicRule(id, domain);
-    storage.set(stores.domainlist, key, domain); // Sets to long term storage
-  }
   if (message.msg === "POPUP_PROTECTION_REQUESTS") {
     console.log("info queried");
     await dataToPopupRequests();
