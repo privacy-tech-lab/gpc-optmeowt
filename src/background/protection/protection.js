@@ -7,7 +7,7 @@ privacy-tech-lab, https://privacytechlab.org/
 protection.js
 ================================================================================
 protection.js (1) Implements our per-site functionality for the background listeners
-          (2) Handles cached values & message passing to popup & options page
+              (2) Handles cached values & message passing to popup & options page
 */
 
 import { stores, storage } from "./../storage.js";
@@ -40,10 +40,10 @@ var domPrev3rdParties = {}; //stores all the 3rd parties by domain (resets when 
 var globalParsedDomain;
 var setup = false;
 // complianceData cache is now handled by the IndexedDB store "stores.complianceData"
-const DEFAULT_NO_DATA_STATUS = {
-  status: 'no_data',
-  details: 'We do not have data for this site.',
-  lastChecked: null
+const defaultComplianceRecord = {
+  classification: null,
+  _isMissing: true,
+  details: 'We do not have data for this site.'
 };
 
 async function reloadVars() {
@@ -182,7 +182,7 @@ async function getComplianceData() {
 }
 
 /**
- * Looks up and stores compliance status for current domain after page load
+ * Looks up and stores compliance schema record for current domain after page load
  * @param {Object} details - callback object from onCompleted listener
  */
 async function handleComplianceCheck(details) {
@@ -212,14 +212,14 @@ async function handleComplianceCheck(details) {
     }
 
     // Wrap fetch + process + store in one try/finally so COMPLIANCE_LOADING is
-    // only cleared AFTER the domain status is in storage. Clearing it earlier
+    // only cleared AFTER the record is in storage. Clearing it earlier
     // caused the popup poll to read before the write completed ("Not in Dataset").
-    try {
+   try {
       const complianceDataMeta = await getComplianceData();
 
-      // Server/network was unreachable — store fetch_error so popup can show it
+      // Server/network was unreachable — store fetch error flag so popup can show it
       if (complianceDataMeta && complianceDataMeta._fetchError) {
-        await storage.set(stores.complianceData, { status: 'fetch_error' }, domain);
+        await storage.set(stores.complianceData, { classification: null, _fetchError: true }, domain);
         return;
       }
 
@@ -228,12 +228,12 @@ async function handleComplianceCheck(details) {
         return;
       }
 
-      const status = await storage.get(stores.complianceData, domain) || DEFAULT_NO_DATA_STATUS;
+      const complianceRecord = await storage.get(stores.complianceData, domain) || defaultComplianceRecord;
 
-      console.log('Compliance status for', domain, ':', status.status);
+      console.log('Compliance record loaded for:', domain);
 
-      // Write status to storage FIRST, then clear loading flag
-      await storage.set(stores.complianceData, status, domain);
+      // Write compliance schema record to storage FIRST, then clear loading flag
+      await storage.set(stores.complianceData, complianceRecord, domain);
     } finally {
       // Only clear after the write above completes (or on any error path)
       if (cacheIsCold) {
@@ -597,14 +597,15 @@ async function onMessageHandlerAsync(message, sender, sendResponse) {
           const parsed = psl.parse(url.hostname);
           const domain = parsed.domain;
           if (domain) {
-            // Server/network error — propagate fetch_error to the popup
+            // Server/network error — propagate fetch error to the popup
             if (dataMeta && dataMeta._fetchError) {
-              await storage.set(stores.complianceData, { status: 'fetch_error' }, domain);
-              console.warn('Compliance config server unreachable; stored fetch_error for active domain');
+              await storage.set(stores.complianceData, { classification: null, _fetchError: true }, domain);
+              console.warn('Compliance config server unreachable; stored fetch error for active domain');
             } else if (dataMeta) {
-              const status = await storage.get(stores.complianceData, domain) || DEFAULT_NO_DATA_STATUS;
-              await storage.set(stores.complianceData, status, domain);
+              const complianceRecord = await storage.get(stores.complianceData, domain) || defaultComplianceRecord;
+              await storage.set(stores.complianceData, complianceRecord, domain);
               console.log(`Updated compliance storage for active domain: ${domain}`);
+              console.log("Here's what was stored:", complianceRecord)
             }
           }
         }
