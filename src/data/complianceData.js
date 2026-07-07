@@ -18,9 +18,7 @@ entry as `classification` so the popup can show per-family status
 
 
 // Permalink to raw states.json — use raw.githubusercontent.com so fetch() gets JSON, not an HTML page
-// const STATES_JSON_URL = 'https://raw.githubusercontent.com/privacy-tech-lab/gpc-web-ui/master/client/public/states.json';
-const STATES_JSON_URL = 'https://raw.githubusercontent.com/KyleQ-hub/PersonalWebUI/refs/heads/main/client/public/states.json';
-// MAKE SURE TO SWAP THESE 2 CONSTANTS BEFORE THE FINAL MERGE
+const STATES_JSON_URL = 'https://raw.githubusercontent.com/privacy-tech-lab/gpc-web-ui/master/client/public/states.json';
 
 // Human-readable state names (used to look up entries in states.json)
 export const STATE_NAMES = {

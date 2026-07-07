@@ -824,7 +824,7 @@ function overallBadgeHtml(classification) {
     return '<span class="compliance-status-badge compliance-non-compliant">🔴 Likely Does Not Honor GPC</span>';
   }
   
-  // Catches 'Not Applicable/Invalid/Missing' or undefined
+  // Catches both 'Not Applicable/Invalid/Missing' and 'null'
   return '<span class="compliance-status-badge compliance-no-signals">🟡 Could Not Determine</span>';
 }
 
