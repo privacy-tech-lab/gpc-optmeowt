@@ -57,7 +57,7 @@
     "wait-on": "^9.0.10",
     "webpack": "^5.108.3",
     "webpack-cli": "^7.1.0",
-    "webpack-dev-server": "^5.2.5",
+    "webpack-dev-server": "^6.0.0",
     "workbox-webpack-plugin": "^7.4.1"
   },
   "overrides": {
