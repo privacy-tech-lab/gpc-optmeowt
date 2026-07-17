@@ -760,11 +760,11 @@ async function buildComplianceStatusLoading(stateCode) {
 // Maps a schema status string to a (label, css class) for the status pill.
 // `null`/missing means no privacy string of that family was detected.
 const CLASSIFICATION_STATUS_META = {
-  opted_out:        { label: 'Opted Out',        cls: 'status-opted-out' },
-  did_not_opt_out:  { label: 'Did Not Opt Out',  cls: 'status-did-not-opt-out' },
-  invalid_missing:  { label: 'Invalid/Missing',  cls: 'status-invalid' },
-  invalid:          { label: 'Invalid',          cls: 'status-invalid' },
-  not_applicable:   { label: 'Not Applicable',   cls: 'status-na' },
+  'Opted Out':        { label: 'Opted Out',        cls: 'status-opted-out' },
+  'Did Not Opt Out':  { label: 'Did Not Opt Out',  cls: 'status-did-not-opt-out' },
+  'Invalid/Missing':  { label: 'Invalid/Missing',  cls: 'status-invalid' },
+  'Invalid':          { label: 'Invalid',          cls: 'status-invalid' },
+  'Not Applicable':   { label: 'Not Applicable',   cls: 'status-na' },
 };
 const CLASSIFICATION_NONE_META  = { label: 'None',  cls: 'status-none' };
 const CLASSIFICATION_MIXED_META = { label: 'Mixed', cls: 'status-mixed' };
@@ -776,13 +776,13 @@ function metaForStatus(status) {
   return CLASSIFICATION_STATUS_META[status] || { label: 'Unknown', cls: 'status-none' };
 }
 
-// GPP ships a list of per-(state, field) classifications. Collapse to one
-// status: same across all → that status; different → "Mixed".
+// GPP ships a list of per-(section, field) classifications. Collapse to one
+// complianceClassification: same across all → that classification; different → "Mixed".
 function aggregateGppMeta(gpp) {
-  if (!gpp || !Array.isArray(gpp.classifications) || gpp.classifications.length === 0) {
+  if (!gpp || !Array.isArray(gpp.complianceClassifications) || gpp.complianceClassifications.length === 0) {
     return CLASSIFICATION_NONE_META;
   }
-  const statuses = new Set(gpp.classifications.map(c => c.status));
+  const statuses = new Set(gpp.complianceClassifications.map(c => c.complianceClassification));
   if (statuses.size === 1) return metaForStatus([...statuses][0]);
   return CLASSIFICATION_MIXED_META;
 }
@@ -797,73 +797,66 @@ function classificationRowHtml(family, meta) {
 }
 
 function buildClassificationHtml(classification) {
+  // Helper to safely extract the string, whether it's nested or a raw string like
+  const getClassification = (field) => {
+    if (!field || field === "None") return null; // null is the convention used by metaForStatus
+    return typeof field === 'string' ? field : field.complianceClassification;
+  };
+
   return `
     <div class="compliance-classifications">
-      ${classificationRowHtml('USPS',            metaForStatus(classification.usps?.status))}
-      ${classificationRowHtml('Optanon Consent', metaForStatus(classification.optanonConsent?.status))}
-      ${classificationRowHtml('Well-known',      metaForStatus(classification.wellKnown?.status))}
+      ${classificationRowHtml('USPS',            metaForStatus(getClassification(classification.usps)))}
+      ${classificationRowHtml('Optanon Consent', metaForStatus(getClassification(classification.optanonConsent)))}
+      ${classificationRowHtml('Well-known',      metaForStatus(getClassification(classification.wellKnown)))}
       ${classificationRowHtml('GPP',             aggregateGppMeta(classification.gpp))}
     </div>
   `;
 }
 
-// Roll the four families (GPP flattened) into a single top-line verdict:
-// any did_not_opt_out → "does_not_honor"; else any opted_out → "honors";
-// else "unknown" (all None, or only invalid/not_applicable).
-function computeOverallVerdict(classification) {
-  const statuses = [];
-  if (classification.usps?.status)            statuses.push(classification.usps.status);
-  if (classification.optanonConsent?.status)  statuses.push(classification.optanonConsent.status);
-  if (classification.wellKnown?.status)       statuses.push(classification.wellKnown.status);
-  if (Array.isArray(classification.gpp?.classifications)) {
-    for (const c of classification.gpp.classifications) {
-      if (c.status) statuses.push(c.status);
-    }
-  }
-  if (statuses.includes('did_not_opt_out')) return 'does_not_honor';
-  if (statuses.includes('opted_out'))       return 'honors';
-  return 'unknown';
-}
-
 function overallBadgeHtml(classification) {
-  const verdict = computeOverallVerdict(classification);
-  if (verdict === 'honors') {
+  // Extract the pre-calculated verdict directly from the new schema
+  const verdict = classification?.complianceResult;
+
+  if (verdict === 'Likely Honors GPC') {
     return '<span class="compliance-status-badge compliance-compliant">🟢 Likely Honors GPC</span>';
   }
-  if (verdict === 'does_not_honor') {
+  if (verdict === 'Likely Does Not Honor GPC') {
     return '<span class="compliance-status-badge compliance-non-compliant">🔴 Likely Does Not Honor GPC</span>';
   }
+  
+  // Catches both 'Not Applicable/Invalid/Missing' and 'null'
   return '<span class="compliance-status-badge compliance-no-signals">🟡 Could Not Determine</span>';
 }
 
 /**
  * Builds the Compliance Status HTML for the popup window
- * @param {Object} status - Compliance status object from storage
+ * @param {Object} complianceRecord - Compliance record object from storage
  * @param {string} stateCode - The state code
  */
-async function buildComplianceStatus(status, stateCode) {
+async function buildComplianceStatus(complianceRecord, stateCode) {
   const container = document.getElementById("compliance-status-content");
   const stateName = STATE_NAMES[stateCode] || stateCode;
-  // Link to the gpc-web-ui pre-filtered to this state (and the current site
-  // when known) via its URL parameter API (`state`, `url`).
+  
   const params = new URLSearchParams({ state: stateCode });
   if (parsedDomain) params.set('url', parsedDomain);
   const datasetUrl = `https://gpc-web-ui.vercel.app/?${params.toString()}`;
   const stateLabel = `<p class="compliance-state-label">What We Observed · ${stateName}</p>`;
 
-  if (!status || status.status === 'no_data') {
+  // 1. Handle missing data (Not in Dataset)
+  if (!complianceRecord || complianceRecord._isMissing) {
     container.innerHTML = `
       <div class="compliance-inline">
         ${stateLabel}
         <span class="compliance-status-badge compliance-no-data">⚪ Not in Dataset</span>
-        <p class="compliance-status-text">We do not have data for this site.</p>
+        <p class="compliance-status-text">${complianceRecord?.details || 'We do not have data for this site.'}</p>
         <a class="compliance-link" href="${datasetUrl}" target="_blank">View ${stateName} dataset →</a>
       </div>
     `;
     return;
   }
 
-  if (status.status === 'fetch_error') {
+  // 2. Handle network/server errors
+  if (complianceRecord._fetchError) {
     container.innerHTML = `
       <div class="compliance-inline">
         ${stateLabel}
@@ -874,45 +867,25 @@ async function buildComplianceStatus(status, stateCode) {
     return;
   }
 
-  // New schema-based per-family classification (preferred when the dataset has it).
-  if (status.classification) {
+  // 3. Render the new schema!
+  if (complianceRecord.classification) {
     container.innerHTML = `
       <div class="compliance-inline">
         ${stateLabel}
-        ${overallBadgeHtml(status.classification)}
-        ${buildClassificationHtml(status.classification)}
+        ${overallBadgeHtml(complianceRecord.classification)}
+        ${buildClassificationHtml(complianceRecord.classification)}
         <a class="compliance-link" href="${datasetUrl}" target="_blank">View ${stateName} dataset →</a>
       </div>
     `;
     return;
   }
 
-  // Fallback: legacy summary badge for datasets without the classification column.
-  let badge = '';
-  let statusText = '';
-  if (status.status === 'compliant') {
-    badge = '<span class="compliance-status-badge compliance-compliant">🟢 Likely Honors GPC</span>';
-    statusText = '';
-  } else if (status.status === 'non_compliant') {
-    badge = '<span class="compliance-status-badge compliance-non-compliant">🔴 Likely Ignores GPC</span>';
-    statusText = 'This site has consent tools but did not appear to respond to GPC during our crawl.';
-  } else if (status.status === 'no_signals') {
-    badge = '<span class="compliance-status-badge compliance-no-signals">🟡 Could Not Determine</span>';
-    statusText = 'No consent signals were detected on this site during our crawl, so we cannot assess GPC compliance.';
-  } else {
-    badge = '<span class="compliance-status-badge compliance-unknown">🔵 Inconclusive</span>';
-    statusText = 'This site is in the dataset but results were inconclusive.';
-  }
-
-  const details = status.details || '';
-
+  // Fallback catch-all if classification is mysteriously null
   container.innerHTML = `
     <div class="compliance-inline">
       ${stateLabel}
-      ${badge}
-      <p class="compliance-status-text">${statusText}</p>
-      ${details ? `<p class="compliance-details">${details}</p>` : ''}
-      <a class="compliance-link" href="${datasetUrl}" target="_blank">View ${stateName} dataset →</a>
+      <span class="compliance-status-badge compliance-no-signals">🟡 Could Not Determine</span>
+      <p class="compliance-status-text">Data structure was malformed or missing classification.</p>
     </div>
   `;
 }

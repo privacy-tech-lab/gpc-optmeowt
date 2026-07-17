@@ -15,11 +15,12 @@ import { defaultSettings } from "../../data/defaultSettings.js";
 import { headers } from "../../data/headers.js";
 import { enableListeners, disableListeners } from "./listeners-$BROWSER.js";
 import psl from "psl";
-import { isWellknownCheckEnabled } from "../../common/settings.js";
+import { isWellknownCheckEnabled, getUserState } from "../../common/settings.js";
+import { fetchComplianceData, isCacheValid } from "../../data/complianceData.js";
 
 /******************************************************************************/
 /******************************************************************************/
-/**********             # Initializers (cached values)               **********/
+/********** # Initializers (cached values)               **********/
 /******************************************************************************/
 /******************************************************************************/
 
@@ -32,6 +33,12 @@ var activeTabID = 0;    // Caches current active tab id
 var sendSignal = true;  // Caches if the signal can be sent to the curr domain
 var domPrev3rdParties = {}; //stores all the 3rd parties by domain (resets when you quit chrome)
 var globalParsedDomain;
+
+const DEFAULT_COMPLIANCE_RECORD = {
+  classification: null,
+  _isMissing: true,
+  details: 'We do not have data for this site.'
+};
 
 async function reloadVars() {
   let storedDomainlisted = await storage.get(
@@ -48,7 +55,7 @@ reloadVars();
 
 /******************************************************************************/
 /******************************************************************************/
-/**********       # Lisetener callbacks - Main functionality         **********/
+/********** # Lisetener callbacks - Main functionality         **********/
 /******************************************************************************/
 /******************************************************************************/
 
@@ -102,13 +109,144 @@ const listenerCallbacks = {
       updatePopupIcon(details);
     }
   },
+
+  /**
+   * Triggers compliance check on page load completion
+   * @param {object} details - retrieved info passed into callback
+   */
+  onCompleted: async (details) => {
+    await handleComplianceCheck(details);
+  }
 }; // closes listenerCallbacks object
 
 /******************************************************************************/
 /******************************************************************************/
-/**********      # Listener helper fxns - Main functionality         **********/
+/********** # Listener helper fxns - Main functionality         **********/
 /******************************************************************************/
 /******************************************************************************/
+
+/**
+ * Fetches compliance data if not cached or cache is stale
+ * @returns {Promise<Object|null>} - Metadata map containing stateCode or null if disabled/error
+ */
+async function getComplianceData() {
+  const stateCode = await getUserState();
+  if (!stateCode || stateCode === 'none') {
+    return null;
+  }
+
+  // Check if we have valid cached data in IndexedDB
+  const metadata = await storage.get(stores.complianceData, '_metadata');
+  
+  // Invalidate cache if state changed
+  if (metadata && metadata.stateCode && metadata.stateCode !== stateCode) {
+    await storage.clear(stores.complianceData);
+  } else if (metadata && isCacheValid(metadata.fetchedAt)) {
+    return metadata; // Cache is valid, return metadata to signify readiness
+  }
+
+  // Fetch fresh data for the selected state
+  try {
+    const result = await fetchComplianceData(stateCode);
+
+    // fetchComplianceData returns { error: 'fetch_error' } on network/server failure
+    if (result.error === 'fetch_error') {
+      console.warn(`Compliance data unavailable for ${stateCode} (server/network error)`);
+      return { _fetchError: true };
+    }
+
+    // Save individual domains to indexedDB instead of holding a huge object in memory
+    const dataKeys = Object.keys(result.data);
+    for (const key of dataKeys) {
+      await storage.set(stores.complianceData, result.data[key], key);
+    }
+
+    const newMetadata = {
+      fetchedAt: result.fetchedAt,
+      count: result.count,
+      stateCode,
+    };
+    await storage.set(stores.complianceData, newMetadata, '_metadata');
+
+    // Notify the popup that fresh compliance data is ready to be painted!
+    chrome.runtime.sendMessage({
+      msg: "COMPLIANCE_DATA_READY"
+    }).catch(e => {
+      // Ignored: Popup might be closed
+    });
+
+    console.log(`Fetched ${stateCode} compliance data for ${result.count} domains`);
+    return newMetadata;
+  } catch (error) {
+    console.error('Failed to fetch compliance data:', error);
+    return null;
+  }
+}
+
+/**
+ * Looks up and stores compliance schema record for current domain after page load
+ * @param {Object} details - callback object from onCompleted listener
+ */
+async function handleComplianceCheck(details) {
+  // Only check main frame navigations
+  if (details.frameId !== 0) return;
+
+  const stateCode = await getUserState();
+  if (!stateCode || stateCode === 'none') {
+    return;
+  }
+
+  try {
+    const url = new URL(details.url);
+    const parsed = psl.parse(url.hostname);
+    const domain = parsed.domain;
+
+    if (!domain) return;
+
+    console.log('Running compliance check for:', domain);
+
+    const metadata = await storage.get(stores.complianceData, '_metadata');
+    const cacheIsCold = !metadata || !isCacheValid(metadata.fetchedAt);
+    if (cacheIsCold) {
+      await storage.set(stores.settings, true, 'COMPLIANCE_LOADING');
+      // Tell popup we are loading
+      chrome.runtime.sendMessage({ msg: "COMPLIANCE_DATA_LOADING" }).catch(() => {});
+    }
+
+   try {
+      const complianceDataMeta = await getComplianceData();
+
+      // Server/network was unreachable — store fetch error flag so popup can show it
+      if (complianceDataMeta && complianceDataMeta._fetchError) {
+        await storage.set(stores.complianceData, { classification: null, _fetchError: true }, domain);
+        return;
+      }
+
+      if (!complianceDataMeta) {
+        console.log('No compliance data available');
+        return;
+      }
+
+      const complianceRecord = await storage.get(stores.complianceData, domain) || DEFAULT_COMPLIANCE_RECORD;
+
+      console.log('Compliance record loaded for:', domain);
+
+      // Write compliance schema record to storage FIRST, then clear loading flag
+      await storage.set(stores.complianceData, complianceRecord, domain);
+    } finally {
+      // Only clear after the write above completes (or on any error path)
+      if (cacheIsCold) {
+        await storage.set(stores.settings, false, 'COMPLIANCE_LOADING');
+        // Notify popup that load is successful and store is populated
+        chrome.runtime.sendMessage({ msg: "COMPLIANCE_DATA_READY" }).catch(() => {});
+      }
+    }
+  } catch (error) {
+    console.debug('Error in compliance check:', error);
+    // Ensure loading flag is cleared on unexpected errors
+    await storage.set(stores.settings, false, 'COMPLIANCE_LOADING');
+  }
+}
 
 /**
  * Attaches headers from `headers.js` to details.requestHeaders
@@ -161,8 +299,7 @@ function getCurrentParsedDomain() {
  * (2) Update domains by adding current domain to domainlist in storage.
  * (3) Updates the 3rd party list for the currentDomain
  * (4) Check to see if we should send signal.
- * 
- * Currently, it only adds to domainlist store as NULL if it doesnt exist
+ * * Currently, it only adds to domainlist store as NULL if it doesnt exist
  * @param {Object} details - callback object according to Chrome API
  */
  async function updateDomainlist(details) {
@@ -317,7 +454,7 @@ async function sendPrivacySignal(domain) {
 
 /******************************************************************************/
 /******************************************************************************/
-/**********          # Message Passing - Popup helper fxns           **********/
+/********** # Message Passing - Popup helper fxns           **********/
 /******************************************************************************/
 /******************************************************************************/
 
@@ -360,7 +497,7 @@ function dataToPopup() {
 
 /******************************************************************************/
 /******************************************************************************/
-/**********                   # Message passing                      **********/
+/********** # Message passing                      **********/
 /******************************************************************************/
 /******************************************************************************/
 
@@ -412,6 +549,44 @@ async function onMessageHandlerAsync(message, sender, sendResponse) {
     const enabled = await isWellknownCheckEnabled();
     await chrome.storage.local.set({ WELLKNOWN_CHECK_ENABLED: enabled });
     sendResponse({ enabled });
+    return true;
+  }
+  if (message.msg === "USER_STATE_CHANGE") {
+    console.log("User state changed, triggering immediate compliance fetch...");
+
+    // Trigger fetch and update current tab
+    (async () => {
+      try {
+        // Set loading flag
+        await storage.set(stores.settings, true, "COMPLIANCE_LOADING");
+        chrome.runtime.sendMessage({ msg: "COMPLIANCE_DATA_LOADING" }).catch(() => {});
+
+        const dataMeta = await getComplianceData();
+        const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
+        if (tabs.length > 0 && tabs[0].url) {
+          const url = new URL(tabs[0].url);
+          const parsed = psl.parse(url.hostname);
+          const domain = parsed.domain;
+          if (domain) {
+            // Server/network error — propagate fetch error to the popup
+            if (dataMeta && dataMeta._fetchError) {
+              await storage.set(stores.complianceData, { classification: null, _fetchError: true }, domain);
+              console.warn('Compliance config server unreachable; stored fetch error for active domain');
+            } else if (dataMeta) {
+              const complianceRecord = await storage.get(stores.complianceData, domain) || DEFAULT_COMPLIANCE_RECORD;
+              await storage.set(stores.complianceData, complianceRecord, domain);
+              console.log(`Updated compliance storage for active domain: ${domain}`);
+            }
+          }
+        }
+      } catch (e) {
+        console.error("Failed to fetch/update compliance data:", e);
+      } finally {
+        // Clear loading flag
+        await storage.set(stores.settings, false, "COMPLIANCE_LOADING");
+        chrome.runtime.sendMessage({ msg: "COMPLIANCE_DATA_READY" }).catch(() => {});
+      }
+    })();
     return true;
   }
   if (message.msg === "TOGGLE_WELLKNOWN_CHECK") {
@@ -501,7 +676,7 @@ function closeMessagePassing() {
 
 /******************************************************************************/
 /******************************************************************************/
-/**********       # Other initializers - run once per enable         **********/
+/********** # Other initializers - run once per enable         **********/
 /******************************************************************************/
 /******************************************************************************/
 
@@ -544,7 +719,7 @@ function wipeLocalVars() {
 
 /******************************************************************************/
 /******************************************************************************/
-/**********           # Exportable init / halt functions             **********/
+/********** # Exportable init / halt functions             **********/
 /******************************************************************************/
 /******************************************************************************/
 
@@ -554,7 +729,6 @@ export function init() {
   initMessagePassing();
   initSetup();
 }
-
 
 export function halt() {
   disableListeners(listenerCallbacks);
