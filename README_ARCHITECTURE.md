@@ -8,7 +8,6 @@ src
 │   │   ├── background.js
 │   │   ├── listeners-chrome.js
 │   │   ├── listeners-firefox.js
-│   │   ├── protection-ff.js
 │   │   └── protection.js
 │   ├── control.js
 │   └── storage.js
@@ -91,7 +90,6 @@ The following source folders have detailed descriptions further in the document.
 2. `listeners-chrome.js`
 3. `listeners-firefox.js`
 4. `protection.js`
-5. `protection-ff.js`
 
 #### `protection/background.js`
 
@@ -104,10 +102,6 @@ Creates listeners for Chrome and Firefox, respectively.
 #### `protection/protection.js`
 
 Manages the domain list with functions like `logData();`, `updateDomainlistAndSignal();`, `pullToDomainlistCache();`, `syncDomainlists();`. Also responsible for supplying the popup with the proper information with `dataToPopup();`. Also creates listeners to watch the popup for domain list changes.
-
-#### `protection/protection-ff.js`
-
-Manages the domain list for Firefox.
 
 ### `background/control.js`
 
