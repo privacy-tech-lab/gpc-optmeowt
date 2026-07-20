@@ -47,6 +47,7 @@ Former contributors are Ambrose Vannier (@avan36), Matthew Rich (@mcrich921), Au
 
 ## 1. Research Publications
 
+- Kyle Quintana, Parker McCoog, Ruby Friedman and Sebastian Zimmeck, [How the Cookie Crumbles: Trends in Privacy Law Compliance Across US States](https://github.com/privacy-tech-lab/gpc-optmeowt/blob/main/research/quintanalEtAlCookies2026Poster.pdf), Summer Research 2026 Poster Session, Wesleyan University, July 2026
 - Sebastian Zimmeck, Nishant Aggarwal, Zachary Liu, Sage Altman and Konrad Kollnig, [Exercising the CCPA Opt-out Right on Android: Legally Mandated but Practically Challenging](https://sebastianzimmeck.de/zimmeckEtAlGPCAndroid2026.pdf), 26th Privacy Enhancing Technologies Symposium (PETS), Calgary, Canada, July 2026, [BibTeX](https://sebastianzimmeck.de/citations.html#zimmeckEtAlGPCAndroid2026Bibtex)
 - Sebastian Zimmeck, Harshvardhan J Pandit, Frederik Zuiderveen Borgesius, Cristiana Teixeira Santos, Konrad Kollnig and Robin Berjon, [Can the GPC standard eliminate consent banners in the EU?](https://doi.org/10.1016/j.clsr.2026.106332), Computer Law & Security Review, Vol. 61, May 2026, [BibTeX](https://sebastianzimmeck.de/citations.html#zimmeckEtAlGPCEU2026Bibtex)
 - Sebastian Zimmeck, [Remarks on the Relevance of Privacy Expectations for Default Opt-out Settings](https://sebastianzimmeck.de/zimmeckRemarks2025.pdf), IEEE Symposium on Privacy Expectations (ISoPE), New York, New York, October 2025, [BibTeX](https://sebastianzimmeck.de/citations.html#zimmeckRemarks2025Bibtex)
