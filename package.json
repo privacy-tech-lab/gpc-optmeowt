@@ -67,7 +67,8 @@
     "uuid": "^11.1.1",
     "diff": "^8.0.3",
     "brace-expansion": "^5.0.8",
-    "js-yaml": "^4.3.0"
+    "js-yaml": "^4.3.0",
+    "fast-uri": "^3.1.5"
   },
   "resolutions": {
     "ws": "^8.17.1"
