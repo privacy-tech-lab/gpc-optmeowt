@@ -11,12 +11,8 @@ to manage the state & functionality mode of the extension
 */
 
 import {
-  init as initProtection_ff,
-  halt as haltProtection_ff,
-} from "./protection/protection-ff.js";
-import {
-  init as initProtection_cr,
-  halt as haltProtection_cr,
+  init as initProtection,
+  halt as haltProtection,
 } from "./protection/protection.js";
 import { defaultSettings } from "../data/defaultSettings.js";
 import { stores, storage } from "./storage.js";
@@ -28,12 +24,10 @@ import {
 } from "../common/editDomainlist.js";
 
 async function enable() {
-  var initProtection = initProtection_cr;
   initProtection();
 }
 
 function disable() {
-  var haltProtection = haltProtection_cr;
   haltProtection();
 }
 

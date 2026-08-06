@@ -75,14 +75,6 @@ describe("Check parsing of IAB signal", () => {
     );
   });
 
-  it("should not reference parse helpers in firefox protection background", () => {
-    const content = readFile("src/background/protection/protection-ff.js");
-    assert.ok(
-      !content.includes("parseIAB") && !content.includes("cookiesIAB"),
-      "firefox protection background still references legacy parse helpers"
-    );
-  });
-
   it("should not reference parse helpers in popup UI state", () => {
     const content = readFile("src/popup/popup.js");
     assert.ok(
