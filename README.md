@@ -293,12 +293,10 @@ If you have questions about OptMeowt's functionality or have found a bug, please
 
 <p align="center"><strong>We would like to thank our supporters!</strong></p><br>
 
-<p align="center">Major financial support provided by the National Science Foundation.</p>
+<p align="center">Major financial support provided by the National Science Foundation under awards <a href="https://nsf.gov/awardsearch/showAward?AWD_ID=2055196">#2055196</a> and <a href="https://www.nsf.gov/awardsearch/show-award/?AWD_ID=2618248">#2618248</a>.</p>
 
 <p align="center">
-  <a href="https://nsf.gov/awardsearch/showAward?AWD_ID=2055196">
-    <img class="img-fluid" src="./nsf.png" height="100px" alt="National Science Foundation Logo">
-  </a>
+   <img class="img-fluid" src="./nsf.png" height="100px" alt="National Science Foundation Logo">
 </p>
 
 <p align="center">Additional financial support provided by the Alfred P. Sloan Foundation, Wesleyan University, and the Anil Fernando Endowment.</p>
