@@ -32,14 +32,14 @@
     "darkmode-js": "^1.5.7",
     "file-saver": "^2.0.5",
     "idb": "^8.0.3",
-    "mocha": "^11.7.6",
+    "mocha": "^11.8.0",
     "mustache": "^4.2.0",
     "path": "^0.12.7",
     "psl": "^1.8.0",
-    "puppeteer": "^25.4.0",
+    "puppeteer": "^25.5.0",
     "rimraf": "^6.1.3",
     "tippy.js": "^6.3.7",
-    "uikit": "3.25.20"
+    "uikit": "3.25.21"
   },
   "devDependencies": {
     "@babel/core": "^8.0.1",
