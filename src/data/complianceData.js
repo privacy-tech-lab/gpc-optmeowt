@@ -25,7 +25,6 @@ export const STATE_NAMES = {
   CA: 'California',
   CO: 'Colorado',
   CT: 'Connecticut',
-  NJ: 'New Jersey',
 };
 
 // Cache TTL: 24 hours
