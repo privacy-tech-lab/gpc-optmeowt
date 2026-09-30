@@ -36,10 +36,10 @@
     "mustache": "^4.2.0",
     "path": "^0.12.7",
     "psl": "^1.8.0",
-    "puppeteer": "^25.11.0",
+    "puppeteer": "^25.12.0",
     "rimraf": "^6.1.3",
     "tippy.js": "^6.3.7",
-    "uikit": "3.25.23"
+    "uikit": "3.25.25"
   },
   "devDependencies": {
     "@babel/core": "^8.0.6",
@@ -51,7 +51,7 @@
     "css-loader": "^7.1.5",
     "file-loader": "^6.2.0",
     "html-webpack-plugin": "^5.6.8",
-    "prettier": "^3.9.8",
+    "prettier": "^3.9.9",
     "string-replace-loader": "^3.0.3",
     "style-loader": "^4.0.0",
     "wait-on": "^9.1.0",
